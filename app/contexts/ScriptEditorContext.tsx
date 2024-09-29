@@ -5,23 +5,37 @@ import React, {
   ReactNode,
   useEffect,
 } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 // Define the structure of a script node
 interface ScriptNode {
+  id: string;
   title: string;
   paragraph: string;
   speaker: string;
 }
 
 // Define the empty node structure
+const emptyNode: ScriptNode = {
+  id: "",
+  title: "New Chapter",
+  paragraph: "",
+  speaker: "You",
+};
+
+// Define the structure of the script nodes state
+interface ScriptNodesState {
+  title: string;
+  nodes: ScriptNode[];
+}
 
 // Define the type for the context value (script nodes, their setter, and emptyNode)
 interface ScriptEditorContextType {
-  scriptNodes: ScriptNode[];
-  setScriptNodes: React.Dispatch<React.SetStateAction<ScriptNode[]>>;
+  scriptNodes: ScriptNodesState;
+  setScriptNodes: React.Dispatch<React.SetStateAction<ScriptNodesState>>;
   emptyNode: ScriptNode;
   addNode: (position: number) => void;
-  deleteNode: (position: number) => void;
+  deleteNode: (id: string) => void;
 }
 
 // Create the context with a default value
@@ -31,26 +45,30 @@ const ScriptEditorContext = createContext<ScriptEditorContextType | undefined>(
 
 // Create a provider component
 export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
-  const emptyNode: ScriptNode = {
-    title: "New Chapter",
-    paragraph: "",
-    speaker: "You",
-  };
-
-  const [scriptNodes, setScriptNodes] = useState<ScriptNode[]>([emptyNode]);
+  const [scriptNodes, setScriptNodes] = useState<ScriptNodesState>({
+    title: "New Script",
+    nodes: [emptyNode],
+  });
 
   const addNode = (position: number) => {
-    let copyScriptNodes = [...scriptNodes];
-    copyScriptNodes.splice(position, 0, emptyNode);
+    const newNode: ScriptNode = {
+      ...emptyNode,
+      id: uuidv4(),
+    };
+
+    let copyScriptNodes = { ...scriptNodes };
+    copyScriptNodes.nodes.splice(position, 0, newNode);
     setScriptNodes(copyScriptNodes);
     console.log("Node added at position: " + position);
   };
 
-  const deleteNode = (position: number) => {
-    let copyScriptNodes = [...scriptNodes];
-    copyScriptNodes.splice(position, 1);
+  const deleteNode = (id: string) => {
+    let copyScriptNodes = { ...scriptNodes };
+    copyScriptNodes.nodes = copyScriptNodes.nodes.filter(
+      (node) => node.id !== id
+    );
     setScriptNodes(copyScriptNodes);
-    console.log("Node deleted at position: " + position);
+    console.log("Node deleted with id: " + id);
   };
 
   useEffect(() => {
@@ -59,7 +77,7 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <ScriptEditorContext.Provider
-      value={{ scriptNodes, setScriptNodes, emptyNode, addNode, deleteNode }} // Pass addNode here
+      value={{ scriptNodes, setScriptNodes, emptyNode, addNode, deleteNode }}
     >
       {children}
     </ScriptEditorContext.Provider>

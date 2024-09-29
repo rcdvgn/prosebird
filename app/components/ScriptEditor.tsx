@@ -3,16 +3,18 @@
 import { useRef, useState, useEffect } from "react";
 import useAutosizeTextArea from "../utils/useAutosizeTextArea";
 
+import AutowidthInput from "react-autowidth-input";
+
 import { StarIcon, ScriptIcon, AddIcon, PlayIcon } from "../assets/icons";
-import {
-  ScriptEditorProvider,
-  useScriptEditor,
-} from "@/app/contexts/ScriptEditorContext";
+import { useScriptEditor } from "@/app/contexts/ScriptEditorContext";
 
 function ScriptNode({ node, position }: { node: any; position: number }) {
   const { scriptNodes, setScriptNodes, addNode, deleteNode } =
     useScriptEditor();
-  const [isSpellCheckEnabled, setIsSpellCheckEnabled] = useState(false);
+  const [isTitleSpellCheckEnabled, setIsTitleSpellCheckEnabled] =
+    useState(false);
+  const [isParagraphSpellCheckEnabled, setIsParagraphSpellCheckEnabled] =
+    useState(false);
 
   const [modifiedChapterTitle, setModifiedChapterTitle] = useState(node.title);
 
@@ -27,16 +29,17 @@ function ScriptNode({ node, position }: { node: any; position: number }) {
 
   const handleChapterTitleFocusOut = () => {
     if (modifiedChapterTitle.length) {
-      let copyScriptNodes = [...scriptNodes];
-      copyScriptNodes[position] = { ...node, title: modifiedChapterTitle };
+      let copyScriptNodes = { ...scriptNodes };
+      copyScriptNodes.nodes[position] = {
+        ...node,
+        title: modifiedChapterTitle,
+      };
       setScriptNodes(copyScriptNodes);
     } else {
-      if (chapterParagraph.current) {
-        if (chapterParagraph.current.value) {
-          setModifiedChapterTitle(node.title);
-        } else {
-          deleteNode(position);
-        }
+      if (chapterParagraph.current && !chapterParagraph.current.value) {
+        deleteNode(node.id);
+      } else {
+        setModifiedChapterTitle(node.title);
       }
     }
   };
@@ -46,7 +49,7 @@ function ScriptNode({ node, position }: { node: any; position: number }) {
   ) => {
     if (e.key === "Tab" || e.key === "Enter") {
       e.preventDefault();
-      chapterParagraph.current ? chapterParagraph.current.focus() : "";
+      chapterParagraph.current?.focus();
       handleChapterTitleFocusOut();
     }
   };
@@ -55,8 +58,8 @@ function ScriptNode({ node, position }: { node: any; position: number }) {
   useAutosizeTextArea(chapterParagraph.current, node.paragraph);
 
   const handleParagraphChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    let copyScriptNodes = [...scriptNodes];
-    copyScriptNodes[position] = { ...node, paragraph: e.target.value };
+    let copyScriptNodes = { ...scriptNodes };
+    copyScriptNodes.nodes[position] = { ...node, paragraph: e.target.value };
     setScriptNodes(copyScriptNodes);
   };
 
@@ -84,15 +87,15 @@ function ScriptNode({ node, position }: { node: any; position: number }) {
         <textarea
           ref={chapterTitle}
           onChange={handleChapterTitleChange}
-          onFocus={() => setIsSpellCheckEnabled(true)}
+          onFocus={() => setIsTitleSpellCheckEnabled(true)}
           onBlur={() => {
             handleChapterTitleFocusOut();
-            setIsSpellCheckEnabled(false);
+            setIsTitleSpellCheckEnabled(false);
           }}
           onKeyDown={handleChapterTitleKeyDown}
           value={modifiedChapterTitle}
           rows={1}
-          spellCheck={isSpellCheckEnabled}
+          spellCheck={isTitleSpellCheckEnabled}
           className="block grow w-full bg-transparent overflow-y-scroll border-text-danger outline-none resize-none text-base text-text-primary font-semibold py-[2px] rounded-sm"
         ></textarea>
       </div>
@@ -101,6 +104,9 @@ function ScriptNode({ node, position }: { node: any; position: number }) {
         onChange={handleParagraphChange}
         value={node.paragraph}
         onKeyDown={handleParagraphKeyDown}
+        onFocus={() => setIsParagraphSpellCheckEnabled(true)}
+        onBlur={() => setIsParagraphSpellCheckEnabled(false)}
+        spellCheck={isParagraphSpellCheckEnabled}
         rows={1}
         className="block mt-[13px] pl-[45px] w-full bg-transparent overflow-y-scroll border-none outline-none resize-none text-sm text-text-primary font-light leading-[22px]"
       ></textarea>
@@ -113,7 +119,7 @@ function ChapterDivider({ position }: { position: number }) {
 
   const handleHover = () => {
     console.log("Position: " + position);
-    console.log("scriptNodes.length: " + scriptNodes.length);
+    console.log("scriptNodes.length: " + scriptNodes.nodes.length);
   };
 
   return (
@@ -129,7 +135,7 @@ function ChapterDivider({ position }: { position: number }) {
         ></div>
         <div
           className={`${
-            position === scriptNodes.length ? "invisible" : ""
+            position === scriptNodes.nodes.length ? "invisible" : ""
           } h-2 rounded-sm border-stroke border-x-[1px] border-t-[1px]`}
         ></div>
         <button
@@ -147,73 +153,113 @@ function ChapterDivider({ position }: { position: number }) {
 function ScriptArea() {
   const { scriptNodes } = useScriptEditor();
 
-  const nodes = [...scriptNodes];
-
   return (
     <div className="w-[683px] min-h-full pt-[15px]">
       <ChapterDivider position={0} />
-      {nodes.map((node: any, index: any) => {
-        return (
-          <div key={index}>
-            <ScriptNode node={node} position={index} />
-            <ChapterDivider position={index + 1} />
-          </div>
-        );
-      })}
+      {[...scriptNodes.nodes]
+        .sort(
+          (a, b) => scriptNodes.nodes.indexOf(a) - scriptNodes.nodes.indexOf(b)
+        )
+        .map((node: any, index: any) => {
+          return (
+            <div key={node.id}>
+              <ScriptNode node={node} position={index} />
+              <ChapterDivider position={index + 1} />
+            </div>
+          );
+        })}
     </div>
   );
 }
 
 export default function ScriptEditor() {
+  const { scriptNodes } = useScriptEditor();
+
+  const documentTitleRef = useRef<HTMLInputElement | null>(null);
+  const inputContainerRef = useRef<HTMLSpanElement | null>(null);
+
+  const [documentTitle, setDocumentTitle] = useState(scriptNodes.title);
+  const [editableDocumentTitle, setEditableDocumentTitle] = useState(
+    scriptNodes.title
+  );
+
+  const handleDocumentTitleChange = (newTitle: any) => {
+    setEditableDocumentTitle(newTitle);
+  };
+
+  const handleDocumentTitleBlur = () => {
+    if (documentTitleRef.current && documentTitleRef.current.value.length > 0) {
+      setDocumentTitle(editableDocumentTitle);
+    } else {
+      setEditableDocumentTitle(documentTitle);
+    }
+  };
+
+  useEffect(() => {
+    if (inputContainerRef.current && documentTitleRef.current) {
+      documentTitleRef.current.style.width = `${inputContainerRef.current.offsetWidth}px`;
+    }
+  }, [editableDocumentTitle]);
+
   return (
-    <ScriptEditorProvider>
-      <div className="grow flex flex-col">
-        <div className="flex justify-between items-center px-4 border-b-[1px] border-stroke h-[55px]">
-          <span className="flex items-center gap-3.5">
-            <div className="icon-container">
-              <ScriptIcon className="stroke-text-primary stroke-[1.5px]" />
-            </div>
-            <span className="flex items-center gap-2">
-              <span className="font-semibold text-base text-text-primary">
-                Revolutionizing Quantitative Computing with AI
-              </span>
-              <StarIcon className="stroke-text-primary stroke-1" />
+    <div className="grow flex flex-col min-w-0">
+      <div className="flex justify-between items-center px-4 border-b-[1px] border-stroke h-[55px]">
+        <div className="grow flex items-center gap-3.5 min-w-0">
+          <div className="icon-container">
+            <ScriptIcon className="stroke-text-primary stroke-[1.5px]" />
+          </div>
+          <div className="relative grow flex items-center gap-2 min-w-0">
+            <span
+              ref={inputContainerRef}
+              className="absolute left-0 top-0 w-fit m-auto font-semibold text-base invisible"
+            >
+              {editableDocumentTitle}
             </span>
-          </span>
-          <div className="flex gap-2 items-center">
-            <div className="flex h-[26px]">
-              <div
-                style={{
-                  backgroundImage: `url("/pfps/profile1.png")`,
-                }}
-                className="-ml-[1px] h-[full] aspect-square rounded-full box-content ring-4 ring-background-primary bg-cover bg-center flex-shrink-0"
-              ></div>
-              <div
-                style={{
-                  backgroundImage: `url("/pfps/profile1.png")`,
-                }}
-                className="-ml-[1px] h-[full] aspect-square rounded-full box-content ring-4 ring-background-primary bg-cover bg-center flex-shrink-0"
-              ></div>
-            </div>
-            <button className="btn-2-md">Share</button>
-            <button className="btn-1-md flex gap-1">
-              <PlayIcon className="fill-text-primary" />
-              <span className="">Launch</span>
-            </button>
+            <input
+              ref={documentTitleRef}
+              type="text"
+              value={editableDocumentTitle}
+              onBlur={handleDocumentTitleBlur}
+              onChange={(e) => handleDocumentTitleChange(e.target.value)}
+              className="font-semibold text-base text-text-primary bg-transparent border-none outline-none rounded-sm focus:text-text-primary/90 hover:ring-1 focus:ring-1 ring-text-secondary ring-offset-4 ring-offset-background-primary"
+            />
+
+            <StarIcon className="stroke-text-primary stroke-1 mr-4" />
           </div>
         </div>
-        <div className="flex grow min-h-0">
-          <div className="flex flex-col grow border-r-[1px] border-stroke">
-            <div className="h-[46px] border-b-[1px] border-stroke shrink-0"></div>
-            <div className="grow flex justify-center min-h-0 overflow-y-auto">
-              <ScriptArea />
-            </div>
+        <div className="flex gap-2 items-center">
+          <div className="flex h-[26px]">
+            <div
+              style={{
+                backgroundImage: `url("/pfps/profile1.png")`,
+              }}
+              className="-ml-[1px] h-[full] aspect-square rounded-full box-content ring-4 ring-background-primary bg-cover bg-center flex-shrink-0"
+            ></div>
+            <div
+              style={{
+                backgroundImage: `url("/pfps/profile1.png")`,
+              }}
+              className="-ml-[1px] h-[full] aspect-square rounded-full box-content ring-4 ring-background-primary bg-cover bg-center flex-shrink-0"
+            ></div>
           </div>
-          <div className="w-[378px]">
-            <div className="h-[46px] border-b-[1px] border-stroke"></div>
-          </div>
+          <button className="btn-2-md">Share</button>
+          <button className="btn-1-md flex gap-1">
+            <PlayIcon className="fill-text-primary" />
+            <span className="">Launch</span>
+          </button>
         </div>
       </div>
-    </ScriptEditorProvider>
+      <div className="flex grow min-h-0">
+        <div className="flex flex-col grow border-r-[1px] border-stroke">
+          <div className="h-[46px] border-b-[1px] border-stroke shrink-0"></div>
+          <div className="grow flex justify-center min-h-0 overflow-y-auto">
+            <ScriptArea />
+          </div>
+        </div>
+        <div className="w-[378px]">
+          <div className="h-[46px] border-b-[1px] border-stroke"></div>
+        </div>
+      </div>
+    </div>
   );
 }
