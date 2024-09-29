@@ -9,11 +9,25 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        background: {
+          primary: "#130e1b",
+          secondary: "#1b1226",
+        },
+        text: {
+          primary: "#ffffff",
+          secondary: "#746B80",
+          danger: "#b51b1d",
+        },
+        foreground: {
+          primary: "#241834",
+          secondary: "#392b4d",
+        },
+        stroke: "#251D30",
+        brand: "#842bff",
+        border: "rgba(255, 255, 255, 0.05)",
       },
     },
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/container-queries")],
 };
 export default config;

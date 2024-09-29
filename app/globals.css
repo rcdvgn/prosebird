@@ -3,25 +3,84 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background-primary: #130e1b;
+  --background-secondary: #1b1226;
+
+  --text-primary: #ffffff;
+  --text-secondary: #746b80;
+  --text-danger: #b51b1d;
+
+  --foreground-primary: #241834;
+  --foreground-secondary: #392b4d;
+
+  --stroke: #251d30;
+  --brand: #842bff;
+  --border: rgba(255, 255, 255, 0.05);
 }
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
   }
+} */
+
+body,
+html {
+  margin: 0;
+  padding: 0;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--background-primary);
+  color: var(--text-primary);
+  height: 100vh;
 }
 
-@layer utilities {
+#root {
+  height: 100%;
+}
+
+textarea::-webkit-scrollbar {
+  width: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+} */
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: var(--foreground-primary);
+  border-radius: 100px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+@layer components {
+  .icon-container {
+    @apply h-[35px] w-[35px] rounded-lg bg-foreground-primary border-border border-[1px] grid place-items-center;
+  }
+
+  .btn-2-sm {
+    @apply flex gap-1 items-center justify-center py-[5px] px-2 border-border border-[1px] outline-none rounded-[5px] bg-foreground-primary text-xs font-medium text-text-primary;
   }
 }
