@@ -3,14 +3,15 @@
 import { useRef, useState, useEffect } from "react";
 import useAutosizeTextArea from "../utils/useAutosizeTextArea";
 
-import { StarIcon, ScriptIcon, AddIcon } from "../assets/icons";
+import { StarIcon, ScriptIcon, AddIcon, PlayIcon } from "../assets/icons";
 import {
   ScriptEditorProvider,
   useScriptEditor,
 } from "@/app/contexts/ScriptEditorContext";
 
 function ScriptNode({ node, position }: { node: any; position: number }) {
-  const { scriptNodes, setScriptNodes, addNode } = useScriptEditor();
+  const { scriptNodes, setScriptNodes, addNode, deleteNode } =
+    useScriptEditor();
   const [isSpellCheckEnabled, setIsSpellCheckEnabled] = useState(false);
 
   const [modifiedChapterTitle, setModifiedChapterTitle] = useState(node.title);
@@ -30,7 +31,13 @@ function ScriptNode({ node, position }: { node: any; position: number }) {
       copyScriptNodes[position] = { ...node, title: modifiedChapterTitle };
       setScriptNodes(copyScriptNodes);
     } else {
-      setModifiedChapterTitle(node.title);
+      if (chapterParagraph.current) {
+        if (chapterParagraph.current.value) {
+          setModifiedChapterTitle(node.title);
+        } else {
+          deleteNode(position);
+        }
+      }
     }
   };
 
@@ -173,7 +180,27 @@ export default function ScriptEditor() {
               <StarIcon className="stroke-text-primary stroke-1" />
             </span>
           </span>
-          <span className=""></span>
+          <div className="flex gap-2 items-center">
+            <div className="flex h-[26px]">
+              <div
+                style={{
+                  backgroundImage: `url("/pfps/profile1.png")`,
+                }}
+                className="-ml-[1px] h-[full] aspect-square rounded-full box-content ring-4 ring-background-primary bg-cover bg-center flex-shrink-0"
+              ></div>
+              <div
+                style={{
+                  backgroundImage: `url("/pfps/profile1.png")`,
+                }}
+                className="-ml-[1px] h-[full] aspect-square rounded-full box-content ring-4 ring-background-primary bg-cover bg-center flex-shrink-0"
+              ></div>
+            </div>
+            <button className="btn-2-md">Share</button>
+            <button className="btn-1-md flex gap-1">
+              <PlayIcon className="fill-text-primary" />
+              <span className="">Launch</span>
+            </button>
+          </div>
         </div>
         <div className="flex grow min-h-0">
           <div className="flex flex-col grow border-r-[1px] border-stroke">

@@ -20,7 +20,8 @@ interface ScriptEditorContextType {
   scriptNodes: ScriptNode[];
   setScriptNodes: React.Dispatch<React.SetStateAction<ScriptNode[]>>;
   emptyNode: ScriptNode;
-  addNode: (position: number) => void; // Add the addNode function
+  addNode: (position: number) => void;
+  deleteNode: (position: number) => void;
 }
 
 // Create the context with a default value
@@ -39,10 +40,17 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
   const [scriptNodes, setScriptNodes] = useState<ScriptNode[]>([emptyNode]);
 
   const addNode = (position: number) => {
-    console.log(position);
     let copyScriptNodes = [...scriptNodes];
     copyScriptNodes.splice(position, 0, emptyNode);
     setScriptNodes(copyScriptNodes);
+    console.log("Node added at position: " + position);
+  };
+
+  const deleteNode = (position: number) => {
+    let copyScriptNodes = [...scriptNodes];
+    copyScriptNodes.splice(position, 1);
+    setScriptNodes(copyScriptNodes);
+    console.log("Node deleted at position: " + position);
   };
 
   useEffect(() => {
@@ -51,7 +59,7 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <ScriptEditorContext.Provider
-      value={{ scriptNodes, setScriptNodes, emptyNode, addNode }} // Pass addNode here
+      value={{ scriptNodes, setScriptNodes, emptyNode, addNode, deleteNode }} // Pass addNode here
     >
       {children}
     </ScriptEditorContext.Provider>

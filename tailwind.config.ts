@@ -24,7 +24,7 @@ const config: Config = {
         },
         stroke: "#251D30",
         brand: "#842bff",
-        border: "rgba(255, 255, 255, 0.05)",
+        border: "rgb(255, 255, 255)",
       },
     },
   },

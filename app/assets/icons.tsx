@@ -60,3 +60,18 @@ export function AddIcon({ className }: { className: any }) {
     </svg>
   );
 }
+
+export function PlayIcon({ className }: { className: any }) {
+  return (
+    <svg
+      className={className}
+      width="10"
+      height="100%"
+      viewBox="0 0 10 12"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M0 1.94879C0 0.797046 1.02799 0.0479515 1.9017 0.563027L8.5997 4.5117C9.56822 5.08267 9.56821 6.71226 8.5997 7.28322L1.90169 11.2319C1.02799 11.747 0 10.9979 0 9.84613V1.94879Z" />
+    </svg>
+  );
+}
