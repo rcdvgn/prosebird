@@ -33,6 +33,12 @@ html {
 
 body {
   background: var(--background-primary);
+  background: linear-gradient(
+    180deg,
+    var(--background-primary) 0%,
+    #181122 100%
+  );
+
   color: var(--text-primary);
   height: 100vh;
 }
@@ -90,5 +96,9 @@ textarea::-webkit-scrollbar {
 
   .btn-2-sm {
     @apply flex gap-1 items-center justify-center py-[5px] px-2 border-border/5 border-[1px] outline-none rounded-[5px] bg-foreground-primary text-xs font-medium text-text-primary;
+  }
+
+  .btn-3 {
+    @apply [&>svg]:fill-text-primary [&>svg]:w-[11px] cursor-pointer h-[30px] aspect-square rounded-lg hover:bg-foreground-primary grid place-items-center;
   }
 }

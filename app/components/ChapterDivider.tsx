@@ -1,21 +1,12 @@
-import { useRef, useState, useEffect } from "react";
-import { StarIcon, ScriptIcon, AddIcon, PlayIcon } from "../assets/icons";
+import { AddIcon } from "../assets/icons";
 
 import { useScriptEditor } from "@/app/contexts/ScriptEditorContext";
 
 export default function ChapterDivider({ position }: { position: number }) {
-  const { scriptNodes, addNode } = useScriptEditor();
-
-  const handleHover = () => {
-    console.log("Position: " + position);
-    console.log("scriptNodes.length: " + scriptNodes.nodes.length);
-  };
+  const { scriptData, addNode } = useScriptEditor();
 
   return (
-    <div
-      onMouseEnter={handleHover}
-      className="group w-full h-[30px] flex items-center justify-center"
-    >
+    <div className="group w-full h-[30px] flex items-center justify-center">
       <div className="relative w-full flex flex-col gap-1.5 invisible group-hover:visible">
         <div
           className={`${
@@ -24,7 +15,7 @@ export default function ChapterDivider({ position }: { position: number }) {
         ></div>
         <div
           className={`${
-            position === scriptNodes.nodes.length ? "invisible" : ""
+            position === scriptData.nodes.length ? "invisible" : ""
           } h-2 rounded-sm border-stroke border-x-[1px] border-t-[1px]`}
         ></div>
         <button

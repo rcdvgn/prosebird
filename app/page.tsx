@@ -3,11 +3,13 @@
 import ScriptEditor from "./components/ScriptEditor";
 import { ScriptEditorProvider } from "@/app/contexts/ScriptEditorContext";
 
+import Sidebar from "./components/Sidebar";
+
 export default function Main() {
   return (
     <>
-      <div className="border-r-[1px] border-stroke w-[300px]"></div>
       <ScriptEditorProvider>
+        <Sidebar />
         <ScriptEditor />
       </ScriptEditorProvider>
     </>

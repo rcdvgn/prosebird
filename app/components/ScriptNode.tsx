@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import useAutosizeTextArea from "../utils/useAutosizeTextArea";
 
 import { useScriptEditor } from "@/app/contexts/ScriptEditorContext";
@@ -10,8 +10,7 @@ export default function ScriptNode({
   node: any;
   position: number;
 }) {
-  const { scriptNodes, setScriptNodes, addNode, deleteNode } =
-    useScriptEditor();
+  const { scriptData, setScriptData, addNode, deleteNode } = useScriptEditor();
   const [isTitleSpellCheckEnabled, setIsTitleSpellCheckEnabled] =
     useState(false);
   const [isParagraphSpellCheckEnabled, setIsParagraphSpellCheckEnabled] =
@@ -30,12 +29,12 @@ export default function ScriptNode({
 
   const handleChapterTitleFocusOut = () => {
     if (modifiedChapterTitle.length) {
-      let copyScriptNodes = { ...scriptNodes };
+      let copyScriptNodes = { ...scriptData };
       copyScriptNodes.nodes[position] = {
         ...node,
         title: modifiedChapterTitle,
       };
-      setScriptNodes(copyScriptNodes);
+      setScriptData(copyScriptNodes);
     } else {
       if (chapterParagraph.current && !chapterParagraph.current.value) {
         deleteNode(node.id);
@@ -59,9 +58,9 @@ export default function ScriptNode({
   useAutosizeTextArea(chapterParagraph.current, node.paragraph);
 
   const handleParagraphChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    let copyScriptNodes = { ...scriptNodes };
+    let copyScriptNodes = { ...scriptData };
     copyScriptNodes.nodes[position] = { ...node, paragraph: e.target.value };
-    setScriptNodes(copyScriptNodes);
+    setScriptData(copyScriptNodes);
   };
 
   const handleParagraphKeyDown = (

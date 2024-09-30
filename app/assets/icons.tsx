@@ -17,8 +17,8 @@ export function ScriptIcon({ className }: { className: any }) {
   return (
     <svg
       className={className}
-      width="11"
-      height="100%"
+      width="100%"
+      height="13"
       viewBox="0 0 11 13"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -72,6 +72,44 @@ export function PlayIcon({ className }: { className: any }) {
       xmlns="http://www.w3.org/2000/svg"
     >
       <path d="M0 1.94879C0 0.797046 1.02799 0.0479515 1.9017 0.563027L8.5997 4.5117C9.56822 5.08267 9.56821 6.71226 8.5997 7.28322L1.90169 11.2319C1.02799 11.747 0 10.9979 0 9.84613V1.94879Z" />
+    </svg>
+  );
+}
+
+export function SearchIcon({ className }: { className: any }) {
+  return (
+    <svg
+      className={className}
+      width="12"
+      height="100%"
+      viewBox="0 0 12 12"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M11.2951 10.3048C11.5683 10.5782 11.5683 11.0215 11.2951 11.2949C11.0219 11.5684 10.579 11.5684 10.3059 11.2949L9.05415 10.0421C6.96939 11.6483 3.96728 11.4954 2.05711 9.58357C-0.0190388 7.50558 -0.0190379 4.13649 2.05712 2.05849C4.13327 -0.0194975 7.49938 -0.0194983 9.57554 2.05849C11.4823 3.96699 11.6379 6.96455 10.0421 9.05071L11.2951 10.3048ZM3.04638 8.59343C4.57618 10.1246 7.05647 10.1246 8.58627 8.59343C10.1161 7.06228 10.1161 4.57979 8.58627 3.04864C7.05647 1.51748 4.57618 1.51748 3.04638 3.04864C1.51658 4.57979 1.51658 7.06228 3.04638 8.59343Z"
+      />
+    </svg>
+  );
+}
+
+export function SideBarExpandIcon({ className }: { className: any }) {
+  return (
+    <svg
+      className={className}
+      width="14"
+      height="100%"
+      viewBox="0 0 14 14"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M3.22 0C1.44164 0 -5.96046e-08 1.44164 -5.96046e-08 3.22V10.78C-5.96046e-08 12.5584 1.44164 14 3.22 14H10.78C12.5584 14 14 12.5584 14 10.78V3.22C14 1.44164 12.5584 0 10.78 0H3.22ZM6.16 1.12H4.34C2.56164 1.12 1.12 2.56164 1.12 4.34V9.66C1.12 11.4384 2.56164 12.88 4.34 12.88H6.16C6.62392 12.88 7 12.5039 7 12.04V1.96C7 1.49608 6.62392 1.12 6.16 1.12Z"
+      />
     </svg>
   );
 }

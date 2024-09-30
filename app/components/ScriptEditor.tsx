@@ -7,14 +7,14 @@ import { StarIcon, ScriptIcon, PlayIcon } from "../assets/icons";
 import { useScriptEditor } from "@/app/contexts/ScriptEditorContext";
 
 export default function ScriptEditor() {
-  const { scriptNodes } = useScriptEditor();
+  const { scriptData } = useScriptEditor();
 
   const documentTitleRef = useRef<HTMLInputElement | null>(null);
   const inputContainerRef = useRef<HTMLSpanElement | null>(null);
 
-  const [documentTitle, setDocumentTitle] = useState(scriptNodes.title);
+  const [documentTitle, setDocumentTitle] = useState(scriptData.title);
   const [editableDocumentTitle, setEditableDocumentTitle] = useState(
-    scriptNodes.title
+    scriptData.title
   );
 
   const handleDocumentTitleChange = (newTitle: any) => {
