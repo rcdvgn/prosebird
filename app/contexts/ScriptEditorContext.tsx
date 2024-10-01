@@ -5,7 +5,9 @@ import React, {
   ReactNode,
   useEffect,
 } from "react";
+import { debounce } from "lodash"; // Import lodash or implement your own debounce
 import { v4 as uuidv4 } from "uuid";
+import _ from "lodash"; // Import lodash
 
 interface ScriptNode {
   id: string;
@@ -14,51 +16,27 @@ interface ScriptNode {
   speaker: string;
 }
 
-const emptyNode: ScriptNode = {
+import { saveScript } from "../actions/actions";
+
+export const emptyNode: ScriptNode = {
   id: "",
   title: "New Chapter",
   paragraph: "",
   speaker: "You",
 };
 
-interface scriptDataState {
-  title: string;
-  nodes: ScriptNode[];
-  favorite: boolean;
-  createdBy: string;
-  editors: string[];
-  viewers: string[];
-}
-
-interface ScriptEditorContextType {
-  scriptData: scriptDataState;
-  setScriptData: React.Dispatch<React.SetStateAction<scriptDataState>>;
-  emptyNode: ScriptNode;
-  addNode: (position: number) => void;
-  deleteNode: (id: string) => void;
-}
-
-const ScriptEditorContext = createContext<ScriptEditorContextType | undefined>(
-  undefined
-);
+const ScriptEditorContext = createContext<any>(undefined);
 
 export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
-  const user = {
-    id: "fxkFMi4yUTgT9HgeG9YF",
-    firstName: "Ricardo",
-    lastName: "Vigliano",
-    email: "ricardorpvigliano@gmail.com",
-    createdAt: "idk",
-  };
+  const [script, setScript] = useState<any>(null);
+  const [isSaved, setIsSaved] = useState(true); // Tracks if script is saved
+  const [lastSavedScript, setLastSavedScript] = useState<any>(null); // Tracks the last saved version
 
-  const [scriptData, setScriptData] = useState<scriptDataState>({
-    title: "New Script",
-    nodes: [emptyNode],
-    favorite: false,
-    createdBy: user.id,
-    editors: ["111", "222", user.id],
-    viewers: ["333", "444"],
-  });
+  // Function to check if there are unsaved changes by comparing script states
+  const hasUnsavedChanges = () => {
+    const cond = _.isEqual(script, lastSavedScript);
+    return !cond;
+  };
 
   const addNode = (position: number) => {
     const newNode: ScriptNode = {
@@ -66,36 +44,62 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
       id: uuidv4(),
     };
 
-    let copyScriptData = { ...scriptData };
+    let copyScriptData = { ...script.data };
     copyScriptData.nodes.splice(position, 0, newNode);
-    setScriptData(copyScriptData);
-    console.log("Node added at position: " + position);
+    setScript({ ...script, data: copyScriptData });
+    // setIsSaved(false);
   };
 
   const deleteNode = (id: string) => {
-    let copyScriptData = { ...scriptData };
+    let copyScriptData = { ...script.data };
     copyScriptData.nodes = copyScriptData.nodes.filter(
-      (node) => node.id !== id
+      (node: any) => node.id !== id
     );
-    setScriptData(copyScriptData);
-    console.log("Node deleted with id: " + id);
+    setScript({ ...script, data: copyScriptData });
+    // setIsSaved(false);
   };
 
   useEffect(() => {
-    console.log("scriptData: ", scriptData);
-  }, [scriptData]);
+    const handleSave = debounce(async () => {
+      if (hasUnsavedChanges() && script) {
+        console.log(script);
+        if (isSaved) {
+          setIsSaved(false);
+        }
+        console.log("Unsaved changes detected, saving...");
+        await saveScript(script);
+        setLastSavedScript(_.cloneDeep(script)); // Clone the script before saving as lastSavedScript
+        setIsSaved(true); // Mark as saved after successful save
+        console.log("Script saved.");
+      }
+    }, 1000); // Save after 1 second of inactivity
+
+    if (script) {
+      handleSave();
+    }
+
+    return () => {
+      handleSave.cancel(); // Cancel pending debounced save on unmount
+    };
+  }, [script]);
 
   return (
     <ScriptEditorContext.Provider
-      value={{ scriptData, setScriptData, emptyNode, addNode, deleteNode }}
+      value={{
+        script,
+        setScript,
+        emptyNode,
+        addNode,
+        deleteNode,
+        isSaved,
+      }}
     >
       {children}
     </ScriptEditorContext.Provider>
   );
 };
 
-// Custom hook for accessing the context
-export const useScriptEditor = (): ScriptEditorContextType => {
+export const useScriptEditor = (): any => {
   const context = useContext(ScriptEditorContext);
   if (!context) {
     throw new Error(

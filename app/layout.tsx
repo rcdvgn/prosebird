@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Public_Sans } from "next/font/google";
 import "./globals.css";
+import { AuthProvider } from "./contexts/AuthContext";
 
 const publicSans = Public_Sans({ subsets: ["latin"] });
 
@@ -16,10 +17,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`p-2 ${publicSans.className}`}>
-        <div id="root" className="flex border-stroke border-[1px] rounded-lg">
-          {children}
-        </div>
+      <body className={publicSans.className}>
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

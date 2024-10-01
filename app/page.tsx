@@ -1,17 +1,20 @@
+// app/page.tsx
 "use client";
 
-import ScriptEditor from "./components/ScriptEditor";
-import { ScriptEditorProvider } from "@/app/contexts/ScriptEditorContext";
+import { useAuth } from "@/app/contexts/AuthContext";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
-import Sidebar from "./components/Sidebar";
+export default function HomePage() {
+  const { user } = useAuth(); // This will correctly destructure the user
+  const router = useRouter();
 
-export default function Main() {
-  return (
-    <>
-      <ScriptEditorProvider>
-        <Sidebar />
-        <ScriptEditor />
-      </ScriptEditorProvider>
-    </>
-  );
+  useEffect(() => {
+    console.log(user); // This should now log the correct user object
+    if (user) {
+      router.push("/files");
+    }
+  }, [user, router]);
+
+  return <div>Welcome to the homepage!</div>;
 }

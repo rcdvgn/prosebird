@@ -1,4 +1,6 @@
-import { useState } from "react";
+"use client";
+
+import { useState, useEffect } from "react";
 import {
   AddIcon,
   ScriptIcon,
@@ -7,14 +9,41 @@ import {
 } from "../assets/icons";
 import Logo from "../assets/logo";
 
+import { useRouter } from "next/navigation";
+
+import { createScript, getUserScripts } from "@/app/actions/actions";
+
+import { useAuth } from "../contexts/AuthContext";
+import { useScriptEditor } from "../contexts/ScriptEditorContext";
+
 export default function Sidebar() {
+  const { user } = useAuth();
+  const { script, setScript } = useScriptEditor();
+  const router = useRouter();
+
   const [isSearchOn, setIsSearchOn] = useState(false);
+  const [scriptList, setScriptList] = useState<any>(null);
 
-  const [scriptCount, setScriptCount] = useState(1);
+  // const [scriptCount, setScriptCount] = useState(1);
 
-  const handleAddScript = () => {
-    setScriptCount((prevCount) => prevCount + 1);
+  const handleCreateScript = async () => {
+    if (user !== null) {
+      const newScript = await createScript(user.id);
+      setScript(newScript);
+      router.push(`/file/${newScript.id}`);
+    }
   };
+
+  useEffect(() => {
+    const handleGetAllScripts = async (userId: any) => {
+      const newScriptList = await getUserScripts(userId);
+
+      setScriptList(newScriptList);
+    };
+    if (user) {
+      handleGetAllScripts(user.id);
+    }
+  }, [user]);
 
   return (
     <div className="border-r-[1px] border-stroke w-[250px] [&>*]:px-4">
@@ -34,7 +63,7 @@ export default function Sidebar() {
             </span>
             <div className="flex gap-1">
               <div
-                onClick={handleAddScript}
+                onClick={handleCreateScript}
                 className={`btn-3 ${isSearchOn ? "bg-foreground-primary" : ""}`}
               >
                 <AddIcon className="" />
@@ -52,21 +81,28 @@ export default function Sidebar() {
           <input type="text" className="hidden" />
         </div>
         <div className="flex flex-col gap-0.5">
-          {[...Array(scriptCount)].map((script: any, index: any) => {
-            return (
-              <div
-                key={index}
-                className="select-none hover:bg-foreground-primary cursor-pointer rounded-lg flex items-center justify-start gap-2.5 px-4 py-[10px]"
-              >
-                <span className="w-[14px] aspect-square grid place-items-center shrink-0">
-                  <ScriptIcon className="stroke-text-primary h-full stroke-[1px]" />
-                </span>
-                <span className="font-medium text-xs text-text-primary whitespace-nowrap overflow-hidden text-ellipsis">
-                  Revolutionizing Quantitative Computing with AI
-                </span>
-              </div>
-            );
-          })}
+          {scriptList &&
+            scriptList.map((item: any, index: any) => {
+              return (
+                <div
+                  key={index}
+                  className={`${
+                    script
+                      ? item.id === script.id
+                        ? "bg-foreground-primary"
+                        : ""
+                      : ""
+                  } select-none hover:bg-foreground-primary cursor-pointer rounded-lg flex items-center justify-start gap-2.5 px-4 py-[10px]`}
+                >
+                  <span className="w-[14px] aspect-square grid place-items-center shrink-0">
+                    <ScriptIcon className="stroke-text-primary h-full stroke-[1px]" />
+                  </span>
+                  <span className="font-medium text-xs text-text-primary whitespace-nowrap overflow-hidden text-ellipsis">
+                    {item.title}
+                  </span>
+                </div>
+              );
+            })}
         </div>
       </div>
     </div>

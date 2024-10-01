@@ -10,36 +10,37 @@ export default function ScriptNode({
   node: any;
   position: number;
 }) {
-  const { scriptData, setScriptData, addNode, deleteNode } = useScriptEditor();
+  const { script, setScript, addNode, deleteNode } = useScriptEditor();
+  const scriptData = script.data;
   const [isTitleSpellCheckEnabled, setIsTitleSpellCheckEnabled] =
     useState(false);
   const [isParagraphSpellCheckEnabled, setIsParagraphSpellCheckEnabled] =
     useState(false);
 
-  const [modifiedChapterTitle, setModifiedChapterTitle] = useState(node.title);
+  const [chapterTitle, setChapterTitle] = useState(node.title);
 
-  const chapterTitle = useRef<HTMLTextAreaElement | null>(null);
-  useAutosizeTextArea(chapterTitle.current, modifiedChapterTitle);
+  const chapterTitleRef = useRef<HTMLTextAreaElement | null>(null);
+  useAutosizeTextArea(chapterTitleRef.current, chapterTitle);
 
   const handleChapterTitleChange = (
     e: React.ChangeEvent<HTMLTextAreaElement>
   ) => {
-    setModifiedChapterTitle(e.target.value);
+    setChapterTitle(e.target.value);
   };
 
   const handleChapterTitleFocusOut = () => {
-    if (modifiedChapterTitle.length) {
-      let copyScriptNodes = { ...scriptData };
-      copyScriptNodes.nodes[position] = {
+    if (chapterTitle.length) {
+      let copyScriptData = { ...scriptData };
+      copyScriptData.nodes[position] = {
         ...node,
-        title: modifiedChapterTitle,
+        title: chapterTitle,
       };
-      setScriptData(copyScriptNodes);
+      setScript({ ...script, data: copyScriptData });
     } else {
       if (chapterParagraph.current && !chapterParagraph.current.value) {
         deleteNode(node.id);
       } else {
-        setModifiedChapterTitle(node.title);
+        setChapterTitle(node.title);
       }
     }
   };
@@ -58,9 +59,9 @@ export default function ScriptNode({
   useAutosizeTextArea(chapterParagraph.current, node.paragraph);
 
   const handleParagraphChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    let copyScriptNodes = { ...scriptData };
-    copyScriptNodes.nodes[position] = { ...node, paragraph: e.target.value };
-    setScriptData(copyScriptNodes);
+    let copyScriptData = { ...scriptData };
+    copyScriptData.nodes[position] = { ...node, paragraph: e.target.value };
+    setScript({ ...script, data: copyScriptData });
   };
 
   const handleParagraphKeyDown = (
@@ -85,7 +86,7 @@ export default function ScriptNode({
         </div>
 
         <textarea
-          ref={chapterTitle}
+          ref={chapterTitleRef}
           onChange={handleChapterTitleChange}
           onFocus={() => setIsTitleSpellCheckEnabled(true)}
           onBlur={() => {
@@ -93,7 +94,7 @@ export default function ScriptNode({
             setIsTitleSpellCheckEnabled(false);
           }}
           onKeyDown={handleChapterTitleKeyDown}
-          value={modifiedChapterTitle}
+          value={chapterTitle}
           rows={1}
           spellCheck={isTitleSpellCheckEnabled}
           className="block grow w-full bg-transparent overflow-y-scroll border-text-danger outline-none resize-none text-base text-text-primary font-semibold py-[2px] rounded-sm"

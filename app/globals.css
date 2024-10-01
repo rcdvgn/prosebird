@@ -33,17 +33,17 @@ html {
 
 body {
   background: var(--background-primary);
-  background: linear-gradient(
+  /* background: linear-gradient(
     180deg,
     var(--background-primary) 0%,
     #181122 100%
-  );
+  ); */
 
   color: var(--text-primary);
   height: 100vh;
 }
 
-#root {
+#main {
   height: 100%;
 }
 

@@ -3,7 +3,8 @@ import { AddIcon } from "../assets/icons";
 import { useScriptEditor } from "@/app/contexts/ScriptEditorContext";
 
 export default function ChapterDivider({ position }: { position: number }) {
-  const { scriptData, addNode } = useScriptEditor();
+  const { script, addNode } = useScriptEditor();
+  const scriptData = script.data;
 
   return (
     <div className="group w-full h-[30px] flex items-center justify-center">

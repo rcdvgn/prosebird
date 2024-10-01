@@ -13,8 +13,8 @@ export default function Logo() {
           fill="#C62BFF"
         />
         <path
-          fill-rule="evenodd"
-          clip-rule="evenodd"
+          fillRule="evenodd"
+          clipRule="evenodd"
           d="M10.5044 15.3396L12.2896 14.6911C13.9749 14.0789 14.523 11.9673 13.3482 10.6127L10.5044 7.33358L14.6565 2.54587C16.207 0.75811 19.1449 1.85463 19.1449 4.22106V14.8293C19.1449 16.6033 17.3825 17.8382 15.7151 17.2325L10.5044 15.3396Z"
           fill="#EA2BFF"
         />
@@ -25,7 +25,7 @@ export default function Logo() {
         <path
           d="M14.2273 2.17361L10.5044 6.46637L6.78143 2.17361C4.88643 -0.011434 1.29559 1.32876 1.29559 4.22106V14.8293C1.29559 16.9975 3.44967 18.5068 5.48757 17.7665L10.5044 15.9441L15.5211 17.7665C17.559 18.5068 19.7131 16.9975 19.7131 14.8293V4.22106C19.7131 1.32876 16.1223 -0.0114338 14.2273 2.17361Z"
           stroke="white"
-          stroke-width="1.13636"
+          strokeWidth="1.13636"
         />
       </g>
       <path
@@ -40,9 +40,9 @@ export default function Logo() {
           width="20.6901"
           height="19.1416"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"

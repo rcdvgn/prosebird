@@ -3,10 +3,11 @@ import ScriptNode from "./ScriptNode";
 import { useScriptEditor } from "@/app/contexts/ScriptEditorContext";
 
 export default function ScriptArea() {
-  const { scriptData } = useScriptEditor();
+  const { script } = useScriptEditor();
+  const scriptData = script.data;
 
   return (
-    <div className="w-[683px] min-h-full pt-[15px]">
+    <div className="w-[683px] pt-[15px] grow">
       <ChapterDivider position={0} />
       {[...scriptData.nodes]
         .sort(
