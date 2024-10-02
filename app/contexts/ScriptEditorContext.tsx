@@ -5,9 +5,9 @@ import React, {
   ReactNode,
   useEffect,
 } from "react";
-import { debounce } from "lodash"; // Import lodash or implement your own debounce
+import { debounce } from "lodash";
 import { v4 as uuidv4 } from "uuid";
-import _ from "lodash"; // Import lodash
+import _ from "lodash";
 
 interface ScriptNode {
   id: string;
@@ -16,7 +16,7 @@ interface ScriptNode {
   speaker: string;
 }
 
-import { saveScript } from "../actions/actions";
+import { saveScript, subscribeToScript } from "../actions/actions";
 
 export const emptyNode: ScriptNode = {
   id: "",
@@ -29,10 +29,9 @@ const ScriptEditorContext = createContext<any>(undefined);
 
 export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
   const [script, setScript] = useState<any>(null);
-  const [isSaved, setIsSaved] = useState(true); // Tracks if script is saved
-  const [lastSavedScript, setLastSavedScript] = useState<any>(null); // Tracks the last saved version
+  const [isSaved, setIsSaved] = useState(true);
+  const [lastSavedScript, setLastSavedScript] = useState<any>(null);
 
-  // Function to check if there are unsaved changes by comparing script states
   const hasUnsavedChanges = () => {
     const cond = _.isEqual(script, lastSavedScript);
     return !cond;
@@ -47,7 +46,6 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
     let copyScriptData = { ...script.data };
     copyScriptData.nodes.splice(position, 0, newNode);
     setScript({ ...script, data: copyScriptData });
-    // setIsSaved(false);
   };
 
   const deleteNode = (id: string) => {
@@ -56,32 +54,49 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
       (node: any) => node.id !== id
     );
     setScript({ ...script, data: copyScriptData });
-    // setIsSaved(false);
   };
 
   useEffect(() => {
     const handleSave = debounce(async () => {
       if (hasUnsavedChanges() && script) {
-        console.log(script);
-        if (isSaved) {
-          setIsSaved(false);
-        }
-        console.log("Unsaved changes detected, saving...");
+        // console.log(script);
+
+        // console.log("Unsaved changes detected, saving...");
         await saveScript(script);
-        setLastSavedScript(_.cloneDeep(script)); // Clone the script before saving as lastSavedScript
-        setIsSaved(true); // Mark as saved after successful save
-        console.log("Script saved.");
+        setLastSavedScript(_.cloneDeep(script));
+        setIsSaved(true);
+        // console.log("Script saved.");
       }
-    }, 1000); // Save after 1 second of inactivity
+    }, 1000);
 
     if (script) {
+      if (isSaved) {
+        setIsSaved(false);
+      }
       handleSave();
     }
 
     return () => {
-      handleSave.cancel(); // Cancel pending debounced save on unmount
+      handleSave.cancel();
     };
   }, [script]);
+
+  useEffect(() => {
+    if (!script) return;
+
+    const unsubscribe = subscribeToScript(script.id, (serverScript) => {
+      if (!_.isEqual(serverScript, script)) {
+        console.log("Local script and server script are not equal");
+        setScript(serverScript);
+        setLastSavedScript(_.cloneDeep(serverScript));
+      } else {
+        console.log("Local script and server script are equal");
+      }
+      // console.log(serverScript);
+    });
+
+    return () => unsubscribe();
+  }, [script?.id]);
 
   return (
     <ScriptEditorContext.Provider

@@ -36,6 +36,9 @@ export default function ScriptEditor() {
     if (e.key === "Enter") {
       e.preventDefault();
       handleDocumentTitleFocusOut();
+      if (documentTitleRef.current) {
+        documentTitleRef.current.blur();
+      }
     }
   };
 
@@ -44,6 +47,14 @@ export default function ScriptEditor() {
       documentTitleRef.current.style.width = `${inputContainerRef.current.offsetWidth}px`;
     }
   }, [documentTitle]);
+
+  useEffect(() => {
+    if (script) {
+      if (scriptData?.title !== documentTitle) {
+        setDocumentTitle(scriptData.title);
+      }
+    }
+  }, [scriptData?.title]);
 
   return (
     <div className="grow flex flex-col min-w-0">

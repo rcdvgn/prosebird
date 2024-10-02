@@ -5,6 +5,7 @@ import { emptyNode } from "../contexts/ScriptEditorContext";
 import {
   collection,
   setDoc,
+  onSnapshot,
   updateDoc,
   getDoc,
   getDocs,
@@ -75,8 +76,24 @@ export const saveScript = async (script: any) => {
     };
 
     await updateDoc(docRef, scriptData);
-    console.log(`Script ${script.id} saved successfully.`);
+    // console.log(`Script ${script.id} saved successfully.`);
   } catch (error) {
     console.error("Error saving script:", error);
   }
+};
+
+export const subscribeToScript = (
+  scriptId: string,
+  onUpdate: (data: any) => void
+) => {
+  const docRef = doc(db, "scripts", scriptId);
+
+  const unsubscribe = onSnapshot(docRef, (docSnapshot) => {
+    if (docSnapshot.exists()) {
+      const serverScript = docSnapshot.data();
+      onUpdate({ id: scriptId, data: serverScript });
+    }
+  });
+
+  return unsubscribe;
 };

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import useAutosizeTextArea from "../utils/useAutosizeTextArea";
 
 import { useScriptEditor } from "@/app/contexts/ScriptEditorContext";
@@ -72,6 +72,14 @@ export default function ScriptNode({
       addNode(position + 1);
     }
   };
+
+  useEffect(() => {
+    if (script) {
+      if (scriptData?.nodes[position].title !== chapterTitle) {
+        setChapterTitle(scriptData.nodes[position].title);
+      }
+    }
+  }, [scriptData?.nodes[position].title]);
 
   return (
     <div className="w-full p-[10px]">
