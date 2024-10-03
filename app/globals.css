@@ -3,18 +3,18 @@
 @tailwind utilities;
 
 :root {
-  --background-primary: #130e1b;
+  --background-primary: #0c090f;
   --background-secondary: #1b1226;
 
   --text-primary: #ffffff;
   --text-secondary: #746b80;
   --text-danger: #b51b1d;
 
-  --foreground-primary: #241834;
-  --foreground-secondary: #392b4d;
+  --foreground-primary: #1f152d;
+  --foreground-secondary: #181221;
 
   --stroke: #251d30;
-  --brand: #842bff;
+  --brand: #6508e7;
   --border: rgb(255, 255, 255);
 }
 

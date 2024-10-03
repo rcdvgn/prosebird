@@ -34,6 +34,7 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
 
   const hasUnsavedChanges = () => {
     const cond = _.isEqual(script, lastSavedScript);
+
     return !cond;
   };
 
@@ -58,22 +59,23 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const handleSave = debounce(async () => {
-      if (hasUnsavedChanges() && script) {
-        // console.log(script);
-
-        // console.log("Unsaved changes detected, saving...");
+      if (hasUnsavedChanges()) {
         await saveScript(script);
         setLastSavedScript(_.cloneDeep(script));
-        setIsSaved(true);
-        // console.log("Script saved.");
       }
+
+      setIsSaved(true);
     }, 1000);
 
     if (script) {
-      if (isSaved) {
-        setIsSaved(false);
+      if (!lastSavedScript) {
+        setLastSavedScript(_.cloneDeep(script));
+      } else {
+        if (isSaved) {
+          setIsSaved(false);
+        }
+        handleSave();
       }
-      handleSave();
     }
 
     return () => {
@@ -86,13 +88,9 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
 
     const unsubscribe = subscribeToScript(script.id, (serverScript) => {
       if (!_.isEqual(serverScript, script)) {
-        console.log("Local script and server script are not equal");
         setScript(serverScript);
         setLastSavedScript(_.cloneDeep(serverScript));
-      } else {
-        console.log("Local script and server script are equal");
       }
-      // console.log(serverScript);
     });
 
     return () => unsubscribe();

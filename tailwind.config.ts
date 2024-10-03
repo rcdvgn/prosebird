@@ -10,7 +10,7 @@ const config: Config = {
     extend: {
       colors: {
         background: {
-          primary: "#130e1b",
+          primary: "#0C090F",
           secondary: "#1b1226",
         },
         text: {
@@ -19,11 +19,11 @@ const config: Config = {
           danger: "#b51b1d",
         },
         foreground: {
-          primary: "#241834",
-          secondary: "#392b4d",
+          primary: "#1F152D",
+          secondary: "#181221",
         },
         stroke: "#251D30",
-        brand: "#842bff",
+        brand: "#6508E7",
         border: "rgb(255, 255, 255)",
       },
     },

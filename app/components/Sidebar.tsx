@@ -89,10 +89,10 @@ export default function Sidebar() {
                   className={`${
                     script
                       ? item.id === script.id
-                        ? "bg-foreground-primary"
+                        ? "bg-foreground-secondary"
                         : ""
                       : ""
-                  } select-none hover:bg-foreground-primary cursor-pointer rounded-lg flex items-center justify-start gap-2.5 px-4 py-[10px]`}
+                  } select-none hover:bg-foreground-secondary cursor-pointer rounded-lg flex items-center justify-start gap-2.5 px-4 py-[10px]`}
                 >
                   <span className="w-[14px] aspect-square grid place-items-center shrink-0">
                     <ScriptIcon className="stroke-text-primary h-full stroke-[1px]" />

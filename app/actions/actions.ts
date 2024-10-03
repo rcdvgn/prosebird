@@ -92,6 +92,8 @@ export const subscribeToScript = (
     if (docSnapshot.exists()) {
       const serverScript = docSnapshot.data();
       onUpdate({ id: scriptId, data: serverScript });
+    } else {
+      // handle script deleted
     }
   });
 
