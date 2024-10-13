@@ -11,23 +11,24 @@ const config: Config = {
       colors: {
         background: {
           primary: "#0C090F",
-          secondary: "#1b1226",
         },
         text: {
           primary: "#ffffff",
-          secondary: "#746B80",
+          secondary: "#B1A9BC",
           danger: "#b51b1d",
         },
         foreground: {
-          primary: "#1F152D",
-          secondary: "#181221",
+          primary: "#17111F",
+          secondary: "#17111D",
+          hover: "#19151E",
         },
         stroke: "#251D30",
         brand: "#6508E7",
-        border: "rgb(255, 255, 255)",
+        border: "#251A30",
       },
     },
   },
   plugins: [require("@tailwindcss/container-queries")],
 };
+
 export default config;

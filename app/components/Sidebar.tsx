@@ -46,7 +46,7 @@ export default function Sidebar() {
   }, [user]);
 
   return (
-    <div className="border-r-[1px] border-stroke w-[250px] [&>*]:px-4">
+    <div className="border-r-[1px] border-stroke w-[250px] [&>*]:px-4 shrink-0">
       <div className="border=2 border-red-500 flex items-center justify-between h-[55px]">
         <span className="ml-[10px]">
           <Logo />
@@ -85,14 +85,15 @@ export default function Sidebar() {
             scriptList.map((item: any, index: any) => {
               return (
                 <div
+                  onClick={() => router.push(`/file/${item.id}`)}
                   key={index}
                   className={`${
                     script
                       ? item.id === script.id
-                        ? "bg-foreground-secondary"
+                        ? "bg-foreground-hover"
                         : ""
                       : ""
-                  } select-none hover:bg-foreground-secondary cursor-pointer rounded-lg flex items-center justify-start gap-2.5 px-4 py-[10px]`}
+                  } select-none hover:bg-foreground-hover cursor-pointer rounded-lg flex items-center justify-start gap-2.5 px-4 py-[10px]`}
                 >
                   <span className="w-[14px] aspect-square grid place-items-center shrink-0">
                     <ScriptIcon className="stroke-text-primary h-full stroke-[1px]" />

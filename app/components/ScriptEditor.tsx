@@ -4,7 +4,7 @@ import { useRef, useState, useEffect } from "react";
 import ScriptArea from "./ScriptArea";
 import ScriptAreaInfo from "./ScriptAreaInfo";
 
-import { StarIcon, ScriptIcon, PlayIcon } from "../assets/icons";
+import { StarIcon, ScriptIcon, PlayIcon, SearchIcon } from "../assets/icons";
 import { useScriptEditor } from "@/app/contexts/ScriptEditorContext";
 
 export default function ScriptEditor() {
@@ -119,7 +119,18 @@ export default function ScriptEditor() {
           </div>
         </div>
         <div className="w-[378px]">
-          <div className="h-[46px] border-b-[1px] border-stroke"></div>
+          <div className="h-[46px] border-b-[1px] border-stroke flex justify-between items-center px-5">
+            <span className="text-sm font-semibold text-text-primary">
+              Chapters
+              <span className="font-medium text-text-secondary">
+                {" "}
+                ({scriptData?.nodes.length})
+              </span>
+            </span>
+            <span className="btn-3">
+              <SearchIcon className="" />
+            </span>
+          </div>
         </div>
       </div>
     </div>

@@ -82,7 +82,7 @@ export default function ScriptNode({
   }, [scriptData?.nodes[position].title]);
 
   return (
-    <div className="w-full p-[10px]">
+    <div className="w-[683px] p-[10px]">
       <div className="flex items-start justify-start">
         <div className="w-[45px] h-[28px] shrink-0">
           <div

@@ -1,0 +1,68 @@
+import React from "react";
+import { MoreIcon, ScriptIcon } from "../assets/icons";
+export default function AllScripts() {
+  return (
+    <div className="">
+      <div className="">
+        <span className="files-section-title">All scripts</span>
+      </div>
+      <div className="flex gap-4 mt-7">
+        {/* <div className=""></div> controls */}
+        <div className="flex flex-col w-full">
+          <div className="mb-2 flex gap-4 items-center bg-foreground-primary py-2 px-3 rounded-[10px]">
+            <div className="script-select"></div>
+            <span className="text-text-secondary font-semibold text-[13px]">
+              Name
+            </span>
+            <div className="flex gap-4 items-center h-full ml-auto">
+              <span className="text-text-secondary font-semibold text-[13px] w-80">
+                Created by
+              </span>
+              <span className="text-text-secondary font-semibold text-[13px] w-32">
+                Last modified
+              </span>
+              <div className="w-6 aspect-square invisible"></div>
+            </div>
+          </div>
+
+          <div className="group/main h-[68px] border-b-[1px] border-border px-3 flex gap-4 items-center justify-start hover:bg-foreground-hover hover:rounded-[10px] rounded-0 hover:border-transparent cursor-pointer">
+            <div className="script-select"></div>
+            <div className="flex gap-4 items-center grow min-w-0">
+              <div className="icon-container">
+                <ScriptIcon className="text-text-primary" />
+              </div>
+              <span className="text-text-primary font-semibold text-sm truncate">
+                Revolutionizing Quantitative Computing with AI
+              </span>
+            </div>
+
+            <div className="flex gap-4 items-center h-full ml-auto">
+              <div className="flex w-80 items-center gap-[10px]">
+                <div
+                  style={{
+                    backgroundImage: `url("/pfps/profile1.png")`,
+                  }}
+                  className="h-8 aspect-square rounded-full bg-cover bg-center flex-shrink-0"
+                ></div>
+                <div className="h-full flex flex-col justify-between grow min-w-0">
+                  <span className="text-text-primary font-semibold text-sm mb-[-3px] truncate">
+                    You
+                  </span>
+                  <span className="text-text-secondary font-medium text-[13px] truncate">
+                    ricardorpvigliano@mindlog.org
+                  </span>
+                </div>
+              </div>
+              <span className="text-text-secondary font-semibold text-[13px] w-32">
+                Sep 19, 2024
+              </span>
+              <div className="group/nested w-6 aspect-square grid place-items-center">
+                <MoreIcon className="text-text-secondary h-fit w-[3px] group-hover/main:visible invisible group-hover/nested:text-text-primary" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

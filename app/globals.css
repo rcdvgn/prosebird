@@ -4,18 +4,18 @@
 
 :root {
   --background-primary: #0c090f;
-  --background-secondary: #1b1226;
 
   --text-primary: #ffffff;
-  --text-secondary: #746b80;
+  --text-secondary: #b1a9bc;
   --text-danger: #b51b1d;
 
-  --foreground-primary: #1f152d;
-  --foreground-secondary: #181221;
+  --foreground-primary: #17111f;
+  --foreground-secondary: #17111d;
+  --foreground-hover: #19151e;
 
   --stroke: #251d30;
   --brand: #6508e7;
-  --border: rgb(255, 255, 255);
+  --border: #251a30;
 }
 
 /* @media (prefers-color-scheme: dark) {
@@ -83,7 +83,7 @@ textarea::-webkit-scrollbar {
 
 @layer components {
   .icon-container {
-    @apply h-[35px] w-[35px] rounded-lg bg-foreground-primary border-border/5 border-[1px] grid place-items-center;
+    @apply shrink-0 h-[40px] w-[40px] rounded-lg bg-foreground-primary border-border/5 border-[1px] grid place-items-center;
   }
 
   .btn-1-md {
@@ -99,6 +99,14 @@ textarea::-webkit-scrollbar {
   }
 
   .btn-3 {
-    @apply [&>svg]:fill-text-primary [&>svg]:w-[11px] cursor-pointer h-[30px] aspect-square rounded-lg hover:bg-foreground-primary grid place-items-center;
+    @apply [&>svg]:fill-text-primary opacity-70 hover:opacity-100 [&>svg]:w-[13px] cursor-pointer h-[30px] aspect-square rounded-lg hover:bg-foreground-primary grid place-items-center;
+  }
+
+  .files-section-title {
+    @apply text-text-primary text-xl font-bold;
+  }
+
+  .script-select {
+    @apply rounded-[6px] h-[22px] w-[22px] bg-foreground-primary border-[1px] border-border hover:bg-background-primary cursor-pointer shrink-0;
   }
 }
