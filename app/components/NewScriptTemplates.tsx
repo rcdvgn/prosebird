@@ -7,7 +7,7 @@ export default function NewscriptTemplates() {
         <span className="files-section-title">New script</span>
       </div>
       <div className="flex gap-8 mt-7">
-        <div className="group border-[1px] border-border h-[155px] w-[350px] rounded-[10px] hover:bg-foreground-primary p-4 cursor-pointer flex flex-col gap-3">
+        <div className="group border-[1px] border-border h-[155px] w-[350px] rounded-[10px] hover:bg-foreground-primary p-4 cursor-pointer flex flex-col gap-3 transition-all ease-in-out duration-200">
           <div className="flex justify-between items-start">
             <div className="icon-container bg-white">
               <EmptyScriptIcon className="text-background-primary h-4" />
@@ -23,7 +23,7 @@ export default function NewscriptTemplates() {
           </div>
         </div>
 
-        <div className="group border-[1px] border-border h-[155px] w-[350px] rounded-[10px] hover:bg-foreground-primary p-4 cursor-pointer flex flex-col gap-3">
+        <div className="group border-[1px] border-border h-[155px] w-[350px] rounded-[10px] hover:bg-foreground-primary p-4 cursor-pointer flex flex-col gap-3 transition-all ease-in-out duration-200">
           <div className="flex justify-between items-start">
             <div className="icon-container bg-white">
               <ImportIcon className="text-background-primary w-[14px]" />
@@ -42,7 +42,7 @@ export default function NewscriptTemplates() {
           </div>
         </div>
 
-        <div className="group border-[1px] border-border h-[155px] w-[350px] rounded-[10px] hover:bg-foreground-primary p-4 cursor-pointer flex flex-col gap-3">
+        <div className="group border-[1px] border-border h-[155px] w-[350px] rounded-[10px] hover:bg-foreground-primary p-4 cursor-pointer flex flex-col gap-3 transition-all ease-in-out duration-200">
           <div className="flex justify-between items-start">
             <div className="icon-container bg-white">
               <AiIcon className="text-background-primary w-4 h-fit" />

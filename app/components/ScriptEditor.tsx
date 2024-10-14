@@ -118,7 +118,7 @@ export default function ScriptEditor() {
             <ScriptAreaInfo />
           </div>
         </div>
-        <div className="w-[378px]">
+        {/* <div className="w-[378px]">
           <div className="h-[46px] border-b-[1px] border-stroke flex justify-between items-center px-5">
             <span className="text-sm font-semibold text-text-primary">
               Chapters
@@ -131,7 +131,7 @@ export default function ScriptEditor() {
               <SearchIcon className="" />
             </span>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

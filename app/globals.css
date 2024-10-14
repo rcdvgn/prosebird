@@ -99,7 +99,7 @@ textarea::-webkit-scrollbar {
   }
 
   .btn-3 {
-    @apply [&>svg]:fill-text-primary opacity-70 hover:opacity-100 [&>svg]:w-[13px] cursor-pointer h-[30px] aspect-square rounded-lg hover:bg-foreground-primary grid place-items-center;
+    @apply [&>svg]:text-text-primary [&>svg]:h-[14px] [&>svg]:w-[14px] opacity-70 hover:opacity-100 cursor-pointer h-[30px] aspect-square rounded-lg hover:bg-foreground-hover grid place-items-center;
   }
 
   .files-section-title {

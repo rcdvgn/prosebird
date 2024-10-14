@@ -30,12 +30,14 @@ export default function ScriptNode({
 
   const handleChapterTitleFocusOut = () => {
     if (chapterTitle.length) {
-      let copyScriptData = { ...scriptData };
-      copyScriptData.nodes[position] = {
-        ...node,
-        title: chapterTitle,
-      };
-      setScript({ ...script, data: copyScriptData });
+      if (chapterTitle !== scriptData.nodes[position].title) {
+        let copyScriptData = { ...scriptData };
+        copyScriptData.nodes[position] = {
+          ...node,
+          title: chapterTitle,
+        };
+        setScript({ ...script, data: copyScriptData });
+      }
     } else {
       if (chapterParagraph.current && !chapterParagraph.current.value) {
         deleteNode(node.id);
@@ -82,7 +84,7 @@ export default function ScriptNode({
   }, [scriptData?.nodes[position].title]);
 
   return (
-    <div className="w-[683px] p-[10px]">
+    <div className="w-full p-[10px]">
       <div className="flex items-start justify-start">
         <div className="w-[45px] h-[28px] shrink-0">
           <div

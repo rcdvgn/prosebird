@@ -9,7 +9,7 @@ export default function AllScripts() {
       <div className="flex gap-4 mt-7">
         {/* <div className=""></div> controls */}
         <div className="flex flex-col w-full">
-          <div className="mb-2 flex gap-4 items-center bg-foreground-primary py-2 px-3 rounded-[10px]">
+          <div className="mb-1 flex gap-4 items-center bg-foreground-primary py-2 px-3 rounded-[10px]">
             <div className="script-select"></div>
             <span className="text-text-secondary font-semibold text-[13px]">
               Name
@@ -25,13 +25,13 @@ export default function AllScripts() {
             </div>
           </div>
 
-          <div className="group/main h-[68px] border-b-[1px] border-border px-3 flex gap-4 items-center justify-start hover:bg-foreground-hover hover:rounded-[10px] rounded-0 hover:border-transparent cursor-pointer">
+          <div className="group/main h-[68px] border-b-[1px] border-border px-3 flex gap-4 items-center justify-start">
             <div className="script-select"></div>
             <div className="flex gap-4 items-center grow min-w-0">
               <div className="icon-container">
                 <ScriptIcon className="text-text-primary" />
               </div>
-              <span className="text-text-primary font-semibold text-sm truncate">
+              <span className="text-text-primary font-semibold text-sm truncate hover:underline cursor-pointer">
                 Revolutionizing Quantitative Computing with AI
               </span>
             </div>
@@ -56,9 +56,12 @@ export default function AllScripts() {
               <span className="text-text-secondary font-semibold text-[13px] w-32">
                 Sep 19, 2024
               </span>
-              <div className="group/nested w-6 aspect-square grid place-items-center">
-                <MoreIcon className="text-text-secondary h-fit w-[3px] group-hover/main:visible invisible group-hover/nested:text-text-primary" />
+              <div className="btn-3 group-hover/main:visible invisible">
+                <MoreIcon className="" />
               </div>
+              {/* <div className="group/nested w-8 rounded-lg cursor-pointer aspect-square grid place-items-center hover:bg-foreground-hover">
+                <MoreIcon className="text-text-secondary h-fit w-[3px] group-hover/main:visible invisible group-hover/nested:text-text-primary" />
+              </div> */}
             </div>
           </div>
         </div>

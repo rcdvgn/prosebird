@@ -7,17 +7,17 @@ export default function ChapterDivider({ position }: { position: number }) {
   const scriptData = script.data;
 
   return (
-    <div className="group w-full flex items-center justify-center my-[-1px]">
-      <div className="relative w-full flex flex-col justify-between invisible group-hover:visible">
+    <div className="group w-full flex items-center justify-center py-2">
+      <div className="relative w-full flex flex-col gap-1 justify-between invisible group-hover:visible">
         <div
           className={`${
-            position > 0 ? "" : "invisible"
-          } h-1.5 border-stroke border-t-[1px]`}
+            position > 0 ? "" : "hidden"
+          } h-1.5 border-stroke border-x-[1px] border-b-[1px] rounded-sm`}
         ></div>
         <div
           className={`${
-            position === scriptData.nodes.length ? "invisible" : ""
-          } h-1.5 border-stroke border-b-[1px]`}
+            position === scriptData.nodes.length ? "hidden" : ""
+          } h-1.5 border-stroke border-x-[1px] border-t-[1px] rounded-sm`}
         ></div>
         <button
           onClick={() => addNode(position)}

@@ -7,7 +7,7 @@ export default function ScriptArea() {
   const scriptData = script.data;
 
   return (
-    <div className="w-full pt-[15px] grow">
+    <div className="w-[683px] pt-[15px] grow">
       <ChapterDivider position={0} />
       {[...scriptData.nodes]
         .sort(
@@ -16,7 +16,7 @@ export default function ScriptArea() {
         .map((node: any, index: any) => {
           return (
             <div key={node.id}>
-              <div className="flex justify-center hover:border-stroke border-transparent border-y-[1px] py-4">
+              <div className="flex justify-center py-4">
                 <ScriptNode node={node} position={index} />
               </div>
 

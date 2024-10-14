@@ -16,7 +16,7 @@ export function StarIcon({ className }: { className: any }) {
 export function ScriptIcon({ className }: { className: any }) {
   return (
     <svg
-      className={className}
+      className={`h-fit ${className}`}
       width="14"
       height="100%"
       viewBox="0 0 14 16"
@@ -36,10 +36,12 @@ export function ScriptIcon({ className }: { className: any }) {
       <path
         d="M4.36719 7.83283C4.36719 7.43422 4.69032 7.11108 5.08893 7.11108H9.51813C9.91673 7.11108 10.2399 7.43422 10.2399 7.83283C10.2399 8.23143 9.91673 8.55457 9.51813 8.55457H5.08893C4.69032 8.55457 4.36719 8.23143 4.36719 7.83283Z"
         className="fill-current"
+        strokeWidth="0"
       />
       <path
         d="M4.36719 10.9439C4.36719 10.5453 4.69032 10.2222 5.08893 10.2222H9.51813C9.91673 10.2222 10.2399 10.5453 10.2399 10.9439C10.2399 11.3425 9.91673 11.6657 9.51813 11.6657H5.08893C4.69032 11.6657 4.36719 11.3425 4.36719 10.9439Z"
         className="fill-current"
+        strokeWidth="0"
       />
     </svg>
   );
@@ -134,6 +136,7 @@ export function AddIcon({ className }: { className: any }) {
         fillRule="evenodd"
         clipRule="evenodd"
         d="M4 1C4 0.723858 3.77614 0.5 3.5 0.5C3.22386 0.5 3 0.723858 3 1V3.5H0.5C0.223858 3.5 0 3.72386 0 4C0 4.27614 0.223858 4.5 0.5 4.5H3V7C3 7.27614 3.22386 7.5 3.5 7.5C3.77614 7.5 4 7.27614 4 7V4.5H6.5C6.77614 4.5 7 4.27614 7 4C7 3.72386 6.77614 3.5 6.5 3.5H4V1Z"
+        className="fill-current"
       />
     </svg>
   );
@@ -168,6 +171,7 @@ export function SearchIcon({ className }: { className: any }) {
         fillRule="evenodd"
         clipRule="evenodd"
         d="M11.2951 10.3048C11.5683 10.5782 11.5683 11.0215 11.2951 11.2949C11.0219 11.5684 10.579 11.5684 10.3059 11.2949L9.05415 10.0421C6.96939 11.6483 3.96728 11.4954 2.05711 9.58357C-0.0190388 7.50558 -0.0190379 4.13649 2.05712 2.05849C4.13327 -0.0194975 7.49938 -0.0194983 9.57554 2.05849C11.4823 3.96699 11.6379 6.96455 10.0421 9.05071L11.2951 10.3048ZM3.04638 8.59343C4.57618 10.1246 7.05647 10.1246 8.58627 8.59343C10.1161 7.06228 10.1161 4.57979 8.58627 3.04864C7.05647 1.51748 4.57618 1.51748 3.04638 3.04864C1.51658 4.57979 1.51658 7.06228 3.04638 8.59343Z"
+        className="fill-current"
       />
     </svg>
   );
@@ -195,9 +199,9 @@ export function SideBarExpandIcon({ className }: { className: any }) {
 export function MoreIcon({ className }: { className: any }) {
   return (
     <svg
-      className={className}
-      width="3"
-      height="100%"
+      className={`w-fit ${className}`}
+      width="100%"
+      height="12"
       viewBox="0 0 3 12"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

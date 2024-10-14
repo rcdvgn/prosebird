@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import {
   AddIcon,
+  MoreIcon,
   ScriptIcon,
   SearchIcon,
   SideBarExpandIcon,
@@ -46,7 +47,7 @@ export default function Sidebar() {
   }, [user]);
 
   return (
-    <div className="border-r-[1px] border-stroke w-[250px] [&>*]:px-4 shrink-0">
+    <div className="border-r-[1px] border-stroke w-[300px] [&>*]:px-4 [&>*]:mb-2 shrink-0">
       <div className="border=2 border-red-500 flex items-center justify-between h-[55px]">
         <span className="ml-[10px]">
           <Logo />
@@ -56,9 +57,20 @@ export default function Sidebar() {
         </span>
       </div>
       <div className="">
-        <div className="py-[2px] mb-[10px]">
+        <div
+          onClick={() => router.push(`/files`)}
+          className="cursor-pointer flex items-center justify-start rounded-lg hover:bg-foreground-primary select-none h-[40px]"
+        >
+          <span className="ml-[10px] font-medium text-sm text-text-primary">
+            Home
+          </span>
+        </div>
+        <input type="text" className="hidden" />
+      </div>
+      <div className="">
+        <div className="h-[40px]">
           <div className="flex items-center justify-between">
-            <span className="ml-[10px] font-semibold text-sm text-text-primary">
+            <span className="ml-[10px] font-medium text-sm text-text-primary">
               Scripts
             </span>
             <div className="flex gap-1">
@@ -80,7 +92,7 @@ export default function Sidebar() {
           </div>
           <input type="text" className="hidden" />
         </div>
-        <div className="flex flex-col gap-0.5">
+        <div className="flex flex-col gap-1">
           {scriptList &&
             scriptList.map((item: any, index: any) => {
               return (
@@ -90,16 +102,19 @@ export default function Sidebar() {
                   className={`${
                     script
                       ? item.id === script.id
-                        ? "bg-foreground-hover"
-                        : ""
+                        ? "bg-foreground-primary "
+                        : "hover:opacity-100 opacity-80"
                       : ""
-                  } select-none hover:bg-foreground-hover cursor-pointer rounded-lg flex items-center justify-start gap-2.5 px-4 py-[10px]`}
+                  } select-none hover:bg-foreground-primary cursor-pointer rounded-lg flex items-center justify-start gap-2.5 pl-4 h-[40px] group/item`}
                 >
                   <span className="w-[14px] aspect-square grid place-items-center shrink-0">
-                    <ScriptIcon className="stroke-text-primary h-full stroke-[1px]" />
+                    <ScriptIcon className="text-text-primary h-full stroke-[1px]" />
                   </span>
-                  <span className="font-medium text-xs text-text-primary whitespace-nowrap overflow-hidden text-ellipsis">
+                  <span className="font-regular text-sm text-text-primary whitespace-nowrap overflow-hidden text-ellipsis">
                     {item.title}
+                  </span>
+                  <span className="group/wrapper h-[30px] aspect-square grid place-items-center shrink-0 ml-auto">
+                    <MoreIcon className="text-text-secondary h-[14px] group-hover/item:visible invisible group-hover/wrapper:text-text-primary" />
                   </span>
                 </div>
               );
