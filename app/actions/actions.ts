@@ -5,6 +5,7 @@ import { emptyNode } from "../contexts/ScriptEditorContext";
 import {
   collection,
   setDoc,
+  limit,
   onSnapshot,
   updateDoc,
   getDoc,
@@ -95,6 +96,27 @@ export const subscribeToScript = (
     } else {
       // handle script deleted
     }
+  });
+
+  return unsubscribe;
+};
+
+export const subscribeToRecentScripts = (onUpdate: (data: any) => void) => {
+  const scriptsCollection = collection(db, "scripts");
+
+  const q = query(
+    scriptsCollection,
+    orderBy("lastModified", "desc"),
+    limit(10)
+  );
+
+  const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    const recentScripts = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    onUpdate(recentScripts);
   });
 
   return unsubscribe;

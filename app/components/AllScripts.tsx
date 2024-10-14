@@ -1,6 +1,13 @@
+"use client";
+
 import React from "react";
 import { MoreIcon, ScriptIcon } from "../assets/icons";
+import { useRecentScripts } from "@/app/contexts/RecentScriptsContext";
+import { lastModifiedFormatter } from "../utils/lastModifiedFormater";
+
 export default function AllScripts() {
+  const { recentlyModified } = useRecentScripts();
+
   return (
     <div className="">
       <div className="">
@@ -25,45 +32,53 @@ export default function AllScripts() {
             </div>
           </div>
 
-          <div className="group/main h-[68px] border-b-[1px] border-border px-3 flex gap-4 items-center justify-start">
-            <div className="script-select"></div>
-            <div className="flex gap-4 items-center grow min-w-0">
-              <div className="icon-container">
-                <ScriptIcon className="text-text-primary" />
-              </div>
-              <span className="text-text-primary font-semibold text-sm truncate hover:underline cursor-pointer">
-                Revolutionizing Quantitative Computing with AI
-              </span>
-            </div>
-
-            <div className="flex gap-4 items-center h-full ml-auto">
-              <div className="flex w-80 items-center gap-[10px]">
+          {recentlyModified &&
+            recentlyModified.map((item: any, index: any) => {
+              return (
                 <div
-                  style={{
-                    backgroundImage: `url("/pfps/profile1.png")`,
-                  }}
-                  className="h-8 aspect-square rounded-full bg-cover bg-center flex-shrink-0"
-                ></div>
-                <div className="h-full flex flex-col justify-between grow min-w-0">
-                  <span className="text-text-primary font-semibold text-sm mb-[-3px] truncate">
-                    You
-                  </span>
-                  <span className="text-text-secondary font-medium text-[13px] truncate">
-                    ricardorpvigliano@mindlog.org
-                  </span>
-                </div>
-              </div>
-              <span className="text-text-secondary font-semibold text-[13px] w-32">
-                Sep 19, 2024
-              </span>
-              <div className="btn-3 group-hover/main:visible invisible">
-                <MoreIcon className="" />
-              </div>
-              {/* <div className="group/nested w-8 rounded-lg cursor-pointer aspect-square grid place-items-center hover:bg-foreground-hover">
+                  key={item.id}
+                  className="group/main h-[68px] border-b-[1px] border-border px-3 flex gap-4 items-center justify-start"
+                >
+                  <div className="script-select"></div>
+                  <div className="flex gap-4 items-center grow min-w-0">
+                    <div className="icon-container">
+                      <ScriptIcon className="text-text-primary" />
+                    </div>
+                    <span className="text-text-primary font-semibold text-sm truncate hover:underline cursor-pointer">
+                      {item.title}
+                    </span>
+                  </div>
+
+                  <div className="flex gap-4 items-center h-full ml-auto">
+                    <div className="flex w-80 items-center gap-[10px]">
+                      <div
+                        style={{
+                          backgroundImage: `url("/pfps/profile1.png")`,
+                        }}
+                        className="h-8 aspect-square rounded-full bg-cover bg-center flex-shrink-0"
+                      ></div>
+                      <div className="h-full flex flex-col justify-between grow min-w-0">
+                        <span className="text-text-primary font-semibold text-sm mb-[-3px] truncate">
+                          You
+                        </span>
+                        <span className="text-text-secondary font-medium text-[13px] truncate">
+                          ricardorpvigliano@mindlog.org
+                        </span>
+                      </div>
+                    </div>
+                    <span className="text-text-secondary font-semibold text-[13px] w-32">
+                      {lastModifiedFormatter(item.lastModified)}
+                    </span>
+                    <div className="btn-3 group-hover/main:visible invisible">
+                      <MoreIcon className="" />
+                    </div>
+                    {/* <div className="group/nested w-8 rounded-lg cursor-pointer aspect-square grid place-items-center hover:bg-foreground-hover">
                 <MoreIcon className="text-text-secondary h-fit w-[3px] group-hover/main:visible invisible group-hover/nested:text-text-primary" />
               </div> */}
-            </div>
-          </div>
+                  </div>
+                </div>
+              );
+            })}
         </div>
       </div>
     </div>
