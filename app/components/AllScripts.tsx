@@ -28,7 +28,9 @@ export default function AllScripts() {
               <span className="text-text-secondary font-semibold text-[13px] w-32">
                 Last modified
               </span>
-              <div className="w-6 aspect-square invisible"></div>
+              <div className="btn-3 invisible">
+                <MoreIcon className="" />
+              </div>
             </div>
           </div>
 
@@ -62,7 +64,7 @@ export default function AllScripts() {
                           You
                         </span>
                         <span className="text-text-secondary font-medium text-[13px] truncate">
-                          ricardorpvigliano@mindlog.org
+                          {item.createdBy.email}
                         </span>
                       </div>
                     </div>

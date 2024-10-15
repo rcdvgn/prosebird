@@ -6,7 +6,7 @@ import React, {
   ReactNode,
 } from "react";
 import { subscribeToRecentScripts } from "../actions/actions"; // Import the action
-
+import { getScriptPeople } from "../actions/actions";
 // Define the type for the script object
 interface Script {
   id: string;
@@ -36,12 +36,29 @@ export const RecentScriptsProvider = ({
   );
 
   useEffect(() => {
-    // Subscribe to recent scripts using the action function
-    const unsubscribe = subscribeToRecentScripts((recentScripts: Script[]) => {
-      setRecentlyModified(recentScripts);
-    });
+    const unsubscribe = subscribeToRecentScripts(
+      async (recentScripts: Script[]) => {
+        const scriptsWithPeople = await Promise.all(
+          recentScripts.map(async (script: any) => {
+            const people = await getScriptPeople(
+              script.createdBy,
+              script.editors,
+              script.viewers
+            );
 
-    // Cleanup the listener when the component unmounts
+            return {
+              ...script,
+              editors: people.editors,
+              viewers: people.viewers,
+              createdBy: people.createdBy,
+            };
+          })
+        );
+        console.log(scriptsWithPeople);
+        setRecentlyModified(scriptsWithPeople);
+      }
+    );
+
     return () => unsubscribe();
   }, []);
 

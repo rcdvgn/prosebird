@@ -121,3 +121,61 @@ export const subscribeToRecentScripts = (onUpdate: (data: any) => void) => {
 
   return unsubscribe;
 };
+
+// Adjust the return type to include user objects
+export const getScriptPeople = async (
+  createdBy: string,
+  editors: string[],
+  viewers: string[]
+): Promise<{ createdBy: any; editors: any; viewers: any }> => {
+  try {
+    const scriptPeople = {
+      createdBy: null as any, // Initially null
+      editors: [] as any, // Empty array for editors
+      viewers: [] as any, // Empty array for viewers
+    };
+
+    // Fetch createdBy user
+    const createdByRef = doc(db, "users", createdBy);
+    const createdByDoc = await getDoc(createdByRef);
+    if (createdByDoc.exists()) {
+      scriptPeople.createdBy = {
+        id: createdByDoc.id,
+        ...createdByDoc.data(),
+      };
+    }
+
+    // Fetch editors
+    if (editors.length > 0) {
+      const editorRefs = editors.map((id) => doc(db, "users", id));
+      const editorDocs = await Promise.all(
+        editorRefs.map((ref) => getDoc(ref))
+      );
+      scriptPeople.editors = editorDocs
+        .filter((doc) => doc.exists())
+        .map((doc) => ({
+          id: doc.id,
+          ...doc.data(), // Include other user fields
+        }));
+    }
+
+    // Fetch viewers
+    if (viewers.length > 0) {
+      const viewerRefs = viewers.map((id) => doc(db, "users", id));
+      const viewerDocs = await Promise.all(
+        viewerRefs.map((ref) => getDoc(ref))
+      );
+      scriptPeople.viewers = viewerDocs
+        .filter((doc) => doc.exists())
+        .map((doc) => ({
+          id: doc.id,
+          ...doc.data(), // Include other user fields
+        }));
+    }
+    console.log(scriptPeople);
+    return scriptPeople; // Return the structured object
+  } catch (error) {
+    console.error("Error fetching script people: ", error);
+    return { createdBy: null, editors: [], viewers: [] }; // Fallback return
+  }
+};
