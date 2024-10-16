@@ -54,7 +54,7 @@ export const RecentScriptsProvider = ({
             };
           })
         );
-        console.log(scriptsWithPeople);
+        // console.log(scriptsWithPeople);
         setRecentlyModified(scriptsWithPeople);
       }
     );

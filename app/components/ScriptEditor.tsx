@@ -56,6 +56,12 @@ export default function ScriptEditor() {
     }
   }, [scriptData?.title]);
 
+  // useEffect(() => {
+  //   return () => {
+  //     setScript(null);
+  //   };
+  // }, []);
+
   return (
     <div className="grow flex flex-col min-w-0">
       <div className="flex justify-between items-center px-4 border-b-[1px] border-stroke h-[55px] shrink-0">

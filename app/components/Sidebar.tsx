@@ -17,10 +17,14 @@ import { createScript, getUserScripts } from "@/app/actions/actions";
 import { useAuth } from "../contexts/AuthContext";
 import { useScriptEditor } from "../contexts/ScriptEditorContext";
 
+import { useRecentScripts } from "@/app/contexts/RecentScriptsContext";
+
 export default function Sidebar() {
   const { user } = useAuth();
   const { script, setScript } = useScriptEditor();
   const router = useRouter();
+
+  const { recentlyModified } = useRecentScripts();
 
   const [isSearchOn, setIsSearchOn] = useState(false);
   const [scriptList, setScriptList] = useState<any>(null);
@@ -93,8 +97,8 @@ export default function Sidebar() {
           <input type="text" className="hidden" />
         </div>
         <div className="flex flex-col gap-1">
-          {scriptList &&
-            scriptList.map((item: any, index: any) => {
+          {recentlyModified &&
+            recentlyModified.map((item: any, index: any) => {
               return (
                 <div
                   onClick={() => router.push(`/file/${item.id}`)}
