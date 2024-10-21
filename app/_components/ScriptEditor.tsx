@@ -4,8 +4,8 @@ import { useRef, useState, useEffect } from "react";
 import ScriptArea from "./ScriptArea";
 import ScriptAreaInfo from "./ScriptAreaInfo";
 
-import { StarIcon, ScriptIcon, PlayIcon, SearchIcon } from "../assets/icons";
-import { useScriptEditor } from "@/app/contexts/ScriptEditorContext";
+import { StarIcon, ScriptIcon, PlayIcon, SearchIcon } from "../_assets/icons";
+import { useScriptEditor } from "@/app/_contexts/ScriptEditorContext";
 
 export default function ScriptEditor() {
   const { script, setScript } = useScriptEditor();

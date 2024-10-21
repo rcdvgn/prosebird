@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from "react";
-import useAutosizeTextArea from "../utils/useAutosizeTextArea";
+import useAutosizeTextArea from "../_utils/useAutosizeTextArea";
 
-import { useScriptEditor } from "@/app/contexts/ScriptEditorContext";
+import { useScriptEditor } from "@/app/_contexts/ScriptEditorContext";
 
 export default function ScriptNode({
   node,

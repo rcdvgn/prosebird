@@ -1,9 +1,9 @@
 "use client";
 
 import React from "react";
-import { MoreIcon, ScriptIcon } from "../assets/icons";
-import { useRecentScripts } from "@/app/contexts/RecentScriptsContext";
-import { lastModifiedFormatter } from "../utils/lastModifiedFormater";
+import { MoreIcon, ScriptIcon } from "../_assets/icons";
+import { useRecentScripts } from "@/app/_contexts/RecentScriptsContext";
+import { lastModifiedFormatter } from "../_utils/lastModifiedFormater";
 
 export default function AllScripts() {
   const { recentlyModified } = useRecentScripts();

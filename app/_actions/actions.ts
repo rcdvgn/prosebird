@@ -1,6 +1,6 @@
 "use client";
 
-import { emptyNode } from "../contexts/ScriptEditorContext";
+import { emptyNode } from "../_contexts/ScriptEditorContext";
 
 import {
   collection,
@@ -19,7 +19,7 @@ import {
   documentId,
 } from "firebase/firestore";
 
-import { db } from "../config/fireabase";
+import { db } from "../_config/fireabase";
 
 export const createScript: any = async (userId: any) => {
   const blankScript = {

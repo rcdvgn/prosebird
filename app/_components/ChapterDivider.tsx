@@ -1,6 +1,6 @@
-import { AddIcon } from "../assets/icons";
+import { AddIcon } from "../_assets/icons";
 
-import { useScriptEditor } from "@/app/contexts/ScriptEditorContext";
+import { useScriptEditor } from "@/app/_contexts/ScriptEditorContext";
 
 export default function ChapterDivider({ position }: { position: number }) {
   const { script, addNode } = useScriptEditor();

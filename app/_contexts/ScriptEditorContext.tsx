@@ -16,7 +16,7 @@ interface ScriptNode {
   speaker: string;
 }
 
-import { saveScript, subscribeToScript } from "../actions/actions";
+import { saveScript, subscribeToScript } from "../_actions/actions";
 
 export const emptyNode: ScriptNode = {
   id: "",

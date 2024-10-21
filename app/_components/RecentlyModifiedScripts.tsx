@@ -1,6 +1,6 @@
 import React from "react";
 
-import { ScriptIcon, MoreIcon, UsersIcon } from "../assets/icons";
+import { ScriptIcon, MoreIcon, UsersIcon } from "../_assets/icons";
 
 export default function RecentlyModifiedScripts() {
   return (

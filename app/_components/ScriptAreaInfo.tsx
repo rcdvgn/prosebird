@@ -1,4 +1,4 @@
-import { useScriptEditor } from "../contexts/ScriptEditorContext";
+import { useScriptEditor } from "../_contexts/ScriptEditorContext";
 export default function ScriptAreaInfo() {
   const { isSaved } = useScriptEditor();
   return (

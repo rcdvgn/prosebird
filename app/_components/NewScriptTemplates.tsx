@@ -1,5 +1,5 @@
 import React from "react";
-import { AddIcon, EmptyScriptIcon, ImportIcon, AiIcon } from "../assets/icons";
+import { AddIcon, EmptyScriptIcon, ImportIcon, AiIcon } from "../_assets/icons";
 export default function NewscriptTemplates() {
   return (
     <div className="">

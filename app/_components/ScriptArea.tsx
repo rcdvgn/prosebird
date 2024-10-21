@@ -1,6 +1,6 @@
 import ChapterDivider from "./ChapterDivider";
 import ScriptNode from "./ScriptNode";
-import { useScriptEditor } from "@/app/contexts/ScriptEditorContext";
+import { useScriptEditor } from "@/app/_contexts/ScriptEditorContext";
 
 export default function ScriptArea() {
   const { script } = useScriptEditor();

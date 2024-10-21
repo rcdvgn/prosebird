@@ -5,8 +5,8 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
-import { subscribeToRecentScripts } from "../actions/actions"; // Import the action
-import { getScriptPeople } from "../actions/actions";
+import { subscribeToRecentScripts } from "../_actions/actions"; // Import the action
+import { getScriptPeople } from "../_actions/actions";
 // Define the type for the script object
 interface Script {
   id: string;

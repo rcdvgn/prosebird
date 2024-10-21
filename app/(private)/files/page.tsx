@@ -1,6 +1,6 @@
-import NewscriptTemplates from "@/app/components/NewScriptTemplates";
-import RecentlyModifiedScripts from "@/app/components/RecentlyModifiedScripts";
-import AllScripts from "@/app/components/AllScripts";
+import NewscriptTemplates from "@/app/_components/NewScriptTemplates";
+import RecentlyModifiedScripts from "@/app/_components/RecentlyModifiedScripts";
+import AllScripts from "@/app/_components/AllScripts";
 
 export default function Files() {
   return (

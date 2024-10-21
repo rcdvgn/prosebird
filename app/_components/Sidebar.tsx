@@ -7,20 +7,20 @@ import {
   ScriptIcon,
   SearchIcon,
   SideBarExpandIcon,
-} from "../assets/icons";
-import Logo from "../assets/logo";
+} from "../_assets/icons";
+import Logo from "../_assets/logo";
 
 import { useRouter } from "next/navigation";
 
-import { createScript, getUserScripts } from "@/app/actions/actions";
+import { createScript, getUserScripts } from "@/app/_actions/actions";
 
-import { useAuth } from "../contexts/AuthContext";
-import { useScriptEditor } from "../contexts/ScriptEditorContext";
+import { useAuth } from "../_contexts/AuthContext";
+import { useScriptEditor } from "../_contexts/ScriptEditorContext";
 
-import { useRecentScripts } from "@/app/contexts/RecentScriptsContext";
+import { useRecentScripts } from "@/app/_contexts/RecentScriptsContext";
 
 export default function Sidebar() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const { script, setScript } = useScriptEditor();
   const router = useRouter();
 
@@ -52,7 +52,7 @@ export default function Sidebar() {
 
   return (
     <div className="border-r-[1px] border-stroke w-[300px] [&>*]:px-4 [&>*]:mb-2 shrink-0">
-      <div className="border=2 border-red-500 flex items-center justify-between h-[55px]">
+      <div className="flex items-center justify-between h-[55px]">
         <span className="ml-[10px]">
           <Logo />
         </span>
@@ -125,6 +125,13 @@ export default function Sidebar() {
             })}
         </div>
       </div>
+
+      <button
+        onClick={logout}
+        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+      >
+        Logout
+      </button>
     </div>
   );
 }
