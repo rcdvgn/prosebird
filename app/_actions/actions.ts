@@ -103,51 +103,53 @@ export const saveScript = async (script: any) => {
     // Update nodes in the separate collection
     const nodesRef = doc(db, "nodes", script.id);
     await updateDoc(nodesRef, { nodes });
-
-    console.log(`Script ${script.id} and nodes updated successfully.`);
   } catch (error) {
     console.error("Error saving script:", error);
   }
 };
 
-export const subscribeToScript = (
-  scriptId: string,
-  onUpdate: (data: any) => void
-) => {
-  const scriptRef = doc(db, "scripts", scriptId);
-  const nodesRef = doc(db, "nodes", scriptId);
+export const subscribeToScript = (localScript: any, onUpdate: any) => {
+  const scriptRef = doc(db, "scripts", localScript.id);
 
   const unsubscribeScript = onSnapshot(scriptRef, (scriptSnapshot) => {
     if (scriptSnapshot.exists()) {
       const scriptData = scriptSnapshot.data();
 
-      // Now listen to the nodes document for changes
-      const unsubscribeNodes = onSnapshot(nodesRef, (nodesSnapshot) => {
-        const nodesData = nodesSnapshot.exists()
-          ? nodesSnapshot.data().nodes
-          : [];
-
-        // Combine the script data with nodes data and trigger the update
-        onUpdate({
-          id: scriptId,
-          data: {
-            ...scriptData,
-            nodes: nodesData,
-          },
-        });
-      });
-
-      // Combine both unsubscribe functions
-      return () => {
-        unsubscribeScript();
-        unsubscribeNodes();
+      const serverScript = {
+        id: localScript.id,
+        data: {
+          ...scriptData,
+          nodes: localScript.data.nodes,
+        },
       };
-    } else {
-      // Handle script not existing
+
+      onUpdate(serverScript);
     }
   });
 
   return unsubscribeScript;
+};
+
+export const subscribeToNodes = (localScript: any, onUpdate: any) => {
+  const nodesRef = doc(db, "nodes", localScript.id);
+
+  const unsubscribeNodes = onSnapshot(nodesRef, (nodesSnapshot) => {
+    const nodesData = nodesSnapshot.exists()
+      ? nodesSnapshot.data().nodes
+      : [emptyNode];
+
+    const serverScript = {
+      id: localScript.id,
+      data: {
+        ...localScript.data,
+        nodes: nodesData,
+      },
+    };
+
+    onUpdate(serverScript);
+
+    return unsubscribeNodes;
+  });
 };
 
 export const subscribeToRecentScripts = (onUpdate: (data: any) => void) => {
@@ -221,7 +223,6 @@ export const getScriptPeople = async (
           ...doc.data(), // Include other user fields
         }));
     }
-    // console.log(scriptPeople);
     return scriptPeople; // Return the structured object
   } catch (error) {
     console.error("Error fetching script people: ", error);

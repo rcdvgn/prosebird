@@ -16,7 +16,11 @@ interface ScriptNode {
   speaker: string;
 }
 
-import { saveScript, subscribeToScript } from "../_actions/actions";
+import {
+  saveScript,
+  subscribeToNodes,
+  subscribeToScript,
+} from "../_actions/actions";
 
 export const emptyNode: ScriptNode = {
   id: "",
@@ -33,7 +37,10 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
   const [lastSavedScript, setLastSavedScript] = useState<any>(null);
 
   const hasUnsavedChanges = () => {
-    const cond = _.isEqual(script, lastSavedScript);
+    const cond = _.isEqual(
+      { ...script.data, lastModified: null },
+      { ...lastSavedScript.data, lastModified: null }
+    );
 
     return !cond;
   };
@@ -60,6 +67,7 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const handleSave = debounce(async () => {
       if (hasUnsavedChanges()) {
+        console.log("about to be saved to server");
         await saveScript(script);
         setLastSavedScript(_.cloneDeep(script));
       }
@@ -86,14 +94,28 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (!script) return;
 
-    const unsubscribe = subscribeToScript(script.id, (serverScript) => {
-      if (!_.isEqual(serverScript, script)) {
+    const applyServerChanges = (serverScript: any) => {
+      if (
+        !_.isEqual(
+          { ...serverScript.data, lastModified: null },
+          { ...script.data, lastModified: null }
+        )
+      ) {
         setScript(serverScript);
         setLastSavedScript(_.cloneDeep(serverScript));
       }
-    });
+    };
 
-    return () => unsubscribe();
+    const unsubscribeScript: any = subscribeToScript(
+      script,
+      applyServerChanges
+    );
+    const unsubscribeNodes: any = subscribeToNodes(script, applyServerChanges);
+
+    return () => {
+      unsubscribeScript();
+      unsubscribeNodes();
+    };
   }, [script?.id]);
 
   return (
