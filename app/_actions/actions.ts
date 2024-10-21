@@ -147,9 +147,8 @@ export const subscribeToNodes = (localScript: any, onUpdate: any) => {
     };
 
     onUpdate(serverScript);
-
-    return unsubscribeNodes;
   });
+  return unsubscribeNodes;
 };
 
 export const subscribeToRecentScripts = (onUpdate: (data: any) => void) => {

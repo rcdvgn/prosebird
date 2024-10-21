@@ -1,7 +1,7 @@
 export function StarIcon({ className }: { className: any }) {
   return (
     <svg
-      className={className}
+      className={className + " h-fit"}
       width="11"
       height="100%"
       viewBox="0 0 11 10"

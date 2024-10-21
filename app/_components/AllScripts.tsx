@@ -57,9 +57,9 @@ export default function AllScripts() {
                         style={{
                           backgroundImage: `url("/pfps/profile1.png")`,
                         }}
-                        className="h-8 aspect-square rounded-full bg-cover bg-center flex-shrink-0"
+                        className="h-9 aspect-square rounded-full bg-cover bg-center flex-shrink-0"
                       ></div>
-                      <div className="h-full flex flex-col justify-between grow min-w-0">
+                      <div className="h-full flex flex-col gap-1 grow min-w-0">
                         <span className="text-text-primary font-semibold text-sm mb-[-3px] truncate">
                           You
                         </span>

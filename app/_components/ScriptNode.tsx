@@ -107,7 +107,7 @@ export default function ScriptNode({
           value={chapterTitle}
           rows={1}
           spellCheck={isTitleSpellCheckEnabled}
-          className="block grow w-full bg-transparent overflow-y-scroll border-text-danger outline-none resize-none text-base text-text-primary font-semibold py-[2px] rounded-sm"
+          className="block grow w-full bg-transparent overflow-y-scroll border-text-danger outline-none resize-none text-base text-text-primary font-bold py-[2px] rounded-sm"
         ></textarea>
       </div>
       <textarea
@@ -119,7 +119,7 @@ export default function ScriptNode({
         onBlur={() => setIsParagraphSpellCheckEnabled(false)}
         spellCheck={isParagraphSpellCheckEnabled}
         rows={1}
-        className="block mt-[13px] pl-[45px] w-full bg-transparent overflow-y-scroll border-none outline-none resize-none text-sm text-text-primary font-light leading-[22px]"
+        className="block mt-[13px] pl-[45px] w-full bg-transparent overflow-y-scroll border-none outline-none resize-none text-sm text-text-primary font-semibold leading-[22px]"
       ></textarea>
     </div>
   );

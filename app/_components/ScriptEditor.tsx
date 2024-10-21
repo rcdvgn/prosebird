@@ -64,7 +64,7 @@ export default function ScriptEditor() {
 
   return (
     <div className="grow flex flex-col min-w-0">
-      <div className="flex justify-between items-center px-4 border-b-[1px] border-stroke h-[55px] shrink-0">
+      <div className="flex justify-between items-center px-4 border-b-[1px] border-stroke h-[60px] shrink-0">
         <div className="grow flex items-center gap-3.5 min-w-0">
           <div className="icon-container">
             <ScriptIcon className="stroke-text-primary stroke-[1.5px]" />
@@ -88,13 +88,13 @@ export default function ScriptEditor() {
               onChange={handleDocumentTitleChange}
               onKeyDown={handleDocumentTitleKeyDown}
               spellCheck={isSpellCheckEnabled}
-              className="font-semibold text-base text-text-primary bg-transparent border-none outline-none rounded-sm focus:text-text-primary/90 hover:ring-1 focus:ring-1 ring-text-secondary ring-offset-4 ring-offset-background-primary"
+              className="font-bold text-base text-text-primary bg-transparent border-none outline-none rounded-sm focus:text-text-primary/90 hover:ring-1 focus:ring-1 ring-text-secondary ring-offset-4 ring-offset-background-primary"
             />
 
-            <StarIcon className="stroke-text-primary stroke-1 mr-4" />
+            <StarIcon className="stroke-text-primary stroke-1 mr-4 w-3 cursor-pointer" />
           </div>
         </div>
-        <div className="flex gap-2 items-center">
+        <div className="flex gap-3 items-center">
           <div className="flex h-[26px]">
             <div
               style={{
@@ -110,7 +110,7 @@ export default function ScriptEditor() {
             ></div>
           </div>
           <button className="btn-2-md">Share</button>
-          <button className="btn-1-md flex gap-1">
+          <button className="btn-1-md flex gap-2">
             <PlayIcon className="fill-text-primary" />
             <span className="">Launch</span>
           </button>

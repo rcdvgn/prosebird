@@ -19,7 +19,7 @@ import { useScriptEditor } from "../_contexts/ScriptEditorContext";
 
 import { useRecentScripts } from "@/app/_contexts/RecentScriptsContext";
 
-export default function Sidebar() {
+export default function Sidebar(fileId: any) {
   const { user, logout } = useAuth();
   const { script, setScript } = useScriptEditor();
   const router = useRouter();
@@ -63,9 +63,9 @@ export default function Sidebar() {
       <div className="">
         <div
           onClick={() => router.push(`/files`)}
-          className="cursor-pointer flex items-center justify-start rounded-lg hover:bg-foreground-primary select-none h-[40px]"
+          className="cursor-pointer flex items-center justify-start rounded-lg hover:bg-foreground-primary select-none h-[46px]"
         >
-          <span className="ml-[10px] font-medium text-sm text-text-primary">
+          <span className="ml-[10px] font-bold text-sm text-text-primary">
             Home
           </span>
         </div>
@@ -74,7 +74,7 @@ export default function Sidebar() {
       <div className="">
         <div className="h-[40px]">
           <div className="flex items-center justify-between">
-            <span className="ml-[10px] font-medium text-sm text-text-primary">
+            <span className="ml-[10px] font-bold text-sm text-text-primary">
               Scripts
             </span>
             <div className="flex gap-1">
@@ -105,16 +105,16 @@ export default function Sidebar() {
                   key={index}
                   className={`${
                     script
-                      ? item.id === script.id
+                      ? item.id === fileId?.fileId
                         ? "bg-foreground-primary "
-                        : "hover:opacity-100 opacity-80"
+                        : ""
                       : ""
                   } select-none hover:bg-foreground-primary cursor-pointer rounded-lg flex items-center justify-start gap-2.5 pl-4 h-[40px] group/item`}
                 >
                   <span className="w-[14px] aspect-square grid place-items-center shrink-0">
                     <ScriptIcon className="text-text-primary h-full stroke-[1px]" />
                   </span>
-                  <span className="font-regular text-sm text-text-primary whitespace-nowrap overflow-hidden text-ellipsis">
+                  <span className="font-semibold text-sm text-text-primary whitespace-nowrap overflow-hidden text-ellipsis">
                     {item.title}
                   </span>
                   <span className="group/wrapper h-[30px] aspect-square grid place-items-center shrink-0 ml-auto">

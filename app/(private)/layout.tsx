@@ -2,7 +2,7 @@
 
 import React, { ReactNode, useEffect } from "react";
 import { useAuth } from "@/app/_contexts/AuthContext";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 
 import { RecentScriptsProvider } from "@/app/_contexts/RecentScriptsContext";
 import { ScriptEditorProvider } from "@/app/_contexts/ScriptEditorContext";
@@ -13,6 +13,10 @@ const AuthenticatedLayout: React.FC<{ children: ReactNode }> = ({
 }) => {
   const { user } = useAuth();
   const router = useRouter();
+  const params = useParams();
+
+  // Extract fileId from params or set it to null if not present
+  const fileId = params?.fileId || null;
 
   useEffect(() => {
     if (!user) {
@@ -24,10 +28,10 @@ const AuthenticatedLayout: React.FC<{ children: ReactNode }> = ({
   return (
     <>
       {user ? (
-        <div id="main" className="flex border-stroke border-[1px] rounded-lg">
+        <div id="main" className="flex">
           <RecentScriptsProvider>
             <ScriptEditorProvider>
-              <Sidebar />
+              <Sidebar fileId={fileId} />
               {children}
             </ScriptEditorProvider>
           </RecentScriptsProvider>
