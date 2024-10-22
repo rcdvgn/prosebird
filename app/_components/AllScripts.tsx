@@ -16,7 +16,7 @@ export default function AllScripts() {
       <div className="flex gap-4 mt-7">
         {/* <div className=""></div> controls */}
         <div className="flex flex-col w-full">
-          <div className="mb-1 flex gap-4 items-center bg-foreground-primary py-2 px-3 rounded-[10px]">
+          <div className="mb-1 flex gap-4 items-center bg-foreground-secondary py-2 px-3 rounded-[10px]">
             <div className="script-select"></div>
             <span className="text-text-secondary font-semibold text-[13px]">
               Name

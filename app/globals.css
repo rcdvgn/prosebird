@@ -3,10 +3,10 @@
 @tailwind utilities;
 
 :root {
-  --background-primary: #0c0a0e;
+  --background-primary: #0a0b0e;
 
   --text-primary: #ffffff;
-  --text-secondary: #b1a9bc;
+  --text-secondary: #a9aebc;
   --text-danger: #b51b1d;
 
   --foreground-primary: #1f222e;
@@ -87,11 +87,11 @@ textarea::-webkit-scrollbar {
   }
 
   .btn-1-md {
-    @apply flex gap-1 items-center justify-center h-9 py-1 px-4 border-none outline-none rounded-lg bg-brand text-[14px] font-semibold text-text-primary;
+    @apply flex gap-1 items-center justify-center h-9 py-1 px-4 border-none outline-none rounded-lg bg-brand text-[14px] font-bold text-text-primary;
   }
 
   .btn-2-md {
-    @apply flex gap-1 items-center justify-center h-9 py-1 px-4 border-none outline-none rounded-lg  bg-foreground-primary text-[14px] font-semibold text-text-primary;
+    @apply flex gap-1 items-center justify-center h-9 py-1 px-4 border-none outline-none rounded-lg  bg-foreground-primary text-[14px] font-bold text-text-primary;
   }
 
   .btn-2-sm {
