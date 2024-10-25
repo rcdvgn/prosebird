@@ -23,7 +23,7 @@ const config: Config = {
           hover: "#19151E",
         },
         stroke: "#251D30",
-        brand: "#1044EE",
+        brand: "#325EF1",
         border: "#251A30",
       },
     },

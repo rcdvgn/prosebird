@@ -11,6 +11,7 @@
   "dependencies": {
     "@tailwindcss/container-queries": "^0.1.1",
     "@types/uuid": "^10.0.0",
+    "email-validator": "^2.0.4",
     "firebase": "^10.13.2",
     "lodash": "^4.17.21",
     "next": "14.2.13",
