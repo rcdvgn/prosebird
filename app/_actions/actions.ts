@@ -1,7 +1,7 @@
 "use client";
 
 import { emptyNode } from "../_contexts/ScriptEditorContext";
-
+import * as EmailValidator from "email-validator";
 import {
   collection,
   setDoc,
@@ -228,3 +228,29 @@ export const getScriptPeople = async (
     return { createdBy: null, editors: [], viewers: [] }; // Fallback return
   }
 };
+
+// export const checkWaitlistEmail = async (email: string) => {
+//   if (!EmailValidator.validate(email)) return null;
+
+//   try {
+//     const waitlistRef = collection(db, "waitlist");
+//     const emailQuery = query(waitlistRef, where("email", "==", email));
+
+//     const querySnapshot = await getDocs(emailQuery);
+
+//     return querySnapshot.empty;
+//   } catch (error) {
+//     console.error("Error fetching waitlist email: ", error);
+//     return null;
+//   }
+// };
+
+// export const addEmailToWaitlist = async (email: string) => {
+//   try {
+//     const docRef = await addDoc(collection(db, "waitlist"), { email });
+//     return docRef.id;
+//   } catch (error) {
+//     console.error("Error adding email to waitlist: ", error);
+//     return null;
+//   }
+// };
