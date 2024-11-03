@@ -21,7 +21,7 @@ export async function POST(request: Request) {
 
     const newPosition = matchToScript(currentPosition, nodes, transcript);
 
-    console.log(newPosition);
+    // console.log(newPosition);
 
     if (newPosition !== currentPosition) {
       await pusherServer.trigger(

@@ -3,7 +3,6 @@ type ScriptNode = {
   [key: string]: any;
 };
 
-// Normalizes a word to remove punctuation and make it lowercase.
 const normalizeWord = (word: string): string => {
   return word
     .replace(/[-—]/g, " ")
@@ -11,68 +10,63 @@ const normalizeWord = (word: string): string => {
     .toLowerCase();
 };
 
-// Formats the script nodes to give each word a unique index.
-// function formatScript(nodes: ScriptNode[]): ScriptNode[] {
-//   let counter = -1;
+function formatScript(nodes: any) {
+  return nodes.reduce((acc: any, node: any) => {
+    Object.assign(acc, node.paragraph);
+    return acc;
+  }, {});
+}
 
-//   return nodes.map((node) => {
-//     const paragraph = Object.fromEntries(
-//       Object.entries(node.paragraph).map(([key, word]) => {
-//         counter++;
-//         return [counter, word];
-//       })
-//     );
-//     return { ...node, paragraph };
-//   });
-// }
-
-// Checks for matches between the last spoken words and expected words in the script.
-function checkMatch(
-  lastSpokenWords: string[],
-  expectedWordsWindow: { word: string; currentPosition: number }[]
-): number | undefined {
-  const normalizedSpokenWords = lastSpokenWords.map(normalizeWord);
+const checkMatch = (lastSpokenWords: any, expectedWordsWindow: any): any => {
+  // console.log(lastSpokenWords, expectedWordsWindow);
+  const normalizedSpokenWords = lastSpokenWords.map((word: any) =>
+    normalizeWord(word)
+  );
 
   for (let j = 0; j < expectedWordsWindow.length; j++) {
-    const { word: normalizedExpectedWord, currentPosition } =
-      expectedWordsWindow[j];
-    const numOfExpectedWords = normalizedExpectedWord.split(" ").length;
+    const { word: normalizedExpectedWord, position } = expectedWordsWindow[j];
 
-    const spokenSegment = normalizedSpokenWords
-      .slice(normalizedSpokenWords.length - numOfExpectedWords)
+    const numOfNormalizedExpectedWords =
+      normalizedExpectedWord.split(" ").length;
+
+    const normalizedSpokenWord = normalizedSpokenWords
+      .slice(normalizedSpokenWords.length - numOfNormalizedExpectedWords)
       .join(" ");
 
-    if (spokenSegment === normalizedExpectedWord) {
-      return currentPosition;
+    console.log("Spoken word: " + normalizedSpokenWord);
+    console.log("Expected word: " + normalizedExpectedWord);
+
+    if (normalizedSpokenWord === normalizedExpectedWord) {
+      console.log("Match! " + position);
+      return position;
     }
+    console.log("No match");
   }
 
   return undefined;
-}
+};
 
-// Main function to match transcript to script and return the new currentPosition.
 export default function matchToScript(
   currentPosition: number,
   nodes: ScriptNode[],
   transcript: string
 ): number {
-  //   const processedScript = formatScript(nodes);
+  const fullScript = formatScript(nodes);
   const spokenWords = transcript.split(" ");
   let newcurrentPosition = currentPosition;
   let matched = false;
 
   const lastSpokenWords = spokenWords.slice(-3);
 
-  if (newcurrentPosition < Object.keys(nodes).length) {
-    const expectedWordsWindow = Object.entries(nodes)
+  if (newcurrentPosition < Object.keys(fullScript).length) {
+    const expectedWordsWindow = Object.keys(fullScript)
       .slice(newcurrentPosition, newcurrentPosition + 3)
-      .map(([index, word]: any) => ({
-        word: normalizeWord(word),
-        currentPosition: parseInt(index),
+      .map((key, index: any) => ({
+        word: normalizeWord(fullScript[key]),
+        position: parseInt(index, 10),
       }));
 
     const matchIndex = checkMatch(lastSpokenWords, expectedWordsWindow);
-
     if (matchIndex !== undefined) {
       newcurrentPosition += matchIndex;
       matched = true;

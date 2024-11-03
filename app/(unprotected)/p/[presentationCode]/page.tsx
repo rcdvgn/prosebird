@@ -22,7 +22,7 @@ export default function Page({
   const [presentation, setPresentation] = useState<any>(null);
   const [presentationScript, setPresentationScript] = useState<any>(null);
 
-  const [currPosition, setCurrPosition] = useState(-1);
+  const [currPosition, setCurrPosition] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
   const {
@@ -148,7 +148,7 @@ export default function Page({
           <span
             key={index}
             style={{
-              opacity: index <= currPosition ? 1 : 0.5,
+              opacity: index < currPosition ? 1 : 0.5,
             }}
           >
             {word}
