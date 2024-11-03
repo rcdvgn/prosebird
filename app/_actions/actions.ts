@@ -35,11 +35,9 @@ export const createScript: any = async (userId: any) => {
   const blankNodes = [emptyNode]; // Nodes now stored separately
 
   try {
-    // Create the script document without the nodes field
     const docRef = await addDoc(collection(db, "scripts"), blankScript);
     const docId = docRef.id;
 
-    // Create the corresponding nodes document in the "nodes" collection
     await setDoc(doc(db, "nodes", docId), { nodes: blankNodes });
 
     return { data: { ...blankScript, nodes: blankNodes }, id: docId };
@@ -151,11 +149,15 @@ export const subscribeToNodes = (localScript: any, onUpdate: any) => {
   return unsubscribeNodes;
 };
 
-export const subscribeToRecentScripts = (onUpdate: (data: any) => void) => {
+export const subscribeToRecentScripts = (
+  userId: string,
+  onUpdate: (data: any) => void
+) => {
   const scriptsCollection = collection(db, "scripts");
 
   const q = query(
     scriptsCollection,
+    where("createdBy", "==", userId),
     orderBy("lastModified", "desc"),
     limit(10)
   );

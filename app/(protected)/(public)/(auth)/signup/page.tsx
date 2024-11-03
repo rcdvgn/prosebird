@@ -31,6 +31,7 @@ const SignUp: React.FC = () => {
           <input
             type="email"
             value={email}
+            className="bg-transparent ring-1 ring-foreground-primary"
             onChange={(e) => setEmail(e.target.value)}
             required
           />
@@ -40,6 +41,7 @@ const SignUp: React.FC = () => {
           <input
             type="password"
             value={password}
+            className="bg-transparent ring-1 ring-foreground-primary"
             onChange={(e) => setPassword(e.target.value)}
             required
           />

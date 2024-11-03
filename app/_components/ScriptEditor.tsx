@@ -3,13 +3,18 @@
 import { useRef, useState, useEffect } from "react";
 import ScriptArea from "./ScriptArea";
 import ScriptAreaInfo from "./ScriptAreaInfo";
+import { useRouter } from "next/navigation";
 
 import { StarIcon, ScriptIcon, PlayIcon, SearchIcon } from "../_assets/icons";
 import { useScriptEditor } from "@/app/_contexts/ScriptEditorContext";
+import { useAuth } from "@/app/_contexts/AuthContext";
 
 export default function ScriptEditor() {
   const { script, setScript } = useScriptEditor();
   const scriptData = script.data;
+  const { user } = useAuth();
+
+  const router = useRouter();
 
   const [isSpellCheckEnabled, setIsSpellCheckEnabled] = useState(false);
 
@@ -39,6 +44,29 @@ export default function ScriptEditor() {
       if (documentTitleRef.current) {
         documentTitleRef.current.blur();
       }
+    }
+  };
+
+  const handlePresent = async () => {
+    try {
+      const res = await fetch("/api/presentation/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          script: script,
+          userId: user.id,
+        }),
+      });
+
+      if (!res.ok) {
+        const { error } = await res.json();
+        throw new Error(error || "Failed to create presentation");
+      }
+
+      const presentationCode = await res.text();
+      router.push(`/p/${presentationCode}`);
+    } catch (error: any) {
+      console.error(error.message);
     }
   };
 
@@ -110,9 +138,9 @@ export default function ScriptEditor() {
             ></div>
           </div>
           <button className="btn-2-md">Share</button>
-          <button className="btn-1-md flex gap-2">
+          <button className="btn-1-md flex gap-2" onClick={handlePresent}>
             <PlayIcon className="fill-text-primary" />
-            <span className="">Launch</span>
+            <span className="">Present</span>
           </button>
         </div>
       </div>

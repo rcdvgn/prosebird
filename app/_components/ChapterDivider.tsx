@@ -1,8 +1,11 @@
 import { AddIcon } from "../_assets/icons";
 
 import { useScriptEditor } from "@/app/_contexts/ScriptEditorContext";
+import { useAuth } from "@/app/_contexts/AuthContext";
 
 export default function ChapterDivider({ position }: { position: number }) {
+  const { user } = useAuth();
+
   const { script, addNode } = useScriptEditor();
   const scriptData = script.data;
 
@@ -20,7 +23,7 @@ export default function ChapterDivider({ position }: { position: number }) {
           } h-1.5 border-stroke border-x-[1px] border-t-[1px] rounded-sm`}
         ></div>
         <button
-          onClick={() => addNode(position)}
+          onClick={() => addNode(position, user)}
           className="absolute top-0 bottom-0 right-0 left-0 m-auto h-fit w-fit btn-2-sm"
         >
           <AddIcon className="fill-text-primary w-2" />

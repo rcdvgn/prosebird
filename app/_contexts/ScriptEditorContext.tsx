@@ -1,3 +1,5 @@
+"use client";
+
 import React, {
   createContext,
   useContext,
@@ -26,7 +28,7 @@ export const emptyNode: ScriptNode = {
   id: "",
   title: "New Chapter",
   paragraph: "",
-  speaker: "You",
+  speaker: "",
 };
 
 const ScriptEditorContext = createContext<any>(undefined);
@@ -45,9 +47,10 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
     return !cond;
   };
 
-  const addNode = (position: number) => {
+  const addNode = (position: number, user: any) => {
     const newNode: ScriptNode = {
       ...emptyNode,
+      speaker: user.id,
       id: uuidv4(),
     };
 

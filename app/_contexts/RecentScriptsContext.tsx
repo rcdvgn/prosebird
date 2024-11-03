@@ -5,6 +5,7 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
+import { useAuth } from "./AuthContext";
 import { subscribeToRecentScripts } from "../_actions/actions"; // Import the action
 import { getScriptPeople } from "../_actions/actions";
 // Define the type for the script object
@@ -31,12 +32,14 @@ export const RecentScriptsProvider = ({
 }: {
   children: ReactNode;
 }) => {
+  const { user } = useAuth();
   const [recentlyModified, setRecentlyModified] = useState<Script[] | null>(
     null
   );
 
   useEffect(() => {
     const unsubscribe = subscribeToRecentScripts(
+      user.id,
       async (recentScripts: Script[]) => {
         const scriptsWithPeople = await Promise.all(
           recentScripts.map(async (script: any) => {
