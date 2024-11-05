@@ -12,6 +12,7 @@
     "@tailwindcss/container-queries": "^0.1.1",
     "@types/uuid": "^10.0.0",
     "firebase": "^10.13.2",
+    "hashkit": "^1.0.0",
     "lodash": "^4.17.21",
     "next": "14.2.13",
     "pusher": "^5.2.0",

@@ -157,7 +157,7 @@ export const subscribeToRecentScripts = (
 
   const q = query(
     scriptsCollection,
-    where("createdBy", "==", userId),
+    // where("createdBy", "==", userId),
     orderBy("lastModified", "desc"),
     limit(10)
   );

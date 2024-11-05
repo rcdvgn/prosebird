@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 import { db } from "@/app/_config/fireabase"; // Firebase config file
 import { doc, getDoc } from "firebase/firestore";
 
+import { decode } from "@/app/_utils/idEncoder";
+
 export async function POST(request: Request) {
   try {
     const { presentationCode } = await request.json();
@@ -14,12 +16,17 @@ export async function POST(request: Request) {
       );
     }
 
+    const docId: any = decode(presentationCode);
+    console.log("Decoded ID:", docId);
+
     const docRef = doc(db, "presentations", presentationCode);
     const docSnap = await getDoc(docRef);
 
-    if (!docSnap.exists() || docSnap.data().status !== "active") {
+    if (!docSnap.exists()) {
       return NextResponse.json({ presentation: null }, { status: 200 });
     }
+
+    // console.log(docSnap.data());
 
     return NextResponse.json({ presentation: docSnap.data() }, { status: 200 });
   } catch (error) {

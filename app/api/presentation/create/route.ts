@@ -20,16 +20,14 @@ import {
 import formatScript from "@/app/_lib/formatScript";
 import { NextResponse } from "next/server";
 
+import { encode } from "@/app/_utils/idEncoder";
+
 export async function POST(request: Request) {
   try {
     const { script, userId } = await request.json();
 
     const presentationsRef = collection(db, "presentations");
-    const q = query(
-      presentationsRef,
-      where("host", "==", userId),
-      where("status", "==", "active")
-    );
+    const q = query(presentationsRef, where("host", "==", userId));
     const querySnapshot = await getDocs(q);
 
     if (!querySnapshot.empty) {
@@ -41,18 +39,22 @@ export async function POST(request: Request) {
 
     const formattedScript = formatScript(script.data.nodes);
 
+    // console.log("formatted script: " + formattedScript);
+
     const presentation = {
       createdAt: serverTimestamp(),
       host: userId,
-      status: "active",
-      script: formattedScript,
-      code: script.id,
+      nodes: formattedScript,
+      scriptId: script.id,
     };
 
     const docRef = await addDoc(presentationsRef, presentation);
-    const presentationCode = docRef.id;
+    const docId = docRef.id;
 
-    return new Response(presentationCode); // Send as plain text
+    const presentationCode: any = encode(docId);
+    console.log("Encoded ID:", presentationCode);
+
+    return new Response(docId);
   } catch (error) {
     console.error("Error creating presentation:", error);
     return NextResponse.json(

@@ -8,6 +8,7 @@ import SpeechRecognition, {
 // import { useScriptEditor } from "@/app/_contexts/ScriptEditorContext";
 import { useAuth } from "@/app/_contexts/AuthContext";
 import { pusherClient } from "@/app/_config/pusher";
+import calculateTimestamps from "@/app/_lib/addTimestamps";
 
 export default function Page({
   params,
@@ -20,7 +21,10 @@ export default function Page({
   const { user } = useAuth();
 
   const [presentation, setPresentation] = useState<any>(null);
-  const [presentationScript, setPresentationScript] = useState<any>(null);
+  const [wordsWithTimestamps, setWordsWithTimestamps] = useState<any>(null);
+  const [containerWidth, setContainerWidth] = useState<any>(520);
+  const [speedMultiplier, setSpeedMultiplier] = useState<any>(1);
+  const [totalDuration, setTotalDuration] = useState<any>(null);
 
   const [currPosition, setCurrPosition] = useState(0);
   const [error, setError] = useState<string | null>(null);
@@ -45,7 +49,6 @@ export default function Page({
     SpeechRecognition.stopListening();
   };
 
-  // Check if the presentation code is valid
   useEffect(() => {
     const validatePresentation = async () => {
       try {
@@ -77,19 +80,24 @@ export default function Page({
     }
   }, [browserSupportsSpeechRecognition]);
 
-  // Update presentation progress in Firestore
   useEffect(() => {
     if (!transcript || !presentation || transcript.length === 0) return;
 
     const updatePresentation = async () => {
       try {
+        // console.log(
+        //   presentationCode,
+        //   currPosition,
+        //   presentation?.nodes.words,
+        //   transcript
+        // );
         const response = await fetch("/api/presentation/update", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             presentationCode: presentationCode,
             currentPosition: currPosition,
-            nodes: presentation?.script,
+            words: presentation?.nodes.words,
             userId: user.id,
             transcript: transcript,
           }),
@@ -106,10 +114,9 @@ export default function Page({
     updatePresentation();
   }, [transcript, presentation]);
 
-  // Subscribe to Pusher updates
   useEffect(() => {
     if (!presentation) return;
-    console.log(presentation);
+    // console.log(presentation);
 
     pusherClient.subscribe(presentationCode);
 
@@ -123,48 +130,31 @@ export default function Page({
   }, [presentation, presentationCode]);
 
   useEffect(() => {
-    console.log(currPosition);
-  }, [currPosition]);
+    const fetchWordsWithTimestamps = async () => {
+      try {
+        if (presentation) {
+          const { scriptWithTimestamps, totalDuration } =
+            await calculateTimestamps(
+              presentation.nodes.words,
+              presentation.nodes.chapters,
+              containerWidth,
+              speedMultiplier
+            );
+          // console.log(scriptWithTimestamps);
+          setTotalDuration(totalDuration);
+          setWordsWithTimestamps(scriptWithTimestamps);
+        }
+      } catch (error) {
+        console.error("Error fetching words with timestamps:", error);
+      }
+    };
 
-  const renderScript = (script: any) => {
-    if (!presentation || currPosition === null) return null;
-
-    const allWords = script.flatMap((node: any) =>
-      Object.values(node.paragraph)
-    );
-
-    return (
-      <div
-        style={{
-          width: "500px",
-          display: "flex",
-          flexWrap: "wrap",
-          gap: "5px",
-          lineHeight: "160%",
-          fontSize: "36px",
-        }}
-      >
-        {allWords.map((word: any, index: any) => (
-          <span
-            key={index}
-            style={{
-              opacity: index < currPosition ? 1 : 0.5,
-            }}
-          >
-            {word}
-          </span>
-        ))}
-      </div>
-    );
-  };
-
-  if (!presentation || error) {
-    return <div>{error}</div>;
-  }
+    fetchWordsWithTimestamps();
+  }, [presentation, containerWidth, speedMultiplier]);
 
   return (
     <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <h1>{`Speech Guided Script #${presentationCode}`}</h1>
+      <h1>{`Current position ${currPosition}`}</h1>
       <div style={{ marginTop: "20px" }}>
         <button onClick={handleStartListening} disabled={listening}>
           Start Listening
@@ -176,7 +166,45 @@ export default function Page({
       <div style={{ marginTop: "20px" }}>
         <h2>Last Spoken Word: {interimTranscript}</h2>
       </div>
-      {renderScript(presentation?.script)}
+      <div
+        className="ring-1 ring-blue-500 text-left"
+        style={{
+          width: containerWidth + "px",
+        }}
+      >
+        {/* {wordsWithTimestamps &&
+          Object.values(wordsWithTimestamps).map((item: any, index: any) => (
+            <span
+              key={index}
+              style={{
+                opacity: index < currPosition ? 1 : 0.5,
+              }}
+            >
+              {index === 0 ? item.word : " " + item.word}
+            </span>
+          ))} */}
+
+        {wordsWithTimestamps &&
+          Object.values(wordsWithTimestamps).map(
+            (line: any, lineIndex: any) => (
+              <div key={lineIndex} className="ring-1 ring-red-500">
+                {line.map((wordObject: any, wordIndex: any) => (
+                  <span
+                    key={wordIndex}
+                    style={{
+                      lineHeight: "160%",
+                      fontSize: "36px",
+                      opacity: wordObject.index < currPosition ? 1 : 0.5,
+                    }}
+                  >
+                    {/* {wordIndex > 0 ? " " : "" + wordObject.word} */}
+                    {wordIndex === 0 ? wordObject.word : " " + wordObject.word}
+                  </span>
+                ))}
+              </div>
+            )
+          )}
+      </div>
     </div>
   );
 }

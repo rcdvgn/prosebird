@@ -10,13 +10,6 @@ const normalizeWord = (word: string): string => {
     .toLowerCase();
 };
 
-function formatScript(nodes: any) {
-  return nodes.reduce((acc: any, node: any) => {
-    Object.assign(acc, node.paragraph);
-    return acc;
-  }, {});
-}
-
 const checkMatch = (lastSpokenWords: any, expectedWordsWindow: any): any => {
   // console.log(lastSpokenWords, expectedWordsWindow);
   const normalizedSpokenWords = lastSpokenWords.map((word: any) =>
@@ -33,14 +26,14 @@ const checkMatch = (lastSpokenWords: any, expectedWordsWindow: any): any => {
       .slice(normalizedSpokenWords.length - numOfNormalizedExpectedWords)
       .join(" ");
 
-    console.log("Spoken word: " + normalizedSpokenWord);
-    console.log("Expected word: " + normalizedExpectedWord);
+    // console.log("Spoken word: " + normalizedSpokenWord);
+    // console.log("Expected word: " + normalizedExpectedWord);
 
     if (normalizedSpokenWord === normalizedExpectedWord) {
-      console.log("Match! " + position);
+      // console.log("Match! " + position);
       return position;
     }
-    console.log("No match");
+    // console.log("No match");
   }
 
   return undefined;
@@ -48,30 +41,31 @@ const checkMatch = (lastSpokenWords: any, expectedWordsWindow: any): any => {
 
 export default function matchToScript(
   currentPosition: number,
-  nodes: ScriptNode[],
+  words: any,
   transcript: string
 ): number {
-  const fullScript = formatScript(nodes);
   const spokenWords = transcript.split(" ");
-  let newcurrentPosition = currentPosition;
+  let newCurrentPosition = currentPosition;
   let matched = false;
+
+  console.log(words);
 
   const lastSpokenWords = spokenWords.slice(-3);
 
-  if (newcurrentPosition < Object.keys(fullScript).length) {
-    const expectedWordsWindow = Object.keys(fullScript)
-      .slice(newcurrentPosition, newcurrentPosition + 3)
-      .map((key, index: any) => ({
-        word: normalizeWord(fullScript[key]),
-        position: parseInt(index, 10),
+  if (newCurrentPosition < words.length) {
+    const expectedWordsWindow = words
+      .slice(newCurrentPosition, newCurrentPosition + 3)
+      .map((wordObject: any, index: any) => ({
+        word: normalizeWord(wordObject.word),
+        position: index,
       }));
 
     const matchIndex = checkMatch(lastSpokenWords, expectedWordsWindow);
     if (matchIndex !== undefined) {
-      newcurrentPosition += matchIndex;
+      newCurrentPosition += matchIndex;
       matched = true;
     }
   }
 
-  return matched ? newcurrentPosition + 1 : currentPosition;
+  return matched ? words[newCurrentPosition + 1].index : currentPosition;
 }

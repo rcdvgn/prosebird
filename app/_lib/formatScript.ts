@@ -1,19 +1,30 @@
+import splitWithSpaces from "../_utils/splitWithSpaces";
+
 export default function formatScript(nodes: any) {
-  let counter = -1;
+  const words: any = [];
+  const chapters: any = {};
+  let wordIndex = 0;
 
-  const formattedScript = nodes.map((node: any) => {
-    const words = node.paragraph
-      .split(" ")
-      .reduce((acc: { [key: number]: string }, word: string) => {
-        counter++;
-        acc[counter] = word;
-        return acc;
-      }, {});
+  nodes.forEach((entry: any) => {
+    const script = entry.paragraph.trim().split(/\s+/);
+    // const script = splitWithSpaces(entry.paragraph.trim());
 
-    return { ...node, paragraph: words };
+    chapters[wordIndex] = {
+      title: entry.title,
+      speaker: entry.speaker,
+    };
+
+    script.forEach((word: any) => {
+      words.push({
+        word: word,
+        index: wordIndex,
+      });
+      wordIndex++;
+    });
   });
 
-  console.log("formattedScript: " + formattedScript);
-
-  return formattedScript;
+  return {
+    words,
+    chapters,
+  };
 }
