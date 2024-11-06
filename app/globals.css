@@ -3,19 +3,19 @@
 @tailwind utilities;
 
 :root {
-  --background-primary: #0a0b0e;
+  --background-primary: #0c0c0c;
 
   --text-primary: #ffffff;
   --text-secondary: #a9aebc;
   --text-danger: #b51b1d;
 
-  --foreground-primary: #1f222e;
+  --foreground-primary: #141414;
   --foreground-secondary: #17111d;
   --foreground-hover: #19151e;
 
   --stroke: #251d30;
   --brand: #1044ee;
-  --border: #251a30;
+  --border: #292929;
 }
 
 /* @media (prefers-color-scheme: dark) {

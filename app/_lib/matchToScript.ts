@@ -48,7 +48,7 @@ export default function matchToScript(
   let newCurrentPosition = currentPosition;
   let matched = false;
 
-  console.log(words);
+  // console.log(words);
 
   const lastSpokenWords = spokenWords.slice(-3);
 

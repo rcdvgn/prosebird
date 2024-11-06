@@ -1,7 +1,7 @@
 "use client";
 import "regenerator-runtime/runtime";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
@@ -9,6 +9,7 @@ import SpeechRecognition, {
 import { useAuth } from "@/app/_contexts/AuthContext";
 import { pusherClient } from "@/app/_config/pusher";
 import calculateTimestamps from "@/app/_lib/addTimestamps";
+import Scrollbar from "@/app/_components/Scrollbar";
 
 export default function Page({
   params,
@@ -28,6 +29,33 @@ export default function Page({
 
   const [currPosition, setCurrPosition] = useState(0);
   const [error, setError] = useState<string | null>(null);
+
+  const elapsedTime = wordsWithTimestamps
+    ? wordsWithTimestamps[currPosition].timestamp
+    : null;
+
+  const updatePresentation = async (targetPosition: any) => {
+    try {
+      const response = await fetch("/api/presentation/update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          presentationCode: presentationCode,
+          currentPosition: currPosition,
+          targetPosition: targetPosition,
+          words: presentation?.nodes.words,
+          userId: user.id,
+          transcript: transcript,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status} - ${response.statusText}`);
+      }
+    } catch (error) {
+      console.error("Error updating presentation:", error);
+    }
+  };
 
   const {
     transcript,
@@ -83,35 +111,7 @@ export default function Page({
   useEffect(() => {
     if (!transcript || !presentation || transcript.length === 0) return;
 
-    const updatePresentation = async () => {
-      try {
-        // console.log(
-        //   presentationCode,
-        //   currPosition,
-        //   presentation?.nodes.words,
-        //   transcript
-        // );
-        const response = await fetch("/api/presentation/update", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            presentationCode: presentationCode,
-            currentPosition: currPosition,
-            words: presentation?.nodes.words,
-            userId: user.id,
-            transcript: transcript,
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error(`Error: ${response.status} - ${response.statusText}`);
-        }
-      } catch (error) {
-        console.error("Error updating presentation:", error);
-      }
-    };
-
-    updatePresentation();
+    updatePresentation(null);
   }, [transcript, presentation]);
 
   useEffect(() => {
@@ -153,58 +153,124 @@ export default function Page({
   }, [presentation, containerWidth, speedMultiplier]);
 
   return (
-    <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <h1>{`Current position ${currPosition}`}</h1>
-      <div style={{ marginTop: "20px" }}>
-        <button onClick={handleStartListening} disabled={listening}>
-          Start Listening
-        </button>
-        <button onClick={handleStopListening} disabled={!listening}>
-          Stop Listening
-        </button>
-      </div>
-      <div style={{ marginTop: "20px" }}>
-        <h2>Last Spoken Word: {interimTranscript}</h2>
-      </div>
-      <div
-        className="ring-1 ring-blue-500 text-left"
-        style={{
-          width: containerWidth + "px",
-        }}
-      >
-        {/* {wordsWithTimestamps &&
-          Object.values(wordsWithTimestamps).map((item: any, index: any) => (
-            <span
-              key={index}
-              style={{
-                opacity: index < currPosition ? 1 : 0.5,
-              }}
-            >
-              {index === 0 ? item.word : " " + item.word}
-            </span>
-          ))} */}
+    <div className="flex relative h-full">
+      <div className="w-[275px]"></div>
 
-        {wordsWithTimestamps &&
-          Object.values(wordsWithTimestamps).map(
-            (line: any, lineIndex: any) => (
-              <div key={lineIndex} className="ring-1 ring-red-500">
-                {line.map((wordObject: any, wordIndex: any) => (
-                  <span
-                    key={wordIndex}
-                    style={{
-                      lineHeight: "160%",
-                      fontSize: "36px",
-                      opacity: wordObject.index < currPosition ? 1 : 0.5,
-                    }}
-                  >
-                    {/* {wordIndex > 0 ? " " : "" + wordObject.word} */}
-                    {wordIndex === 0 ? wordObject.word : " " + wordObject.word}
-                  </span>
-                ))}
-              </div>
-            )
-          )}
+      <ScriptContainer
+        containerWidth={containerWidth}
+        wordsWithTimestamps={wordsWithTimestamps}
+        updatePresentation={updatePresentation}
+        currPosition={currPosition}
+        totalDuration={totalDuration}
+        elapsedTime={elapsedTime}
+      />
+
+      <div className="w-[275px]"></div>
+      <div className="w-full h-56 fixed bottom-0 bg-gradient-to-t from-background-primary to-background-primary/0 pointer-events-none"></div>
+      <div className="w-full pb-[10px] px-[10px] fixed bottom-0">
+        <ControlBar />
       </div>
     </div>
+  );
+}
+
+function ControlBar() {
+  return (
+    <div className="bg-foreground-primary h-16 rounded-[10px] border-[1px] border-border"></div>
+  );
+}
+
+// import { useAutoscroll } from "@/app/_contexts/AutoScrollContext";
+
+function ScriptContainer({
+  containerWidth,
+  wordsWithTimestamps,
+  updatePresentation,
+  currPosition,
+  totalDuration,
+  elapsedTime,
+}: {
+  containerWidth: any;
+  wordsWithTimestamps: any;
+  updatePresentation: any;
+  currPosition: any;
+  totalDuration: any;
+  elapsedTime: any;
+}) {
+  const [scrollbarHeight, setScrollbarHeight] = useState(0);
+
+  // const { isAutoscrollOn, setIsAutoscrollOn } = useAutoscroll()
+  const scriptContainer = useRef<HTMLDivElement | null>(null);
+  const scrollContainer = useRef<HTMLDivElement | null>(null);
+
+  const calculateScrollbarHeight = () => {
+    if (scrollContainer.current && scriptContainer.current) {
+      const containerHeight = scrollContainer.current.clientHeight;
+      const contentHeight = scriptContainer.current.scrollHeight;
+
+      const newScrollbarHeight =
+        (containerHeight / contentHeight) * containerHeight;
+      setScrollbarHeight(newScrollbarHeight);
+    }
+  };
+
+  const textSize = "0px"; // placeholder CHANGE LATER
+
+  useLayoutEffect(() => {
+    calculateScrollbarHeight();
+  }, [wordsWithTimestamps, textSize]);
+
+  return (
+    <>
+      <div
+        ref={scrollContainer}
+        className="grow h-full flex flex-col items-center ring-1 ring-blue-500  shrink-0 overflow-hidden relative"
+      >
+        <div
+          ref={scriptContainer}
+          className="absolute border-[1px] border-red-500 text-left m-auto left-0 right-0 
+          top-0
+          "
+          style={{
+            width: containerWidth + "px",
+          }}
+        >
+          {wordsWithTimestamps &&
+            Object.values(wordsWithTimestamps).map(
+              (line: any, lineIndex: any) => (
+                <div key={lineIndex} className="">
+                  {line.map((wordObject: any, wordIndex: any) => (
+                    <span
+                      key={wordIndex}
+                      style={{
+                        lineHeight: "160%",
+                        fontSize: "36px",
+                      }}
+                      onClick={() => updatePresentation(wordObject.index)}
+                      className={`transtion-all transition-100 cursor-pointer font-medium hover:opacity-100 hover:font-semibold ${
+                        wordObject.index < currPosition
+                          ? "opacity-100"
+                          : "opacity-40 medium"
+                      }`}
+                    >
+                      {wordIndex === 0
+                        ? wordObject.word
+                        : " " + wordObject.word}
+                    </span>
+                  ))}
+                </div>
+              )
+            )}
+        </div>
+      </div>
+      <Scrollbar
+        calculateScrollbarHeight={calculateScrollbarHeight}
+        scrollContainer={scrollContainer}
+        scriptContainer={scriptContainer}
+        scrollbarHeight={scrollbarHeight}
+        elapsedTime={elapsedTime}
+        totalDuration={totalDuration}
+      />
+    </>
   );
 }

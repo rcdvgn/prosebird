@@ -6,8 +6,14 @@ import matchToScript from "@/app/_lib/matchToScript";
 
 export async function POST(request: Request) {
   try {
-    const { presentationCode, currentPosition, words, userId, transcript } =
-      await request.json();
+    const {
+      presentationCode,
+      currentPosition,
+      targetPosition,
+      words,
+      userId,
+      transcript,
+    } = await request.json();
 
     // const docRef = doc(db, "presentations", presentationCode);
     // const docSnap = await getDoc(docRef);
@@ -19,9 +25,9 @@ export async function POST(request: Request) {
     //   );
     // }
 
-    // console.log("sgdfgfdg");
-
-    const newPosition = matchToScript(currentPosition, words, transcript);
+    const newPosition = targetPosition
+      ? targetPosition
+      : matchToScript(currentPosition, words, transcript);
     // console.log(newPosition);
 
     if (newPosition !== currentPosition) {
@@ -29,7 +35,6 @@ export async function POST(request: Request) {
         presentationCode,
         "update-position",
         newPosition
-        // script[newPosition].timestamp
       );
     }
 
