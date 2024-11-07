@@ -157,6 +157,22 @@ export function PlayIcon({ className }: { className: any }) {
   );
 }
 
+export function PauseIcon({ className }: { className: string }) {
+  return (
+    <svg
+      className={className}
+      width="17"
+      height="100%"
+      fill="none"
+      viewBox="0 0 17 20"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M0.119385 2.4C0.119385 1.07452 1.11797 0 2.34979 0H4.20847C5.44029 0 6.43888 1.07452 6.43888 2.4V17.6C6.43888 18.9255 5.44029 20 4.20847 20H2.34979C1.11797 20 0.119385 18.9255 0.119385 17.6V2.4Z" />
+      <path d="M10.3421 2.4C10.3421 1.07452 11.3407 0 12.5725 0H14.4312C15.663 0 16.6616 1.07452 16.6616 2.4V17.6C16.6616 18.9255 15.663 20 14.4312 20H12.5725C11.3407 20 10.3421 18.9255 10.3421 17.6V2.4Z" />
+    </svg>
+  );
+}
+
 export function SearchIcon({ className }: { className: any }) {
   return (
     <svg
