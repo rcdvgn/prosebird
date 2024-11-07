@@ -6,7 +6,7 @@ export default function getLineFromIndex(
 
   for (const [key, line] of Object.entries(wordsWithTimestamps) as any) {
     if (line.length > testIndex) {
-      return key;
+      return { nextWordLineKey: key, nextWordWordIndex: testIndex };
     } else {
       testIndex -= line.length;
     }

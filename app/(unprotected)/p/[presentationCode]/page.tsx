@@ -33,7 +33,8 @@ export default function Page({
   const [speedMultiplier, setSpeedMultiplier] = useState<any>(1);
   const [totalDuration, setTotalDuration] = useState<any>(null);
   const [isSeeking, setIsSeeking] = useState(false);
-  const [position, setPosition] = useState(0);
+  const [position, setPosition] = useState<any>(0);
+  const [tempPosition, setTempPosition] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
   const elapsedTime =
@@ -211,7 +212,7 @@ export default function Page({
     // console.log(presentation);
 
     pusherClient.subscribe(presentationCode);
-    if (scrollMode === "dynamic") {
+    if (!timer.isRunning()) {
       pusherClient.bind("update-position", (newPosition: any) => {
         setPosition(newPosition);
       });
@@ -246,15 +247,19 @@ export default function Page({
   }, [presentation, containerWidth, speedMultiplier]);
 
   useEffect(() => {
-    if (scrollMode === "continuous") {
-      const nextWordLineKey = getLineFromIndex(
-        wordsWithTimestamps,
-        position + 1
-      );
+    if (!wordsWithTimestamps || scrollMode === "dynamic") return;
+    const { nextWordLineKey, nextWordWordIndex }: any = getLineFromIndex(
+      wordsWithTimestamps,
+      tempPosition + 1
+    );
 
-      if (nextWordLineKey) {
-        if (elapsedTime >= wordsWithTimestamps[nextWordLineKey].timestamp)
-          updatePresentation(position + 1);
+    if (nextWordLineKey) {
+      if (
+        elapsedTime >=
+        wordsWithTimestamps[nextWordLineKey][nextWordWordIndex].timestamp
+      ) {
+        setTempPosition(tempPosition + 1);
+        updatePresentation(tempPosition + 1);
       }
     }
   }, [elapsedTime]);
@@ -357,7 +362,6 @@ function ScriptContainer({
   const { isAutoscrollOn, setIsAutoscrollOn } = useAutoscroll();
   const [scrollbarHeight, setScrollbarHeight] = useState(0);
 
-  // const { isAutoscrollOn, setIsAutoscrollOn } = useAutoscroll()
   const scriptContainer = useRef<HTMLDivElement | null>(null);
   const scrollContainer = useRef<HTMLDivElement | null>(null);
 
@@ -399,8 +403,7 @@ function ScriptContainer({
       >
         <div
           ref={scriptContainer}
-          className="absolute border-[1px] border-red-500 text-left m-auto left-0 right-0 
-          top-0
+          className="absolute border-[1px] border-red-500 text-left m-auto left-0 right-0
           "
           style={{
             width: containerWidth + "px",
