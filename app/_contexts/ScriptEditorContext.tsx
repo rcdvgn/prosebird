@@ -11,24 +11,15 @@ import { debounce } from "lodash";
 import { v4 as uuidv4 } from "uuid";
 import _ from "lodash";
 
-interface ScriptNode {
-  id: string;
-  title: string;
-  paragraph: string;
-  speaker: string;
-}
-
 import {
   saveScript,
   subscribeToNodes,
   subscribeToScript,
 } from "../_actions/actions";
 
-export const emptyNode: ScriptNode = {
-  id: "",
+export const emptyNode: any = {
   title: "New Chapter",
   paragraph: "",
-  speaker: "",
 };
 
 const ScriptEditorContext = createContext<any>(undefined);
@@ -48,9 +39,9 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const addNode = (position: number, user: any) => {
-    const newNode: ScriptNode = {
+    const newNode: any = {
       ...emptyNode,
-      speaker: user.id,
+      speaker: { id: user.id, isAnonymous: false },
       id: uuidv4(),
     };
 

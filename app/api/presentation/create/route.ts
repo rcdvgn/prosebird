@@ -37,22 +37,22 @@ export async function POST(request: Request) {
       );
     }
 
-    const formattedScript = formatScript(script.data.nodes);
-
+    const { formattedScript, guests } = formatScript(script.data.nodes, userId);
     // console.log("formatted script: " + formattedScript);
 
     const presentation = {
       createdAt: serverTimestamp(),
-      host: userId,
+      host: { id: userId, isConnected: false },
       nodes: formattedScript,
       scriptId: script.id,
+      guests: guests,
     };
 
     const docRef = await addDoc(presentationsRef, presentation);
     const docId = docRef.id;
 
-    const presentationCode: any = encode(docId);
-    console.log("Encoded ID:", presentationCode);
+    // const presentationCode: any = encode(docId);
+    // console.log("Encoded ID:", presentationCode);
 
     return new Response(docId);
   } catch (error) {

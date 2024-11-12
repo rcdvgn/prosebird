@@ -8,9 +8,12 @@ export async function POST(request: Request) {
 
     if (targetPosition !== currentPosition) {
       await pusherServer.trigger(
-        presentationCode,
+        `presence-${presentationCode}`,
         "update-position",
-        targetPosition
+        {
+          position: targetPosition,
+          senderId: userId,
+        }
       );
     }
 

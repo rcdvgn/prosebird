@@ -10,5 +10,6 @@ export const pusherServer = new PusherServer({
 });
 
 export const pusherClient = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
+  authEndpoint: "/api/pusher/auth",
   cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
 });
