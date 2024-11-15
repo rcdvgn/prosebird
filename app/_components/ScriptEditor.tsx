@@ -70,6 +70,10 @@ export default function ScriptEditor() {
     }
   };
 
+  const handleShareFile = () => {
+    console.log("Handle file sharing");
+  };
+
   useEffect(() => {
     if (inputContainerRef.current && documentTitleRef.current) {
       documentTitleRef.current.style.width = `${inputContainerRef.current.offsetWidth}px`;
@@ -137,7 +141,9 @@ export default function ScriptEditor() {
               className="-ml-[1px] h-[full] aspect-square rounded-full box-content ring-4 ring-background-primary bg-cover bg-center flex-shrink-0"
             ></div>
           </div>
-          <button className="btn-2-md">Share</button>
+          <button onClick={handleShareFile} className="btn-2-md">
+            Share
+          </button>
           <button className="btn-1-md flex gap-2" onClick={handlePresent}>
             <PlayIcon className="fill-text-primary" />
             <span className="">Present</span>

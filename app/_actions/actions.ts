@@ -30,6 +30,7 @@ export const createScript: any = async (userId: any) => {
     lastModified: Timestamp.now(),
     editors: [],
     viewers: [],
+    guests: [],
   };
 
   const blankNodes = [emptyNode]; // Nodes now stored separately
@@ -228,5 +229,64 @@ export const getScriptPeople = async (
   } catch (error) {
     console.error("Error fetching script people: ", error);
     return { createdBy: null, editors: [], viewers: [] }; // Fallback return
+  }
+};
+
+export const getPeople = async (userIds: any) => {
+  if (userIds.length === 0) {
+    return [];
+  }
+
+  try {
+    const userDocs = await Promise.all(
+      userIds.map(async (id: any) => {
+        const docRef = doc(db, "users", id); // Assume "users" is the collection name
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          return { id: docSnap.id, ...docSnap.data() };
+        } else {
+          console.warn(`No document found for ID: ${id}`);
+          return null; // or handle missing documents as desired
+        }
+      })
+    );
+
+    return userDocs.filter((doc) => doc !== null) as any;
+  } catch (error) {
+    console.error("Error fetching user documents:", error);
+    throw error;
+  }
+};
+
+export const addScriptGuest = async (script: any, newGuest: any) => {
+  const updatedGuests = [...script.data.guests, newGuest];
+
+  try {
+    const docRef = doc(db, "scripts", script.id);
+
+    await updateDoc(docRef, { guests: updatedGuests });
+  } catch (error) {
+    console.error("Error adding guest", error);
+  }
+};
+
+export const changeNodeSpeaker = async (
+  script: any,
+  nodePosition: any,
+  newSpeakerId: any
+) => {
+  const updatedNode = {
+    ...script.data.nodes[nodePosition],
+    speaker: newSpeakerId,
+  };
+  let updatedNodes = [...script.data.nodes];
+  updatedNodes[nodePosition] = updatedNode;
+
+  try {
+    const docRef = doc(db, "nodes", script.id);
+    await updateDoc(docRef, { nodes: updatedNodes });
+  } catch (error) {
+    console.error("Error changing node speaker", error);
   }
 };

@@ -1,5 +1,3 @@
-"use client";
-
 import React, {
   createContext,
   useContext,
@@ -15,6 +13,7 @@ import {
   saveScript,
   subscribeToNodes,
   subscribeToScript,
+  getPeople,
 } from "../_actions/actions";
 
 export const emptyNode: any = {
@@ -28,6 +27,10 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
   const [script, setScript] = useState<any>(null);
   const [isSaved, setIsSaved] = useState(true);
   const [lastSavedScript, setLastSavedScript] = useState<any>(null);
+  const [participants, setParticipants] = useState<any>([]);
+  const [lastFetchedParticipants, setLastFetchedParticipants] = useState<any>(
+    []
+  );
 
   const hasUnsavedChanges = () => {
     const cond = _.isEqual(
@@ -112,6 +115,53 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
     };
   }, [script?.id]);
 
+  useEffect(() => {
+    if (!script) return;
+
+    const editors = script.data.editors || [];
+    const viewers = script.data.viewers || [];
+    const guests = script.data.guests || [];
+    const combinedParticipants = [...editors, ...viewers, ...guests];
+
+    if (!_.isEqual(combinedParticipants, lastFetchedParticipants)) {
+      setLastFetchedParticipants(combinedParticipants);
+
+      const fetchParticipants = async () => {
+        try {
+          const [editorsDocs, viewersDocs] = await Promise.all([
+            getPeople(editors),
+            getPeople(viewers),
+          ]);
+
+          const editorsWithRoles = editorsDocs.map((doc: any) => ({
+            ...doc,
+            role: "editor",
+          }));
+          const viewersWithRoles = viewersDocs.map((doc: any) => ({
+            ...doc,
+            role: "viewer",
+          }));
+
+          // guests handled differently since they are anonymous users
+          const guestsWithRoles = guests.map((doc: any) => ({
+            id: doc,
+            role: "guest",
+          }));
+
+          setParticipants([
+            ...editorsWithRoles,
+            ...viewersWithRoles,
+            ...guestsWithRoles,
+          ]);
+        } catch (error) {
+          console.error("Error fetching participants:", error);
+        }
+      };
+
+      fetchParticipants();
+    }
+  }, [script]);
+
   return (
     <ScriptEditorContext.Provider
       value={{
@@ -121,6 +171,7 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
         addNode,
         deleteNode,
         isSaved,
+        participants,
       }}
     >
       {children}

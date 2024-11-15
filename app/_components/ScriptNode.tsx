@@ -3,6 +3,8 @@ import useAutosizeTextArea from "../_utils/useAutosizeTextArea";
 
 import { useScriptEditor } from "@/app/_contexts/ScriptEditorContext";
 
+import SpeakerPicker from "./SpeakerPicker";
+
 export default function ScriptNode({
   node,
   position,
@@ -19,8 +21,12 @@ export default function ScriptNode({
 
   const [chapterTitle, setChapterTitle] = useState(node.title);
 
+  const speakerPictureRef = useRef<any>(null);
+
   const chapterTitleRef = useRef<HTMLTextAreaElement | null>(null);
   useAutosizeTextArea(chapterTitleRef.current, chapterTitle);
+
+  const [speakerPicker, setSpeakerPicker] = useState<any>(true);
 
   const handleChapterTitleChange = (
     e: React.ChangeEvent<HTMLTextAreaElement>
@@ -81,18 +87,33 @@ export default function ScriptNode({
         setChapterTitle(scriptData.nodes[position].title);
       }
     }
-  }, [scriptData?.nodes[position].title]);
+  }, [script?.data?.nodes[position].title]);
 
   return (
     <div className="w-full p-[10px]">
       <div className="flex items-start justify-start">
         <div className="w-[45px] h-[28px] shrink-0">
-          <div
-            style={{
-              backgroundImage: `url("/pfps/profile1.png")`,
-            }}
-            className="h-full aspect-square rounded-full bg-cover bg-center flex-shrink-0"
-          ></div>
+          <div className="relative h-full">
+            <div
+              ref={speakerPictureRef}
+              onClick={() => {
+                setSpeakerPicker(!speakerPicker);
+              }}
+              style={{
+                backgroundImage: `url("/pfps/profile1.png")`,
+              }}
+              className="cursor-pointer h-full aspect-square rounded-full bg-cover bg-center flex-shrink-0"
+            ></div>
+
+            {speakerPicker && (
+              <SpeakerPicker
+                position={position}
+                speakerPicker={speakerPicker}
+                setSpeakerPicker={setSpeakerPicker}
+                speakerPictureRef={speakerPictureRef}
+              />
+            )}
+          </div>
         </div>
 
         <textarea
