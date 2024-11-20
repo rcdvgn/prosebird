@@ -16,10 +16,7 @@ import {
   getPeople,
 } from "../_actions/actions";
 
-export const emptyNode: any = {
-  title: "New Chapter",
-  paragraph: "",
-};
+import { emptyNode } from "../_utils/emptyNode";
 
 const ScriptEditorContext = createContext<any>(undefined);
 
@@ -143,8 +140,8 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
           }));
 
           // guests handled differently since they are anonymous users
-          const guestsWithRoles = guests.map((doc: any) => ({
-            id: doc,
+          const guestsWithRoles = guests.map((guest: any) => ({
+            id: guest,
             role: "guest",
           }));
 

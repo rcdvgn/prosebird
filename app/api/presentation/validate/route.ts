@@ -1,9 +1,6 @@
 // /app/api/presentation/validate.ts
 import { NextResponse } from "next/server";
-import { db } from "@/app/_config/fireabase"; // Firebase config file
-import { doc, getDoc } from "firebase/firestore";
-
-import { decode } from "@/app/_utils/idEncoder";
+import { getPresentationByCode } from "@/app/_actions/actions";
 
 export async function POST(request: Request) {
   try {
@@ -16,19 +13,13 @@ export async function POST(request: Request) {
       );
     }
 
-    const docId: any = decode(presentationCode);
-    console.log("Decoded ID:", docId);
+    const presentation: any = await getPresentationByCode(presentationCode);
 
-    const docRef = doc(db, "presentations", presentationCode);
-    const docSnap = await getDoc(docRef);
-
-    if (!docSnap.exists()) {
+    if (!presentation) {
       return NextResponse.json({ presentation: null }, { status: 200 });
     }
 
-    // console.log(docSnap.data());
-
-    return NextResponse.json({ presentation: docSnap.data() }, { status: 200 });
+    return NextResponse.json({ presentation }, { status: 200 });
   } catch (error) {
     console.error("Error validating presentation code:", error);
     return NextResponse.json(

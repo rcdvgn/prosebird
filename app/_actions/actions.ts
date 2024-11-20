@@ -1,6 +1,4 @@
-"use client";
-
-import { emptyNode } from "../_contexts/ScriptEditorContext";
+import { emptyNode } from "../_utils/emptyNode";
 
 import {
   collection,
@@ -19,7 +17,10 @@ import {
   documentId,
 } from "firebase/firestore";
 
+import generatePresentationCode from "@/app/_lib/generatePresentationCode";
+
 import { db } from "../_config/fireabase";
+import { error } from "console";
 
 export const createScript: any = async (userId: any) => {
   const blankScript = {
@@ -47,7 +48,32 @@ export const createScript: any = async (userId: any) => {
   }
 };
 
-export async function getScriptData(fileId: string) {
+export async function getScriptAndNodes(fileId: string) {
+  try {
+    const scriptRef = doc(db, "scripts", fileId);
+    const scriptDoc = await getDoc(scriptRef);
+
+    if (!scriptDoc.exists()) {
+      console.error(`Script with ID ${fileId} does not exist.`);
+      return null;
+    }
+
+    const scriptData = scriptDoc.data();
+
+    // Fetch nodes separately from the "nodes" collection
+    const nodesRef = doc(db, "nodes", fileId);
+    const nodesDoc = await getDoc(nodesRef);
+    const nodes = nodesDoc.exists() ? nodesDoc.data().nodes : [];
+
+    // Merge nodes with script data
+    return { id: scriptDoc.id, data: { ...scriptData, nodes } };
+  } catch (error) {
+    console.error("Error fetching script data:", error);
+    return null;
+  }
+}
+
+export async function getNodes(fileId: string) {
   try {
     const scriptRef = doc(db, "scripts", fileId);
     const scriptDoc = await getDoc(scriptRef);
@@ -146,6 +172,20 @@ export const subscribeToNodes = (localScript: any, onUpdate: any) => {
     };
 
     onUpdate(serverScript);
+  });
+  return unsubscribeNodes;
+};
+
+export const getRealtimeNodes = (scriptId: any, onUpdate: any) => {
+  const nodesRef = doc(db, "nodes", scriptId);
+
+  const unsubscribeNodes = onSnapshot(nodesRef, (nodesSnapshot) => {
+    if (nodesSnapshot.exists()) {
+      const latestNodes = nodesSnapshot.data().nodes;
+      onUpdate(latestNodes);
+    } else {
+      console.error("Nodes not found using script id: " + scriptId);
+    }
   });
   return unsubscribeNodes;
 };
@@ -288,5 +328,41 @@ export const changeNodeSpeaker = async (
     await updateDoc(docRef, { nodes: updatedNodes });
   } catch (error) {
     console.error("Error changing node speaker", error);
+  }
+};
+
+export async function generateUniquePresentationCode() {
+  let generatedCode: string;
+  let querySnapshot;
+  const presentationsRef = collection(db, "presentations");
+
+  do {
+    generatedCode = generatePresentationCode();
+    const q = query(presentationsRef, where("code", "==", generatedCode));
+    querySnapshot = await getDocs(q);
+  } while (!querySnapshot.empty);
+
+  return generatedCode;
+}
+
+export const getPresentationByCode = async (presentationCode: string) => {
+  try {
+    const presentationsRef = collection(db, "presentations");
+    const q = query(presentationsRef, where("code", "==", presentationCode));
+    const querySnap = await getDocs(q);
+
+    if (querySnap.empty) {
+      console.error("Presentation not found");
+      return null;
+    }
+
+    const doc = querySnap.docs[0];
+    return {
+      id: doc.id,
+      ...doc.data(),
+    };
+  } catch (error) {
+    console.error("Error getting presentation:", error);
+    throw error;
   }
 };

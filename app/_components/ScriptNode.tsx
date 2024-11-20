@@ -26,7 +26,7 @@ export default function ScriptNode({
   const chapterTitleRef = useRef<HTMLTextAreaElement | null>(null);
   useAutosizeTextArea(chapterTitleRef.current, chapterTitle);
 
-  const [speakerPicker, setSpeakerPicker] = useState<any>(true);
+  const [speakerPicker, setSpeakerPicker] = useState<any>(false);
 
   const handleChapterTitleChange = (
     e: React.ChangeEvent<HTMLTextAreaElement>

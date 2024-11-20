@@ -10,7 +10,7 @@ import { useScriptEditor } from "@/app/_contexts/ScriptEditorContext";
 import { useAuth } from "@/app/_contexts/AuthContext";
 
 export default function ScriptEditor() {
-  const { script, setScript } = useScriptEditor();
+  const { script, setScript, participants } = useScriptEditor();
   const scriptData = script.data;
   const { user } = useAuth();
 
@@ -48,6 +48,11 @@ export default function ScriptEditor() {
   };
 
   const handlePresent = async () => {
+    const participantsIdsAndRoles = participants.map((item: any) => {
+      const { id, role } = item;
+      return { id, role };
+    });
+
     try {
       const res = await fetch("/api/presentation/create", {
         method: "POST",
@@ -55,6 +60,7 @@ export default function ScriptEditor() {
         body: JSON.stringify({
           script: script,
           userId: user.id,
+          scriptParticipants: participantsIdsAndRoles,
         }),
       });
 

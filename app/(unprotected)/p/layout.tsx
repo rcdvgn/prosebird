@@ -1,5 +1,5 @@
 import { AutoscrollProvider } from "@/app/_contexts/AutoScrollContext";
-import { ObserverProvider } from "@/app/_contexts/ObserverContext";
+import { PresentationProvider } from "@/app/_contexts/PresentationContext";
 
 export default function PresentationLayout({
   children,
@@ -7,8 +7,8 @@ export default function PresentationLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ObserverProvider>
+    <PresentationProvider>
       <AutoscrollProvider>{children}</AutoscrollProvider>
-    </ObserverProvider>
+    </PresentationProvider>
   );
 }

@@ -19,42 +19,45 @@ import {
 } from "firebase/firestore";
 import formatScript from "@/app/_lib/formatScript";
 import { NextResponse } from "next/server";
-
-import { encode } from "@/app/_utils/idEncoder";
-
+import { generateUniquePresentationCode } from "@/app/_actions/actions";
 export async function POST(request: Request) {
   try {
-    const { script, userId } = await request.json();
+    const { script, userId, scriptParticipants } = await request.json();
 
     const presentationsRef = collection(db, "presentations");
-    const q = query(presentationsRef, where("host", "==", userId));
-    const querySnapshot = await getDocs(q);
+    // const q = query(presentationsRef, where("host", "==", userId));
+    // const querySnapshot = await getDocs(q);
 
-    if (!querySnapshot.empty) {
-      return NextResponse.json(
-        { error: "You already have an active presentation." },
-        { status: 400 }
-      );
-    }
+    // if (!querySnapshot.empty) {
+    //   return NextResponse.json(
+    //     { error: "You already have an active presentation." },
+    //     { status: 400 }
+    //   );
+    // }
 
-    const { formattedScript, guests } = formatScript(script.data.nodes, userId);
-    // console.log("formatted script: " + formattedScript);
+    const { formattedScript, participants } = formatScript(
+      script.data.nodes,
+      userId,
+      scriptParticipants
+    );
+
+    console.log("formatted script ok");
+    const generatedCode: any = await generateUniquePresentationCode();
+    console.log("generated code ok");
 
     const presentation = {
       createdAt: serverTimestamp(),
       host: { id: userId, isConnected: false },
       nodes: formattedScript,
       scriptId: script.id,
-      guests: guests,
+      participants: participants,
+      code: generatedCode,
     };
 
     const docRef = await addDoc(presentationsRef, presentation);
-    const docId = docRef.id;
+    // const docId = docRef.id;
 
-    // const presentationCode: any = encode(docId);
-    // console.log("Encoded ID:", presentationCode);
-
-    return new Response(docId);
+    return new Response(generatedCode);
   } catch (error) {
     console.error("Error creating presentation:", error);
     return NextResponse.json(

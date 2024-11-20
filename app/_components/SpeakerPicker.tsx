@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { addScriptGuest, changeNodeSpeaker } from "../_actions/actions";
 import { useScriptEditor } from "@/app/_contexts/ScriptEditorContext";
 import OutsideClickHandler from "./OutsideClickHandler";
+import { useAuth } from "../_contexts/AuthContext";
 
 export default function SpeakerPicker({
   position,
@@ -15,6 +16,7 @@ export default function SpeakerPicker({
   setSpeakerPicker: any;
   speakerPictureRef: any;
 }) {
+  const { user } = useAuth();
   const { script, participants } = useScriptEditor();
 
   const addNewUserInput = useRef<any>(null);
@@ -86,6 +88,18 @@ export default function SpeakerPicker({
             }`}
             placeholder="New participant"
           />
+
+          <div
+            onClick={() => {
+              user.id !== script.data.nodes[position].speaker
+                ? handleChangeSpeaker(user.id)
+                : "";
+            }}
+            className="cursor-pointer text-text-primary font-semibold text-base px-4 py-2 hover:bg-brand rounded-[8px] truncate"
+          >
+            {user.firstName} {user.lastName}{" "}
+            {user.id === script.data.nodes[position].speaker ? "•" : ""}
+          </div>
           {participants &&
             participants.map((participant: any, index: any) => {
               return (
@@ -101,6 +115,9 @@ export default function SpeakerPicker({
                   {participant.role === "guest"
                     ? participant.id
                     : `${participant.firstName} ${participant.lastName}`}
+                  {participant.id === script.data.nodes[position].speaker
+                    ? " •"
+                    : ""}
                 </div>
               );
             })}

@@ -1,10 +1,18 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import Pusher from "pusher-js";
-import { useAuth } from "@/app/_contexts/AuthContext";
 
-import GreenRoom from "@/app/_components/GreenRoom";
-import Presentation from "@/app/_components/Presentation";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from "react";
+import { debounce } from "lodash";
+import { v4 as uuidv4 } from "uuid";
+import _ from "lodash";
+import Pusher from "pusher-js";
+
+import { getRealtimeNodes } from "../_actions/actions";
 
 interface PusherMember {
   id: string;
@@ -19,22 +27,26 @@ interface PusherMembers {
   each: (callback: (member: PusherMember) => void) => void;
 }
 
-export default function Page({
-  params,
-}: {
-  params: { presentationCode: string };
-}) {
-  const { presentationCode } = params;
-  const { user } = useAuth();
+const PresentationContext = createContext<any>(undefined);
 
-  const [speaker, setspeaker] = useState<any>(null);
+export const PresentationProvider = ({ children }: { children: ReactNode }) => {
+  const [presentationCode, setPresentationCode] = useState<any>(null);
+  const [script, setScript] = useState<any>(null);
   const [loading, setLoading] = useState<any>(true);
   const [presentation, setPresentation] = useState<any>(null);
-  const [pusherChannel, setPusherChannel] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
+  const [speaker, setspeaker] = useState<any>(null);
+
+  const [realtimeNodes, setRealtimeNodes] = useState<any>(null);
+  const [newerNodesAvailable, setNewerNodesAvailable] = useState<any>(false);
 
   useEffect(() => {
+    console.log(presentationCode);
+    if (!presentationCode) return;
+    if (!presentationCode.length) return;
+
     const validatePresentation = async () => {
+      console.log("Attempting to validate the presentation");
       try {
         const response = await fetch("/api/presentation/validate", {
           method: "POST",
@@ -58,6 +70,24 @@ export default function Page({
 
     validatePresentation();
   }, [presentationCode]);
+
+  useEffect(() => {
+    console.log("presentation is: " + presentation);
+    if (!presentation) return;
+
+    const handleNodesChanges = (latestNodes: any) => {
+      console.log("Most recent nodes version: " + latestNodes);
+
+      setRealtimeNodes(latestNodes);
+    };
+
+    const unsubscribeNodes: any = getRealtimeNodes(
+      presentation?.scriptId,
+      handleNodesChanges
+    );
+
+    return unsubscribeNodes();
+  }, [presentation]);
 
   useEffect(() => {
     if (!presentation || !speaker) return;
@@ -96,7 +126,7 @@ export default function Page({
     // Bind to success and error events for user authentication
     channel.bind("pusher:subscription_succeeded", (members: PusherMembers) => {
       console.log("Successfully subscribed to channel", members);
-      members.each((member) => console.log("Member:", member));
+      members.each((member: any) => console.log("Member:", member));
     });
 
     channel.bind("pusher:member_added", (member: PusherMember) => {
@@ -112,20 +142,29 @@ export default function Page({
     };
   }, [speaker, presentation]);
 
-  if (loading) {
-    return <h1>Loading...</h1>;
+  return (
+    <PresentationContext.Provider
+      value={{
+        presentationCode,
+        setPresentationCode,
+        presentation,
+        error,
+        loading,
+        speaker,
+        setspeaker,
+      }}
+    >
+      {children}
+    </PresentationContext.Provider>
+  );
+};
+
+export const usePresentation = (): any => {
+  const context = useContext(PresentationContext);
+  if (!context) {
+    throw new Error(
+      "usePresentation must be used within a PresentationProvider"
+    );
   }
-
-  return <GreenRoom presentation={presentation} setspeaker={setspeaker} />;
-
-  // return speaker ? (
-  //   <Presentation
-  //     speaker={speaker}
-  //     presentationCode={speaker}
-  //     presentation={presentation}
-  //     pusherClient={pusherClient}
-  //   />
-  // ) : (
-  //   <GreenRoom presentation={presentation} setspeaker={setspeaker} />
-  // );
-}
+  return context;
+};
