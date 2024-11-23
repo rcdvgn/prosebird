@@ -17,10 +17,13 @@ import {
 } from "../_actions/actions";
 
 import { emptyNode } from "../_utils/emptyNode";
+import { useAuth } from "./AuthContext";
 
 const ScriptEditorContext = createContext<any>(undefined);
 
 export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
+  const { user } = useAuth();
+
   const [script, setScript] = useState<any>(null);
   const [isSaved, setIsSaved] = useState(true);
   const [lastSavedScript, setLastSavedScript] = useState<any>(null);
@@ -113,21 +116,26 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
   }, [script?.id]);
 
   useEffect(() => {
-    if (!script) return;
+    if (!script || !user) return;
 
     const editors = script.data.editors || [];
     const viewers = script.data.viewers || [];
     const guests = script.data.guests || [];
-    const combinedParticipants = [...editors, ...viewers, ...guests];
+    const author = script.data.createdBy;
+
+    const combinedParticipants = [...editors, ...viewers, ...guests, author];
 
     if (!_.isEqual(combinedParticipants, lastFetchedParticipants)) {
       setLastFetchedParticipants(combinedParticipants);
 
       const fetchParticipants = async () => {
         try {
-          const [editorsDocs, viewersDocs] = await Promise.all([
-            getPeople(editors),
-            getPeople(viewers),
+          // Fix Promise.all destructuring to match number of promises
+          const [editorsDocs, viewersDocs, authorDoc]: any = await Promise.all([
+            getPeople(editors, []),
+            getPeople(viewers, []),
+            // user.id !== author ? getPeople([author], []) : Promise.resolve([]),
+            getPeople([author], []),
           ]);
 
           const editorsWithRoles = editorsDocs.map((doc: any) => ({
@@ -139,7 +147,11 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
             role: "viewer",
           }));
 
-          // guests handled differently since they are anonymous users
+          // Add author to participants if fetched
+          const authorWithRole = [{ ...authorDoc[0], role: "author" }];
+          // authorDoc.length > 0 ? [{ ...authorDoc[0], role: "author" }] : [];
+
+          // Handle guests
           const guestsWithRoles = guests.map((guest: any) => ({
             id: guest,
             role: "guest",
@@ -148,6 +160,7 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
           setParticipants([
             ...editorsWithRoles,
             ...viewersWithRoles,
+            ...authorWithRole,
             ...guestsWithRoles,
           ]);
         } catch (error) {
@@ -157,7 +170,7 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
 
       fetchParticipants();
     }
-  }, [script]);
+  }, [script, user]);
 
   return (
     <ScriptEditorContext.Provider

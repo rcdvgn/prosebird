@@ -272,27 +272,27 @@ export const getScriptPeople = async (
   }
 };
 
-export const getPeople = async (userIds: any) => {
+export const getPeople = async (userIds: string[], exceptionIds: string[]) => {
   if (userIds.length === 0) {
     return [];
   }
-
   try {
     const userDocs = await Promise.all(
-      userIds.map(async (id: any) => {
-        const docRef = doc(db, "users", id); // Assume "users" is the collection name
+      userIds.map(async (id) => {
+        // Need to explicitly return null for excluded IDs
+        if (exceptionIds.includes(id)) {
+          return null;
+        }
+        const docRef = doc(db, "users", id);
         const docSnap = await getDoc(docRef);
-
         if (docSnap.exists()) {
           return { id: docSnap.id, ...docSnap.data() };
-        } else {
-          console.warn(`No document found for ID: ${id}`);
-          return null; // or handle missing documents as desired
         }
+        console.warn(`No document found for ID: ${id}`);
+        return null;
       })
     );
-
-    return userDocs.filter((doc) => doc !== null) as any;
+    return userDocs.filter((doc) => doc !== null);
   } catch (error) {
     console.error("Error fetching user documents:", error);
     throw error;
@@ -364,5 +364,35 @@ export const getPresentationByCode = async (presentationCode: string) => {
   } catch (error) {
     console.error("Error getting presentation:", error);
     throw error;
+  }
+};
+
+export const changeMemberStatus = async (
+  presentationId: any,
+  presentationParticipants: any,
+  memberId: any,
+  newConnectionStatus: any
+) => {
+  console.log(
+    presentationId,
+    presentationParticipants,
+    memberId,
+    newConnectionStatus
+  );
+
+  const updatedParticipants = presentationParticipants.map((item: any) => {
+    if (item.id === memberId) {
+      return { ...item, isConnected: newConnectionStatus };
+    } else {
+      return item;
+    }
+  });
+
+  try {
+    const docRef = doc(db, "presentations", presentationId);
+
+    await updateDoc(docRef, { participants: updatedParticipants });
+  } catch (error) {
+    console.error("Error updating member connection status:", error);
   }
 };

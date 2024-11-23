@@ -15,7 +15,8 @@ export default function Page({
   const { urlPresentationCode } = params;
 
   // const { user } = useAuth();
-  const { setPresentationCode, loading } = usePresentation();
+  const { setPresentationCode, loading, speaker, participants } =
+    usePresentation();
 
   // const [pusherChannel, setPusherChannel] = useState<any>(null);
 
@@ -30,16 +31,17 @@ export default function Page({
     return <h1>Loading...</h1>;
   }
 
-  return <GreenRoom />;
+  if (speaker) {
+    if (speaker.isConnected) {
+      return <Presentation />;
+    }
+    // else {
+    //   console.log(speaker);
+    //   console.log(participants);
+    // }
+  } else {
+    console.log("no speaker");
+  }
 
-  // return speaker ? (
-  //   <Presentation
-  //     speaker={speaker}
-  //     presentationCode={speaker}
-  //     presentation={presentation}
-  //     pusherClient={pusherClient}
-  //   />
-  // ) : (
-  //   <GreenRoom presentation={presentation} setspeaker={setspeaker} />
-  // );
+  return <GreenRoom />;
 }

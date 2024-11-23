@@ -3,7 +3,7 @@
 export default function formatScript(
   nodes: any,
   userId: any,
-  scriptsParticipants: any
+  scriptParticipants: any
 ) {
   const words: any = [];
   const chapters: any = {};
@@ -34,8 +34,12 @@ export default function formatScript(
     });
   });
 
+  if (!speakers.includes(userId)) {
+    speakers.push(userId);
+  }
+
   const presentationParticipants: any = [];
-  scriptsParticipants.forEach((scriptsParticipant: any) => {
+  scriptParticipants.forEach((scriptsParticipant: any) => {
     if (speakers.includes(scriptsParticipant.id)) {
       presentationParticipants.push({
         ...scriptsParticipant,

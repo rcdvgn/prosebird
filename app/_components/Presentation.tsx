@@ -6,33 +6,26 @@ import React, { useState, useEffect } from "react";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
-import { pusherClient } from "@/app/_config/pusher";
 import calculateTimestamps from "@/app/_lib/addTimestamps";
-import GreenRoom from "@/app/_components/GreenRoom";
 import getLineFromIndex from "@/app/_utils/getLineFromIndex";
 import ScriptContainer from "@/app/_components/ScriptContainer";
 import ActionPanel from "@/app/_components/ActionPanel";
+import { usePresentation } from "../_contexts/PresentationContext";
 
-export default function Presentation({
-  speaker,
-  presentationCode,
-  presentationData,
-  pusherClient,
-}: {
-  speaker: any;
-  presentationCode: any;
-  presentationData: any;
-  pusherClient: any;
-}) {
+export default function Presentation() {
+  const { presentation, presentationCode, speaker, pusherClient } =
+    usePresentation();
+
   const [scrollMode, setScrollMode] = useState<any>("continuous");
   const [continuousElapsedTime, setContinuousElapsedTime] = useState<any>(0);
   const [wordsWithTimestamps, setWordsWithTimestamps] = useState<any>(null);
-  const [containerWidth, setContainerWidth] = useState<any>(520);
-  const [speedMultiplier, setSpeedMultiplier] = useState<any>(1);
   const [totalDuration, setTotalDuration] = useState<any>(null);
   const [isSeeking, setIsSeeking] = useState(false);
   const [position, setPosition] = useState<any>(0);
   const [tempPosition, setTempPosition] = useState(0);
+
+  const containerWidth = 520;
+  const speedMultiplier = 1;
 
   const handleTimerExpire = () => {
     console.log("Time has expired");
@@ -133,7 +126,7 @@ export default function Presentation({
         body: JSON.stringify({
           presentationCode: presentationCode,
           currentPosition: position,
-          words: presentationData.nodes.words,
+          words: presentation.nodes.words,
           userId: speaker.id,
           transcript: transcript,
         }),
@@ -174,14 +167,14 @@ export default function Presentation({
   }, [browserSupportsSpeechRecognition]);
 
   useEffect(() => {
-    if (!transcript || !presentationData || transcript.length === 0) return;
+    if (!transcript || !presentation || transcript.length === 0) return;
 
     dynamicallyUpdatePresentation();
-  }, [transcript, presentationData]);
+  }, [transcript, presentation]);
 
   useEffect(() => {
-    if (!presentationData) return;
-    pusherClient.subscribe(presentationCode);
+    if (!presentation) return;
+    pusherClient.subscribe(`presence-${presentationCode}`);
     pusherClient.bind("update-position", (data: any) => {
       // if continuous, updating elapsedTime consequentially updates position
       if (scrollMode === "continuous") {
@@ -200,18 +193,18 @@ export default function Presentation({
     });
 
     return () => {
-      pusherClient.unsubscribe(presentationCode);
+      pusherClient.unsubscribe(`presence-${presentationCode}`);
     };
-  }, [presentationData, presentationCode]);
+  }, [presentation, presentationCode]);
 
   useEffect(() => {
     const fetchWordsWithTimestamps = async () => {
       try {
-        if (presentationData) {
+        if (presentation) {
           const { scriptWithTimestamps, totalDuration } =
             await calculateTimestamps(
-              presentationData.nodes.words,
-              presentationData.nodes.chapters,
+              presentation.nodes.words,
+              presentation.nodes.chapters,
               containerWidth,
               speedMultiplier
             );
@@ -225,7 +218,7 @@ export default function Presentation({
     };
 
     fetchWordsWithTimestamps();
-  }, [presentationData, containerWidth, speedMultiplier]);
+  }, [presentation, containerWidth, speedMultiplier]);
 
   useEffect(() => {
     if (!wordsWithTimestamps || scrollMode === "dynamic") return;

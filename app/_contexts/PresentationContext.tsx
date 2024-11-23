@@ -12,7 +12,11 @@ import { v4 as uuidv4 } from "uuid";
 import _ from "lodash";
 import Pusher from "pusher-js";
 
-import { getRealtimeNodes } from "../_actions/actions";
+import {
+  getRealtimeNodes,
+  getPeople,
+  changeMemberStatus,
+} from "../_actions/actions";
 
 interface PusherMember {
   id: string;
@@ -37,8 +41,14 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
   const [error, setError] = useState<string | null>(null);
   const [speaker, setspeaker] = useState<any>(null);
 
+  const [participants, setParticipants] = useState<any>([]);
+  const [lastFetchedParticipants, setLastFetchedParticipants] = useState<any>(
+    []
+  );
   const [realtimeNodes, setRealtimeNodes] = useState<any>(null);
   const [newerNodesAvailable, setNewerNodesAvailable] = useState<any>(false);
+
+  const [pusherClient, setPusherClient] = useState<any>(null);
 
   useEffect(() => {
     console.log(presentationCode);
@@ -71,9 +81,16 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
     validatePresentation();
   }, [presentationCode]);
 
+  // const getParticipants = () => {
+  //   if (presentation) {
+  //     setParticipants();
+  //   }
+  // };
+
   useEffect(() => {
-    console.log("presentation is: " + presentation);
     if (!presentation) return;
+
+    console.log(presentation);
 
     const handleNodesChanges = (latestNodes: any) => {
       console.log("Most recent nodes version: " + latestNodes);
@@ -86,13 +103,72 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
       handleNodesChanges
     );
 
-    return unsubscribeNodes();
+    // getParticipants();
+
+    return () => {
+      unsubscribeNodes();
+    };
+  }, [presentation]);
+
+  useEffect(() => {
+    if (!presentation) return;
+
+    const participantsData = presentation.participants || [];
+
+    if (!_.isEqual(participantsData, lastFetchedParticipants)) {
+      setLastFetchedParticipants(participantsData);
+
+      const fetchParticipantDetails = async () => {
+        try {
+          const newParticipantsIds = participantsData.map(
+            (participant: any) => participant.id
+          );
+          const userDocs = await getPeople(newParticipantsIds, []);
+
+          const userDetailsMap = userDocs.reduce((acc, userDoc) => {
+            acc[userDoc.id] = userDoc;
+            return acc;
+          }, {} as Record<string, any>);
+
+          const enrichedParticipants = participantsData.map(
+            (participant: any) => {
+              const userDetails = userDetailsMap[participant.id];
+              if (userDetails) {
+                return {
+                  ...userDetails,
+                  ...participant,
+                };
+              }
+              return participant;
+            }
+          );
+
+          setParticipants(enrichedParticipants);
+        } catch (error) {
+          console.error("Error fetching participant details:", error);
+        }
+      };
+
+      fetchParticipantDetails();
+    }
   }, [presentation]);
 
   useEffect(() => {
     if (!presentation || !speaker) return;
 
-    const pusherClient = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
+    const handleMemberStatus = async (
+      memberId: string,
+      isConnected: boolean
+    ) => {
+      await changeMemberStatus(
+        presentation.id,
+        presentation.participants,
+        memberId,
+        isConnected
+      );
+    };
+
+    const client: any = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
       userAuthentication: {
         endpoint: "/api/pusher/user-auth",
         transport: "ajax",
@@ -118,29 +194,48 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
       cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
     });
 
-    // Sign in the user and handle success/error events
-    pusherClient.signin();
+    setPusherClient(client);
 
-    const channel = pusherClient.subscribe(`presence-${presentationCode}`);
+    // Sign in before subscribing to the channel
+    // client.signin()
+    const channel = client.subscribe(`presence-${presentationCode}`);
 
-    // Bind to success and error events for user authentication
-    channel.bind("pusher:subscription_succeeded", (members: PusherMembers) => {
-      console.log("Successfully subscribed to channel", members);
-      members.each((member: any) => console.log("Member:", member));
+    channel.bind(
+      "pusher:subscription_succeeded",
+      async (members: PusherMembers) => {
+        console.log("Successfully subscribed to channel", members);
+
+        // Set the current speaker's status to connected
+        if (speaker.id === members.myID) {
+          await handleMemberStatus(speaker.id, true);
+        }
+
+        members.each((member: any) => console.log("Member:", member));
+      }
+    );
+
+    channel.bind("pusher:member_added", (member: any) => {
+      console.log("Other member added to channel", member);
     });
 
-    channel.bind("pusher:member_added", (member: PusherMember) => {
-      console.log("Member added to channel", member);
-    });
-
-    channel.bind("pusher:member_removed", (member: PusherMember) => {
+    channel.bind("pusher:member_removed", async (member: any) => {
       console.log("Member removed from channel", member);
+      await handleMemberStatus(member.id, false);
     });
 
     return () => {
-      pusherClient.unsubscribe(`presence-${presentationCode}`);
+      // Set the speaker's status to disconnected on cleanup
+      handleMemberStatus(speaker.id, false).then(() => {
+        client.unsubscribe(`presence-${presentationCode}`);
+        client.disconnect();
+        setPusherClient(null); // Clear the client instance
+      });
     };
-  }, [speaker, presentation]);
+  }, [speaker?.id, presentation?.id]);
+
+  // useEffect(() => {
+  //   console.log(participants);
+  // }, [participants]);
 
   return (
     <PresentationContext.Provider
@@ -152,6 +247,8 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
         loading,
         speaker,
         setspeaker,
+        participants,
+        pusherClient,
       }}
     >
       {children}

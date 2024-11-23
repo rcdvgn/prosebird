@@ -41,13 +41,11 @@ export async function POST(request: Request) {
       scriptParticipants
     );
 
-    console.log("formatted script ok");
     const generatedCode: any = await generateUniquePresentationCode();
-    console.log("generated code ok");
 
     const presentation = {
       createdAt: serverTimestamp(),
-      host: { id: userId, isConnected: false },
+      host: userId,
       nodes: formattedScript,
       scriptId: script.id,
       participants: participants,

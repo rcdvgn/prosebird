@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { usePresentation } from "../_contexts/PresentationContext";
 
 export default function GreenRoom() {
-  const { presentation, setspeaker } = usePresentation();
+  const { setspeaker, participants, speaker } = usePresentation();
   const { user } = useAuth();
   const router = useRouter();
 
@@ -13,17 +13,19 @@ export default function GreenRoom() {
   };
 
   useEffect(() => {
-    if (!user || !presentation) return;
+    if (!user || !participants.length) return;
 
-    if (user.id === presentation?.host.id) {
-      enterPresentation(user);
+    const presentationHost = participants.find((p: any) => p.role === "author");
+
+    if (user.id === presentationHost.id) {
+      speaker?.id !== user.id ? enterPresentation(presentationHost) : "";
     }
-  }, [user]);
+  }, [user, participants]);
 
   return (
     <div className="w-[500px] p-[10px] bg-foreground-primary rounded-[10px] border-[1px] border-border">
-      {presentation &&
-        presentation.participants.map((participant: any, index: any) => {
+      {participants &&
+        participants.map((participant: any, index: any) => {
           return (
             <div
               key={index}
@@ -38,23 +40,23 @@ export default function GreenRoom() {
               ) : participant.role === "guest" ? (
                 <button
                   onClick={() => enterPresentation(participant)}
-                  className="btn-1"
+                  className="btn-1-md"
                 >
-                  {"Join as " + participant.id}
+                  Join
                 </button>
               ) : user?.id === participant.id ? (
                 <button
                   onClick={() => enterPresentation(participant)}
-                  className="btn-1"
+                  className="btn-1-md"
                 >
-                  {"Join as " + participant.id}
+                  Join
                 </button>
               ) : (
                 <button
                   onClick={() => {
                     router.push("/signin");
                   }}
-                  className="btn-1"
+                  className="btn-1-md"
                 >
                   Log-in
                 </button>
