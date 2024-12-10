@@ -396,3 +396,23 @@ export const changeMemberStatus = async (
     console.error("Error updating member connection status:", error);
   }
 };
+
+export const subscribeToPresentation = (presentationId: any, onUpdate: any) => {
+  const presentationRef = doc(db, "presentations", presentationId);
+
+  const unsubscribePresentation = onSnapshot(
+    presentationRef,
+    (presentationSnapshot) => {
+      if (presentationSnapshot.exists()) {
+        const latestPresentation = {
+          ...presentationSnapshot.data(),
+          id: presentationSnapshot.id,
+        };
+        onUpdate(latestPresentation);
+      } else {
+        console.error("Nodes not found using script id: " + presentationId);
+      }
+    }
+  );
+  return unsubscribePresentation;
+};

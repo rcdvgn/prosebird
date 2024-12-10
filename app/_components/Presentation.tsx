@@ -13,7 +13,7 @@ import ActionPanel from "@/app/_components/ActionPanel";
 import { usePresentation } from "../_contexts/PresentationContext";
 
 export default function Presentation() {
-  const { presentation, presentationCode, speaker, pusherClient } =
+  const { presentation, presentationCode, speaker, pusherChannel } =
     usePresentation();
 
   const [scrollMode, setScrollMode] = useState<any>("continuous");
@@ -97,6 +97,7 @@ export default function Presentation() {
     }
   };
 
+  // update presentation if scroll mode is continuous
   const updatePresentation = async (targetPosition: any) => {
     try {
       const response = await fetch("/api/presentation/update", {
@@ -118,6 +119,7 @@ export default function Presentation() {
     }
   };
 
+  // update presentation if scroll mode is dynamic
   const dynamicallyUpdatePresentation = async () => {
     try {
       const response = await fetch("/api/presentation/dynamically-update", {
@@ -160,26 +162,26 @@ export default function Presentation() {
     SpeechRecognition.stopListening();
   };
 
+  // check if browser supports dynamic mode
   useEffect(() => {
     if (!browserSupportsSpeechRecognition) {
       console.log("Browser doesn't support speech recognition.");
     }
   }, [browserSupportsSpeechRecognition]);
 
+  // get and handle pusher messages
   useEffect(() => {
-    if (!transcript || !presentation || transcript.length === 0) return;
-
-    dynamicallyUpdatePresentation();
-  }, [transcript, presentation]);
-
-  useEffect(() => {
-    if (!presentation) return;
-    pusherClient.subscribe(`presence-${presentationCode}`);
-    pusherClient.bind("update-position", (data: any) => {
+    if (!wordsWithTimestamps || !presentation) return;
+    console.log(presentationCode);
+    // pusherClient.subscribe(`presence-${presentationCode}`);
+    pusherChannel.bind("update-position", (data: any) => {
       // if continuous, updating elapsedTime consequentially updates position
       if (scrollMode === "continuous") {
+        console.log(data.senderId);
         // this check prevents a feedback loop since we shouldnt be listening to our own changes in this scroll mode
         if (data.senderId !== speaker.id && wordsWithTimestamps) {
+          console.log("updating time");
+
           const newTimestamp = getTimestampFromIndex(
             wordsWithTimestamps,
             data.position
@@ -191,12 +193,9 @@ export default function Presentation() {
         setPosition(data.position);
       }
     });
+  }, [presentation?.id, presentationCode, wordsWithTimestamps]);
 
-    return () => {
-      pusherClient.unsubscribe(`presence-${presentationCode}`);
-    };
-  }, [presentation, presentationCode]);
-
+  // generate wordsWithTimestamps
   useEffect(() => {
     const fetchWordsWithTimestamps = async () => {
       try {
@@ -218,8 +217,15 @@ export default function Presentation() {
     };
 
     fetchWordsWithTimestamps();
-  }, [presentation, containerWidth, speedMultiplier]);
+  }, [presentation?.nodes, presentation?.id, containerWidth, speedMultiplier]);
 
+  // update presentation if scroll mode is dynamic
+  useEffect(() => {
+    if (!transcript || !presentation || transcript.length === 0) return;
+    dynamicallyUpdatePresentation();
+  }, [transcript, presentation]);
+
+  // update presentation if scroll mode is continuous
   useEffect(() => {
     if (!wordsWithTimestamps || scrollMode === "dynamic") return;
     const { nextWordLineKey, nextWordWordIndex }: any = getLineFromIndex(

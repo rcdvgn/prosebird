@@ -16,6 +16,7 @@ import {
   getRealtimeNodes,
   getPeople,
   changeMemberStatus,
+  subscribeToPresentation,
 } from "../_actions/actions";
 
 interface PusherMember {
@@ -39,7 +40,7 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState<any>(true);
   const [presentation, setPresentation] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
-  const [speaker, setspeaker] = useState<any>(null);
+  const [speaker, setSpeaker] = useState<any>(null);
 
   const [participants, setParticipants] = useState<any>([]);
   const [lastFetchedParticipants, setLastFetchedParticipants] = useState<any>(
@@ -48,7 +49,7 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
   const [realtimeNodes, setRealtimeNodes] = useState<any>(null);
   const [newerNodesAvailable, setNewerNodesAvailable] = useState<any>(false);
 
-  const [pusherClient, setPusherClient] = useState<any>(null);
+  const [pusherChannel, setPusherChannel] = useState<any>(null);
 
   useEffect(() => {
     console.log(presentationCode);
@@ -90,32 +91,10 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (!presentation) return;
 
-    console.log(presentation);
-
-    const handleNodesChanges = (latestNodes: any) => {
-      console.log("Most recent nodes version: " + latestNodes);
-
-      setRealtimeNodes(latestNodes);
-    };
-
-    const unsubscribeNodes: any = getRealtimeNodes(
-      presentation?.scriptId,
-      handleNodesChanges
-    );
-
-    // getParticipants();
-
-    return () => {
-      unsubscribeNodes();
-    };
-  }, [presentation]);
-
-  useEffect(() => {
-    if (!presentation) return;
-
     const participantsData = presentation.participants || [];
 
     if (!_.isEqual(participantsData, lastFetchedParticipants)) {
+      console.log("Change in participants, proceeding to fetch individually");
       setLastFetchedParticipants(participantsData);
 
       const fetchParticipantDetails = async () => {
@@ -144,14 +123,57 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
           );
 
           setParticipants(enrichedParticipants);
+
+          if (speaker) {
+            if (newParticipantsIds.includes(speaker.id)) {
+              const matchedSpeaker = enrichedParticipants.find(
+                (participant: any) => participant.id === speaker.id
+              );
+              setSpeaker(matchedSpeaker || null);
+            } else {
+              setSpeaker(null);
+            }
+          }
         } catch (error) {
           console.error("Error fetching participant details:", error);
         }
       };
 
       fetchParticipantDetails();
+    } else {
+      console.log("No change in participants");
     }
   }, [presentation]);
+
+  useEffect(() => {
+    if (!presentation) return;
+    const handlePresentationChanges: any = (latestPresentation: any) => {
+      console.log("Most recent presentation version: " + latestPresentation);
+
+      setPresentation(latestPresentation);
+    };
+
+    const handleNodesChanges: any = (latestNodes: any) => {
+      console.log("Most recent nodes version: " + latestNodes);
+
+      setRealtimeNodes(latestNodes);
+    };
+
+    const unsubscribePresentation: any = subscribeToPresentation(
+      presentation?.id,
+      handlePresentationChanges
+    );
+
+    const unsubscribeNodes: any = getRealtimeNodes(
+      presentation?.scriptId,
+      handleNodesChanges
+    );
+
+    return () => {
+      unsubscribeNodes();
+      unsubscribePresentation();
+    };
+  }, [presentation?.id]);
 
   useEffect(() => {
     if (!presentation || !speaker) return;
@@ -194,11 +216,10 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
       cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
     });
 
-    setPusherClient(client);
-
     // Sign in before subscribing to the channel
     // client.signin()
     const channel = client.subscribe(`presence-${presentationCode}`);
+    setPusherChannel(channel);
 
     channel.bind(
       "pusher:subscription_succeeded",
@@ -228,7 +249,6 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
       handleMemberStatus(speaker.id, false).then(() => {
         client.unsubscribe(`presence-${presentationCode}`);
         client.disconnect();
-        setPusherClient(null); // Clear the client instance
       });
     };
   }, [speaker?.id, presentation?.id]);
@@ -246,9 +266,9 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
         error,
         loading,
         speaker,
-        setspeaker,
+        setSpeaker,
         participants,
-        pusherClient,
+        pusherChannel,
       }}
     >
       {children}

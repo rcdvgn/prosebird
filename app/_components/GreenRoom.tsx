@@ -4,12 +4,12 @@ import { useRouter } from "next/navigation";
 import { usePresentation } from "../_contexts/PresentationContext";
 
 export default function GreenRoom() {
-  const { setspeaker, participants, speaker } = usePresentation();
+  const { setSpeaker, participants, speaker } = usePresentation();
   const { user } = useAuth();
   const router = useRouter();
 
   const enterPresentation = (participant: any) => {
-    setspeaker(participant);
+    setSpeaker(participant);
   };
 
   useEffect(() => {

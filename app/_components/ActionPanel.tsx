@@ -1,5 +1,9 @@
+"use client";
+
 import ProgressBar from "@/app/_components/ProgressBar";
 import PlayPauseButton from "./PlayPauseButton";
+
+import { usePresentation } from "../_contexts/PresentationContext";
 
 export default function ActionPanel({
   elapsedTime,
@@ -22,6 +26,8 @@ export default function ActionPanel({
   handleTimerRun: any;
   timer: any;
 }) {
+  const { speaker } = usePresentation();
+
   return (
     <div className="flex flex-col bg-foreground-primary h-16 rounded-[10px] border-[1px] border-border">
       <ProgressBar
@@ -39,6 +45,8 @@ export default function ActionPanel({
         }`}</button>
 
         <PlayPauseButton handleTimerRun={handleTimerRun} timer={timer} />
+
+        <p>{speaker.id}</p>
       </div>
     </div>
   );
