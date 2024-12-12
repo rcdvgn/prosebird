@@ -49,7 +49,7 @@ export default function ProgressBar({
       const progressBarRect = progressContainer.current.getBoundingClientRect();
       const maxRight = progressBarRect.width;
 
-      const updateProgressBar = (clientX: number) => {
+      const broadcastProgressBar = (clientX: number) => {
         const newRightPx = Math.max(
           0,
           Math.min(progressBarRect.right - clientX, maxRight)
@@ -62,14 +62,15 @@ export default function ProgressBar({
         handleTimeChange(newElapsedTime);
       };
 
-      updateProgressBar(e.clientX); // Initial setting
+      broadcastProgressBar(e.clientX); // Initial setting
 
       const handleMouseMove = (e: MouseEvent) => {
-        updateProgressBar(e.clientX);
+        broadcastProgressBar(e.clientX);
       };
 
       const handleMouseUp = (e: MouseEvent) => {
         setIsSeeking(false);
+        // broadcastProgress(newPosition, null);
 
         document.removeEventListener("mousemove", handleMouseMove);
         document.removeEventListener("mouseup", handleMouseUp);

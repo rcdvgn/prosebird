@@ -11,17 +11,24 @@ import getLineFromIndex from "@/app/_utils/getLineFromIndex";
 import ScriptContainer from "@/app/_components/ScriptContainer";
 import ActionPanel from "@/app/_components/ActionPanel";
 import { usePresentation } from "../_contexts/PresentationContext";
+import { set } from "lodash";
 
 export default function Presentation() {
-  const { presentation, presentationCode, speaker, pusherChannel } =
-    usePresentation();
+  const {
+    presentation,
+    presentationCode,
+    speaker,
+    pusherChannel,
+    position,
+    setPosition,
+    broadcastProgress,
+  } = usePresentation();
 
   const [scrollMode, setScrollMode] = useState<any>("continuous");
   const [continuousElapsedTime, setContinuousElapsedTime] = useState<any>(0);
   const [wordsWithTimestamps, setWordsWithTimestamps] = useState<any>(null);
   const [totalDuration, setTotalDuration] = useState<any>(null);
   const [isSeeking, setIsSeeking] = useState(false);
-  const [position, setPosition] = useState<any>(0);
   const [tempPosition, setTempPosition] = useState(0);
 
   const containerWidth = 520;
@@ -77,6 +84,8 @@ export default function Presentation() {
     }, 10);
 
     return () => clearInterval(intervalId);
+
+    // maybe remove "isSeeking"
   }, [timer, isSeeking]);
 
   const toggleScrollMode = () => {
@@ -91,54 +100,10 @@ export default function Presentation() {
         wordsWithTimestamps,
         position
       );
+      setTempPosition(position);
       setContinuousElapsedTime(timestampFromIndex);
       handleTimerRun();
       setScrollMode("continuous");
-    }
-  };
-
-  // update presentation if scroll mode is continuous
-  const updatePresentation = async (targetPosition: any) => {
-    try {
-      const response = await fetch("/api/presentation/update", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          presentationCode: presentationCode,
-          currentPosition: position,
-          targetPosition: targetPosition,
-          userId: speaker.id,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status} - ${response.statusText}`);
-      }
-    } catch (error) {
-      console.error("Error updating presentation:", error);
-    }
-  };
-
-  // update presentation if scroll mode is dynamic
-  const dynamicallyUpdatePresentation = async () => {
-    try {
-      const response = await fetch("/api/presentation/dynamically-update", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          presentationCode: presentationCode,
-          currentPosition: position,
-          words: presentation.nodes.words,
-          userId: speaker.id,
-          transcript: transcript,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status} - ${response.statusText}`);
-      }
-    } catch (error) {
-      console.error("Error updating presentation:", error);
     }
   };
 
@@ -169,32 +134,6 @@ export default function Presentation() {
     }
   }, [browserSupportsSpeechRecognition]);
 
-  // get and handle pusher messages
-  useEffect(() => {
-    if (!wordsWithTimestamps || !presentation) return;
-    console.log(presentationCode);
-    // pusherClient.subscribe(`presence-${presentationCode}`);
-    pusherChannel.bind("update-position", (data: any) => {
-      // if continuous, updating elapsedTime consequentially updates position
-      if (scrollMode === "continuous") {
-        console.log(data.senderId);
-        // this check prevents a feedback loop since we shouldnt be listening to our own changes in this scroll mode
-        if (data.senderId !== speaker.id && wordsWithTimestamps) {
-          console.log("updating time");
-
-          const newTimestamp = getTimestampFromIndex(
-            wordsWithTimestamps,
-            data.position
-          );
-          newTimestamp ? handleTimeChange(newTimestamp) : "";
-        }
-        // if dynamic, updating position consequentially updates elapsedTime
-      } else {
-        setPosition(data.position);
-      }
-    });
-  }, [presentation?.id, presentationCode, wordsWithTimestamps]);
-
   // generate wordsWithTimestamps
   useEffect(() => {
     const fetchWordsWithTimestamps = async () => {
@@ -219,11 +158,38 @@ export default function Presentation() {
     fetchWordsWithTimestamps();
   }, [presentation?.nodes, presentation?.id, containerWidth, speedMultiplier]);
 
+  // get and handle pusher messages
+  useEffect(() => {
+    if (!wordsWithTimestamps || !presentation) return;
+    console.log(presentationCode);
+    // pusherClient.subscribe(`presence-${presentationCode}`);
+    pusherChannel.bind("update-position", (data: any) => {
+      // if continuous, updating elapsedTime consequentially updates position
+      if (scrollMode === "continuous") {
+        console.log(data.senderId);
+        // this check prevents a feedback loop since we shouldnt be listening to our own changes in this scroll mode
+        if (data.senderId !== speaker.id) {
+          console.log(data.position);
+
+          const newTimestamp = getTimestampFromIndex(
+            wordsWithTimestamps,
+            data.position
+          );
+          newTimestamp ? handleTimeChange(newTimestamp) : "";
+        }
+
+        // if dynamic, updating position consequentially updates elapsedTime
+      } else {
+        setPosition(data.position);
+      }
+    });
+  }, [presentation?.id, presentationCode, wordsWithTimestamps]);
+
   // update presentation if scroll mode is dynamic
   useEffect(() => {
     if (!transcript || !presentation || transcript.length === 0) return;
-    dynamicallyUpdatePresentation();
-  }, [transcript, presentation]);
+    broadcastProgress(null, transcript);
+  }, [transcript]);
 
   // update presentation if scroll mode is continuous
   useEffect(() => {
@@ -238,11 +204,14 @@ export default function Presentation() {
         elapsedTime >=
         wordsWithTimestamps[nextWordLineKey][nextWordWordIndex].timestamp
       ) {
+        console.log("sdgdfhgfdhdhdfhfbcv");
         setTempPosition(tempPosition + 1);
-        updatePresentation(tempPosition + 1);
+        if (timer.isRunning()) {
+          broadcastProgress(tempPosition + 1, null);
+        }
       }
     }
-  }, [elapsedTime]);
+  }, [continuousElapsedTime]);
 
   return (
     <div className="flex relative h-full">
@@ -251,8 +220,6 @@ export default function Presentation() {
       <ScriptContainer
         containerWidth={containerWidth}
         wordsWithTimestamps={wordsWithTimestamps}
-        updatePresentation={updatePresentation}
-        position={position}
         totalDuration={totalDuration}
         elapsedTime={elapsedTime}
         handleTimeChange={handleTimeChange}

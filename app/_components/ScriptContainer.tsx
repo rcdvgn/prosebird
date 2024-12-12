@@ -2,24 +2,23 @@
 import React, { useState, useRef, useLayoutEffect } from "react";
 import Scrollbar from "./Scrollbar";
 import { useAutoscroll } from "@/app/_contexts/AutoScrollContext";
+import { usePresentation } from "../_contexts/PresentationContext";
 
 export default function ScriptContainer({
   containerWidth,
   wordsWithTimestamps,
-  updatePresentation,
-  position,
   totalDuration,
   elapsedTime,
   handleTimeChange,
 }: {
   containerWidth: any;
   wordsWithTimestamps: any;
-  updatePresentation: any;
-  position: any;
   totalDuration: any;
   elapsedTime: any;
   handleTimeChange: any;
 }) {
+  const { position, broadcastProgress } = usePresentation();
+
   const { isAutoscrollOn, setIsAutoscrollOn } = useAutoscroll();
   const [scrollbarHeight, setScrollbarHeight] = useState(0);
 
@@ -39,7 +38,7 @@ export default function ScriptContainer({
 
   const handleJump = (newPosition: any) => {
     setIsAutoscrollOn(true);
-    updatePresentation(newPosition);
+    broadcastProgress(newPosition, null);
   };
 
   const textSize = "0px"; // placeholder CHANGE LATER

@@ -41,6 +41,7 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
   const [presentation, setPresentation] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [speaker, setSpeaker] = useState<any>(null);
+  const [position, setPosition] = useState<any>(0);
 
   const [participants, setParticipants] = useState<any>([]);
   const [lastFetchedParticipants, setLastFetchedParticipants] = useState<any>(
@@ -50,6 +51,35 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
   const [newerNodesAvailable, setNewerNodesAvailable] = useState<any>(false);
 
   const [pusherChannel, setPusherChannel] = useState<any>(null);
+
+  const broadcastProgress = async (targetPosition: any, transcript: any) => {
+    console.log(targetPosition);
+    const customParams = transcript
+      ? { words: presentation.nodes.words, transcript: transcript }
+      : { targetPosition: targetPosition };
+
+    try {
+      const response = await fetch(
+        `/api/presentation/${transcript ? "dynamically-" : ""}update`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            presentationCode: presentationCode,
+            currentPosition: position,
+            userId: speaker.id,
+            ...customParams,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status} - ${response.statusText}`);
+      }
+    } catch (error) {
+      console.error("Error updating presentation:", error);
+    }
+  };
 
   useEffect(() => {
     console.log(presentationCode);
@@ -269,6 +299,9 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
         setSpeaker,
         participants,
         pusherChannel,
+        position,
+        setPosition,
+        broadcastProgress,
       }}
     >
       {children}
