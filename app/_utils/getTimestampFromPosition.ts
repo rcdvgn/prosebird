@@ -1,4 +1,4 @@
-export default function getTimestampFromIndex(
+export default function getTimestampFromPosition(
   wordsWithTimestamps: any,
   position: any
 ) {

@@ -42,15 +42,10 @@ const checkMatch = (lastSpokenWords: any, expectedWordsWindow: any): any => {
 export default function matchToScript(
   currentPosition: number,
   words: any,
-  transcript: string
-): number {
-  const spokenWords = transcript.split(" ");
+  lastSpokenWords: string
+): any {
   let newCurrentPosition = currentPosition;
   let matched = false;
-
-  // console.log(words);
-
-  const lastSpokenWords = spokenWords.slice(-3);
 
   if (newCurrentPosition < words.length) {
     const expectedWordsWindow = words

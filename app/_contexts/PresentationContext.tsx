@@ -11,6 +11,9 @@ import { debounce } from "lodash";
 import { v4 as uuidv4 } from "uuid";
 import _ from "lodash";
 import Pusher from "pusher-js";
+import calculateTimestamps from "@/app/_lib/addTimestamps";
+
+import getPositionFromTimestamp from "../_utils/getPositionFromTimestamp";
 
 import {
   getRealtimeNodes,
@@ -41,8 +44,12 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
   const [presentation, setPresentation] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [speaker, setSpeaker] = useState<any>(null);
-  const [position, setPosition] = useState<any>(0);
-
+  const [elapsedTime, setElapsedTime] = useState<any>(0);
+  const [scrollMode, setScrollMode] = useState<any>("continuous");
+  const [isSeeking, setIsSeeking] = useState(false);
+  const [wordsWithTimestamps, setWordsWithTimestamps] = useState<any>(null);
+  const [totalDuration, setTotalDuration] = useState<any>(null);
+  const [progress, setProgress] = useState<any>({ line: 0, index: 0 });
   const [participants, setParticipants] = useState<any>([]);
   const [lastFetchedParticipants, setLastFetchedParticipants] = useState<any>(
     []
@@ -52,11 +59,19 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
 
   const [pusherChannel, setPusherChannel] = useState<any>(null);
 
-  const broadcastProgress = async (targetPosition: any, transcript: any) => {
-    console.log(targetPosition);
-    const customParams = transcript
-      ? { words: presentation.nodes.words, transcript: transcript }
-      : { targetPosition: targetPosition };
+  const containerWidth = 520;
+  const speedMultiplier = 1;
+
+  const broadcastProgress = async ({ transcript }: any) => {
+    let customParams = {};
+    if (transcript) {
+      const lastSpokenWords = transcript.split(" ").slice(-3);
+
+      customParams = {
+        words: presentation.nodes.words,
+        lastSpokenWords: lastSpokenWords,
+      };
+    }
 
     try {
       const response = await fetch(
@@ -66,7 +81,8 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             presentationCode: presentationCode,
-            currentPosition: position,
+            currentPosition:
+              wordsWithTimestamps[progress.line][progress.index].position,
             userId: speaker.id,
             ...customParams,
           }),
@@ -81,6 +97,7 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // fetch presentation
   useEffect(() => {
     console.log(presentationCode);
     if (!presentationCode) return;
@@ -112,69 +129,31 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
     validatePresentation();
   }, [presentationCode]);
 
-  // const getParticipants = () => {
-  //   if (presentation) {
-  //     setParticipants();
-  //   }
-  // };
-
+  // generate wordsWithTimestamps
   useEffect(() => {
-    if (!presentation) return;
-
-    const participantsData = presentation.participants || [];
-
-    if (!_.isEqual(participantsData, lastFetchedParticipants)) {
-      console.log("Change in participants, proceeding to fetch individually");
-      setLastFetchedParticipants(participantsData);
-
-      const fetchParticipantDetails = async () => {
-        try {
-          const newParticipantsIds = participantsData.map(
-            (participant: any) => participant.id
-          );
-          const userDocs = await getPeople(newParticipantsIds, []);
-
-          const userDetailsMap = userDocs.reduce((acc, userDoc) => {
-            acc[userDoc.id] = userDoc;
-            return acc;
-          }, {} as Record<string, any>);
-
-          const enrichedParticipants = participantsData.map(
-            (participant: any) => {
-              const userDetails = userDetailsMap[participant.id];
-              if (userDetails) {
-                return {
-                  ...userDetails,
-                  ...participant,
-                };
-              }
-              return participant;
-            }
-          );
-
-          setParticipants(enrichedParticipants);
-
-          if (speaker) {
-            if (newParticipantsIds.includes(speaker.id)) {
-              const matchedSpeaker = enrichedParticipants.find(
-                (participant: any) => participant.id === speaker.id
-              );
-              setSpeaker(matchedSpeaker || null);
-            } else {
-              setSpeaker(null);
-            }
-          }
-        } catch (error) {
-          console.error("Error fetching participant details:", error);
+    const fetchWordsWithTimestamps = async () => {
+      try {
+        if (presentation) {
+          const { scriptWithTimestamps, totalDuration } =
+            await calculateTimestamps(
+              presentation.nodes.words,
+              presentation.nodes.chapters,
+              containerWidth,
+              speedMultiplier
+            );
+          // console.log(scriptWithTimestamps);
+          setTotalDuration(totalDuration);
+          setWordsWithTimestamps(scriptWithTimestamps);
         }
-      };
+      } catch (error) {
+        console.error("Error fetching words with timestamps:", error);
+      }
+    };
 
-      fetchParticipantDetails();
-    } else {
-      console.log("No change in participants");
-    }
-  }, [presentation]);
+    fetchWordsWithTimestamps();
+  }, [presentation?.nodes, presentation?.id, containerWidth, speedMultiplier]);
 
+  // watch nodes and presenation changes in realtime
   useEffect(() => {
     if (!presentation) return;
     const handlePresentationChanges: any = (latestPresentation: any) => {
@@ -205,6 +184,7 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
     };
   }, [presentation?.id]);
 
+  // handle pusher authentication and authorization
   useEffect(() => {
     if (!presentation || !speaker) return;
 
@@ -283,9 +263,76 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
     };
   }, [speaker?.id, presentation?.id]);
 
-  // useEffect(() => {
-  //   console.log(participants);
-  // }, [participants]);
+  // update participants and speaker variable in realtime
+  useEffect(() => {
+    if (!presentation) return;
+
+    const participantsData = presentation.participants || [];
+
+    if (!_.isEqual(participantsData, lastFetchedParticipants)) {
+      console.log("Change in participants, proceeding to fetch individually");
+      setLastFetchedParticipants(participantsData);
+
+      const fetchParticipantDetails = async () => {
+        try {
+          const newParticipantsIds = participantsData.map(
+            (participant: any) => participant.id
+          );
+          const userDocs = await getPeople(newParticipantsIds, []);
+
+          const userDetailsMap = userDocs.reduce((acc, userDoc) => {
+            acc[userDoc.id] = userDoc;
+            return acc;
+          }, {} as Record<string, any>);
+
+          const enrichedParticipants = participantsData.map(
+            (participant: any) => {
+              const userDetails = userDetailsMap[participant.id];
+              if (userDetails) {
+                return {
+                  ...userDetails,
+                  ...participant,
+                };
+              }
+              return participant;
+            }
+          );
+
+          setParticipants(enrichedParticipants);
+
+          if (speaker) {
+            if (newParticipantsIds.includes(speaker.id)) {
+              const matchedSpeaker = enrichedParticipants.find(
+                (participant: any) => participant.id === speaker.id
+              );
+              setSpeaker(matchedSpeaker || null);
+            } else {
+              setSpeaker(null);
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching participant details:", error);
+        }
+      };
+
+      fetchParticipantDetails();
+    } else {
+      console.log("No change in participants");
+    }
+  }, [presentation?.participants]);
+
+  // update progress based on elapsedTime
+  useEffect(() => {
+    if (!wordsWithTimestamps || isSeeking) return;
+
+    const newProgress = getPositionFromTimestamp(
+      wordsWithTimestamps,
+      progress,
+      elapsedTime
+    );
+
+    setProgress(newProgress);
+  }, [elapsedTime]);
 
   return (
     <PresentationContext.Provider
@@ -299,9 +346,15 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
         setSpeaker,
         participants,
         pusherChannel,
-        position,
-        setPosition,
+        progress,
+        setProgress,
         broadcastProgress,
+        elapsedTime,
+        setElapsedTime,
+        scrollMode,
+        setScrollMode,
+        containerWidth,
+        speedMultiplier,
       }}
     >
       {children}

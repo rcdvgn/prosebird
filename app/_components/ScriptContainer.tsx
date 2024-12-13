@@ -5,19 +5,15 @@ import { useAutoscroll } from "@/app/_contexts/AutoScrollContext";
 import { usePresentation } from "../_contexts/PresentationContext";
 
 export default function ScriptContainer({
-  containerWidth,
   wordsWithTimestamps,
   totalDuration,
   elapsedTime,
-  handleTimeChange,
 }: {
-  containerWidth: any;
   wordsWithTimestamps: any;
   totalDuration: any;
   elapsedTime: any;
-  handleTimeChange: any;
 }) {
-  const { position, broadcastProgress } = usePresentation();
+  const { position, broadcastProgress, containerWidth } = usePresentation();
 
   const { isAutoscrollOn, setIsAutoscrollOn } = useAutoscroll();
   const [scrollbarHeight, setScrollbarHeight] = useState(0);

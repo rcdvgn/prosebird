@@ -3,19 +3,16 @@ import { pusherServer } from "@/app/_config/pusher";
 
 export async function POST(request: Request) {
   try {
-    const { presentationCode, currentPosition, targetPosition, userId } =
-      await request.json();
+    const { presentationCode, currentPosition, userId } = await request.json();
 
-    if (targetPosition !== currentPosition) {
-      await pusherServer.trigger(
-        `presence-${presentationCode}`,
-        "update-position",
-        {
-          position: targetPosition,
-          senderId: userId,
-        }
-      );
-    }
+    await pusherServer.trigger(
+      `presence-${presentationCode}`,
+      "update-position",
+      {
+        newPosition: currentPosition,
+        senderId: userId,
+      }
+    );
 
     return new Response(null, { status: 200 });
   } catch (error) {

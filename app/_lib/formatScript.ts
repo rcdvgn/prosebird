@@ -28,7 +28,7 @@ export default function formatScript(
     script.forEach((word: any) => {
       words.push({
         word: word,
-        index: wordIndex,
+        position: wordIndex,
       });
       wordIndex++;
     });

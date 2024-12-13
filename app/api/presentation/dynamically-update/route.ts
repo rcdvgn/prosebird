@@ -9,10 +9,9 @@ export async function POST(request: Request) {
     const {
       presentationCode,
       currentPosition,
-      targetPosition,
       words,
       userId,
-      transcript,
+      lastSpokenWords,
     } = await request.json();
 
     // const docRef = doc(db, "presentations", presentationCode);
@@ -25,9 +24,7 @@ export async function POST(request: Request) {
     //   );
     // }
 
-    const newPosition = targetPosition
-      ? targetPosition
-      : matchToScript(currentPosition, words, transcript);
+    const newPosition = matchToScript(currentPosition, words, lastSpokenWords);
     // console.log(newPosition);
 
     if (newPosition !== currentPosition) {

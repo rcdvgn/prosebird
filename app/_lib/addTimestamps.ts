@@ -35,7 +35,7 @@ function calculateLineBreaks(
     const testWidth = context.measureText(testLine).width;
 
     // Check if the word's key is a chapter start
-    if (chapterKeys.has(wordObject.index)) {
+    if (chapterKeys.has(wordObject.position)) {
       if (currentLine.length > 0) {
         lines.push(currentLine); // Push the existing line if it's not empty
       }

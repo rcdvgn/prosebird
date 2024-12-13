@@ -4,20 +4,16 @@ import { useEffect, useRef } from "react";
 import { useAutoscroll } from "@/app/_contexts/AutoScrollContext";
 import { PlayIcon } from "../_assets/icons";
 import formatTimestamp from "../_utils/formatTimestamp";
+import getPositionFromTimestamp from "../_utils/getPositionFromTimestamp";
+import { usePresentation } from "../_contexts/PresentationContext";
 
 export default function ProgressBar({
-  elapsedTime,
-  totalDuration,
   handleTimeChange,
-  isSeeking,
-  setIsSeeking,
 }: {
-  elapsedTime: number;
-  totalDuration: number;
   handleTimeChange: (newTime: number) => void;
-  isSeeking: boolean;
-  setIsSeeking: (value: boolean) => void;
 }) {
+  const { totalDuration, elapsedTime, isSeeking, setIsSeeking } =
+    usePresentation();
   const { isAutoscrollOn, setIsAutoscrollOn } = useAutoscroll();
 
   const progressContainer = useRef<HTMLDivElement | null>(null);
@@ -49,7 +45,7 @@ export default function ProgressBar({
       const progressBarRect = progressContainer.current.getBoundingClientRect();
       const maxRight = progressBarRect.width;
 
-      const broadcastProgressBar = (clientX: number) => {
+      const updateProgressBar = (clientX: number) => {
         const newRightPx = Math.max(
           0,
           Math.min(progressBarRect.right - clientX, maxRight)
@@ -62,15 +58,17 @@ export default function ProgressBar({
         handleTimeChange(newElapsedTime);
       };
 
-      broadcastProgressBar(e.clientX); // Initial setting
+      updateProgressBar(e.clientX); // Initial setting
 
       const handleMouseMove = (e: MouseEvent) => {
-        broadcastProgressBar(e.clientX);
+        updateProgressBar(e.clientX);
       };
 
       const handleMouseUp = (e: MouseEvent) => {
         setIsSeeking(false);
-        // broadcastProgress(newPosition, null);
+
+        // make sure this works
+        handleTimeChange(elapsedTime);
 
         document.removeEventListener("mousemove", handleMouseMove);
         document.removeEventListener("mouseup", handleMouseUp);
