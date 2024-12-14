@@ -7,7 +7,6 @@ import React, {
   ReactNode,
   useEffect,
 } from "react";
-import { debounce } from "lodash";
 import { v4 as uuidv4 } from "uuid";
 import _ from "lodash";
 import Pusher from "pusher-js";
@@ -51,6 +50,7 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
   const [totalDuration, setTotalDuration] = useState<any>(null);
   const [progress, setProgress] = useState<any>({ line: 0, index: 0 });
   const [participants, setParticipants] = useState<any>([]);
+  const [isAutoscrollOn, setIsAutoscrollOn] = useState<boolean>(true);
   const [lastFetchedParticipants, setLastFetchedParticipants] = useState<any>(
     []
   );
@@ -99,12 +99,11 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
 
   // fetch presentation
   useEffect(() => {
-    console.log(presentationCode);
+    // console.log(presentationCode);
     if (!presentationCode) return;
     if (!presentationCode.length) return;
 
     const validatePresentation = async () => {
-      console.log("Attempting to validate the presentation");
       try {
         const response = await fetch("/api/presentation/validate", {
           method: "POST",
@@ -114,7 +113,7 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
 
         const data = await response.json();
 
-        if (data.presentation) {
+        if (data?.presentation) {
           setPresentation(data.presentation);
           setLoading(false);
         } else {
@@ -141,7 +140,7 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
               containerWidth,
               speedMultiplier
             );
-          // console.log(scriptWithTimestamps);
+
           setTotalDuration(totalDuration);
           setWordsWithTimestamps(scriptWithTimestamps);
         }
@@ -157,13 +156,13 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (!presentation) return;
     const handlePresentationChanges: any = (latestPresentation: any) => {
-      console.log("Most recent presentation version: " + latestPresentation);
+      // console.log("Most recent presentation version: " + latestPresentation);
 
       setPresentation(latestPresentation);
     };
 
     const handleNodesChanges: any = (latestNodes: any) => {
-      console.log("Most recent nodes version: " + latestNodes);
+      // console.log("Most recent nodes version: " + latestNodes);
 
       setRealtimeNodes(latestNodes);
     };
@@ -234,23 +233,23 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
     channel.bind(
       "pusher:subscription_succeeded",
       async (members: PusherMembers) => {
-        console.log("Successfully subscribed to channel", members);
+        // console.log("Successfully subscribed to channel", members);
 
         // Set the current speaker's status to connected
         if (speaker.id === members.myID) {
           await handleMemberStatus(speaker.id, true);
         }
 
-        members.each((member: any) => console.log("Member:", member));
+        // members.each((member: any) => console.log("Member:", member));
       }
     );
 
     channel.bind("pusher:member_added", (member: any) => {
-      console.log("Other member added to channel", member);
+      // console.log("Other member added to channel", member);
     });
 
     channel.bind("pusher:member_removed", async (member: any) => {
-      console.log("Member removed from channel", member);
+      // console.log("Member removed from channel", member);
       await handleMemberStatus(member.id, false);
     });
 
@@ -270,7 +269,7 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
     const participantsData = presentation.participants || [];
 
     if (!_.isEqual(participantsData, lastFetchedParticipants)) {
-      console.log("Change in participants, proceeding to fetch individually");
+      // console.log("Change in participants, proceeding to fetch each individually");
       setLastFetchedParticipants(participantsData);
 
       const fetchParticipantDetails = async () => {
@@ -317,7 +316,7 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
 
       fetchParticipantDetails();
     } else {
-      console.log("No change in participants");
+      // console.log("No change in participants");
     }
   }, [presentation?.participants]);
 
@@ -331,8 +330,12 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
       elapsedTime
     );
 
-    setProgress(newProgress);
-  }, [elapsedTime]);
+    console.log(newProgress, progress);
+
+    if (!_.isEqual(newProgress, progress)) {
+      setProgress(newProgress);
+    }
+  }, [elapsedTime, isSeeking, wordsWithTimestamps]);
 
   return (
     <PresentationContext.Provider
@@ -355,6 +358,12 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
         setScrollMode,
         containerWidth,
         speedMultiplier,
+        wordsWithTimestamps,
+        totalDuration,
+        isAutoscrollOn,
+        setIsAutoscrollOn,
+        isSeeking,
+        setIsSeeking,
       }}
     >
       {children}

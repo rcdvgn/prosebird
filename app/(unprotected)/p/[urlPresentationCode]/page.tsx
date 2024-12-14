@@ -14,11 +14,8 @@ export default function Page({
 }) {
   const { urlPresentationCode } = params;
 
-  // const { user } = useAuth();
-  const { setPresentationCode, pusherChannel, loading, speaker, participants } =
+  const { setPresentationCode, pusherChannel, loading, speaker } =
     usePresentation();
-
-  // const [pusherChannel, setPusherChannel] = useState<any>(null);
 
   useEffect(() => {
     if (!urlPresentationCode) return;
@@ -34,12 +31,7 @@ export default function Page({
   if (speaker && pusherChannel) {
     if (speaker.isConnected) {
       return <Presentation />;
-    } else {
-      console.log(speaker);
-      console.log(participants);
     }
-  } else {
-    console.log("no speaker");
   }
 
   return <GreenRoom />;

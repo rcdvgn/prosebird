@@ -1,22 +1,21 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useAutoscroll } from "@/app/_contexts/AutoScrollContext";
+// import { useAutoscroll } from "@/app/_contexts/AutoScrollContext";
+import { usePresentation } from "../_contexts/PresentationContext";
 
 export default function Scrollbar({
   calculateScrollbarHeight,
   scrollContainer,
   scriptContainer,
   scrollbarHeight,
-  elapsedTime,
-  totalDuration,
 }: {
   calculateScrollbarHeight: any;
   scrollContainer: React.RefObject<HTMLDivElement>;
   scriptContainer: React.RefObject<HTMLDivElement>;
   scrollbarHeight: any;
-  elapsedTime: number;
-  totalDuration: number;
 }) {
-  const { isAutoscrollOn, setIsAutoscrollOn } = useAutoscroll();
+  // const { isAutoscrollOn, setIsAutoscrollOn } = useAutoscroll();
+  const { elapsedTime, totalDuration, isAutoscrollOn, setIsAutoscrollOn } =
+    usePresentation();
 
   const scrollThumb = useRef<HTMLDivElement | null>(null);
 
@@ -124,7 +123,6 @@ export default function Scrollbar({
     scrollContainer,
     scriptContainer,
     isAutoscrollOn,
-    setIsAutoscrollOn,
   ]);
 
   useEffect(() => {

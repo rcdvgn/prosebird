@@ -1,4 +1,4 @@
-import { AutoscrollProvider } from "@/app/_contexts/AutoScrollContext";
+// import { AutoscrollProvider } from "@/app/_contexts/AutoScrollContext";
 import { PresentationProvider } from "@/app/_contexts/PresentationContext";
 
 export default function PresentationLayout({
@@ -8,7 +8,8 @@ export default function PresentationLayout({
 }>) {
   return (
     <PresentationProvider>
-      <AutoscrollProvider>{children}</AutoscrollProvider>
+      {/* <AutoscrollProvider></AutoscrollProvider> */}
+      {children}
     </PresentationProvider>
   );
 }

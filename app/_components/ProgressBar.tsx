@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { useAutoscroll } from "@/app/_contexts/AutoScrollContext";
+import { useEffect, useState, useRef } from "react";
+// import { useAutoscroll } from "@/app/_contexts/AutoScrollContext";
 import { PlayIcon } from "../_assets/icons";
 import formatTimestamp from "../_utils/formatTimestamp";
-import getPositionFromTimestamp from "../_utils/getPositionFromTimestamp";
 import { usePresentation } from "../_contexts/PresentationContext";
 
 export default function ProgressBar({
@@ -12,9 +11,15 @@ export default function ProgressBar({
 }: {
   handleTimeChange: (newTime: number) => void;
 }) {
-  const { totalDuration, elapsedTime, isSeeking, setIsSeeking } =
-    usePresentation();
-  const { isAutoscrollOn, setIsAutoscrollOn } = useAutoscroll();
+  const {
+    totalDuration,
+    elapsedTime,
+    isSeeking,
+    setIsSeeking,
+    isAutoscrollOn,
+    setIsAutoscrollOn,
+  } = usePresentation();
+  // const { isAutoscrollOn, setIsAutoscrollOn } = useAutoscroll();
 
   const progressContainer = useRef<HTMLDivElement | null>(null);
   const progressBar = useRef<HTMLDivElement | null>(null);
@@ -45,6 +50,8 @@ export default function ProgressBar({
       const progressBarRect = progressContainer.current.getBoundingClientRect();
       const maxRight = progressBarRect.width;
 
+      let newElapsedTime = elapsedTime; // Keep track of the updated elapsed time locally
+
       const updateProgressBar = (clientX: number) => {
         const newRightPx = Math.max(
           0,
@@ -54,7 +61,7 @@ export default function ProgressBar({
         progressBar.current!.style.right = `${newRightPercent}%`;
 
         // const newElapsedTime = (1 - newRight / maxRight) * totalDuration;
-        const newElapsedTime = (1 - newRightPercent / 100) * totalDuration;
+        newElapsedTime = (1 - newRightPercent / 100) * totalDuration;
         handleTimeChange(newElapsedTime);
       };
 
@@ -67,8 +74,8 @@ export default function ProgressBar({
       const handleMouseUp = (e: MouseEvent) => {
         setIsSeeking(false);
 
-        // make sure this works
-        handleTimeChange(elapsedTime);
+        // this is just seting the elapsed time back to what it was before started seeking
+        handleTimeChange(newElapsedTime);
 
         document.removeEventListener("mousemove", handleMouseMove);
         document.removeEventListener("mouseup", handleMouseUp);

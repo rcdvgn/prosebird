@@ -1,21 +1,26 @@
 "use client";
 import React, { useState, useRef, useLayoutEffect } from "react";
 import Scrollbar from "./Scrollbar";
-import { useAutoscroll } from "@/app/_contexts/AutoScrollContext";
+// import { useAutoscroll } from "@/app/_contexts/AutoScrollContext";
 import { usePresentation } from "../_contexts/PresentationContext";
+import getTimestampFromPosition from "../_utils/getTimestampFromPosition";
 
 export default function ScriptContainer({
-  wordsWithTimestamps,
-  totalDuration,
-  elapsedTime,
+  handleTimeChange,
 }: {
-  wordsWithTimestamps: any;
-  totalDuration: any;
-  elapsedTime: any;
+  handleTimeChange: any;
 }) {
-  const { position, broadcastProgress, containerWidth } = usePresentation();
+  const {
+    progress,
+    containerWidth,
+    elapsedTime,
+    totalDuration,
+    wordsWithTimestamps,
+    isAutoscrollOn,
+    setIsAutoscrollOn,
+  } = usePresentation();
 
-  const { isAutoscrollOn, setIsAutoscrollOn } = useAutoscroll();
+  // const { isAutoscrollOn, setIsAutoscrollOn } = useAutoscroll();
   const [scrollbarHeight, setScrollbarHeight] = useState(0);
 
   const scriptContainer = useRef<HTMLDivElement | null>(null);
@@ -34,7 +39,17 @@ export default function ScriptContainer({
 
   const handleJump = (newPosition: any) => {
     setIsAutoscrollOn(true);
-    broadcastProgress(newPosition, null);
+
+    if (
+      wordsWithTimestamps[progress.line][progress.index].position !==
+      newPosition
+    ) {
+      const newElapsedTime = getTimestampFromPosition(
+        wordsWithTimestamps,
+        newPosition
+      );
+      handleTimeChange(newElapsedTime);
+    }
   };
 
   const textSize = "0px"; // placeholder CHANGE LATER
@@ -76,9 +91,11 @@ export default function ScriptContainer({
                         lineHeight: "160%",
                         fontSize: "36px",
                       }}
-                      onClick={() => handleJump(wordObject.index)}
+                      onClick={() => handleJump(wordObject.position)}
                       className={`transtion-all transition-100 cursor-pointer font-medium hover:opacity-100 hover:font-semibold ${
-                        wordObject.index < position
+                        wordObject.position <
+                        wordsWithTimestamps[progress.line][progress.index]
+                          .position
                           ? "opacity-100"
                           : "opacity-40 medium"
                       }`}
@@ -98,8 +115,6 @@ export default function ScriptContainer({
         scrollContainer={scrollContainer}
         scriptContainer={scriptContainer}
         scrollbarHeight={scrollbarHeight}
-        elapsedTime={elapsedTime}
-        totalDuration={totalDuration}
       />
     </>
   );

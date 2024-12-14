@@ -21,7 +21,6 @@ export default function Presentation() {
     elapsedTime,
     setElapsedTime,
     isSeeking,
-    setIsSeeking,
     totalDuration,
     speedMultiplier,
     scrollMode,
@@ -29,7 +28,7 @@ export default function Presentation() {
   } = usePresentation();
 
   const handleTimerExpire = () => {
-    console.log("Time has expired");
+    // console.log("Time has expired");
   };
 
   const timer = useTimer(
@@ -114,7 +113,7 @@ export default function Presentation() {
   // check if browser supports dynamic mode
   useEffect(() => {
     if (!browserSupportsSpeechRecognition) {
-      console.log("Browser doesn't support speech recognition.");
+      // console.log("Browser doesn't support speech recognition.");
     }
   }, [browserSupportsSpeechRecognition]);
 
@@ -142,6 +141,7 @@ export default function Presentation() {
 
   // update presentation if scroll mode is continuous
   useEffect(() => {
+    //substitute timer.isRunning() by turn check
     if (!wordsWithTimestamps || scrollMode === "dynamic" || !timer.isRunning())
       return;
     broadcastProgress({ transcript: null });
@@ -151,11 +151,7 @@ export default function Presentation() {
     <div className="flex relative h-full">
       <div className="w-[275px]"></div>
 
-      <ScriptContainer
-        wordsWithTimestamps={wordsWithTimestamps}
-        totalDuration={totalDuration}
-        elapsedTime={elapsedTime}
-      />
+      <ScriptContainer handleTimeChange={handleTimeChange} />
 
       <div className="w-[275px]"></div>
       <div className="w-full h-56 fixed bottom-0 bg-gradient-to-t from-background-primary to-background-primary/0 pointer-events-none"></div>
