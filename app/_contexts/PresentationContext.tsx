@@ -54,6 +54,7 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
   const [lastFetchedParticipants, setLastFetchedParticipants] = useState<any>(
     []
   );
+  const [controller, setController] = useState<any>(null);
   const [realtimeNodes, setRealtimeNodes] = useState<any>(null);
   const [newerNodesAvailable, setNewerNodesAvailable] = useState<any>(false);
 
@@ -61,6 +62,35 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
 
   const containerWidth = 520;
   const speedMultiplier = 1;
+
+  const getCurrentChapterSpeaker = (currentLineIndex: any) => {
+    if (!presentation || !speaker) return;
+    const chapters = presentation?.nodes?.chapters;
+
+    const chapterStartLines = Object.keys(chapters);
+
+    let correctLineSpeaker: any;
+
+    for (let i = chapterStartLines.length - 1; i >= 0; i--) {
+      if (chapterStartLines[i] <= currentLineIndex) {
+        correctLineSpeaker = chapters[chapterStartLines[i]].speaker;
+        break;
+      }
+    }
+
+    if (correctLineSpeaker !== speaker?.id) {
+      setController((previousController: any) => {
+        return {
+          current: correctLineSpeaker,
+          previous: previousController?.previous
+            ? previousController?.previous
+            : null,
+        };
+      });
+      return false;
+    }
+    return true;
+  };
 
   const broadcastProgress = async ({ transcript }: any) => {
     let customParams = {};
@@ -390,6 +420,8 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
         setIsAutoscrollOn,
         isSeeking,
         setIsSeeking,
+        getCurrentChapterSpeaker,
+        controller,
       }}
     >
       {children}

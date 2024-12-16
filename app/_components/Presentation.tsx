@@ -25,6 +25,10 @@ export default function Presentation() {
     speedMultiplier,
     scrollMode,
     setScrollMode,
+    getCurrentChapterSpeaker,
+    isAutoscrollOn,
+    setIsAutoscrollOn,
+    controller,
   } = usePresentation();
 
   const handleTimerExpire = () => {
@@ -97,6 +101,22 @@ export default function Presentation() {
     SpeechRecognition.stopListening();
   };
 
+  useEffect(() => {
+    if (!speaker || !controller)
+      if (controller.current === speaker.id) {
+        if (controller.previous !== speaker.id) {
+          if (!timer.isRunning() && scrollMode === "continuous") {
+            handleTimerRun();
+          }
+          isAutoscrollOn ? setIsAutoscrollOn(false) : "";
+        }
+      } else {
+        if (timer.isRunning()) {
+          handleTimerRun();
+        }
+      }
+  }, [speaker, controller]);
+
   // render interval
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -142,9 +162,12 @@ export default function Presentation() {
   // update presentation if scroll mode is continuous
   useEffect(() => {
     //substitute timer.isRunning() by turn check
-    if (!wordsWithTimestamps || scrollMode === "dynamic" || !timer.isRunning())
-      return;
-    broadcastProgress({ transcript: null });
+    if (!wordsWithTimestamps || !speaker || scrollMode === "dynamic") return;
+
+    const keepController = getCurrentChapterSpeaker(progress.line);
+    if (keepController) {
+      broadcastProgress({ transcript: null });
+    }
   }, [progress]);
 
   return (

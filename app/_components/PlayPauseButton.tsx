@@ -1,4 +1,5 @@
 import { PauseIcon, PlayIcon } from "@/app/_assets/icons";
+import { usePresentation } from "../_contexts/PresentationContext";
 
 export default function PlayPauseButton({
   handleTimerRun,
@@ -7,10 +8,16 @@ export default function PlayPauseButton({
   handleTimerRun: any;
   timer: any;
 }) {
+  const { controller, speaker, scrollMode } = usePresentation();
+
   return (
     <div
       className="h-12 aspect-square rounded-full bg-brand grid place-items-center cursor-pointer mx-7"
-      onClick={handleTimerRun}
+      onClick={
+        speaker.id === controller.current && scrollMode === "continuous"
+          ? handleTimerRun
+          : ""
+      }
     >
       {timer.isStarted() ? (
         timer.isRunning() ? (
