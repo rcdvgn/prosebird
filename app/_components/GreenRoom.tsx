@@ -15,11 +15,16 @@ export default function GreenRoom() {
   useEffect(() => {
     if (!user || !participants.length) return;
 
-    const presentationHost = participants.find((p: any) => p.role === "author");
+    const userIdMatch = participants.find(
+      (participant: any) =>
+        participant.id === user.id && participant.role !== "guest"
+    );
+    // const presentationHost = participants.find((p: any) => p.role === "author");
 
-    if (user.id === presentationHost.id) {
-      speaker?.id !== user.id ? enterPresentation(presentationHost) : "";
-    }
+    if (userIdMatch === undefined) return;
+    enterPresentation(userIdMatch);
+
+    // speaker?.id !== user.id ? enterPresentation(presentationHost) : "";
   }, [user, participants]);
 
   return (

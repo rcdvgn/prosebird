@@ -2,20 +2,20 @@
 
 export default function formatScript(
   nodes: any,
-  userId: any,
-  scriptParticipants: any
+  userId: any
+  // scriptParticipants: any
 ) {
   const words: any = [];
   const chapters: any = {};
-  const speakers: any = [];
+  // const speakers: any = [];
   let wordIndex = 0;
 
   nodes.forEach((entry: any) => {
-    if (!speakers.includes(entry.speaker)) {
-      if (entry.speaker !== userId) {
-        speakers.push(entry.speaker);
-      }
-    }
+    // if (!speakers.includes(entry.speaker)) {
+    //   if (entry.speaker !== userId) {
+    //     speakers.push(entry.speaker);
+    //   }
+    // }
 
     const script = entry.paragraph.trim().split(/\s+/);
     // const script = splitWithSpaces(entry.paragraph.trim());
@@ -34,25 +34,25 @@ export default function formatScript(
     });
   });
 
-  if (!speakers.includes(userId)) {
-    speakers.push(userId);
-  }
+  // if (!speakers.includes(userId)) {
+  //   speakers.push(userId);
+  // }
 
-  const presentationParticipants: any = [];
-  scriptParticipants.forEach((scriptsParticipant: any) => {
-    if (speakers.includes(scriptsParticipant.id)) {
-      presentationParticipants.push({
-        ...scriptsParticipant,
-        isConnected: false,
-      });
-    }
-  });
+  // const presentationParticipants: any = [];
+  // scriptParticipants.forEach((scriptsParticipant: any) => {
+  //   if (speakers.includes(scriptsParticipant.id)) {
+  //     presentationParticipants.push({
+  //       ...scriptsParticipant,
+  //       isConnected: false,
+  //     });
+  //   }
+  // });
 
   return {
     formattedScript: {
       words,
       chapters,
     },
-    participants: presentationParticipants,
+    // participants: presentationParticipants,
   };
 }

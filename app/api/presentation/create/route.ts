@@ -35,11 +35,18 @@ export async function POST(request: Request) {
     //   );
     // }
 
-    const { formattedScript, participants } = formatScript(
+    const { formattedScript } = formatScript(
       script.data.nodes,
-      userId,
-      scriptParticipants
+      userId
+      // scriptParticipants
     );
+
+    const participants = scriptParticipants.map((scriptsParticipant: any) => {
+      return {
+        ...scriptsParticipant,
+        isConnected: false,
+      };
+    });
 
     const generatedCode: any = await generateUniquePresentationCode();
 

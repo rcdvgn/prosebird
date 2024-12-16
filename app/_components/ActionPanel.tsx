@@ -30,6 +30,7 @@ export default function ActionPanel({
 
         <PlayPauseButton handleTimerRun={handleTimerRun} timer={timer} />
 
+        <p>{speaker.isConnected ? "True" : "False"}</p>
         <p>{speaker.id}</p>
       </div>
     </div>

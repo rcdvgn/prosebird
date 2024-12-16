@@ -47,8 +47,12 @@ export default function ScriptEditor() {
     }
   };
 
+  // useEffect(() => {
+  //   participants ? console.log(participants) : "";
+  // }, [participants]);
+
   const handlePresent = async () => {
-    const participantsIdsAndRoles = participants.map((item: any) => {
+    let participantsIdsAndRoles = participants.map((item: any) => {
       const { id, role } = item;
       return { id, role };
     });

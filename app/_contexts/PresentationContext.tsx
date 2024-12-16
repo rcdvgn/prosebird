@@ -191,6 +191,8 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
       memberId: string,
       isConnected: boolean
     ) => {
+      // console.log(memberId, isConnected);
+
       await changeMemberStatus(
         presentation.id,
         presentation.participants,
@@ -234,12 +236,9 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
       "pusher:subscription_succeeded",
       async (members: PusherMembers) => {
         // console.log("Successfully subscribed to channel", members);
-
-        // Set the current speaker's status to connected
-        if (speaker.id === members.myID) {
-          await handleMemberStatus(speaker.id, true);
-        }
-
+        // if (speaker.id === members.myID) {
+        //   await handleMemberStatus(speaker.id, true);
+        // }
         // members.each((member: any) => console.log("Member:", member));
       }
     );
@@ -250,17 +249,21 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
 
     channel.bind("pusher:member_removed", async (member: any) => {
       // console.log("Member removed from channel", member);
-      await handleMemberStatus(member.id, false);
+      // await handleMemberStatus(member.id, false)
     });
 
     return () => {
       // Set the speaker's status to disconnected on cleanup
-      handleMemberStatus(speaker.id, false).then(() => {
-        client.unsubscribe(`presence-${presentationCode}`);
-        client.disconnect();
-      });
+      // handleMemberStatus(speaker.id, false).then(() => {
+      //   client.unsubscribe(`presence-${presentationCode}`);
+      //   client.disconnect();
+      // });
     };
   }, [speaker?.id, presentation?.id]);
+
+  // useEffect(() => {
+  //   console.log(participants, speaker);
+  // }, [participants, speaker]);
 
   // update participants and speaker variable in realtime
   useEffect(() => {
@@ -299,15 +302,38 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
 
           setParticipants(enrichedParticipants);
 
+          // console.log("Participants just changed and now 'speaker' will too!");
+
           if (speaker) {
+            // console.log(
+            //   "It looks like youre a speaker already: " +
+            //     JSON.stringify(speaker)
+            // );
             if (newParticipantsIds.includes(speaker.id)) {
+              // console.log("Youre still good, keep doing you b");
+
               const matchedSpeaker = enrichedParticipants.find(
                 (participant: any) => participant.id === speaker.id
               );
+
+              if (!_.isEqual(speaker, matchedSpeaker)) {
+                // console.log("Your speaker object changed, look:");
+                // console.log("Old you: " + JSON.stringify(speaker));
+                // console.log("New you: " + JSON.stringify(matchedSpeaker));
+              } else {
+                // console.log(
+                //   "Your speaker object was reset but didnt change a thing"
+                // );
+              }
+
               setSpeaker(matchedSpeaker || null);
             } else {
+              // console.log("It seems that you are the idiot that got removed");
+
               setSpeaker(null);
             }
+          } else {
+            // console.log("It looks like you werent a speaker before, nevermind");
           }
         } catch (error) {
           console.error("Error fetching participant details:", error);
@@ -330,7 +356,7 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
       elapsedTime
     );
 
-    console.log(newProgress, progress);
+    // console.log(newProgress, progress);
 
     if (!_.isEqual(newProgress, progress)) {
       setProgress(newProgress);

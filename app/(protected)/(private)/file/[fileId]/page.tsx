@@ -9,7 +9,7 @@ import { useScriptEditor } from "@/app/_contexts/ScriptEditorContext";
 export default function File({ params }: { params: { fileId: string } }) {
   const { user } = useAuth();
   const router = useRouter();
-  const { script, setScript } = useScriptEditor();
+  const { script, setScript, participants } = useScriptEditor();
 
   useEffect(() => {
     if (user) {
@@ -25,7 +25,7 @@ export default function File({ params }: { params: { fileId: string } }) {
     }
   }, [user, params.fileId, router]);
 
-  if (!script) return <div>Loading...</div>;
+  if (!script || !participants) return <div>Loading...</div>;
 
   return script && <ScriptEditor />;
 }

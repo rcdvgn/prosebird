@@ -373,13 +373,6 @@ export const changeMemberStatus = async (
   memberId: any,
   newConnectionStatus: any
 ) => {
-  console.log(
-    presentationId,
-    presentationParticipants,
-    memberId,
-    newConnectionStatus
-  );
-
   const updatedParticipants = presentationParticipants.map((item: any) => {
     if (item.id === memberId) {
       return { ...item, isConnected: newConnectionStatus };
@@ -387,6 +380,8 @@ export const changeMemberStatus = async (
       return item;
     }
   });
+
+  // console.log(presentationParticipants, updatedParticipants);
 
   try {
     const docRef = doc(db, "presentations", presentationId);
