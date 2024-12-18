@@ -25,14 +25,16 @@ export default function Presentation() {
     speedMultiplier,
     scrollMode,
     setScrollMode,
-    getCurrentChapterSpeaker,
+    getController,
     isAutoscrollOn,
     setIsAutoscrollOn,
     controller,
+    setController,
   } = usePresentation();
 
   const handleTimerExpire = () => {
-    // console.log("Time has expired");
+    handleTimeChange(totalDuration);
+    console.log("Time has expired");
   };
 
   const timer = useTimer(
@@ -47,8 +49,6 @@ export default function Presentation() {
   );
 
   const handleTimerRun = () => {
-    // check if its users turn
-
     if (!timer.isStarted()) {
       timer.start(Date.now() - elapsedTime);
     } else {
@@ -101,20 +101,27 @@ export default function Presentation() {
     SpeechRecognition.stopListening();
   };
 
+  // observe and manage control over the presentation
   useEffect(() => {
-    if (!speaker || !controller)
-      if (controller.current === speaker.id) {
-        if (controller.previous !== speaker.id) {
-          if (!timer.isRunning() && scrollMode === "continuous") {
-            handleTimerRun();
-          }
-          isAutoscrollOn ? setIsAutoscrollOn(false) : "";
-        }
-      } else {
-        if (timer.isRunning()) {
-          handleTimerRun();
-        }
+    if (!speaker || !presentation || !controller) return;
+
+    console.log(progress, controller);
+    if (controller?.current === speaker?.id) {
+      // console.log("Speaker is the controller of the presentation");
+
+      if (controller?.previous !== speaker?.id) {
+        // if (!timer.isRunning() && scrollMode === "continuous") {
+        //   handleTimerRun();
+        // }
+        !isAutoscrollOn ? setIsAutoscrollOn(true) : "";
       }
+    } else {
+      // console.log("Speaker isnt the controller of the presentation");
+
+      if (timer.isRunning()) {
+        handleTimerRun();
+      }
+    }
   }, [speaker, controller]);
 
   // render interval
@@ -142,13 +149,16 @@ export default function Presentation() {
     if (!wordsWithTimestamps || !presentation) return;
 
     pusherChannel.bind("update-position", (data: any) => {
+      console.log("new data received: " + JSON.stringify(data));
       if (scrollMode === "continuous" && data.senderId === speaker.id) return;
 
       const newTimestamp = getTimestampFromPosition(
         wordsWithTimestamps,
         data.newPosition
       );
-
+      console.log(
+        "About to change to: " + data.newPosition + " (" + newTimestamp + ")"
+      );
       newTimestamp ? handleTimeChange(newTimestamp) : "";
     });
   }, [presentation?.id, wordsWithTimestamps]);
@@ -161,11 +171,24 @@ export default function Presentation() {
 
   // update presentation if scroll mode is continuous
   useEffect(() => {
-    //substitute timer.isRunning() by turn check
-    if (!wordsWithTimestamps || !speaker || scrollMode === "dynamic") return;
+    if (
+      !progress ||
+      !wordsWithTimestamps ||
+      !speaker ||
+      scrollMode === "dynamic"
+    )
+      return;
 
-    const keepController = getCurrentChapterSpeaker(progress.line);
-    if (keepController) {
+    const position =
+      wordsWithTimestamps[progress.line][progress.index].position;
+    const { isController, didControllerChange } = getController(position);
+
+    console.log(isController, didControllerChange);
+
+    const isProgressZero = position > 0;
+
+    if (isController || (didControllerChange && isProgressZero)) {
+      console.log("about to broadcast");
       broadcastProgress({ transcript: null });
     }
   }, [progress]);

@@ -1,7 +1,4 @@
-// app/api/pusher/webhook/route.ts
 import { NextResponse } from "next/server";
-import { db } from "@/app/_config/fireabase";
-import { doc, updateDoc, getDoc } from "firebase/firestore";
 import {
   changeMemberStatus,
   getPresentationByCode,
@@ -14,7 +11,6 @@ export async function POST(req: Request) {
 
   await Promise.all(
     events.map(async (event: any) => {
-      console.log(event);
       const { name: eventName, channel, user_id: userId } = event;
 
       const presentationCode = channel

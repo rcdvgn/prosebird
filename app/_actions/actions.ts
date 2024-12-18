@@ -1,4 +1,5 @@
 import { emptyNode } from "../_utils/emptyNode";
+import { v4 as uuidv4 } from "uuid";
 
 import {
   collection,
@@ -34,7 +35,13 @@ export const createScript: any = async (userId: any) => {
     guests: [],
   };
 
-  const blankNodes = [emptyNode]; // Nodes now stored separately
+  const blankNodes: any = [
+    {
+      ...emptyNode,
+      speaker: userId,
+      id: uuidv4(),
+    },
+  ];
 
   try {
     const docRef = await addDoc(collection(db, "scripts"), blankScript);

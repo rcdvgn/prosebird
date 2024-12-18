@@ -1,5 +1,6 @@
 import { PauseIcon, PlayIcon } from "@/app/_assets/icons";
 import { usePresentation } from "../_contexts/PresentationContext";
+import { useEffect } from "react";
 
 export default function PlayPauseButton({
   handleTimerRun,
@@ -10,24 +11,25 @@ export default function PlayPauseButton({
 }) {
   const { controller, speaker, scrollMode } = usePresentation();
 
+  const showControls =
+    speaker?.id === controller?.current && scrollMode === "continuous";
+
   return (
-    <div
-      className="h-12 aspect-square rounded-full bg-brand grid place-items-center cursor-pointer mx-7"
-      onClick={
-        speaker.id === controller.current && scrollMode === "continuous"
-          ? handleTimerRun
-          : ""
-      }
-    >
-      {timer.isStarted() ? (
-        timer.isRunning() ? (
-          <PauseIcon className="w-[12px] fill-text-primary" />
+    showControls && (
+      <div
+        className="h-12 aspect-square rounded-full bg-brand grid place-items-center cursor-pointer mx-7"
+        onClick={handleTimerRun}
+      >
+        {timer.isStarted() ? (
+          timer.isRunning() ? (
+            <PauseIcon className="w-[12px] fill-text-primary" />
+          ) : (
+            <PlayIcon className="w-[12px] fill-text-primary" />
+          )
         ) : (
           <PlayIcon className="w-[12px] fill-text-primary" />
-        )
-      ) : (
-        <PlayIcon className="w-[12px] fill-text-primary" />
-      )}
-    </div>
+        )}
+      </div>
+    )
   );
 }

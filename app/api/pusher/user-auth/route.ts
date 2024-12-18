@@ -43,8 +43,6 @@ export async function POST(req: Request) {
       },
     });
 
-    console.log(authResponse);
-
     return NextResponse.json(authResponse);
   } catch (error) {
     console.error("Pusher auth error:", error);

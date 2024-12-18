@@ -6,12 +6,12 @@ export default function getPositionFromTimestamp(
   let startLine = 0;
   let startIndex = 0;
 
-  const lastLine = wordsWithTimestamps[wordsWithTimestamps.length - 1]; // Get the last line
-  const lastWordObject = lastLine ? lastLine[lastLine.length - 1] : null; // Get the last word in the last line
+  const lastLine = wordsWithTimestamps[wordsWithTimestamps.length - 1];
+  const lastWordObject = lastLine ? lastLine[lastLine.length - 1] : null;
   if (lastWordObject && timestamp >= lastWordObject.timestamp) {
     return {
-      line: wordsWithTimestamps.length - 1, // The index of the last line
-      index: lastLine.length - 1, // The index of the last word in the last line
+      line: wordsWithTimestamps.length - 1,
+      index: lastLine.length - 1,
     };
   }
 
@@ -27,10 +27,12 @@ export default function getPositionFromTimestamp(
     .map(Number)
     .sort((a, b) => a - b);
 
+  // console.log(wordsWithTimestamps);
+
   let i;
   for (i = lineKeys.indexOf(startLine); i < lineKeys.length; i++) {
     if (
-      i + 1 < lineKeys.length &&
+      i === lineKeys.length - 1 ||
       timestamp < wordsWithTimestamps[lineKeys[i + 1]][0].timestamp
     ) {
       break;

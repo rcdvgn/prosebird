@@ -15,7 +15,7 @@ export default function ScriptArea() {
         )
         .map((node: any, index: any) => {
           return (
-            <div key={node.id}>
+            <div key={index}>
               <div className="flex justify-center py-4">
                 <ScriptNode node={node} position={index} />
               </div>

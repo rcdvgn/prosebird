@@ -44,7 +44,7 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
   const addNode = (position: number, user: any) => {
     const newNode: any = {
       ...emptyNode,
-      speaker: { id: user.id, isAnonymous: false },
+      speaker: user.id,
       id: uuidv4(),
     };
 

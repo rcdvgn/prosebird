@@ -63,33 +63,44 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
   const containerWidth = 520;
   const speedMultiplier = 1;
 
-  const getCurrentChapterSpeaker = (currentLineIndex: any) => {
+  const getController = (currentPosition: any) => {
+    let isController = false;
+    let didControllerChange = false;
+
     if (!presentation || !speaker) return;
     const chapters = presentation?.nodes?.chapters;
 
-    const chapterStartLines = Object.keys(chapters);
+    const chapterStartPositions = Object.keys(chapters);
 
     let correctLineSpeaker: any;
 
-    for (let i = chapterStartLines.length - 1; i >= 0; i--) {
-      if (chapterStartLines[i] <= currentLineIndex) {
-        correctLineSpeaker = chapters[chapterStartLines[i]].speaker;
+    for (let i = chapterStartPositions.length - 1; i >= 0; i--) {
+      if (currentPosition >= chapterStartPositions[i]) {
+        // console.log(currentPosition, chapterStartPositions[i]);
+        correctLineSpeaker = chapters[chapterStartPositions[i]].speaker;
         break;
       }
     }
+    correctLineSpeaker === speaker?.id ? (isController = true) : "";
 
-    if (correctLineSpeaker !== speaker?.id) {
+    if (!controller) {
+      didControllerChange = true;
+      setController({ current: correctLineSpeaker, previous: null });
+    }
+
+    if (correctLineSpeaker !== controller?.current) {
+      didControllerChange = true;
       setController((previousController: any) => {
         return {
           current: correctLineSpeaker,
-          previous: previousController?.previous
-            ? previousController?.previous
+          previous: previousController?.current
+            ? previousController?.current
             : null,
         };
       });
-      return false;
     }
-    return true;
+
+    return { isController, didControllerChange };
   };
 
   const broadcastProgress = async ({ transcript }: any) => {
@@ -386,9 +397,11 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
       elapsedTime
     );
 
-    // console.log(newProgress, progress);
-
     if (!_.isEqual(newProgress, progress)) {
+      console.log(
+        "progress about to be updated: " + JSON.stringify(newProgress)
+      );
+
       setProgress(newProgress);
     }
   }, [elapsedTime, isSeeking, wordsWithTimestamps]);
@@ -420,8 +433,9 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
         setIsAutoscrollOn,
         isSeeking,
         setIsSeeking,
-        getCurrentChapterSpeaker,
+        getController,
         controller,
+        setController,
       }}
     >
       {children}
