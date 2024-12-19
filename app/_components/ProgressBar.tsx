@@ -101,7 +101,7 @@ export default function ProgressBar({
 
   return (
     <div className="mx-6 translate-y-[2px]">
-      <div className="text-text-primary font-semibold text-sm py-1">
+      <div className="text-primary font-semibold text-sm py-1">
         {formatTimestamp(elapsedTime)} / {formatTimestamp(totalDuration)}
       </div>
       <div ref={progressContainer} className="flex cursor-pointer h-[10px]">
@@ -120,7 +120,7 @@ export default function ProgressBar({
         className="absolute bg-brand py-2 px-1.5 rounded-lg border-none outline-none cursor-pointer -translate-x-1/2 bottom-[10px] items-center justify-center"
       >
         <PlayIcon className="fill-text-primary w-[8px]" />
-        <span className="text-[11px] font-semibold text-text-primary text-nowrap">
+        <span className="text-[11px] font-semibold text-primary text-nowrap">
           Jump Here
         </span>
       </button>

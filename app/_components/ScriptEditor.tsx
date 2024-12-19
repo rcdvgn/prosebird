@@ -130,7 +130,7 @@ export default function ScriptEditor() {
               onChange={handleDocumentTitleChange}
               onKeyDown={handleDocumentTitleKeyDown}
               spellCheck={isSpellCheckEnabled}
-              className="font-bold text-base text-text-primary bg-transparent border-none outline-none rounded-sm focus:text-text-primary/90 hover:ring-1 focus:ring-1 ring-text-secondary ring-offset-4 ring-offset-background-primary"
+              className="font-bold text-base text-primary bg-transparent border-none outline-none rounded-sm focus:text-primary/90 hover:ring-1 focus:ring-1 ring-text-secondary ring-offset-4 ring-offset-background"
             />
 
             <StarIcon className="stroke-text-primary stroke-1 mr-4 w-3 cursor-pointer" />
@@ -142,13 +142,13 @@ export default function ScriptEditor() {
               style={{
                 backgroundImage: `url("/pfps/profile1.png")`,
               }}
-              className="-ml-[1px] h-[full] aspect-square rounded-full box-content ring-4 ring-background-primary bg-cover bg-center flex-shrink-0"
+              className="-ml-[1px] h-[full] aspect-square rounded-full box-content ring-4 ring-background bg-cover bg-center flex-shrink-0"
             ></div>
             <div
               style={{
                 backgroundImage: `url("/pfps/profile1.png")`,
               }}
-              className="-ml-[1px] h-[full] aspect-square rounded-full box-content ring-4 ring-background-primary bg-cover bg-center flex-shrink-0"
+              className="-ml-[1px] h-[full] aspect-square rounded-full box-content ring-4 ring-background bg-cover bg-center flex-shrink-0"
             ></div>
           </div>
           <button onClick={handleShareFile} className="btn-2-md">
@@ -170,7 +170,7 @@ export default function ScriptEditor() {
         </div>
         {/* <div className="w-[378px]">
           <div className="h-[46px] border-b-[1px] border-stroke flex justify-between items-center px-5">
-            <span className="text-sm font-semibold text-text-primary">
+            <span className="text-sm font-semibold text-primary">
               Chapters
               <span className="font-medium text-text-secondary">
                 {" "}

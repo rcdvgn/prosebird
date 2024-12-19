@@ -64,12 +64,12 @@ export default function SpeakerPicker({
       onOutsideClick={handleOutsideClick}
       exceptionRefs={[speakerPictureRef]}
     >
-      <div className="w-64 -translate-x-[17rem] absolute left-0 top-0 m-auto p-2 rounded-[10px] bg-foreground-primary border-[1px] border-border">
+      <div className="w-64 -translate-x-[17rem] absolute left-0 top-0 m-auto p-2 rounded-[10px] bg-foreground border-[1px] border-border">
         <div className="flex justify-between px-2 font-semibold text-sm mb-1">
           <span className="text-text-secondary">Participants</span>
           <span
             onClick={showNewGuestInput}
-            className={`cursor-pointer text-text-primary hover:underline rounded-[8px] h-full px-2 ${
+            className={`cursor-pointer text-primary hover:underline rounded-[8px] h-full px-2 ${
               isNewGuestInputVisible ? "opacity-50" : "opacity-100"
             }`}
           >
@@ -83,7 +83,7 @@ export default function SpeakerPicker({
             onKeyDown={handleKeyDown}
             value={newGuest}
             type="text"
-            className={`bg-transparent focus:bg-background-primary text-text-primary font-semibold text-base px-4 py-2 rounded-[8px] outline-none ring-none border-border border-[1px] ${
+            className={`bg-transparent focus:bg-background text-primary font-semibold text-base px-4 py-2 rounded-[8px] outline-none ring-none border-border border-[1px] ${
               isNewGuestInputVisible ? "block" : "hidden"
             }`}
             placeholder="New participant"
@@ -99,7 +99,7 @@ export default function SpeakerPicker({
                       ? handleChangeSpeaker(participant.id)
                       : "";
                   }}
-                  className="cursor-pointer text-text-primary font-semibold text-base px-4 py-2 hover:bg-brand rounded-[8px] truncate"
+                  className="cursor-pointer text-primary font-semibold text-base px-4 py-2 hover:bg-brand rounded-[8px] truncate"
                 >
                   {participant.role === "guest"
                     ? participant.id

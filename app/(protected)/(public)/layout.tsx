@@ -10,11 +10,10 @@ const PublicLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     if (user) {
-      router.push("/files"); // Redirect to dashboard if user is authenticated
+      router.push("/files");
     }
   }, [user, router]);
 
-  // Render children if the user is not authenticated
   return <>{!user ? children : null}</>;
 };
 

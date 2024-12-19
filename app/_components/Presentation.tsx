@@ -200,7 +200,7 @@ export default function Presentation() {
       <ScriptContainer handleTimeChange={handleTimeChange} />
 
       <div className="w-[275px]"></div>
-      <div className="w-full h-56 fixed bottom-0 bg-gradient-to-t from-background-primary to-background-primary/0 pointer-events-none"></div>
+      <div className="w-full h-56 fixed bottom-0 bg-gradient-to-t from-background to-background/0 pointer-events-none"></div>
       <div className="w-full pb-[10px] px-[10px] fixed bottom-0">
         <ActionPanel
           handleTimeChange={handleTimeChange}

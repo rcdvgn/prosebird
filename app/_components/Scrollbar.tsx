@@ -155,7 +155,7 @@ export default function Scrollbar({
           style={{
             height: `${scrollbarHeight}px`,
           }}
-          className="w-full absolute right-0 m-auto bg-foreground-primary rounded-full border-[1px] border-border"
+          className="w-full absolute right-0 m-auto bg-foreground rounded-full border-[1px] border-border"
         ></div>
       </div>
     </div>

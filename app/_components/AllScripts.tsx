@@ -44,9 +44,9 @@ export default function AllScripts() {
                   <div className="script-select"></div>
                   <div className="flex gap-4 items-center grow min-w-0">
                     <div className="icon-container">
-                      <ScriptIcon className="text-text-primary" />
+                      <ScriptIcon className="text-primary" />
                     </div>
-                    <span className="text-text-primary font-semibold text-sm truncate hover:underline cursor-pointer">
+                    <span className="text-primary font-semibold text-sm truncate hover:underline cursor-pointer">
                       {item.title}
                     </span>
                   </div>
@@ -60,7 +60,7 @@ export default function AllScripts() {
                         className="h-9 aspect-square rounded-full bg-cover bg-center flex-shrink-0"
                       ></div>
                       <div className="h-full flex flex-col gap-1 grow min-w-0">
-                        <span className="text-text-primary font-semibold text-sm mb-[-3px] truncate">
+                        <span className="text-primary font-semibold text-sm mb-[-3px] truncate">
                           You
                         </span>
                         <span className="text-text-secondary font-medium text-[13px] truncate">
@@ -74,8 +74,8 @@ export default function AllScripts() {
                     <div className="btn-3 group-hover/main:visible invisible">
                       <MoreIcon className="" />
                     </div>
-                    {/* <div className="group/nested w-8 rounded-lg cursor-pointer aspect-square grid place-items-center hover:bg-foreground-hover">
-                <MoreIcon className="text-text-secondary h-fit w-[3px] group-hover/main:visible invisible group-hover/nested:text-text-primary" />
+                    {/* <div className="group/nested w-8 rounded-lg cursor-pointer aspect-square grid place-items-center hover:bg-hover">
+                <MoreIcon className="text-text-secondary h-fit w-[3px] group-hover/main:visible invisible group-hover/nested:text-primary" />
               </div> */}
                   </div>
                 </div>

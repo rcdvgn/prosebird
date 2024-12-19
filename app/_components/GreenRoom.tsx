@@ -28,7 +28,7 @@ export default function GreenRoom() {
   }, [user, participants]);
 
   return (
-    <div className="w-[500px] p-[10px] bg-foreground-primary rounded-[10px] border-[1px] border-border">
+    <div className="w-[500px] p-[10px] bg-foreground rounded-[10px] border-[1px] border-border">
       {participants &&
         participants.map((participant: any, index: any) => {
           return (

@@ -63,24 +63,22 @@ export default function Sidebar(fileId: any) {
       <div className="">
         <div
           onClick={() => router.push(`/files`)}
-          className="cursor-pointer flex items-center justify-start rounded-lg hover:bg-foreground-primary select-none h-[46px]"
+          className="cursor-pointer flex items-center justify-start rounded-lg hover:bg-foreground select-none h-[46px]"
         >
-          <span className="ml-[10px] font-bold text-sm text-text-primary">
-            Home
-          </span>
+          <span className="ml-[10px] font-bold text-sm text-primary">Home</span>
         </div>
         <input type="text" className="hidden" />
       </div>
       <div className="">
         <div className="h-[40px]">
           <div className="flex items-center justify-between">
-            <span className="ml-[10px] font-bold text-sm text-text-primary">
+            <span className="ml-[10px] font-bold text-sm text-primary">
               Scripts
             </span>
             <div className="flex gap-1">
               <div
                 onClick={handleCreateScript}
-                className={`btn-3 ${isSearchOn ? "bg-foreground-primary" : ""}`}
+                className={`btn-3 ${isSearchOn ? "bg-foreground" : ""}`}
               >
                 <AddIcon className="" />
               </div>
@@ -88,7 +86,7 @@ export default function Sidebar(fileId: any) {
                 onClick={() => {
                   setIsSearchOn(!isSearchOn);
                 }}
-                className={`btn-3 ${isSearchOn ? "bg-foreground-primary" : ""}`}
+                className={`btn-3 ${isSearchOn ? "bg-foreground" : ""}`}
               >
                 <SearchIcon className="" />
               </div>
@@ -106,19 +104,19 @@ export default function Sidebar(fileId: any) {
                   className={`${
                     script
                       ? item.id === fileId?.fileId
-                        ? "bg-foreground-primary "
+                        ? "bg-foreground "
                         : ""
                       : ""
-                  } select-none hover:bg-foreground-primary cursor-pointer rounded-lg flex items-center justify-start gap-2.5 pl-4 h-[40px] group/item`}
+                  } select-none hover:bg-foreground cursor-pointer rounded-lg flex items-center justify-start gap-2.5 pl-4 h-[40px] group/item`}
                 >
                   <span className="w-[14px] aspect-square grid place-items-center shrink-0">
-                    <ScriptIcon className="text-text-primary h-full stroke-[1px]" />
+                    <ScriptIcon className="text-primary h-full stroke-[1px]" />
                   </span>
-                  <span className="font-semibold text-sm text-text-primary whitespace-nowrap overflow-hidden text-ellipsis">
+                  <span className="font-semibold text-sm text-primary whitespace-nowrap overflow-hidden text-ellipsis">
                     {item.title}
                   </span>
                   <span className="group/wrapper h-[30px] aspect-square grid place-items-center shrink-0 ml-auto">
-                    <MoreIcon className="text-text-secondary h-[14px] group-hover/item:visible invisible group-hover/wrapper:text-text-primary" />
+                    <MoreIcon className="text-text-secondary h-[14px] group-hover/item:visible invisible group-hover/wrapper:text-primary" />
                   </span>
                 </div>
               );

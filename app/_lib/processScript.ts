@@ -51,7 +51,7 @@ function calculateLineBreaks(
 }
 
 export default function processScript(nodes: any) {
-  const processedScript = nodes.forEach((node) => {});
+  const processedScript = nodes.forEach((node: any) => {});
 
   // const processScript =
   return processedScript;

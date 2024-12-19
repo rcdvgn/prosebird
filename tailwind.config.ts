@@ -9,22 +9,20 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: {
-          primary: "#0C0C0C",
-        },
-        text: {
-          primary: "#ffffff",
-          secondary: "#A9AEBC",
-          danger: "#b51b1d",
-        },
-        foreground: {
-          primary: "#141414",
-          secondary: "#17111D",
-          hover: "#19151E",
-        },
-        stroke: "#251D30",
-        brand: "#1044EE",
-        border: "#292929",
+        background: "rgba(var(--background), <alpha-value>)",
+        middleground: "rgba(var(--middleground), <alpha-value>)",
+        foreground: "rgba(var(--foreground), <alpha-value>)",
+        hover: "rgba(var(--hover), <alpha-value>)",
+
+        primary: "var(--primary)",
+        secondary: "rgba(var(--secondary), <alpha-value>)",
+        inactive: "rgba(var(--inactive), <alpha-value>)",
+        placeholder: "rgba(var(--placeholder), <alpha-value>)",
+        danger: "var(--text-danger)",
+
+        stroke: "var(--stroke)",
+        brand: "rgba(var(--brand), <alpha-value>)",
+        border: "rgba(var(--border), <alpha-value>)",
       },
     },
   },

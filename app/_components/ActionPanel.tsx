@@ -19,7 +19,7 @@ export default function ActionPanel({
   const { speaker, scrollMode } = usePresentation();
 
   return (
-    <div className="flex flex-col bg-foreground-primary h-16 rounded-[10px] border-[1px] border-border">
+    <div className="flex flex-col bg-foreground h-16 rounded-[10px] border-[1px] border-border">
       <ProgressBar handleTimeChange={handleTimeChange} />
       <div className="h-full w-full flex">
         <span>{`Scroll mode: ${scrollMode}`}</span>
