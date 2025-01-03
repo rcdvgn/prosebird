@@ -40,8 +40,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         if (!userDoc.exists()) {
           // New user, create a Firestore document for them
           const newUser: any = {
-            firstName: "Ricardo",
-            lastName: "Vigliano",
+            // firstName: "Ricardo",
+            // lastName: "Vigliano",
+            plan: "free",
+            profilePicturePrompted: false,
             email: currentUser.email,
             createdAt: serverTimestamp(),
           };

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { ReactNode, useEffect } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { useAuth } from "@/app/_contexts/AuthContext";
 import { useRouter, useParams } from "next/navigation";
 
@@ -8,26 +8,32 @@ import { RecentScriptsProvider } from "@/app/_contexts/RecentScriptsContext";
 import { ScriptEditorProvider } from "@/app/_contexts/ScriptEditorContext";
 import Sidebar from "@/app/_components/Sidebar";
 
-const AuthenticatedLayout: React.FC<{ children: ReactNode }> = ({
-  children,
-}) => {
+const MainLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { user } = useAuth();
   const router = useRouter();
   const params = useParams();
 
-  // Extract fileId from params or set it to null if not present
+  const [letUserIn, setLetUserIn] = useState(false);
+
+  // const [isProcessing, setIsProcessing] = useState(true);
+
   const fileId = params?.fileId || null;
 
   useEffect(() => {
-    if (!user) {
-      router.push("/"); // Redirect to home if user is not authenticated
+    if (user) {
+      if (!user.firstName) {
+        router.push("/onboarding");
+      } else {
+        setLetUserIn(true);
+      }
+    } else {
+      router.push("/");
     }
-  }, [user, router]);
+  }, [user]);
 
-  // Render children if the user is authenticated
   return (
     <>
-      {user ? (
+      {letUserIn ? (
         <div id="main" className="flex">
           <RecentScriptsProvider>
             <ScriptEditorProvider>
@@ -41,4 +47,4 @@ const AuthenticatedLayout: React.FC<{ children: ReactNode }> = ({
   );
 };
 
-export default AuthenticatedLayout;
+export default MainLayout;

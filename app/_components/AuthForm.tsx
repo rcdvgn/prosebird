@@ -9,7 +9,7 @@ function AuthFlow({ flow }: any) {
   const router = useRouter();
 
   return (
-    <div className="text-sm w-full text-center font-semibold">
+    <div className="text-sm w-full text-center font-semibold my-4">
       <span className="text-secondary mr-1 pointer-events-none">
         {flow === "signup"
           ? "Already have an account?"
@@ -36,7 +36,7 @@ export default function AuthForm({ flow }: any) {
 
   const [error, setError] = useState<string | null>(null);
 
-  const alternateFlow = flow === "signin" ? "signup" : "signin";
+  // const alternateFlow = flow === "signin" ? "signup" : "signin";
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,7 +63,7 @@ export default function AuthForm({ flow }: any) {
     }
   };
   return (
-    <div className="w-[350px] h-full flex flex-col justify-between p-4">
+    <div className="w-[400px] h-full flex flex-col justify-between">
       <div className="invisible pointer-events-none">
         <AuthFlow flow={flow} />
       </div>
@@ -136,7 +136,7 @@ export default function AuthForm({ flow }: any) {
 
           <div className="flex items-center">
             <div className="bg-border h-[1px] w-full"></div>
-            <span className="text-secondary font-semibold text-xs px-3 shrink-0">
+            <span className="text-secondary font-medium text-sm px-3 shrink-0">
               or {flow} with
             </span>
             <div className="bg-border h-[1px] w-full"></div>
