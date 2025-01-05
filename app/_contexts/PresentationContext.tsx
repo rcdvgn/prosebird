@@ -19,6 +19,7 @@ import {
   getPeople,
   changeMemberStatus,
   subscribeToPresentation,
+  managePresence,
 } from "../_actions/actions";
 
 interface PusherMember {
@@ -58,7 +59,7 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
   const [realtimeNodes, setRealtimeNodes] = useState<any>(null);
   const [newerNodesAvailable, setNewerNodesAvailable] = useState<any>(false);
 
-  const [pusherChannel, setPusherChannel] = useState<any>(null);
+  // const [pusherChannel, setPusherChannel] = useState<any>(null);
 
   const containerWidth = 520;
   const speedMultiplier = 1;
@@ -76,7 +77,6 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
 
     for (let i = chapterStartPositions.length - 1; i >= 0; i--) {
       if (currentPosition >= chapterStartPositions[i]) {
-        // console.log(currentPosition, chapterStartPositions[i]);
         correctLineSpeaker = chapters[chapterStartPositions[i]].speaker;
         break;
       }
@@ -121,7 +121,8 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            presentationCode: presentationCode,
+            // presentationCode: presentationCode,
+            presentationId: presentation.id,
             currentPosition:
               wordsWithTimestamps[progress.line][progress.index].position,
             userId: speaker.id,
@@ -140,7 +141,6 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
 
   // fetch presentation
   useEffect(() => {
-    // console.log(presentationCode);
     if (!presentationCode) return;
     if (!presentationCode.length) return;
 
@@ -224,83 +224,21 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
     };
   }, [presentation?.id]);
 
-  // handle pusher authentication and authorization
   useEffect(() => {
     if (!presentation || !speaker) return;
 
-    const handleMemberStatus = async (
-      memberId: string,
-      isConnected: boolean
-    ) => {
-      // console.log(memberId, isConnected);
-
-      await changeMemberStatus(
-        presentation.id,
-        presentation.participants,
-        memberId,
-        isConnected
-      );
-    };
-
-    const client: any = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
-      userAuthentication: {
-        endpoint: "/api/pusher/user-auth",
-        transport: "ajax",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded", // Changed this
-          "X-User-ID": speaker?.id,
-        },
-        params: {
-          uid: speaker?.id,
-        },
-      },
-      channelAuthorization: {
-        endpoint: "/api/pusher/auth",
-        transport: "ajax",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded", // Changed this
-          "X-User-ID": speaker?.id,
-        },
-        params: {
-          uid: speaker?.id,
-        },
-      },
-      cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
-    });
-
-    // Sign in before subscribing to the channel
-    // client.signin()
-    const channel = client.subscribe(`presence-${presentationCode}`);
-    setPusherChannel(channel);
-
-    channel.bind(
-      "pusher:subscription_succeeded",
-      async (members: PusherMembers) => {
-        // console.log("Successfully subscribed to channel", members);
-        // if (speaker.id === members.myID) {
-        //   await handleMemberStatus(speaker.id, true);
-        // }
-        // members.each((member: any) => console.log("Member:", member));
+    const unsubscribe = managePresence(
+      presentation.id,
+      speaker,
+      (updatedParticipants: any) => {
+        console.log("Updated participants:", updatedParticipants);
       }
     );
 
-    channel.bind("pusher:member_added", (member: any) => {
-      // console.log("Other member added to channel", member);
-    });
-
-    channel.bind("pusher:member_removed", async (member: any) => {
-      // console.log("Member removed from channel", member);
-      // await handleMemberStatus(member.id, false)
-    });
-
     return () => {
-      // Set the speaker's status to disconnected on cleanup
-      // handleMemberStatus(speaker.id, false).then(() => {
-      //   client.unsubscribe(`presence-${presentationCode}`);
-      //   client.disconnect();
-      // });
+      unsubscribe();
     };
-  }, [speaker?.id, presentation?.id]);
+  }, [presentation?.id, speaker?.id]);
 
   // useEffect(() => {
   //   console.log(participants, speaker);
@@ -312,32 +250,37 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
 
     const participantsData = presentation.participants || [];
 
+    console.log(participantsData);
+
     if (!_.isEqual(participantsData, lastFetchedParticipants)) {
       // console.log("Change in participants, proceeding to fetch each individually");
+
       setLastFetchedParticipants(participantsData);
 
       const fetchParticipantDetails = async () => {
         try {
-          const newParticipantsIds = participantsData.map(
-            (participant: any) => participant.id
-          );
+          const newParticipantsIds = Object.keys(participantsData);
+
           const userDocs = await getPeople(newParticipantsIds, []);
+
+          console.log(userDocs);
 
           const userDetailsMap = userDocs.reduce((acc, userDoc) => {
             acc[userDoc.id] = userDoc;
             return acc;
           }, {} as Record<string, any>);
 
-          const enrichedParticipants = participantsData.map(
-            (participant: any) => {
-              const userDetails = userDetailsMap[participant.id];
+          const enrichedParticipants = Object.entries(participantsData).map(
+            ([participantId, participantData]: any) => {
+              const userDetails = userDetailsMap[participantId];
               if (userDetails) {
                 return {
+                  id: participantId,
                   ...userDetails,
-                  ...participant,
+                  ...participantData,
                 };
               }
-              return participant;
+              return { id: participantId, ...participantData };
             }
           );
 
@@ -417,7 +360,6 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
         speaker,
         setSpeaker,
         participants,
-        pusherChannel,
         progress,
         setProgress,
         broadcastProgress,

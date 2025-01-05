@@ -3,6 +3,7 @@ import { getAuth } from "firebase/auth";
 // import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
 // import { getStorage } from "firebase/storage";
+import { getDatabase } from "firebase/database"; // Import the RTDB module
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_API_KEY,
@@ -19,3 +20,4 @@ export const auth = getAuth();
 // const analytics = getAnalytics(app);
 export const db = getFirestore(app);
 // export const storage = getStorage(app);
+export const rtdb = getDatabase(app);

@@ -1,18 +1,21 @@
 import { NextResponse } from "next/server";
-import { pusherServer } from "@/app/_config/pusher";
+import { ref, update } from "firebase/database";
+import { rtdb } from "@/app/_config/fireabase";
 
 export async function POST(request: Request) {
   try {
-    const { presentationCode, currentPosition, userId } = await request.json();
+    const { presentationId, currentPosition, userId } = await request.json();
 
-    await pusherServer.trigger(
-      `presence-${presentationCode}`,
-      "update-position",
-      {
-        newPosition: currentPosition,
-        senderId: userId,
-      }
+    const lastMessageRef = ref(
+      rtdb,
+      `presentations/${presentationId}/lastMessage`
     );
+
+    // Update the data in the Realtime Database
+    await update(lastMessageRef, {
+      position: currentPosition,
+      senderId: userId,
+    });
 
     return new Response(null, { status: 200 });
   } catch (error) {

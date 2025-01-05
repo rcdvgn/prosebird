@@ -14,7 +14,6 @@ export default function Presentation() {
   const {
     presentation,
     speaker,
-    pusherChannel,
     wordsWithTimestamps,
     broadcastProgress,
     progress,
@@ -146,22 +145,18 @@ export default function Presentation() {
 
   // get and handle pusher messages
   useEffect(() => {
-    if (!wordsWithTimestamps || !presentation) return;
+    if (!wordsWithTimestamps || !presentation || !presentation?.lastMessage)
+      return;
+    const { position: newPosition, senderId } = presentation.lastMessage;
 
-    pusherChannel.bind("update-position", (data: any) => {
-      console.log("new data received: " + JSON.stringify(data));
-      if (scrollMode === "continuous" && data.senderId === speaker.id) return;
+    if (scrollMode === "continuous" && senderId === speaker.id) return;
 
-      const newTimestamp = getTimestampFromPosition(
-        wordsWithTimestamps,
-        data.newPosition
-      );
-      console.log(
-        "About to change to: " + data.newPosition + " (" + newTimestamp + ")"
-      );
-      newTimestamp ? handleTimeChange(newTimestamp) : "";
-    });
-  }, [presentation?.id, wordsWithTimestamps]);
+    const newTimestamp = getTimestampFromPosition(
+      wordsWithTimestamps,
+      newPosition
+    );
+    newTimestamp ? handleTimeChange(newTimestamp) : "";
+  }, [presentation?.id, presentation?.lastMessage, wordsWithTimestamps]);
 
   // update presentation if scroll mode is dynamic
   useEffect(() => {

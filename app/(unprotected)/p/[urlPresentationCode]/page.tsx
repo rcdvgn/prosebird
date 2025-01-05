@@ -14,8 +14,7 @@ export default function Page({
 }) {
   const { urlPresentationCode } = params;
 
-  const { setPresentationCode, pusherChannel, loading, speaker } =
-    usePresentation();
+  const { setPresentationCode, loading, speaker } = usePresentation();
 
   useEffect(() => {
     if (!urlPresentationCode) return;
@@ -28,7 +27,7 @@ export default function Page({
     return <h1>Loading...</h1>;
   }
 
-  if (speaker && pusherChannel) {
+  if (speaker) {
     if (speaker.isConnected) {
       return <Presentation />;
     }

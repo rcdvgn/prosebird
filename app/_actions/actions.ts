@@ -18,9 +18,21 @@ import {
   documentId,
 } from "firebase/firestore";
 
+import {
+  get,
+  query as rtdbQuery,
+  ref,
+  orderByChild,
+  onValue,
+  off,
+  equalTo,
+  onDisconnect,
+  set,
+} from "firebase/database";
+
 import generatePresentationCode from "@/app/_lib/generatePresentationCode";
 
-import { db } from "../_config/fireabase";
+import { db, rtdb } from "../_config/fireabase";
 import { error } from "console";
 
 export const createScript: any = async (userId: any) => {
@@ -279,13 +291,13 @@ export const getScriptPeople = async (
   }
 };
 
-export const getPeople = async (userIds: string[], exceptionIds: string[]) => {
+export const getPeople = async (userIds: any, exceptionIds: any) => {
   if (userIds.length === 0) {
     return [];
   }
   try {
     const userDocs = await Promise.all(
-      userIds.map(async (id) => {
+      userIds.map(async (id: any) => {
         // Need to explicitly return null for excluded IDs
         if (exceptionIds.includes(id)) {
           return null;
@@ -352,21 +364,52 @@ export async function generateUniquePresentationCode() {
   return generatedCode;
 }
 
+// export const getPresentationByCode = async (presentationCode: string) => {
+//   try {
+//     const presentationsRef = collection(db, "presentations");
+//     const q = query(presentationsRef, where("code", "==", presentationCode));
+//     const querySnap = await getDocs(q);
+
+//     if (querySnap.empty) {
+//       console.error("Presentation not found");
+//       return null;
+//     }
+
+//     const doc = querySnap.docs[0];
+//     return {
+//       id: doc.id,
+//       ...doc.data(),
+//     };
+//   } catch (error) {
+//     console.error("Error getting presentation:", error);
+//     throw error;
+//   }
+// };
+
 export const getPresentationByCode = async (presentationCode: string) => {
   try {
-    const presentationsRef = collection(db, "presentations");
-    const q = query(presentationsRef, where("code", "==", presentationCode));
-    const querySnap = await getDocs(q);
+    // Create a reference to the presentations node in RTDB
+    const presentationsRef = ref(rtdb, "presentations");
 
-    if (querySnap.empty) {
+    // Query the RTDB for the presentation with the matching code
+    const q = rtdbQuery(
+      presentationsRef,
+      orderByChild("code"),
+      equalTo(presentationCode)
+    );
+    const snapshot = await get(q);
+
+    // Check if the snapshot contains any data
+    if (!snapshot.exists()) {
       console.error("Presentation not found");
       return null;
     }
 
-    const doc = querySnap.docs[0];
+    // Retrieve the first matching presentation
+    const [key, data]: any = Object.entries(snapshot.val())[0];
     return {
-      id: doc.id,
-      ...doc.data(),
+      id: key, // The unique ID for the presentation in RTDB
+      ...data,
     };
   } catch (error) {
     console.error("Error getting presentation:", error);
@@ -399,22 +442,105 @@ export const changeMemberStatus = async (
   }
 };
 
-export const subscribeToPresentation = (presentationId: any, onUpdate: any) => {
-  const presentationRef = doc(db, "presentations", presentationId);
+// export const subscribeToPresentation = (presentationId: any, onUpdate: any) => {
+//   const presentationRef = doc(db, "presentations", presentationId);
 
-  const unsubscribePresentation = onSnapshot(
+//   const unsubscribePresentation = onSnapshot(
+//     presentationRef,
+//     (presentationSnapshot) => {
+//       if (presentationSnapshot.exists()) {
+//         const latestPresentation = {
+//           ...presentationSnapshot.data(),
+//           id: presentationSnapshot.id,
+//         };
+//         onUpdate(latestPresentation);
+//       } else {
+//         console.error("Nodes not found using script id: " + presentationId);
+//       }
+//     }
+//   );
+//   return unsubscribePresentation;
+// };
+
+export const subscribeToPresentation = (presentationId: any, onUpdate: any) => {
+  // Create a reference to the specific presentation in RTDB
+  const presentationRef = ref(rtdb, `presentations/${presentationId}`);
+
+  // Attach a listener to the reference
+  const unsubscribePresentation = onValue(
     presentationRef,
-    (presentationSnapshot) => {
-      if (presentationSnapshot.exists()) {
+    (snapshot) => {
+      if (snapshot.exists()) {
         const latestPresentation = {
-          ...presentationSnapshot.data(),
-          id: presentationSnapshot.id,
+          ...snapshot.val(),
+          id: presentationId,
         };
         onUpdate(latestPresentation);
       } else {
-        console.error("Nodes not found using script id: " + presentationId);
+        console.error(
+          "Node not found using presentation ID: " + presentationId
+        );
       }
+    },
+    (error) => {
+      console.error("Error subscribing to presentation:", error);
     }
   );
-  return unsubscribePresentation;
+
+  // Return a function to unsubscribe
+  return () => off(presentationRef, "value", unsubscribePresentation);
+};
+
+export const managePresence = (
+  presentationId: any,
+  user: any,
+  onParticipantsChange: any
+) => {
+  console.log(user);
+  const presenceRef = ref(
+    rtdb,
+    `presentations/${presentationId}/participants/${user.id}`
+  );
+  const connectedRef = ref(rtdb, ".info/connected");
+  const participantsRef = ref(
+    rtdb,
+    `presentations/${presentationId}/participants`
+  );
+
+  // Listener for connection status
+  const unsubscribeConnected = onValue(connectedRef, (snapshot) => {
+    const isConnected = snapshot.val();
+    if (isConnected) {
+      // Update the user's connection status in the database
+      set(presenceRef, {
+        role: user.role,
+        isConnected: true,
+        // connectedAt: Date.now(),
+      }).catch((error) => {
+        console.error("Error setting presence:", error);
+      });
+
+      // Automatically update the user to disconnected status when they disconnect
+      onDisconnect(presenceRef)
+        .set({
+          role: user.role,
+          isConnected: false,
+        })
+        .catch((error) => {
+          console.error("Error setting disconnect status:", error);
+        });
+    }
+  });
+
+  // Listener for participants updates
+  const unsubscribeParticipants = onValue(participantsRef, (snapshot) => {
+    const participants = snapshot.val() || {};
+    onParticipantsChange(participants);
+  });
+
+  // Return a cleanup function
+  return () => {
+    unsubscribeConnected();
+    unsubscribeParticipants();
+  };
 };

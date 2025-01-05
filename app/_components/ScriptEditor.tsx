@@ -52,10 +52,14 @@ export default function ScriptEditor() {
   // }, [participants]);
 
   const handlePresent = async () => {
-    let participantsIdsAndRoles = participants.map((item: any) => {
-      const { id, role } = item;
-      return { id, role };
-    });
+    const participantsIdsAndRoles = participants.reduce(
+      (acc: any, item: any) => {
+        const { id, role } = item;
+        acc[id] = { role, isConnected: false }; // Add participant data using `id` as the key
+        return acc;
+      },
+      {}
+    );
 
     try {
       const res = await fetch("/api/presentation/create", {
