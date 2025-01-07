@@ -1,41 +1,16 @@
 import { NextResponse } from "next/server";
-import { pusherServer } from "@/app/_config/pusher";
 import matchToScript from "@/app/_lib/matchToScript";
-// import { db } from "@/app/_config/fireabase";
-// import { doc, getDoc } from "firebase/firestore";
+import { updatePresentation } from "@/app/_services/server";
 
 export async function POST(request: Request) {
   try {
-    const {
-      presentationCode,
-      currentPosition,
-      words,
-      userId,
-      lastSpokenWords,
-    } = await request.json();
-
-    // const docRef = doc(db, "presentations", presentationCode);
-    // const docSnap = await getDoc(docRef);
-
-    // if (!docSnap.exists() || docSnap.data().status !== "active") {
-    //   return NextResponse.json(
-    //     { error: "Invalid or inactive presentation code." },
-    //     { status: 400 }
-    //   );
-    // }
+    const { presentationId, currentPosition, words, userId, lastSpokenWords } =
+      await request.json();
 
     const newPosition = matchToScript(currentPosition, words, lastSpokenWords);
-    // console.log(newPosition);
 
     if (newPosition !== currentPosition) {
-      await pusherServer.trigger(
-        `presence-${presentationCode}`,
-        "update-position",
-        {
-          position: newPosition,
-          senderId: userId,
-        }
-      );
+      await updatePresentation(presentationId, newPosition, userId);
     }
 
     return new Response(null, { status: 200 });

@@ -32,8 +32,7 @@ import {
 
 import generatePresentationCode from "@/app/_lib/generatePresentationCode";
 
-import { db, rtdb } from "../_config/fireabase";
-import { error } from "console";
+import { db, rtdb } from "../_config/firebase/client";
 
 export const createScript: any = async (userId: any) => {
   const blankScript = {
@@ -350,20 +349,6 @@ export const changeNodeSpeaker = async (
   }
 };
 
-export async function generateUniquePresentationCode() {
-  let generatedCode: string;
-  let querySnapshot;
-  const presentationsRef = collection(db, "presentations");
-
-  do {
-    generatedCode = generatePresentationCode();
-    const q = query(presentationsRef, where("code", "==", generatedCode));
-    querySnapshot = await getDocs(q);
-  } while (!querySnapshot.empty);
-
-  return generatedCode;
-}
-
 // export const getPresentationByCode = async (presentationCode: string) => {
 //   try {
 //     const presentationsRef = collection(db, "presentations");
@@ -385,37 +370,6 @@ export async function generateUniquePresentationCode() {
 //     throw error;
 //   }
 // };
-
-export const getPresentationByCode = async (presentationCode: string) => {
-  try {
-    // Create a reference to the presentations node in RTDB
-    const presentationsRef = ref(rtdb, "presentations");
-
-    // Query the RTDB for the presentation with the matching code
-    const q = rtdbQuery(
-      presentationsRef,
-      orderByChild("code"),
-      equalTo(presentationCode)
-    );
-    const snapshot = await get(q);
-
-    // Check if the snapshot contains any data
-    if (!snapshot.exists()) {
-      console.error("Presentation not found");
-      return null;
-    }
-
-    // Retrieve the first matching presentation
-    const [key, data]: any = Object.entries(snapshot.val())[0];
-    return {
-      id: key, // The unique ID for the presentation in RTDB
-      ...data,
-    };
-  } catch (error) {
-    console.error("Error getting presentation:", error);
-    throw error;
-  }
-};
 
 export const changeMemberStatus = async (
   presentationId: any,
@@ -492,11 +446,10 @@ export const subscribeToPresentation = (presentationId: any, onUpdate: any) => {
 };
 
 export const managePresence = (
-  presentationId: any,
+  presentationId: string,
   user: any,
   onParticipantsChange: any
 ) => {
-  console.log(user);
   const presenceRef = ref(
     rtdb,
     `presentations/${presentationId}/participants/${user.id}`
@@ -506,6 +459,7 @@ export const managePresence = (
     rtdb,
     `presentations/${presentationId}/participants`
   );
+  const presentationRef = ref(rtdb, `presentations/${presentationId}`);
 
   // Listener for connection status
   const unsubscribeConnected = onValue(connectedRef, (snapshot) => {
@@ -515,7 +469,6 @@ export const managePresence = (
       set(presenceRef, {
         role: user.role,
         isConnected: true,
-        // connectedAt: Date.now(),
       }).catch((error) => {
         console.error("Error setting presence:", error);
       });
@@ -526,19 +479,32 @@ export const managePresence = (
           role: user.role,
           isConnected: false,
         })
+        .then(() => {
+          // Update the presentation's `lastParticipantDisconnectedAt` field
+          onDisconnect(presentationRef)
+            .update({
+              lastParticipantDisconnectedAt: { ".sv": "timestamp" }, // Server timestamp
+            })
+            .catch((error) => {
+              console.error(
+                "Error updating lastParticipantDisconnectedAt:",
+                error
+              );
+            });
+        })
         .catch((error) => {
           console.error("Error setting disconnect status:", error);
         });
     }
   });
 
-  // Listener for participants updates
+  // Optional: Listener for participants changes
   const unsubscribeParticipants = onValue(participantsRef, (snapshot) => {
-    const participants = snapshot.val() || {};
+    const participants = snapshot.val();
     onParticipantsChange(participants);
   });
 
-  // Return a cleanup function
+  // Return a function to unsubscribe both listeners
   return () => {
     unsubscribeConnected();
     unsubscribeParticipants();

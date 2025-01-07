@@ -1,9 +1,11 @@
-import { rtdb } from "@/app/_config/fireabase";
-import processScript from "@/app/_lib/processScript";
-import { ref, push, serverTimestamp, set } from "firebase/database";
+// import processScript from "@/app/_lib/processScript";
+import { serverTimestamp } from "firebase/database";
 import formatScript from "@/app/_lib/formatScript";
 import { NextResponse } from "next/server";
-import { generateUniquePresentationCode } from "@/app/_actions/actions";
+import {
+  generateUniquePresentationCode,
+  createPresentation,
+} from "@/app/_services/server";
 
 export async function POST(request: Request) {
   try {
@@ -29,18 +31,15 @@ export async function POST(request: Request) {
       scriptId: script.id,
       participants: scriptParticipants,
       code: generatedCode,
+      status: "active",
+      lastParticipantDisconnectedAt: null,
       lastMessage: {
         position: 0,
         senderId: null,
       },
     };
 
-    // Reference to the 'presentations' node in RTDB
-    const presentationsRef = ref(rtdb, "presentations");
-
-    // Push the presentation data to RTDB
-    const newPresentationRef = push(presentationsRef);
-    await set(newPresentationRef, presentation);
+    await createPresentation(presentation);
 
     // Return the generated code for the presentation
     return new Response(generatedCode);

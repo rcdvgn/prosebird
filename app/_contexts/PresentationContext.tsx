@@ -20,7 +20,7 @@ import {
   changeMemberStatus,
   subscribeToPresentation,
   managePresence,
-} from "../_actions/actions";
+} from "../_services/client";
 
 interface PusherMember {
   id: string;

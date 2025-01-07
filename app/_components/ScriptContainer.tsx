@@ -70,7 +70,7 @@ export default function ScriptContainer({
     <>
       <div
         ref={scrollContainer}
-        className="grow h-full flex flex-col items-center ring-1 ring-blue-500  shrink-0 overflow-hidden relative"
+        className="grow h-full flex flex-col items-center ring-1 ring-blue-500 shrink-0 overflow-hidden relative"
       >
         <div
           ref={scriptContainer}
@@ -92,7 +92,7 @@ export default function ScriptContainer({
                         fontSize: "36px",
                       }}
                       onClick={() => handleJump(wordObject.position)}
-                      className={`transtion-all transition-100 cursor-pointer font-medium hover:opacity-100 hover:font-semibold ${
+                      className={`transtion-all transition-100 cursor-pointer font-bold hover:opacity-100 hover:font-bold text-primary ${
                         wordObject.position <
                         wordsWithTimestamps[progress.line][progress.index]
                           .position

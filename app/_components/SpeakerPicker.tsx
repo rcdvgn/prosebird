@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-import { addScriptGuest, changeNodeSpeaker } from "../_actions/actions";
+import { addScriptGuest, changeNodeSpeaker } from "../_services/client";
 import { useScriptEditor } from "@/app/_contexts/ScriptEditorContext";
 import OutsideClickHandler from "./OutsideClickHandler";
 import { useAuth } from "../_contexts/AuthContext";

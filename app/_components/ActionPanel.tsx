@@ -19,19 +19,16 @@ export default function ActionPanel({
   const { speaker, scrollMode } = usePresentation();
 
   return (
-    <div className="flex flex-col bg-foreground h-16 rounded-[10px] border-[1px] border-border">
+    <div className="flex flex-col bg-middleground h-16 rounded-[10px] border-[1px] border-border relative">
       <ProgressBar handleTimeChange={handleTimeChange} />
-      <div className="h-full w-full flex">
-        <span>{`Scroll mode: ${scrollMode}`}</span>
+      <div className="h-full w-full flex items-center justify-center">
+        {/* <span>{`Scroll mode: ${scrollMode}`}</span>
 
         <button onClick={toggleScrollMode} className="">{`Switch to ${
           scrollMode === "continuous" ? "Dynamic" : "Continuous"
-        }`}</button>
+        }`}</button> */}
 
         <PlayPauseButton handleTimerRun={handleTimerRun} timer={timer} />
-
-        <p>{speaker.isConnected ? "True" : "False"}</p>
-        <p>{speaker.id}</p>
       </div>
     </div>
   );

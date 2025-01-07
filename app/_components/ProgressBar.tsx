@@ -100,12 +100,12 @@ export default function ProgressBar({
   }, [totalDuration, handleTimeChange, setIsSeeking]);
 
   return (
-    <div className="mx-6 translate-y-[2px]">
-      <div className="text-primary font-semibold text-sm py-1">
+    <div className="px-[10px] w-full absolute left-0 bottom-full">
+      <div className="text-primary font-semibold text-sm">
         {formatTimestamp(elapsedTime)} / {formatTimestamp(totalDuration)}
       </div>
-      <div ref={progressContainer} className="flex cursor-pointer h-[10px]">
-        <div className="h-2.5 w-full rounded-full relative mt-auto overflow-x-hidden">
+      <div ref={progressContainer} className="group flex cursor-pointer h-4">
+        <div className="h-[1px] w-full relative mt-auto overflow-x-hidden group-hover:h-2 transition-all ease-in-out duration-100">
           <div
             ref={progressBar}
             className="w-full h-full absolute top-0 bg-brand"
@@ -117,9 +117,9 @@ export default function ProgressBar({
         style={{ display: !isAutoscrollOn && !isSeeking ? "flex" : "none" }}
         onClick={handleEngageAutoScroll}
         ref={autoScrollButton}
-        className="absolute bg-brand py-2 px-1.5 rounded-lg border-none outline-none cursor-pointer -translate-x-1/2 bottom-[10px] items-center justify-center"
+        className="absolute bg-brand py-2 px-1.5 rounded-lg border-none outline-none cursor-pointer -translate-x-1/2 bottom-4 items-center justify-center"
       >
-        <PlayIcon className="fill-text-primary w-[8px]" />
+        <PlayIcon className="text-primary w-[8px]" />
         <span className="text-[11px] font-semibold text-primary text-nowrap">
           Jump Here
         </span>

@@ -8,7 +8,7 @@ async function loadFontAndContext(): Promise<CanvasRenderingContext2D> {
 
   const font = new FontFace(
     "Public-Sans",
-    "url(/fonts/Public_Sans/PublicSans.ttf)"
+    "url(/fonts/Public_Sans/static/PublicSans-Bold.ttf)"
   );
   await font.load();
   document.fonts.add(font);

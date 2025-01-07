@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { auth, db } from "@/app/_config/fireabase";
+import { auth, db } from "@/app/_config/firebase/client";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,

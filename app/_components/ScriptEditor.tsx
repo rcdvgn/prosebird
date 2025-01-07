@@ -159,7 +159,7 @@ export default function ScriptEditor() {
             Share
           </button>
           <button className="btn-1-md flex gap-2" onClick={handlePresent}>
-            <PlayIcon className="fill-text-primary" />
+            <PlayIcon className="text-primary" />
             <span className="">Present</span>
           </button>
         </div>

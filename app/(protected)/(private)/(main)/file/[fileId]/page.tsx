@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { getScriptAndNodes } from "@/app/_actions/actions";
+import { getScriptAndNodes } from "@/app/_services/client";
 import { useAuth } from "@/app/_contexts/AuthContext";
 import ScriptEditor from "@/app/_components/ScriptEditor";
 import { useScriptEditor } from "@/app/_contexts/ScriptEditorContext";

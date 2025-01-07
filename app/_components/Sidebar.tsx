@@ -12,7 +12,7 @@ import Logo from "../_assets/logo";
 
 import { useRouter } from "next/navigation";
 
-import { createScript, getUserScripts } from "@/app/_actions/actions";
+import { createScript, getUserScripts } from "@/app/_services/client";
 
 import { useAuth } from "../_contexts/AuthContext";
 import { useScriptEditor } from "../_contexts/ScriptEditorContext";

@@ -14,7 +14,7 @@ import {
   subscribeToNodes,
   subscribeToScript,
   getPeople,
-} from "../_actions/actions";
+} from "../_services/client";
 
 import { emptyNode } from "../_utils/emptyNode";
 import { useAuth } from "./AuthContext";

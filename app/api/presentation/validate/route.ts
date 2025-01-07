@@ -1,6 +1,10 @@
 // /app/api/presentation/validate.ts
 import { NextResponse } from "next/server";
-import { getPresentationByCode } from "@/app/_actions/actions";
+import {
+  getPresentationByCode,
+  updatePresentationStatus,
+  getServerTimestampRTDB,
+} from "@/app/_services/server";
 
 export async function POST(request: Request) {
   try {
@@ -16,7 +20,40 @@ export async function POST(request: Request) {
     const presentation: any = await getPresentationByCode(presentationCode);
 
     if (!presentation) {
-      return NextResponse.json({ presentation: null }, { status: 200 });
+      console.log("nem existe");
+
+      return NextResponse.json(
+        { error: "Presentation not found." },
+        { status: 500 }
+      );
+    }
+
+    if (presentation.status !== "active") {
+      console.log("caiu ali");
+
+      return NextResponse.json(
+        { error: "Inactive presentation." },
+        { status: 500 }
+      );
+    }
+
+    const serverTimestamp: any = await getServerTimestampRTDB();
+
+    // console.log(serverTimestamp, presentation.lastParticipantDisconnectedAt);
+
+    if (
+      serverTimestamp - presentation.lastParticipantDisconnectedAt >
+      5 * 60 * 1000
+    ) {
+      // If no participants for 55+ minutes or `lastParticipantDisconnectedAt` is null
+      await updatePresentationStatus(presentation.id, "inactive");
+
+      return NextResponse.json(
+        {
+          error: "Presentation has been marked as inactive due to inactivity.",
+        },
+        { status: 400 }
+      );
     }
 
     return NextResponse.json({ presentation }, { status: 200 });

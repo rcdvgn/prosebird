@@ -6,8 +6,8 @@ import React, {
   ReactNode,
 } from "react";
 import { useAuth } from "./AuthContext";
-import { subscribeToRecentScripts } from "../_actions/actions"; // Import the action
-import { getScriptPeople } from "../_actions/actions";
+import { subscribeToRecentScripts } from "../_services/client"; // Import the action
+import { getScriptPeople } from "../_services/client";
 // Define the type for the script object
 interface Script {
   id: string;

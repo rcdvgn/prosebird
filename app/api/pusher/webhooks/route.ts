@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import {
   changeMemberStatus,
   getPresentationByCode,
-} from "@/app/_actions/actions";
+} from "@/app/_services/client";
 
 export async function POST(req: Request) {
   const body = await req.json();

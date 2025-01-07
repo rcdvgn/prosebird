@@ -104,10 +104,7 @@ export default function Presentation() {
   useEffect(() => {
     if (!speaker || !presentation || !controller) return;
 
-    console.log(progress, controller);
     if (controller?.current === speaker?.id) {
-      // console.log("Speaker is the controller of the presentation");
-
       if (controller?.previous !== speaker?.id) {
         // if (!timer.isRunning() && scrollMode === "continuous") {
         //   handleTimerRun();
@@ -115,8 +112,6 @@ export default function Presentation() {
         !isAutoscrollOn ? setIsAutoscrollOn(true) : "";
       }
     } else {
-      // console.log("Speaker isnt the controller of the presentation");
-
       if (timer.isRunning()) {
         handleTimerRun();
       }
@@ -178,12 +173,9 @@ export default function Presentation() {
       wordsWithTimestamps[progress.line][progress.index].position;
     const { isController, didControllerChange } = getController(position);
 
-    console.log(isController, didControllerChange);
-
     const isProgressZero = position > 0;
 
     if (isController || (didControllerChange && isProgressZero)) {
-      console.log("about to broadcast");
       broadcastProgress({ transcript: null });
     }
   }, [progress]);

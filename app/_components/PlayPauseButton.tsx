@@ -17,17 +17,13 @@ export default function PlayPauseButton({
   return (
     showControls && (
       <div
-        className="h-12 aspect-square rounded-full bg-brand grid place-items-center cursor-pointer mx-7"
+        className="h-10 aspect-square rounded-full bg-brand grid place-items-center cursor-pointer mx-7"
         onClick={handleTimerRun}
       >
-        {timer.isStarted() ? (
-          timer.isRunning() ? (
-            <PauseIcon className="w-[12px] fill-text-primary" />
-          ) : (
-            <PlayIcon className="w-[12px] fill-text-primary" />
-          )
+        {timer.isStarted() && timer.isRunning() ? (
+          <PauseIcon className="w-[12px] text-primary" />
         ) : (
-          <PlayIcon className="w-[12px] fill-text-primary" />
+          <PlayIcon className="w-[12px] text-primary translate-x-[2px]" />
         )}
       </div>
     )
