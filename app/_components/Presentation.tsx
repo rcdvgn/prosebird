@@ -2,7 +2,7 @@
 import "regenerator-runtime/runtime";
 import { useTimer } from "react-use-precision-timer";
 import getTimestampFromPosition from "@/app/_utils/getTimestampFromPosition";
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
@@ -28,7 +28,6 @@ export default function Presentation() {
     isAutoscrollOn,
     setIsAutoscrollOn,
     controller,
-    setController,
   } = usePresentation();
 
   const handleTimerExpire = () => {
@@ -83,7 +82,7 @@ export default function Presentation() {
   const {
     transcript,
     resetTranscript,
-    // listening,
+    listening,
     // interimTranscript,
     browserSupportsSpeechRecognition,
   } = useSpeechRecognition();
@@ -111,9 +110,13 @@ export default function Presentation() {
         // }
         !isAutoscrollOn ? setIsAutoscrollOn(true) : "";
       }
-    } else {
-      if (timer.isRunning()) {
-        handleTimerRun();
+    } else if (controller?.previous === speaker?.id) {
+      if (scrollMode === "continuous") {
+        if (timer.isRunning()) {
+          handleTimerRun();
+        }
+      } else {
+        listening ? handleStopListening() : "";
       }
     }
   }, [speaker, controller]);
@@ -138,7 +141,7 @@ export default function Presentation() {
     }
   }, [browserSupportsSpeechRecognition]);
 
-  // get and handle pusher messages
+  // handle messages
   useEffect(() => {
     if (!wordsWithTimestamps || !presentation || !presentation?.lastMessage)
       return;
@@ -161,22 +164,19 @@ export default function Presentation() {
 
   // update presentation if scroll mode is continuous
   useEffect(() => {
-    if (
-      !progress ||
-      !wordsWithTimestamps ||
-      !speaker ||
-      scrollMode === "dynamic"
-    )
-      return;
+    if (!progress || !wordsWithTimestamps || !speaker) return;
 
     const position =
       wordsWithTimestamps[progress.line][progress.index].position;
     const { isController, didControllerChange } = getController(position);
 
-    const isProgressZero = position > 0;
+    if (scrollMode === "continuous") {
+      // check to disregard fake controller "change" in the first useEffect run
+      const isProgressZero = position === 0;
 
-    if (isController || (didControllerChange && isProgressZero)) {
-      broadcastProgress({ transcript: null });
+      if (isController || (didControllerChange && !isProgressZero)) {
+        broadcastProgress({ transcript: null });
+      }
     }
   }, [progress]);
 
@@ -190,6 +190,9 @@ export default function Presentation() {
       <div className="w-full h-56 fixed bottom-0 bg-gradient-to-t from-background to-background/0 pointer-events-none"></div>
       <div className="w-full pb-[10px] px-[10px] fixed bottom-0">
         <ActionPanel
+          handleStartListening={handleStartListening}
+          handleStopListening={handleStopListening}
+          listening={listening}
           handleTimeChange={handleTimeChange}
           toggleScrollMode={toggleScrollMode}
           handleTimerRun={handleTimerRun}

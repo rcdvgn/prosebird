@@ -20,8 +20,6 @@ export async function POST(request: Request) {
     const presentation: any = await getPresentationByCode(presentationCode);
 
     if (!presentation) {
-      console.log("nem existe");
-
       return NextResponse.json(
         { error: "Presentation not found." },
         { status: 500 }
@@ -29,8 +27,6 @@ export async function POST(request: Request) {
     }
 
     if (presentation.status !== "active") {
-      console.log("caiu ali");
-
       return NextResponse.json(
         { error: "Inactive presentation." },
         { status: 500 }
@@ -38,8 +34,6 @@ export async function POST(request: Request) {
     }
 
     const serverTimestamp: any = await getServerTimestampRTDB();
-
-    // console.log(serverTimestamp, presentation.lastParticipantDisconnectedAt);
 
     if (
       serverTimestamp - presentation.lastParticipantDisconnectedAt >

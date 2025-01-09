@@ -250,8 +250,6 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
 
     const participantsData = presentation.participants || [];
 
-    console.log(participantsData);
-
     if (!_.isEqual(participantsData, lastFetchedParticipants)) {
       // console.log("Change in participants, proceeding to fetch each individually");
 
@@ -262,8 +260,6 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
           const newParticipantsIds = Object.keys(participantsData);
 
           const userDocs = await getPeople(newParticipantsIds, []);
-
-          console.log(userDocs);
 
           const userDetailsMap = userDocs.reduce((acc, userDoc) => {
             acc[userDoc.id] = userDoc;
@@ -341,10 +337,6 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
     );
 
     if (!_.isEqual(newProgress, progress)) {
-      console.log(
-        "progress about to be updated: " + JSON.stringify(newProgress)
-      );
-
       setProgress(newProgress);
     }
   }, [elapsedTime, isSeeking, wordsWithTimestamps]);

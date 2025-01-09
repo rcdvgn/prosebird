@@ -25,17 +25,10 @@ const checkMatch = (lastSpokenWords: any, expectedWordsWindow: any): any => {
     const normalizedSpokenWord = normalizedSpokenWords
       .slice(normalizedSpokenWords.length - numOfNormalizedExpectedWords)
       .join(" ");
-
-    // console.log("Spoken word: " + normalizedSpokenWord);
-    // console.log("Expected word: " + normalizedExpectedWord);
-
     if (normalizedSpokenWord === normalizedExpectedWord) {
-      // console.log("Match! " + position);
       return position;
     }
-    // console.log("No match");
   }
-
   return undefined;
 };
 
@@ -62,5 +55,5 @@ export default function matchToScript(
     }
   }
 
-  return matched ? words[newCurrentPosition + 1].index : currentPosition;
+  return matched ? words[newCurrentPosition + 1].position : currentPosition;
 }
