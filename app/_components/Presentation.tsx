@@ -2,13 +2,24 @@
 import "regenerator-runtime/runtime";
 import { useTimer } from "react-use-precision-timer";
 import getTimestampFromPosition from "@/app/_utils/getTimestampFromPosition";
-import React, { useEffect } from "react";
-import SpeechRecognition, {
-  useSpeechRecognition,
-} from "react-speech-recognition";
+import React, { useState, useEffect, useRef } from "react";
+// import SpeechRecognition, {
+//   useSpeechRecognition,
+// } from "react-speech-recognition";
 import ScriptContainer from "@/app/_components/ScriptContainer";
 import ActionPanel from "@/app/_components/ActionPanel";
+
 import { usePresentation } from "../_contexts/PresentationContext";
+import {
+  useDeepgram,
+  LiveConnectionState,
+  LiveTranscriptionEvents,
+} from "../_contexts/DeepgramContextProvider";
+import {
+  useMicrophone,
+  MicrophoneEvents,
+  MicrophoneState,
+} from "../_contexts/MicrophoneContext";
 
 export default function Presentation() {
   const {
@@ -30,10 +41,17 @@ export default function Presentation() {
     controller,
   } = usePresentation();
 
-  const handleTimerExpire = () => {
-    handleTimeChange(totalDuration);
-    console.log("Time has expired");
-  };
+  const { connectToDeepgram, connection, connectionState } = useDeepgram();
+  const {
+    setupMicrophone,
+    microphone,
+    startMicrophone,
+    stopMicrophone,
+    microphoneState,
+  } = useMicrophone();
+  const [transcript, setTranscript] = useState("");
+
+  const keepAliveInterval = useRef<any>();
 
   const timer = useTimer(
     {
@@ -43,8 +61,81 @@ export default function Presentation() {
       startImmediately: false,
       speedMultiplier: speedMultiplier,
     },
-    handleTimerExpire
+    () => {
+      handleTimeChange(totalDuration);
+      console.log("Time has expired");
+    }
   );
+
+  useEffect(() => {
+    setupMicrophone();
+  }, []);
+
+  useEffect(() => {
+    if (microphoneState === MicrophoneState.Ready) {
+      connectToDeepgram({
+        model: "nova-2",
+        interim_results: true,
+        smart_format: true,
+        filler_words: true,
+        utterance_end_ms: 3000,
+      });
+    }
+  }, [microphoneState]);
+
+  useEffect(() => {
+    if (!microphone || !connection) return;
+
+    const onData = (e: BlobEvent) => {
+      if (e.data.size > 0) {
+        connection?.send(e.data);
+      }
+    };
+
+    const onTranscript = (data: any) => {
+      console.log(data);
+      const thisCaption = data.channel.alternatives[0]?.transcript;
+      if (thisCaption) {
+        setTranscript((prev) => prev + " " + thisCaption);
+      }
+    };
+
+    if (connectionState === LiveConnectionState.OPEN) {
+      connection.addListener(LiveTranscriptionEvents.Transcript, onTranscript);
+      microphone.addEventListener(MicrophoneEvents.DataAvailable, onData);
+      // startMicrophone();
+    }
+
+    return () => {
+      connection.removeListener(
+        LiveTranscriptionEvents.Transcript,
+        onTranscript
+      );
+      microphone.removeEventListener(MicrophoneEvents.DataAvailable, onData);
+    };
+  }, [connectionState, microphone]);
+
+  useEffect(() => {
+    if (!connection) return;
+
+    if (
+      microphoneState !== MicrophoneState.Open &&
+      connectionState === LiveConnectionState.OPEN
+    ) {
+      connection.keepAlive();
+
+      keepAliveInterval.current = setInterval(() => {
+        connection.keepAlive();
+      }, 5000);
+    } else {
+      clearInterval(keepAliveInterval.current);
+    }
+
+    return () => {
+      clearInterval(keepAliveInterval.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [microphoneState, connectionState]);
 
   const handleTimerRun = () => {
     if (!timer.isStarted()) {
@@ -74,52 +165,36 @@ export default function Presentation() {
 
       setScrollMode("dynamic");
     } else {
-      // handleTimerRun();
       setScrollMode("continuous");
     }
   };
 
-  const {
-    transcript,
-    resetTranscript,
-    listening,
-    // interimTranscript,
-    browserSupportsSpeechRecognition,
-  } = useSpeechRecognition();
+  // const {
+  //   transcript,
+  //   resetTranscript,
+  //   listening,
+  //   // interimTranscript,
+  //   browserSupportsSpeechRecognition,
+  // } = useSpeechRecognition();
 
-  const handleStartListening = () => {
-    resetTranscript();
-    SpeechRecognition.startListening({
-      continuous: true,
-      language: "en-US",
-    });
-  };
+  // const handleStartListening = () => {
+  //   resetTranscript();
+  //   SpeechRecognition.startListening({
+  //     continuous: true,
+  //     language: "en-US",
+  //   });
+  // };
 
-  const handleStopListening = () => {
-    SpeechRecognition.stopListening();
-  };
+  // const handleStopListening = () => {
+  //   SpeechRecognition.stopListening();
+  // };
 
-  // observe and manage control over the presentation
-  useEffect(() => {
-    if (!speaker || !presentation || !controller) return;
-
-    if (controller?.current === speaker?.id) {
-      if (controller?.previous !== speaker?.id) {
-        // if (!timer.isRunning() && scrollMode === "continuous") {
-        //   handleTimerRun();
-        // }
-        !isAutoscrollOn ? setIsAutoscrollOn(true) : "";
-      }
-    } else if (controller?.previous === speaker?.id) {
-      if (scrollMode === "continuous") {
-        if (timer.isRunning()) {
-          handleTimerRun();
-        }
-      } else {
-        listening ? handleStopListening() : "";
-      }
-    }
-  }, [speaker, controller]);
+  // check if browser supports dynamic mode
+  // useEffect(() => {
+  //   if (!browserSupportsSpeechRecognition) {
+  //     console.log("Browser doesn't support speech recognition.");
+  //   }
+  // }, [browserSupportsSpeechRecognition]);
 
   // render interval
   useEffect(() => {
@@ -130,16 +205,26 @@ export default function Presentation() {
     }, 10);
 
     return () => clearInterval(intervalId);
-
-    // maybe remove "isSeeking"
   }, [timer, isSeeking]);
 
-  // check if browser supports dynamic mode
+  // observe and manage control over the presentation
   useEffect(() => {
-    if (!browserSupportsSpeechRecognition) {
-      // console.log("Browser doesn't support speech recognition.");
+    if (!speaker || !presentation || !controller) return;
+
+    if (controller?.current === speaker?.id) {
+      if (controller?.previous !== speaker?.id) {
+        !isAutoscrollOn ? setIsAutoscrollOn(true) : "";
+      }
+    } else if (controller?.previous === speaker?.id) {
+      if (scrollMode === "continuous") {
+        if (timer.isRunning()) {
+          handleTimerRun();
+        }
+      } else {
+        microphoneState === MicrophoneState.Open ? stopMicrophone() : "";
+      }
     }
-  }, [browserSupportsSpeechRecognition]);
+  }, [speaker, controller]);
 
   // handle messages
   useEffect(() => {
@@ -171,7 +256,6 @@ export default function Presentation() {
     const { isController, didControllerChange } = getController(position);
 
     if (scrollMode === "continuous") {
-      // check to disregard fake controller "change" in the first useEffect run
       const isProgressZero = position === 0;
 
       if (isController || (didControllerChange && !isProgressZero)) {
@@ -190,9 +274,9 @@ export default function Presentation() {
       <div className="w-full h-56 fixed bottom-0 bg-gradient-to-t from-background to-background/0 pointer-events-none"></div>
       <div className="w-full pb-[10px] px-[10px] fixed bottom-0">
         <ActionPanel
-          handleStartListening={handleStartListening}
-          handleStopListening={handleStopListening}
-          listening={listening}
+          // handleStartListening={handleStartListening}
+          // handleStopListening={handleStopListening}
+          // listening={listening}
           handleTimeChange={handleTimeChange}
           toggleScrollMode={toggleScrollMode}
           handleTimerRun={handleTimerRun}

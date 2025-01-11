@@ -1,26 +1,24 @@
 import { PauseIcon, PlayIcon } from "@/app/_assets/icons";
 import { usePresentation } from "../_contexts/PresentationContext";
+import { MicrophoneState, useMicrophone } from "../_contexts/MicrophoneContext";
 
 export default function PlayPauseButton({
-  handleStartListening,
-  handleStopListening,
-  listening,
   handleTimerRun,
   timer,
 }: {
-  handleStartListening: any;
-  handleStopListening: any;
-  listening: any;
   handleTimerRun: any;
   timer: any;
 }) {
   const { controller, speaker, scrollMode } = usePresentation();
+  const { startMicrophone, stopMicrophone, microphoneState } = useMicrophone();
 
   const handlePlayPause = () => {
     if (scrollMode === "continuous") {
       handleTimerRun();
     } else {
-      listening ? handleStopListening() : handleStartListening();
+      microphoneState === MicrophoneState.Open
+        ? stopMicrophone()
+        : startMicrophone();
     }
   };
 

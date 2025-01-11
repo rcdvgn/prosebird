@@ -1,4 +1,5 @@
-// import { AutoscrollProvider } from "@/app/_contexts/AutoScrollContext";
+import { DeepgramContextProvider } from "@/app/_contexts/DeepgramContextProvider";
+import { MicrophoneContextProvider } from "@/app/_contexts/MicrophoneContext";
 import { PresentationProvider } from "@/app/_contexts/PresentationContext";
 
 export default function PresentationLayout({
@@ -7,9 +8,10 @@ export default function PresentationLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <PresentationProvider>
-      {/* <AutoscrollProvider></AutoscrollProvider> */}
-      {children}
-    </PresentationProvider>
+    <MicrophoneContextProvider>
+      <DeepgramContextProvider>
+        <PresentationProvider>{children}</PresentationProvider>
+      </DeepgramContextProvider>
+    </MicrophoneContextProvider>
   );
 }
