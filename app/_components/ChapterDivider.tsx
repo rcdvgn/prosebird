@@ -10,24 +10,14 @@ export default function ChapterDivider({ position }: { position: number }) {
   const scriptData = script.data;
 
   return (
-    <div className="group w-full flex items-center justify-center py-2">
-      <div className="relative w-full flex flex-col gap-1 justify-between invisible group-hover:visible">
-        <div
-          className={`${
-            position > 0 ? "" : "hidden"
-          } h-1.5 border-stroke border-x-[1px] border-b-[1px] rounded-sm`}
-        ></div>
-        <div
-          className={`${
-            position === scriptData.nodes.length ? "hidden" : ""
-          } h-1.5 border-stroke border-x-[1px] border-t-[1px] rounded-sm`}
-        ></div>
-        <button
-          onClick={() => addNode(position, user)}
-          className="absolute top-0 bottom-0 right-0 left-0 m-auto h-fit w-fit btn-2-sm"
-        >
-          <AddIcon className="fill-text-primary w-2" />
-          <span className="">Chapter</span>
+    <div
+      onClick={() => addNode(position, user)}
+      className="group w-full py-1 cursor-pointer"
+    >
+      <div className="relative w-full invisible group-hover:visible flex items-center justify-center">
+        <div className="group-hover:w-full group-hover:opacity-100 opacity-0 w-0 h-[1px] bg-brand transition-all duration-150 ease-out rounded-full"></div>
+        <button className="absolute top-0 bottom-0 left-0 right-0 m-auto h-6 w-6 rounded-full bg-brand grid place-items-center">
+          <AddIcon className="text-primary h-2.5" />
         </button>
       </div>
     </div>

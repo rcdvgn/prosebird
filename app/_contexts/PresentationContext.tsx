@@ -7,9 +7,7 @@ import React, {
   ReactNode,
   useEffect,
 } from "react";
-import { v4 as uuidv4 } from "uuid";
 import _ from "lodash";
-import Pusher from "pusher-js";
 import calculateTimestamps from "@/app/_lib/addTimestamps";
 
 import getPositionFromTimestamp from "../_utils/getPositionFromTimestamp";
@@ -17,7 +15,6 @@ import getPositionFromTimestamp from "../_utils/getPositionFromTimestamp";
 import {
   getRealtimeNodes,
   getPeople,
-  changeMemberStatus,
   subscribeToPresentation,
   managePresence,
 } from "../_services/client";

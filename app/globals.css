@@ -6,7 +6,9 @@
   --background: 20, 20, 20;
   --middleground: 12, 12, 12;
   --foreground: 26, 26, 26;
+
   --hover: 29, 29, 29;
+  --selected: 41, 41, 41;
 
   --primary: #ffffff;
   /* #A1A1A1 */
@@ -21,6 +23,9 @@
 
   /* #292929 */
   --border: 41, 41, 41;
+
+  --success-green: 33, 248, 40;
+  --money-green: 114, 251, 93;
 }
 
 /* @media (prefers-color-scheme: dark) {
@@ -37,14 +42,13 @@ html {
 }
 
 body {
-  background: rgb(var(--background));
   /* background: linear-gradient(
     180deg,
     var(--background) 0%,
     #181122 100%
   ); */
 
-  color: rgb(var(--primary));
+  /* color: rgb(var(--primary)); */
   height: 100vh;
 }
 
@@ -88,23 +92,11 @@ textarea::-webkit-scrollbar {
 
 @layer components {
   .icon-container {
-    @apply shrink-0 h-[40px] w-[40px] rounded-xl bg-foreground border-border/5 border-[1px] grid place-items-center;
-  }
-
-  .btn-1-md {
-    @apply flex gap-1 items-center justify-center h-9 py-1 px-4 border-none outline-none rounded-lg bg-brand text-[14px] font-bold text-primary;
-  }
-
-  .btn-2-md {
-    @apply flex gap-1 items-center justify-center h-9 py-1 px-4 border-none outline-none rounded-lg  bg-foreground text-[14px] font-bold text-primary;
-  }
-
-  .btn-2-sm {
-    @apply flex gap-1.5 items-center justify-center py-2 px-2 border-none outline-none rounded-[7px] bg-foreground text-xs font-bold text-primary;
+    @apply bg-foreground shrink-0 h-[36px] aspect-square rounded-[10px] border-border border-[1px] grid place-items-center text-inactive [&>svg]:h-4;
   }
 
   .btn-3 {
-    @apply [&>svg]:text-primary [&>svg]:h-[14px] [&>svg]:w-[14px] opacity-70 hover:opacity-100 cursor-pointer h-[30px] aspect-square rounded-lg hover:bg-hover grid place-items-center;
+    @apply [&>svg]:text-primary [&>svg]:h-[14px] [&>svg]:w-[14px] opacity-70 hover:opacity-100 cursor-pointer h-[30px] aspect-square rounded-[10px] hover:bg-hover grid place-items-center;
   }
 
   .files-section-title {
@@ -116,18 +108,38 @@ textarea::-webkit-scrollbar {
   }
 
   .input-default {
-    @apply bg-transparent h-[44px] outline-1 -outline-offset-1 outline-border px-[14px] rounded-lg outline-none text-primary font-medium text-[14px] focus:outline-2 focus:-outline-offset-2 focus:outline-brand placeholder:text-placeholder focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-brand;
+    @apply bg-transparent h-[44px] outline-1 -outline-offset-1 outline-border px-[14px] rounded-[10px] outline-none text-primary font-medium text-sm focus:outline-2 focus:-outline-offset-2 focus:outline-brand placeholder:text-placeholder focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-brand;
   }
 
-  .button-default {
-    @apply h-[44px] bg-brand rounded-lg text-primary text-sm font-bold px-[14px] hover:opacity-85 outline-none border-none focus:outline-brand focus:outline outline-offset-2;
+  .btn-1 {
+    @apply h-[36px] bg-brand rounded-[10px] text-primary text-sm font-bold px-[14px] flex justify-center items-center gap-[6px] hover:opacity-85 outline-none border-none focus:outline-brand focus:outline outline-offset-2;
+  }
+
+  .btn-2 {
+    @apply h-[36px] bg-brand/15 rounded-[10px] text-brand text-sm font-bold px-[14px] flex justify-center items-center gap-[6px] hover:bg-brand/20 outline-none border-none focus:outline-brand focus:outline outline-offset-2;
+  }
+
+  .btn-1-md {
+    @apply btn-1 h-[36px];
+  }
+
+  .btn-1-lg {
+    @apply btn-1 h-[44px];
+  }
+
+  .btn-2-md {
+    @apply btn-2 h-[36px];
   }
 
   .button-secondary {
-    @apply h-[44px] rounded-lg text-inactive text-sm font-semibold px-[14px] hover:text-primary outline-none border-border border-[1px] focus:outline-brand focus:outline outline-offset-2 hover:bg-hover hover:border-transparent;
+    @apply h-[44px] rounded-[10px] text-inactive text-sm font-semibold px-[14px] hover:text-primary outline-none border-border border-[1px] focus:outline-brand focus:outline outline-offset-2 hover:bg-hover hover:border-transparent;
   }
 
   .button-icon {
-    @apply text-inactive grid place-items-center h-[70%] aspect-square rounded-md hover:text-primary cursor-pointer hover:bg-hover mr-2;
+    @apply text-inactive grid place-items-center h-[32px] aspect-square rounded-md hover:text-primary cursor-pointer hover:bg-hover;
+  }
+
+  .inactive {
+    @apply text-inactive hover:text-primary focus:text-primary focus-within:text-primary;
   }
 }

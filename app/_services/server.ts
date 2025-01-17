@@ -134,3 +134,82 @@ export const updatePresentation = async (
     senderId: userId,
   });
 };
+
+// export const updateCustomerSubscription = async (
+//   userId: string,
+//   subscriptionData: Record<string, any>
+// ) => {
+//   try {
+//     const docRef = db.collection("users").doc(userId);
+
+//     await docRef.update(subscriptionData);
+
+//     console.log(`Successfully updated plan for user: ${userId}`);
+//   } catch (error) {
+//     console.error("Error updating customer plan:", error);
+//     throw error;
+//   }
+// };
+
+export const updateCustomerSubscription = async (
+  userId: string,
+  subscriptionData: Record<string, any>
+) => {
+  try {
+    const docRef = db.collection("users").doc(userId);
+    await docRef.update(subscriptionData);
+    console.log(`Successfully updated subscription for user: ${userId}`);
+  } catch (error) {
+    console.error("Error updating customer subscription:", error);
+    throw error;
+  }
+};
+
+export const handleSubscriptionDeletion = async (customerId: any) => {
+  try {
+    const userDoc = await db
+      .collection("users")
+      .where("customerId", "==", customerId)
+      .limit(1)
+      .get();
+
+    if (!userDoc.empty) {
+      const userId = userDoc.docs[0].id;
+      await updateCustomerSubscription(userId, {
+        subscriptionStatus: "canceled",
+      });
+    } else {
+      console.error(`No user found for customerId: ${customerId}`);
+    }
+  } catch (error) {
+    console.error("Error handling subscription deletion:", error);
+    throw error;
+  }
+};
+
+export const handleSubscriptionUpdate = async (subscription: any) => {
+  try {
+    const customerId = subscription.customer;
+    const planName = subscription.items.data[0].price.id;
+    const status = subscription.status;
+
+    const userDoc = await db
+      .collection("users")
+      .where("customerId", "==", customerId)
+      .limit(1)
+      .get();
+
+    if (!userDoc.empty) {
+      const userId = userDoc.docs[0].id;
+      await updateCustomerSubscription(userId, {
+        subscriptionStatus: status,
+        planName: planName || null,
+      });
+    } else {
+      console.error(`No user found for customerId: ${customerId}`);
+    }
+  } catch (error) {
+    console.error("Error handling subscription update:", error);
+    throw error;
+  }
+};

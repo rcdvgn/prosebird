@@ -5,9 +5,18 @@ import ScriptArea from "./ScriptArea";
 import ScriptAreaInfo from "./ScriptAreaInfo";
 import { useRouter } from "next/navigation";
 
-import { StarIcon, ScriptIcon, PlayIcon, SearchIcon } from "../_assets/icons";
+import {
+  StarIcon,
+  ScriptIcon,
+  PlayIcon,
+  SearchIcon,
+  MoreIcon,
+  DragIcon,
+} from "../_assets/icons";
 import { useScriptEditor } from "@/app/_contexts/ScriptEditorContext";
 import { useAuth } from "@/app/_contexts/AuthContext";
+import { changeFavoriteStatus } from "../_services/client";
+import Draggable from "react-draggable";
 
 export default function ScriptEditor() {
   const { script, setScript, participants } = useScriptEditor();
@@ -88,6 +97,21 @@ export default function ScriptEditor() {
     console.log("Handle file sharing");
   };
 
+  const handleDragStart = (e: any, data: any) => {
+    console.log("started");
+    console.log(data.node);
+  };
+
+  const handleDragMove = (e: any) => {
+    // console.log(e.x, e.y);
+  };
+
+  const handleDragStop = (e: any, data: any) => {
+    console.log("stoped");
+
+    console.log(data.node);
+  };
+
   useEffect(() => {
     if (inputContainerRef.current && documentTitleRef.current) {
       documentTitleRef.current.style.width = `${inputContainerRef.current.offsetWidth}px`;
@@ -109,16 +133,16 @@ export default function ScriptEditor() {
   // }, []);
 
   return (
-    <div className="grow flex flex-col min-w-0">
-      <div className="flex justify-between items-center px-4 border-b-[1px] border-stroke h-[60px] shrink-0">
-        <div className="grow flex items-center gap-3.5 min-w-0">
+    <div className="grow flex flex-col min-w-0 bg-middleground mr-[10px] my-[10px] rounded-[10px] border-[1px] border-border">
+      <div className="flex justify-between items-center p-[10px] border-b-[1px] border-border h-[55px] shrink-0">
+        <div className="grow flex items-center gap-3 min-w-0">
           <div className="icon-container">
-            <ScriptIcon className="stroke-text-primary stroke-[1.5px]" />
+            <ScriptIcon className="text-primary" />
           </div>
-          <div className="relative grow flex items-center gap-2 min-w-0">
+          <div className="relative grow flex items-center gap-1 min-w-0">
             <span
               ref={inputContainerRef}
-              className="absolute left-0 top-0 w-fit m-auto font-semibold text-base invisible"
+              className="absolute left-0 top-0 w-fit m-auto font-semibold text-[13px] invisible min-w-0"
             >
               {documentTitle}
             </span>
@@ -134,44 +158,94 @@ export default function ScriptEditor() {
               onChange={handleDocumentTitleChange}
               onKeyDown={handleDocumentTitleKeyDown}
               spellCheck={isSpellCheckEnabled}
-              className="font-bold text-base text-primary bg-transparent border-none outline-none rounded-sm focus:text-primary/90 hover:ring-1 focus:ring-1 ring-text-secondary ring-offset-4 ring-offset-background"
+              className="font-semibold text-[13px] inactive bg-transparent border-none outline-none rounded-sm focus:text-primary/90 hover:ring-1 focus:ring-1 ring-text-secondary ring-offset-4 ring-offset-background min-w-0"
             />
-
-            <StarIcon className="stroke-text-primary stroke-1 mr-4 w-3 cursor-pointer" />
+            <div className="flex items-center">
+              <span
+                onClick={() =>
+                  changeFavoriteStatus(script.id, !scriptData.isFavorite)
+                }
+                className="button-icon !h-[25px] !bg-transparent"
+              >
+                <StarIcon
+                  className="stroke-1 h-3"
+                  filled={scriptData?.isFavorite}
+                />
+              </span>
+              <span className="button-icon !h-[25px] !bg-transparent">
+                <MoreIcon className="h-3 rotate-90" />
+              </span>
+            </div>
           </div>
         </div>
-        <div className="flex gap-3 items-center">
+        <div className="flex gap-2.5 items-center">
           <div className="flex h-[26px]">
-            <div
-              style={{
-                backgroundImage: `url("/pfps/profile1.png")`,
-              }}
-              className="-ml-[1px] h-[full] aspect-square rounded-full box-content ring-4 ring-background bg-cover bg-center flex-shrink-0"
-            ></div>
-            <div
-              style={{
-                backgroundImage: `url("/pfps/profile1.png")`,
-              }}
-              className="-ml-[1px] h-[full] aspect-square rounded-full box-content ring-4 ring-background bg-cover bg-center flex-shrink-0"
-            ></div>
+            {Array.from({ length: 3 }).map((item: any, index: any) => {
+              return (
+                <div
+                  key={index}
+                  style={{
+                    backgroundImage: `url("/pfps/profile1.png")`,
+                  }}
+                  className={`${
+                    index > 0 ? "-ml-[3px]" : ""
+                  } h-full aspect-square rounded-full box-content ring-2 ring-background bg-cover bg-center flex-shrink-0`}
+                ></div>
+              );
+            })}
           </div>
           <button onClick={handleShareFile} className="btn-2-md">
             Share
           </button>
-          <button className="btn-1-md flex gap-2" onClick={handlePresent}>
-            <PlayIcon className="text-primary" />
+          <button className="btn-1-md" onClick={handlePresent}>
+            <PlayIcon className="text-primary h-3" />
             <span className="">Present</span>
           </button>
         </div>
       </div>
       <div className="flex grow min-h-0">
-        <div className="flex flex-col grow border-r-[1px] border-stroke">
-          <div className="h-[46px] border-b-[1px] border-stroke shrink-0"></div>
+        <div className="flex flex-col grow">
+          {/* <div className="h-[46px] border-b-[1px] border-stroke shrink-0"></div> */}
           <div className="relative grow flex flex-col items-center min-h-0 overflow-y-auto">
             <ScriptArea />
             <ScriptAreaInfo />
           </div>
         </div>
+
+        <div className="w-[280px] bg-foreground border-border border-[1px] rounded-[10px] m-2.5 py-2.5 px-2">
+          {Array.from({ length: 5 }).map((_: any, index: any) => {
+            return (
+              <div className="relative h-[42px]" key={index}>
+                <div className="bg-selected rounded-[10px] h-full w-full"></div>
+                <Draggable
+                  axis="y"
+                  onStart={handleDragStart}
+                  onDrag={handleDragMove}
+                  onStop={handleDragStop}
+                >
+                  <div className="group absolute left-0 top-0 w-full h-full m-auto flex items-center py-2.5 pr-2 rounded-[10px] hover:bg-hover">
+                    <div className="button-icon !bg-transparent">
+                      <span className="font-semibold text-[13px] text-secondary group-hover:hidden">
+                        1.
+                      </span>
+                      <DragIcon className="h-3 hidden group-hover:block" />
+                    </div>
+                    <div
+                      style={{
+                        backgroundImage: `url("/pfps/profile1.png")`,
+                      }}
+                      className="h-[22px] aspect-square rounded-full bg-cover bg-center flex-shrink-0 mr-2.5"
+                    ></div>
+                    <div className="font-semibold text-[13px] text-primary grow truncate">
+                      Introduction to AI in Quantitative Computing
+                    </div>
+                  </div>
+                </Draggable>
+              </div>
+            );
+          })}
+        </div>
+
         {/* <div className="w-[378px]">
           <div className="h-[46px] border-b-[1px] border-stroke flex justify-between items-center px-5">
             <span className="text-sm font-semibold text-primary">

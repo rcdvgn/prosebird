@@ -31,45 +31,47 @@ export async function POST(req: Request) {
   data = event.data;
   eventType = event.type;
 
-  try {
-    switch (eventType) {
-      case "checkout.session.completed": {
-        const session = await stripe.checkout.sessions.retrieve(
-          data.object.id,
-          {
-            expand: ["line_items"],
-          }
-        );
+  console.log(data);
 
-        const customerId: any = session?.customer;
-        const customer = await stripe.customers.retrieve(customerId);
+  // try {
+  //   switch (eventType) {
+  //     case "checkout.session.completed": {
+  //       const session = await stripe.checkout.sessions.retrieve(
+  //         data.object.id,
+  //         {
+  //           expand: ["line_items"],
+  //         }
+  //       );
 
-        const priceId = session?.line_items?.data[0]?.price_id;
-        const plan = plans.find((p: any) => p.priceId === priceId);
+  //       const customerId: any = session?.customer;
+  //       const customer = await stripe.customers.retrieve(customerId);
 
-        if (!plan) break;
+  //       const priceId = session?.line_items?.data[0]?.price_id;
+  //       const plan = plans.find((p: any) => p.priceId === priceId);
 
-        let user;
+  //       if (!plan) break;
 
-        // check if user exists
-        if (customer.email) {
-        } else {
-          console.error("Error finding user");
-          throw new Error("Error finding user");
-        }
-      }
+  //       let user;
 
-      case "customer.subscription.deleted": {
-      }
+  //       // check if user exists
+  //       if (customer.email) {
+  //       } else {
+  //         console.error("Error finding user");
+  //         throw new Error("Error finding user");
+  //       }
+  //     }
 
-      default:
-      // unhandled event type
-    }
-  } catch (error: any) {
-    console.error(
-      `Stripe error: ${error.message} | Event type: ${eventType} | `
-    );
-  }
+  //     case "customer.subscription.deleted": {
+  //     }
+
+  //     default:
+  //     // unhandled event type
+  //   }
+  // } catch (error: any) {
+  //   console.error(
+  //     `Stripe error: ${error.message} | Event type: ${eventType} | `
+  //   );
+  // }
 
   //   try {
   //     return NextResponse.json();

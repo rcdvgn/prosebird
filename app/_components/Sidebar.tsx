@@ -51,7 +51,7 @@ export default function Sidebar(fileId: any) {
   }, [user]);
 
   return (
-    <div className="border-r-[1px] border-stroke w-[300px] [&>*]:px-4 [&>*]:mb-2 shrink-0">
+    <div className="w-[280px] [&>*]:px-3.5 [&>*]:mb-2 shrink-0">
       <div className="flex items-center justify-between h-[55px]">
         <span className="ml-[10px]">
           <Logo />
@@ -63,14 +63,14 @@ export default function Sidebar(fileId: any) {
       <div className="">
         <div
           onClick={() => router.push(`/files`)}
-          className="cursor-pointer flex items-center justify-start rounded-lg hover:bg-foreground select-none h-[46px]"
+          className="cursor-pointer flex items-center justify-start rounded-lg hover:bg-hover select-none h-[42px]"
         >
           <span className="ml-[10px] font-bold text-sm text-primary">Home</span>
         </div>
         <input type="text" className="hidden" />
       </div>
       <div className="">
-        <div className="h-[40px]">
+        {/* <div className="h-[40px]">
           <div className="flex items-center justify-between">
             <span className="ml-[10px] font-bold text-sm text-primary">
               Scripts
@@ -93,8 +93,11 @@ export default function Sidebar(fileId: any) {
             </div>
           </div>
           <input type="text" className="hidden" />
+        </div> */}
+        <div className="py-3 px-[18px]">
+          <span className="text-xs font-semibold text-secondary">Today</span>
         </div>
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col">
           {recentlyModified &&
             recentlyModified.map((item: any, index: any) => {
               return (
@@ -104,19 +107,29 @@ export default function Sidebar(fileId: any) {
                   className={`${
                     script
                       ? item.id === fileId?.fileId
-                        ? "bg-foreground "
-                        : ""
+                        ? "bg-selected"
+                        : "hover:bg-hover"
                       : ""
-                  } select-none hover:bg-foreground cursor-pointer rounded-lg flex items-center justify-start gap-2.5 pl-4 h-[40px] group/item`}
+                  } select-none cursor-pointer rounded-[10px] flex items-center justify-start gap-3 pl-[18px] pr-1 h-[40px] group`}
                 >
                   <span className="w-[14px] aspect-square grid place-items-center shrink-0">
-                    <ScriptIcon className="text-primary h-full stroke-[1px]" />
+                    <ScriptIcon className="text-primary h-4" />
                   </span>
-                  <span className="font-semibold text-sm text-primary whitespace-nowrap overflow-hidden text-ellipsis">
+                  <span className="font-semibold text-[13px] text-primary whitespace-nowrap overflow-hidden text-ellipsis">
                     {item.title}
                   </span>
-                  <span className="group/wrapper h-[30px] aspect-square grid place-items-center shrink-0 ml-auto">
-                    <MoreIcon className="text-text-secondary h-[14px] group-hover/item:visible invisible group-hover/wrapper:text-primary" />
+                  <span
+                    className={`
+                      button-icon ml-auto !bg-transparent ${
+                        script
+                          ? item.id === fileId?.fileId
+                            ? ""
+                            : "invisible group-hover:visible"
+                          : ""
+                      }
+                    `}
+                  >
+                    <MoreIcon className="h-3" />
                   </span>
                 </div>
               );

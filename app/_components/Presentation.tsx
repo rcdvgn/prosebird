@@ -75,6 +75,7 @@ export default function Presentation() {
     if (microphoneState === MicrophoneState.Ready) {
       connectToDeepgram({
         model: "nova-2",
+        language: "pt-BR",
         interim_results: true,
         smart_format: true,
         filler_words: true,
@@ -244,6 +245,8 @@ export default function Presentation() {
   // update presentation if scroll mode is dynamic
   useEffect(() => {
     if (!transcript || !presentation || transcript.length === 0) return;
+
+    console.log(transcript);
     broadcastProgress({ transcript });
   }, [transcript]);
 

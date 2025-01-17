@@ -91,8 +91,8 @@ export default function ScriptNode({
 
   return (
     <div className="w-full p-[10px]">
-      <div className="flex items-start justify-start">
-        <div className="w-[45px] h-[28px] shrink-0">
+      <div className="flex items-center justify-start">
+        <div className="mr-5 h-[34px] shrink-0">
           <div className="relative h-full">
             <div
               ref={speakerPictureRef}
@@ -140,7 +140,7 @@ export default function ScriptNode({
         onBlur={() => setIsParagraphSpellCheckEnabled(false)}
         spellCheck={isParagraphSpellCheckEnabled}
         rows={1}
-        className="block mt-[13px] pl-[45px] w-full bg-transparent overflow-y-scroll border-none outline-none resize-none text-sm text-primary font-semibold leading-[22px]"
+        className="block mt-2.5 pl-[54px] w-full bg-transparent overflow-y-scroll border-none outline-none resize-none text-sm text-primary font-regular leading-[22px]"
       ></textarea>
     </div>
   );

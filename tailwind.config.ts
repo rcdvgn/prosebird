@@ -8,11 +8,16 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      boxShadow: {
+        brand: "0 0 6px 1px rgba(50, 94, 241, 0.1)",
+      },
       colors: {
         background: "rgba(var(--background), <alpha-value>)",
         middleground: "rgba(var(--middleground), <alpha-value>)",
         foreground: "rgba(var(--foreground), <alpha-value>)",
+
         hover: "rgba(var(--hover), <alpha-value>)",
+        selected: "rgba(var(--selected), <alpha-value>)",
 
         primary: "var(--primary)",
         secondary: "rgba(var(--secondary), <alpha-value>)",
@@ -23,6 +28,9 @@ const config: Config = {
         stroke: "var(--stroke)",
         brand: "rgba(var(--brand), <alpha-value>)",
         border: "rgba(var(--border), <alpha-value>)",
+
+        "success-green": "rgba(var(--success-green), <alpha-value>)",
+        "money-green": "rgba(var(--money-green), <alpha-value>)",
       },
     },
   },

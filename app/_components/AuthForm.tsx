@@ -119,7 +119,7 @@ export default function AuthForm({ flow }: any) {
 
               <span
                 onClick={() => setIsPasswordVisible(!isPasswordVisible)}
-                className="button-icon"
+                className="button-icon mr-2"
               >
                 {isPasswordVisible ? (
                   <ShowPasswordIcon className="" />
@@ -130,7 +130,7 @@ export default function AuthForm({ flow }: any) {
             </div>
           </div>
 
-          <button className="button-default w-full" type="submit">
+          <button className="btn-1-lg w-full" type="submit">
             {flow === "signin" ? "Sign In" : "Sign Up"}
           </button>
 

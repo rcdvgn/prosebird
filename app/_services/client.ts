@@ -30,17 +30,15 @@ import {
   set,
 } from "firebase/database";
 
-import generatePresentationCode from "@/app/_lib/generatePresentationCode";
-
 import { db, rtdb } from "../_config/firebase/client";
 
 export const createScript: any = async (userId: any) => {
   const blankScript = {
     title: "Untitled",
-    favorite: false,
     createdBy: userId,
     createdAt: Timestamp.now(),
     lastModified: Timestamp.now(),
+    isFavorite: false,
     editors: [],
     viewers: [],
     guests: [],
@@ -371,30 +369,28 @@ export const changeNodeSpeaker = async (
 //   }
 // };
 
-export const changeMemberStatus = async (
-  presentationId: any,
-  presentationParticipants: any,
-  memberId: any,
-  newConnectionStatus: any
-) => {
-  const updatedParticipants = presentationParticipants.map((item: any) => {
-    if (item.id === memberId) {
-      return { ...item, isConnected: newConnectionStatus };
-    } else {
-      return item;
-    }
-  });
+// export const changeMemberStatus = async (
+//   presentationId: any,
+//   presentationParticipants: any,
+//   memberId: any,
+//   newConnectionStatus: any
+// ) => {
+//   const updatedParticipants = presentationParticipants.map((item: any) => {
+//     if (item.id === memberId) {
+//       return { ...item, isConnected: newConnectionStatus };
+//     } else {
+//       return item;
+//     }
+//   });
 
-  // console.log(presentationParticipants, updatedParticipants);
+//   try {
+//     const docRef = doc(db, "presentations", presentationId);
 
-  try {
-    const docRef = doc(db, "presentations", presentationId);
-
-    await updateDoc(docRef, { participants: updatedParticipants });
-  } catch (error) {
-    console.error("Error updating member connection status:", error);
-  }
-};
+//     await updateDoc(docRef, { participants: updatedParticipants });
+//   } catch (error) {
+//     console.error("Error updating member connection status:", error);
+//   }
+// };
 
 // export const subscribeToPresentation = (presentationId: any, onUpdate: any) => {
 //   const presentationRef = doc(db, "presentations", presentationId);
@@ -510,3 +506,23 @@ export const managePresence = (
     unsubscribeParticipants();
   };
 };
+
+export async function changeFavoriteStatus(scriptId: any, newStatus: any) {
+  try {
+    const docRef = doc(db, "scripts", scriptId);
+
+    await updateDoc(docRef, { isFavorite: newStatus });
+  } catch (error) {
+    console.error("Error updating favorite status:", error);
+  }
+}
+
+export async function onboardUser(userId: any, userData: any) {
+  try {
+    const docRef = doc(db, "users", userId);
+
+    await updateDoc(docRef, userData);
+  } catch (error) {
+    console.error("Error updating favorite status:", error);
+  }
+}

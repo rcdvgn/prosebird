@@ -42,8 +42,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           const newUser: any = {
             // firstName: "Ricardo",
             // lastName: "Vigliano",
-            plan: "free",
-            profilePicturePrompted: false,
+            // plan: "free",
+            // profilePicturePrompted: false,
             email: currentUser.email,
             createdAt: serverTimestamp(),
           };
