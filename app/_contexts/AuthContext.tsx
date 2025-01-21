@@ -7,15 +7,23 @@ import {
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
-  User,
+  GoogleAuthProvider,
+  signInWithPopup,
 } from "firebase/auth";
-import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  serverTimestamp,
+} from "firebase/firestore";
 
 // Define the context type
 interface AuthContextType {
   user: any | null;
   login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string) => Promise<void>;
+  googleLogin: () => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -37,21 +45,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         const userDocRef = doc(db, "users", currentUser.uid);
         const userDoc = await getDoc(userDocRef);
 
+        const providerPhotoURL = currentUser.photoURL || null;
+
         if (!userDoc.exists()) {
-          // New user, create a Firestore document for them
+          // New user setup
           const newUser: any = {
-            // firstName: "Ricardo",
-            // lastName: "Vigliano",
-            // plan: "free",
-            // profilePicturePrompted: false,
             email: currentUser.email,
             createdAt: serverTimestamp(),
+            profilePicture: {
+              userUploaded: null, // No custom upload yet
+              provider: providerPhotoURL, // Use provider's photo if available
+            },
           };
 
           await setDoc(userDocRef, newUser);
           setUser({ id: currentUser.uid, ...newUser });
         } else {
-          // Existing user, retrieve their Firestore document
+          // Existing user, update provider photo if it has changed
+          const userData = userDoc.data();
+          if (
+            providerPhotoURL &&
+            userData.profilePicture?.provider !== providerPhotoURL
+          ) {
+            await updateDoc(userDocRef, {
+              "profilePicture.provider": providerPhotoURL,
+            });
+          }
           setUser({ id: currentUser.uid, ...userDoc.data() });
         }
       } else {
@@ -65,16 +84,52 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     return () => unsubscribe();
   }, []);
 
-  // useEffect(() => {
-  //   console.log(user);
-  // }, [user]);
-
   // Login function
   const login = async (email: string, password: string) => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
       console.error("Login error:", error);
+      throw error;
+    }
+  };
+
+  // Google Login function
+  const googleLogin = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      // Check if Firestore needs updating after Google login
+      const userDocRef = doc(db, "users", user.uid);
+      const userDoc = await getDoc(userDocRef);
+
+      if (!userDoc.exists()) {
+        // Create new user document
+        const newUser: any = {
+          email: user.email,
+          createdAt: serverTimestamp(),
+          profilePicture: {
+            userUploaded: null,
+            provider: user.photoURL || null,
+          },
+        };
+
+        await setDoc(userDocRef, newUser);
+      } else {
+        // Update provider photo if it has changed
+        if (
+          user.photoURL &&
+          userDoc.data().profilePicture?.provider !== user.photoURL
+        ) {
+          await updateDoc(userDocRef, {
+            "profilePicture.provider": user.photoURL,
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Google login error:", error);
       throw error;
     }
   };
@@ -100,7 +155,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout }}>
+    <AuthContext.Provider value={{ user, login, signup, googleLogin, logout }}>
       {!loading && children}
     </AuthContext.Provider>
   );

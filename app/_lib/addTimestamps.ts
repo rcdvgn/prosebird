@@ -89,6 +89,7 @@ export default async function calculateTimestamps(
   containerWidth: any,
   speedMultiplier: any
 ) {
+  // console.log(words, chapters, containerWidth, speedMultiplier);
   const baseSpeed = 1500;
 
   const context = await loadFontAndContext();

@@ -1,9 +1,11 @@
 "use client";
-import React, { useState, useRef, useLayoutEffect } from "react";
+import React, { useState, useRef, useLayoutEffect, useEffect } from "react";
 import Scrollbar from "./Scrollbar";
 // import { useAutoscroll } from "@/app/_contexts/AutoScrollContext";
 import { usePresentation } from "../_contexts/PresentationContext";
 import getTimestampFromPosition from "../_utils/getTimestampFromPosition";
+import Draggable from "react-draggable";
+import { ResizeIcon } from "../_assets/icons";
 
 export default function ScriptContainer({
   handleTimeChange,
@@ -13,6 +15,7 @@ export default function ScriptContainer({
   const {
     progress,
     containerWidth,
+    setContainerWidth,
     elapsedTime,
     totalDuration,
     wordsWithTimestamps,
@@ -21,7 +24,24 @@ export default function ScriptContainer({
   } = usePresentation();
 
   // const { isAutoscrollOn, setIsAutoscrollOn } = useAutoscroll();
+  const [maxDelta, setMaxDelta] = useState<any>(null);
+
   const [scrollbarHeight, setScrollbarHeight] = useState(0);
+  const [tempContainerWidth, setTempContainerWidth] =
+    useState<any>(containerWidth);
+
+  const initialPosition = { x: 0, y: 0 };
+  const [draggablePositionLeft, setDraggablePositionLeft] =
+    useState<any>(initialPosition);
+  const [draggablePositionRight, setDraggablePositionRight] =
+    useState<any>(initialPosition);
+
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+
+  const [bounds, setBounds] = useState({ left: 0, right: 0 });
+
+  const leftDraggableRef = useRef<HTMLDivElement>(null);
+  const rightDraggableRef = useRef<HTMLDivElement>(null);
 
   const scriptContainer = useRef<HTMLDivElement | null>(null);
   const scrollContainer = useRef<HTMLDivElement | null>(null);
@@ -66,18 +86,125 @@ export default function ScriptContainer({
     }
   }, [elapsedTime, totalDuration, isAutoscrollOn]);
 
+  const handleStartDrag = (e: any, data: any) => {
+    setIsDragging(true);
+
+    const scrollWidth = scrollContainer.current!.offsetWidth;
+    const scriptWidth = scriptContainer.current!.offsetWidth;
+
+    const left = -1 * ((scrollWidth - scriptWidth) / 2);
+
+    setBounds({
+      right: scriptWidth / 2 - 200,
+      left: left <= 0 ? left : 0,
+    });
+  };
+
+  const handleDragMoveLeft = (e: any, data: any) => {
+    setDraggablePositionLeft({ x: data.x, y: 0 });
+
+    setDraggablePositionRight({
+      x: draggablePositionRight.x - data.deltaX,
+      y: 0,
+    });
+
+    const newWidth = tempContainerWidth + data.deltaX * -2;
+    setTempContainerWidth(newWidth > 100 ? newWidth : 100);
+  };
+
+  const handleDragMoveRight = (e: any, data: any) => {
+    setDraggablePositionRight({ x: data.x, y: 0 });
+
+    setDraggablePositionLeft({
+      x: draggablePositionLeft.x - data.deltaX,
+      y: 0,
+    });
+
+    const newWidth = tempContainerWidth + data.deltaX * 2;
+    setTempContainerWidth(newWidth > 100 ? newWidth : 100);
+  };
+
+  const handleDragStopLeft = (e: any, data: any) => {
+    setDraggablePositionLeft(initialPosition);
+    setDraggablePositionRight(initialPosition);
+
+    setContainerWidth(tempContainerWidth);
+    setIsDragging(false);
+  };
+
+  const handleDragStopRight = (e: any, data: any) => {
+    setDraggablePositionRight(initialPosition);
+    setDraggablePositionLeft(initialPosition);
+
+    setContainerWidth(tempContainerWidth);
+    setIsDragging(false);
+  };
+
   return (
     <>
       <div
         ref={scrollContainer}
-        className="grow h-full flex flex-col items-center ring-1 ring-blue-500 shrink-0 overflow-hidden relative"
+        className="group border-[1px] border-pink-500 grow h-full flex flex-col items-center shrink-0 overflow-hidden relative"
       >
         <div
+          className={`border-[1px] border-blue-500 flex justify-center h-full fixed top-0 transition-opacity duration-200 ease-in-out ${
+            isDragging ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+          }`}
+          // style={{
+          //   width: `${containerWidth}px`,
+          // }}
+        >
+          <div className="pr-6 border-[1px] border-red-500 h-screen grid place-items-center left-0 top-0">
+            <Draggable
+              axis="x"
+              position={draggablePositionLeft}
+              onStart={handleStartDrag}
+              onDrag={handleDragMoveLeft}
+              onStop={handleDragStopLeft}
+              bounds={bounds}
+              nodeRef={leftDraggableRef}
+            >
+              <div
+                ref={leftDraggableRef}
+                className="aspect-square h-[30px] bg-brand rounded-full grid place-items-center cursor-pointer"
+              >
+                <ResizeIcon className="h-2.5 text-primary" />
+              </div>
+            </Draggable>
+          </div>
+
+          <div
+            className="pointer-events-none"
+            style={{
+              width: `${containerWidth}px`,
+            }}
+          ></div>
+
+          <div className="pl-6 border-[1px] border-red-500 h-screen grid place-items-center right-0 top-0">
+            <Draggable
+              axis="x"
+              position={draggablePositionRight}
+              onStart={handleStartDrag}
+              onDrag={handleDragMoveRight}
+              onStop={handleDragStopRight}
+              bounds={{ left: -1 * bounds.right, right: -1 * bounds.left }}
+              nodeRef={rightDraggableRef}
+            >
+              <div
+                ref={rightDraggableRef}
+                className="aspect-square h-[30px] bg-brand rounded-full grid place-items-center cursor-pointer"
+              >
+                <ResizeIcon className="h-2.5 text-primary" />
+              </div>
+            </Draggable>
+          </div>
+        </div>
+
+        <div
           ref={scriptContainer}
-          className="absolute border-[1px] border-red-500 text-left m-auto left-0 right-0
-          "
+          className="border-[1px] border-yellow-500 absolute text-left m-auto left-0 right-0"
           style={{
-            width: containerWidth + "px",
+            width: tempContainerWidth + "px",
           }}
         >
           {wordsWithTimestamps &&

@@ -29,7 +29,7 @@ const checkMatch = (lastSpokenWords: any, expectedWordsWindow: any): any => {
       return position;
     }
   }
-  return undefined;
+  return null;
 };
 
 export default function matchToScript(
@@ -49,7 +49,7 @@ export default function matchToScript(
       }));
 
     const matchIndex = checkMatch(lastSpokenWords, expectedWordsWindow);
-    if (matchIndex !== undefined) {
+    if (matchIndex) {
       newCurrentPosition += matchIndex;
       matched = true;
     }

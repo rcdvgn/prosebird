@@ -13,8 +13,6 @@ export async function POST(req: Request) {
       );
     }
 
-    console.log(customerId);
-
     if (customerId) {
       const stripeSession = await stripe.billingPortal.sessions.create({
         customer: customerId,

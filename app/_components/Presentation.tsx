@@ -268,12 +268,12 @@ export default function Presentation() {
   }, [progress]);
 
   return (
-    <div className="flex relative h-full">
-      <div className="w-[275px]"></div>
+    <div className="flex relative h-full overflow-y-hidden">
+      <div className="w-[275px] shrink-0"></div>
 
       <ScriptContainer handleTimeChange={handleTimeChange} />
 
-      <div className="w-[275px]"></div>
+      <div className="w-[275px] shrink-0  "></div>
       <div className="w-full h-56 fixed bottom-0 bg-gradient-to-t from-background to-background/0 pointer-events-none"></div>
       <div className="w-full pb-[10px] px-[10px] fixed bottom-0">
         <ActionPanel

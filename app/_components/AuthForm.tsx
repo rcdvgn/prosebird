@@ -28,7 +28,7 @@ function AuthFlow({ flow }: any) {
 }
 
 export default function AuthForm({ flow }: any) {
-  const { login, signup } = useAuth();
+  const { login, signup, googleLogin } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -143,7 +143,10 @@ export default function AuthForm({ flow }: any) {
           </div>
 
           <div className="flex gap-3.5">
-            <button className="button-secondary w-full items-center flex justify-center gap-2.5">
+            <button
+              onClick={googleLogin}
+              className="button-secondary w-full items-center flex justify-center gap-2.5"
+            >
               <img
                 src="/static/logos/google_48.png"
                 alt=""

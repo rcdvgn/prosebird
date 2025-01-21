@@ -528,3 +528,23 @@ export function ChevronIcon({ className }: { className: any }) {
     </svg>
   );
 }
+
+export function ResizeIcon({ className }: { className: any }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 15 10"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M9.11279 1.22636C9.11279 0.38395 10.1198 -0.0505991 10.7327 0.527308L14.5987 4.17238C15.0009 4.55162 15.0009 5.19124 14.5987 5.57049L10.7327 9.21556C10.1198 9.79346 9.11279 9.35891 9.11279 8.5165V1.22636Z"
+        className="fill-current"
+      />
+      <path
+        d="M6.23022 1.22539C6.23022 0.383087 5.22348 -0.0515089 4.61049 0.526168L0.741788 4.172C0.339326 4.55127 0.339326 5.19116 0.741788 5.57044L4.61049 9.21627C5.22348 9.79394 6.23022 9.35935 6.23022 8.51705V1.22539Z"
+        className="fill-current"
+      />
+    </svg>
+  );
+}

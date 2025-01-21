@@ -48,6 +48,7 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
   const [totalDuration, setTotalDuration] = useState<any>(null);
   const [progress, setProgress] = useState<any>({ line: 0, index: 0 });
   const [participants, setParticipants] = useState<any>([]);
+  const [containerWidth, setContainerWidth] = useState<any>(520);
   const [isAutoscrollOn, setIsAutoscrollOn] = useState<boolean>(true);
   const [lastFetchedParticipants, setLastFetchedParticipants] = useState<any>(
     []
@@ -58,7 +59,6 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
 
   // const [pusherChannel, setPusherChannel] = useState<any>(null);
 
-  const containerWidth = 520;
   const speedMultiplier = 1;
 
   const getController = (currentPosition: any) => {
@@ -357,6 +357,7 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
         scrollMode,
         setScrollMode,
         containerWidth,
+        setContainerWidth,
         speedMultiplier,
         wordsWithTimestamps,
         totalDuration,
