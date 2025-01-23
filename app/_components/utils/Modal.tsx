@@ -4,7 +4,7 @@ import React from "react";
 
 import OutsideClickHandler from "./OutsideClickHandler";
 import { useModal } from "@/app/_contexts/ModalContext";
-import Settings from "../Settings";
+import Settings from "../modals/Settings";
 
 const Modal: React.FC<{}> = () => {
   const { currentModal, closeModal } = useModal();

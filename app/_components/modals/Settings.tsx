@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { CloseIcon, PersonalIcon } from "../_assets/icons";
+import { CloseIcon, PersonalIcon } from "../../_assets/icons";
 // import { OverlayScrollbarsComponent } from "overlayscrollbars-react";
 import "overlayscrollbars/overlayscrollbars.css";
-import { useModal } from "../_contexts/ModalContext";
-import Preferences from "./settings/Preferences";
+import { useModal } from "../../_contexts/ModalContext";
+import Preferences from "../settings/Preferences";
 
 export default function Settings() {
   const { closeModal } = useModal();
@@ -49,14 +49,14 @@ export default function Settings() {
 
       <div className="flex grow min-h-0">
         {/* <OverlayScrollbarsComponent defer> */}
-        <div className="m-2 overflow-y-auto">
+        <div className="m-2 overflow-y-auto flex flex-col gap-1">
           {settings.map((item: any, index: any) => {
             return (
               <div
                 key={index}
                 onClick={() => handleChangeSettings(index)}
                 className={
-                  "group w-[210px] py-3 px-5 flex items-center justify-start rounded-[10px] cursor-pointer gap-2 " +
+                  "group w-[180px] py-2.5 px-5 flex items-center justify-start rounded-lg cursor-pointer gap-2 " +
                   (currentSettings === index ? "bg-selected" : "")
                 }
               >

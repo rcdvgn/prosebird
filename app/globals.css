@@ -146,4 +146,12 @@ textarea::-webkit-scrollbar {
   .inactive {
     @apply text-inactive hover:text-primary focus:text-primary focus-within:text-primary;
   }
+
+  .tooltip-default {
+    @apply bg-foreground text-primary font-medium text-xs p-2 ring-1 ring-border rounded-lg;
+  }
+
+  .tooltip-about {
+    @apply bg-foreground text-primary font-medium text-xs py-2 px-3 ring-1 ring-border rounded-lg max-w-[300px] leading-5;
+  }
 }

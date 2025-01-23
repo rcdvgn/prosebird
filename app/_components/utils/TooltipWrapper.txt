@@ -1,0 +1,25 @@
+import React from "react";
+
+export default function TooltipWrapper({ children, options }: any) {
+  const positions: any = {
+    top: "left-1/2 transform -translate-x-1/2 bottom-full mb-2",
+    bottom: "left-1/2 transform -translate-x-1/2 top-full mt-2",
+    left: "right-full top-1/2 transform -translate-y-1/2 mr-2",
+    right: "left-full top-1/2 transform -translate-y-1/2 ml-2",
+  };
+
+  const types: any = { default: "tooltop-default", about: "tooltop-about" };
+
+  return (
+    <div className="relative group">
+      {children}
+      <div
+        className={`absolute z-[9999] hidden group-hover:block pointer-events-none ${
+          options?.position ? positions[options.position] : positions.top
+        } ${options?.type ? types[options.type] : types.default}`}
+      >
+        {options.text}
+      </div>
+    </div>
+  );
+}
