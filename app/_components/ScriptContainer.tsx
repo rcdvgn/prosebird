@@ -23,9 +23,6 @@ export default function ScriptContainer({
     setIsAutoscrollOn,
   } = usePresentation();
 
-  // const { isAutoscrollOn, setIsAutoscrollOn } = useAutoscroll();
-  const [maxDelta, setMaxDelta] = useState<any>(null);
-
   const [scrollbarHeight, setScrollbarHeight] = useState(0);
   const [tempContainerWidth, setTempContainerWidth] =
     useState<any>(containerWidth);
@@ -150,9 +147,6 @@ export default function ScriptContainer({
           className={`border-[1px] border-blue-500 flex justify-center h-full fixed top-0 transition-opacity duration-200 ease-in-out ${
             isDragging ? "opacity-100" : "opacity-0 group-hover:opacity-100"
           }`}
-          // style={{
-          //   width: `${containerWidth}px`,
-          // }}
         >
           <div className="pr-6 border-[1px] border-red-500 h-screen grid place-items-center left-0 top-0">
             <Draggable

@@ -12,7 +12,7 @@ import {
   PersonalIcon,
   ProfessionalIcon,
 } from "@/app/_assets/icons";
-import OutsideClickHandler from "@/app/_components/OutsideClickHandler";
+import OutsideClickHandler from "@/app/_components/utils/OutsideClickHandler";
 import { plans } from "@/app/_lib/plans";
 import { onboardUser } from "@/app/_services/client";
 
@@ -60,7 +60,9 @@ const OcuppationPicker = ({
       <div className="flex flex-col gap-2 grow">
         <div className="flex items-center justify-between">
           <span className="block text-primary text-sm font-bold">{title}</span>
-          {isSelected && <CircledCheckIcon className="text-primary" />}
+          {isSelected && (
+            <CircledCheckIcon className="text-primary h-4 fill-brand" />
+          )}
         </div>
         <span className="block text-secondary text-[13px] font-semibold">
           {subtitle}

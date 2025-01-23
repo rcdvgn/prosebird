@@ -21,6 +21,7 @@ const config: Config = {
 
         primary: "var(--primary)",
         secondary: "rgba(var(--secondary), <alpha-value>)",
+        tertiary: "rgba(var(--tertiary), <alpha-value>)",
         inactive: "rgba(var(--inactive), <alpha-value>)",
         placeholder: "rgba(var(--placeholder), <alpha-value>)",
         danger: "var(--text-danger)",

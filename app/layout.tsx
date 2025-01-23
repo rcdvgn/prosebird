@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Public_Sans } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "./_contexts/AuthContext";
+import { ModalProvider } from "./_contexts/ModalContext";
+import Modal from "./_components/utils/Modal";
 
 const publicSans = Public_Sans({ subsets: ["latin"] });
 
@@ -18,7 +20,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`bg-background ${publicSans.className}`}>
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <ModalProvider>
+            {children}
+            <Modal />
+          </ModalProvider>
+        </AuthProvider>
       </body>
     </html>
   );
