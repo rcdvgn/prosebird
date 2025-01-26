@@ -10,7 +10,7 @@
   --hover: 29, 29, 29;
   --selected: 41, 41, 41;
 
-  --primary: #ffffff;
+  --primary: 255, 255, 255;
   /* #A1A1A1 */
   --secondary: 161, 161, 161;
   /* #B3B3B3 */
@@ -23,7 +23,8 @@
   --brand: 50, 94, 241;
 
   /* #292929 */
-  --border: 33, 33, 33;
+  --border: 41, 41, 41;
+  --stroke: 33, 33, 33;
 
   --success-green: 33, 248, 40;
   --money-green: 114, 251, 93;
@@ -95,6 +96,10 @@ textarea::-webkit-scrollbar {
 } */
 
 @layer components {
+  .slate {
+    @apply grow flex flex-col min-w-0 bg-middleground mr-2 my-2 rounded-[10px] border-[1px] border-border overflow-y-auto;
+  }
+
   .icon-container {
     @apply bg-foreground shrink-0 h-[36px] aspect-square rounded-[10px] border-border border-[1px] grid place-items-center text-inactive [&>svg]:h-4;
   }

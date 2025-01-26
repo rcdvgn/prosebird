@@ -133,7 +133,7 @@ export default function ScriptEditor() {
   // }, []);
 
   return (
-    <div className="grow flex flex-col min-w-0 bg-middleground mr-[10px] my-[10px] rounded-[10px] border-[1px] border-border">
+    <div className="slate">
       <div className="flex justify-between items-center p-[10px] border-b-[1px] border-border h-[55px] shrink-0">
         <div className="grow flex items-center gap-3 min-w-0">
           <div className="icon-container">

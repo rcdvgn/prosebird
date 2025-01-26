@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import {
   AddIcon,
+  DashboardIcon,
+  LogoIcon,
   MoreIcon,
   ScriptIcon,
   SearchIcon,
@@ -18,6 +20,8 @@ import { useAuth } from "../_contexts/AuthContext";
 import { useScriptEditor } from "../_contexts/ScriptEditorContext";
 
 import { useRecentScripts } from "@/app/_contexts/RecentScriptsContext";
+import { useModal } from "../_contexts/ModalContext";
+import Settings from "./modals/Settings";
 
 export default function Sidebar(fileId: any) {
   const { user, logout } = useAuth();
@@ -28,6 +32,8 @@ export default function Sidebar(fileId: any) {
 
   const [isSearchOn, setIsSearchOn] = useState(false);
   const [scriptList, setScriptList] = useState<any>(null);
+
+  const { openModal } = useModal();
 
   // const [scriptCount, setScriptCount] = useState(1);
 
@@ -50,10 +56,33 @@ export default function Sidebar(fileId: any) {
     }
   }, [user]);
 
+  // TEMPORARY
+  const handleSettings = () => {
+    openModal(<Settings />);
+  };
+
   return (
-    <div className="w-[280px] [&>*]:px-3.5 [&>*]:mb-2 shrink-0">
-      <div className="flex items-center justify-between h-[55px]">
-        <span className="ml-[10px]">
+    <div className="flex shrink-0">
+      <div className="flex flex-col items-center justify-start gap-4 w-[80px] border-[1px] border-blue-500">
+        <div className="h-[78px] w-full grid place-items-center">
+          <LogoIcon className="h-5" />
+        </div>
+
+        {Array.from({ length: 3 }).map((_: any, index: any) => {
+          return (
+            <div
+              key={index}
+              className="h-[44px] aspect-square grid place-items-center bg-brand/15 hover:bg-brand/20 transition-bg ease-in-out duration-100 rounded-xl cursor-pointer"
+            >
+              <DashboardIcon className="text-brand h-5" />
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="border-[1px] border-red-500 w-[300px]">
+        {/* <div className="flex items-center justify-between h-[55px]">
+        <span onClick={handleSettings} className="ml-[10px]">
           <Logo />
         </span>
         <span className="w-[30px] grid place-items-center cursor-pointer">
@@ -70,30 +99,7 @@ export default function Sidebar(fileId: any) {
         <input type="text" className="hidden" />
       </div>
       <div className="">
-        {/* <div className="h-[40px]">
-          <div className="flex items-center justify-between">
-            <span className="ml-[10px] font-bold text-sm text-primary">
-              Scripts
-            </span>
-            <div className="flex gap-1">
-              <div
-                onClick={handleCreateScript}
-                className={`btn-3 ${isSearchOn ? "bg-foreground" : ""}`}
-              >
-                <AddIcon className="" />
-              </div>
-              <div
-                onClick={() => {
-                  setIsSearchOn(!isSearchOn);
-                }}
-                className={`btn-3 ${isSearchOn ? "bg-foreground" : ""}`}
-              >
-                <SearchIcon className="" />
-              </div>
-            </div>
-          </div>
-          <input type="text" className="hidden" />
-        </div> */}
+        
         <div className="py-3 px-[18px]">
           <span className="text-xs font-semibold text-secondary">Today</span>
         </div>
@@ -142,7 +148,8 @@ export default function Sidebar(fileId: any) {
         className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
       >
         Logout
-      </button>
+      </button> */}
+      </div>
     </div>
   );
 }

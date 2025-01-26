@@ -19,16 +19,16 @@ const config: Config = {
         hover: "rgba(var(--hover), <alpha-value>)",
         selected: "rgba(var(--selected), <alpha-value>)",
 
-        primary: "var(--primary)",
+        primary: "rgba(var(--primary), <alpha-value>)",
         secondary: "rgba(var(--secondary), <alpha-value>)",
         tertiary: "rgba(var(--tertiary), <alpha-value>)",
         inactive: "rgba(var(--inactive), <alpha-value>)",
         placeholder: "rgba(var(--placeholder), <alpha-value>)",
         danger: "var(--text-danger)",
 
-        stroke: "var(--stroke)",
         brand: "rgba(var(--brand), <alpha-value>)",
         border: "rgba(var(--border), <alpha-value>)",
+        stroke: "rgba(var(--stroke), <alpha-value>)",
 
         "success-green": "rgba(var(--success-green), <alpha-value>)",
         "money-green": "rgba(var(--money-green), <alpha-value>)",
