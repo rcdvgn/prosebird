@@ -15,8 +15,9 @@ const config: Config = {
         background: "rgba(var(--background), <alpha-value>)",
         middleground: "rgba(var(--middleground), <alpha-value>)",
         foreground: "rgba(var(--foreground), <alpha-value>)",
+        battleground: "rgba(var(--battleground), <alpha-value>)",
 
-        hover: "rgba(var(--hover), <alpha-value>)",
+        hover: "var(--hover)",
         selected: "rgba(var(--selected), <alpha-value>)",
 
         primary: "rgba(var(--primary), <alpha-value>)",
@@ -32,6 +33,7 @@ const config: Config = {
 
         "success-green": "rgba(var(--success-green), <alpha-value>)",
         "money-green": "rgba(var(--money-green), <alpha-value>)",
+        "favorite-yellow": "rgba(var(--favorite-yellow), <alpha-value>)",
       },
     },
   },

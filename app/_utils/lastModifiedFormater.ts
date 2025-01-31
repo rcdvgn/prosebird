@@ -2,26 +2,33 @@ import { Timestamp } from "firebase/firestore";
 
 const getTimeDifference = (timestamp: Timestamp) => {
   const now = new Date();
-  const timeDiff = now.getTime() - timestamp.toDate().getTime();
+  const targetDate = timestamp.toDate();
 
-  const seconds = Math.floor(timeDiff / 1000);
-  const minutes = Math.floor(timeDiff / 60000);
+  const timeDiff = now.getTime() - targetDate.getTime();
+  const oneDayInMs = 24 * 60 * 60 * 1000;
 
-  if (seconds < 60) {
-    return seconds <= 5 ? "just now" : `${seconds} seconds ago`;
+  // Check if the event happened today
+  if (now.toDateString() === targetDate.toDateString()) {
+    return targetDate.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   }
-  if (minutes < 10) {
-    return `${minutes} minutes ago`;
+
+  // Check if the event happened yesterday
+  const yesterday = new Date(now.getTime() - oneDayInMs);
+  if (yesterday.toDateString() === targetDate.toDateString()) {
+    return "yesterday";
   }
 
-  const time = timestamp
-    .toDate()
-    .toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  const date = timestamp.toDate().toLocaleDateString();
-
-  return date === new Date().toLocaleDateString() ? time : date;
+  // Format as abbreviated date (e.g., Jan. 27, 2025)
+  return targetDate.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
 };
 
 export const lastModifiedFormatter = (timestamp: Timestamp) => {
-  return getTimeDifference(timestamp); // Static value, no need for interval or re-rendering logic
+  return getTimeDifference(timestamp);
 };

@@ -5,9 +5,10 @@
 :root {
   --background: 20, 20, 20;
   --middleground: 12, 12, 12;
-  --foreground: 26, 26, 26;
+  --foreground: 25, 25, 25;
+  --battleground: 32, 32, 32;
 
-  --hover: 29, 29, 29;
+  --hover: rgba(255, 255, 255, 0.06);
   --selected: 41, 41, 41;
 
   --primary: 255, 255, 255;
@@ -19,7 +20,6 @@
   --placeholder: 102, 102, 102;
   --text-danger: #b51b1d;
 
-  --stroke: #251d30;
   --brand: 50, 94, 241;
 
   /* #292929 */
@@ -28,6 +28,7 @@
 
   --success-green: 33, 248, 40;
   --money-green: 114, 251, 93;
+  --favorite-yellow: 233, 196, 11;
 }
 
 /* @media (prefers-color-scheme: dark) {
@@ -97,7 +98,7 @@ textarea::-webkit-scrollbar {
 
 @layer components {
   .slate {
-    @apply grow flex flex-col min-w-0 bg-middleground mr-2 my-2 rounded-[10px] border-[1px] border-border overflow-y-auto;
+    @apply grow flex flex-col min-w-0 bg-middleground mr-2 mb-2 rounded-[10px] overflow-y-auto;
   }
 
   .icon-container {
@@ -113,19 +114,23 @@ textarea::-webkit-scrollbar {
   }
 
   .script-select {
-    @apply rounded-[6px] h-[22px] w-[22px] bg-foreground border-[1px] border-border hover:bg-background cursor-pointer shrink-0;
+    @apply rounded-[5px] h-5 w-5 border-[1px] border-border cursor-pointer shrink-0 bg-brand grid place-items-center;
   }
 
   .input-default {
     @apply bg-transparent h-[44px] outline-1 -outline-offset-1 outline-border px-[14px] rounded-[10px] outline-none text-primary font-medium text-sm focus:outline-2 focus:-outline-offset-2 focus:outline-brand placeholder:text-placeholder focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-brand;
   }
 
+  .input-2 {
+    @apply outline-none border-none h-full bg-transparent text-primary font-medium text-sm px-2 placeholder:text-placeholder;
+  }
+
   .btn-1 {
-    @apply h-[36px] bg-brand rounded-[10px] text-primary text-sm font-bold px-[14px] flex justify-center items-center gap-[6px] hover:opacity-85 outline-none border-none focus:outline-brand focus:outline outline-offset-2;
+    @apply bg-brand rounded-lg text-primary text-[13px] font-bold px-[14px] flex justify-center items-center gap-[6px] hover:opacity-85 outline-none border-none focus:outline-brand focus:outline outline-offset-2;
   }
 
   .btn-2 {
-    @apply h-[36px] bg-brand/15 rounded-[10px] text-brand text-sm font-bold px-[14px] flex justify-center items-center gap-[6px] hover:bg-brand/20 outline-none border-none focus:outline-brand focus:outline outline-offset-2;
+    @apply bg-brand/15 rounded-lg text-brand text-[13px] font-bold px-[14px] flex justify-center items-center gap-[6px] hover:bg-brand/20 outline-none border-none focus:outline-brand focus:outline outline-offset-2;
   }
 
   .btn-1-md {
@@ -145,7 +150,7 @@ textarea::-webkit-scrollbar {
   }
 
   .button-icon {
-    @apply text-inactive grid place-items-center h-[32px] aspect-square rounded-md hover:text-primary cursor-pointer hover:bg-hover;
+    @apply text-inactive grid place-items-center h-[32px] aspect-square rounded-lg hover:text-primary cursor-pointer hover:bg-hover;
   }
 
   .inactive {

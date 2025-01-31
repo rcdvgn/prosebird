@@ -31,6 +31,7 @@ import {
 } from "firebase/database";
 
 import { db, rtdb } from "../_config/firebase/client";
+import defaultPreferences from "../_lib/defaultPreferences";
 
 export const createScript: any = async (userId: any) => {
   const blankScript = {
@@ -89,27 +90,15 @@ export async function getScriptAndNodes(fileId: string) {
   }
 }
 
-export async function getNodes(fileId: string) {
+export async function getNodes(scriptId: string) {
   try {
-    const scriptRef = doc(db, "scripts", fileId);
-    const scriptDoc = await getDoc(scriptRef);
-
-    if (!scriptDoc.exists()) {
-      console.error(`Script with ID ${fileId} does not exist.`);
-      return null;
-    }
-
-    const scriptData = scriptDoc.data();
-
-    // Fetch nodes separately from the "nodes" collection
-    const nodesRef = doc(db, "nodes", fileId);
+    const nodesRef = doc(db, "nodes", scriptId);
     const nodesDoc = await getDoc(nodesRef);
     const nodes = nodesDoc.exists() ? nodesDoc.data().nodes : [];
 
-    // Merge nodes with script data
-    return { id: scriptDoc.id, data: { ...scriptData, nodes } };
+    return nodes;
   } catch (error) {
-    console.error("Error fetching script data:", error);
+    console.error("Error fetching script nodes:", error);
     return null;
   }
 }
@@ -524,5 +513,21 @@ export async function onboardUser(userId: any, userData: any) {
     await updateDoc(docRef, userData);
   } catch (error) {
     console.error("Error updating favorite status:", error);
+  }
+}
+
+export async function getUserPreferences(userId: string) {
+  try {
+    const preferencesDocRef = doc(db, "preferences", userId);
+    const preferencesSnapshot = await getDoc(preferencesDocRef);
+
+    const userPreferences = preferencesSnapshot.exists()
+      ? preferencesSnapshot.data()
+      : {};
+
+    return { ...defaultPreferences, ...userPreferences };
+  } catch (error) {
+    console.error("Error fetching user preferences:", error);
+    return defaultPreferences;
   }
 }

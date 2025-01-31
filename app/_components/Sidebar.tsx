@@ -8,6 +8,7 @@ import {
   MoreIcon,
   ScriptIcon,
   SearchIcon,
+  ShrinkIcon,
   SideBarExpandIcon,
 } from "../_assets/icons";
 import Logo from "../_assets/logo";
@@ -22,15 +23,18 @@ import { useScriptEditor } from "../_contexts/ScriptEditorContext";
 import { useRecentScripts } from "@/app/_contexts/RecentScriptsContext";
 import { useModal } from "../_contexts/ModalContext";
 import Settings from "./modals/Settings";
+import Input3 from "./ui/Input3";
 
 export default function Sidebar(fileId: any) {
   const { user, logout } = useAuth();
   const { script, setScript } = useScriptEditor();
   const router = useRouter();
 
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState<any>(true);
+
   const { recentlyModified } = useRecentScripts();
 
-  const [isSearchOn, setIsSearchOn] = useState(false);
+  const [isSearchOn, setIsSearchOn] = useState<any>(false);
   const [scriptList, setScriptList] = useState<any>(null);
 
   const { openModal } = useModal();
@@ -63,25 +67,48 @@ export default function Sidebar(fileId: any) {
 
   return (
     <div className="flex shrink-0">
-      <div className="flex flex-col items-center justify-start gap-4 w-[80px] border-[1px] border-blue-500">
-        <div className="h-[78px] w-full grid place-items-center">
+      <div className="flex flex-col items-center justify-start w-[80px] border-[1px] border-blue-500">
+        <div
+          onClick={handleSettings}
+          className="h-[68px] w-full grid place-items-center"
+        >
           <LogoIcon className="h-5" />
         </div>
 
-        {Array.from({ length: 3 }).map((_: any, index: any) => {
-          return (
-            <div
-              key={index}
-              className="h-[44px] aspect-square grid place-items-center bg-brand/15 hover:bg-brand/20 transition-bg ease-in-out duration-100 rounded-xl cursor-pointer"
-            >
-              <DashboardIcon className="text-brand h-5" />
-            </div>
-          );
-        })}
+        <div className="flex flex-col items-center justify-start gap-4 w-full px-[18px] py-2.5">
+          {Array.from({ length: 3 }).map((_: any, index: any) => {
+            return (
+              <div
+                key={index}
+                className="h-[44px] aspect-square grid place-items-center bg-brand/15 hover:bg-brand/20 transition-bg ease-in-out duration-100 rounded-xl cursor-pointer"
+              >
+                <DashboardIcon className="text-brand h-5" />
+              </div>
+            );
+          })}
+        </div>
       </div>
 
-      <div className="border-[1px] border-red-500 w-[300px]">
-        {/* <div className="flex items-center justify-between h-[55px]">
+      {isSidebarExpanded && (
+        <div className="border-pink-500 border-[1px] w-[300px] pr-3">
+          <div className="h-[68px] w-full flex justify-between items-center px-4">
+            <Input3 />
+
+            <span
+              onClick={() => setIsSidebarExpanded(false)}
+              className="group button-icon !bg-transparent text-placeholder"
+            >
+              <ShrinkIcon className="h-3 transition-transform duration-200 ease-in-out group-hover:-translate-x-1" />
+            </span>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+{
+  /* <div className="flex items-center justify-between h-[55px]">
         <span onClick={handleSettings} className="ml-[10px]">
           <Logo />
         </span>
@@ -148,8 +175,5 @@ export default function Sidebar(fileId: any) {
         className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
       >
         Logout
-      </button> */}
-      </div>
-    </div>
-  );
+      </button> */
 }

@@ -1,4 +1,6 @@
-async function loadFontAndContext(): Promise<CanvasRenderingContext2D> {
+async function loadFontAndContext(
+  fontSize: any
+): Promise<CanvasRenderingContext2D> {
   const canvas = document.createElement("canvas");
   const context = canvas.getContext("2d");
 
@@ -12,7 +14,8 @@ async function loadFontAndContext(): Promise<CanvasRenderingContext2D> {
   );
   await font.load();
   document.fonts.add(font);
-  context.font = "36px Public-Sans"; // Adjust the size as needed
+  console.log(`${fontSize}px Public-Sans`);
+  context.font = `${fontSize}px Public-Sans`; // Adjust the size as needed
 
   return context;
 }
@@ -33,6 +36,9 @@ function calculateLineBreaks(
       (currentLine.length > 0 ? " " : "") +
       wordObject.word;
     const testWidth = context.measureText(testLine).width;
+
+    console.log(testLine + ":");
+    console.log(containerWidth, testWidth);
 
     // Check if the word's key is a chapter start
     if (chapterKeys.has(wordObject.position)) {
@@ -87,11 +93,12 @@ export default async function calculateTimestamps(
   words: any,
   chapters: any,
   containerWidth: any,
-  speedMultiplier: any
+  speedMultiplier: any,
+  fontSize: any
 ) {
   const baseSpeed = 1500;
 
-  const context = await loadFontAndContext();
+  const context = await loadFontAndContext(fontSize);
 
   const lines = calculateLineBreaks(context, words, chapters, containerWidth);
 

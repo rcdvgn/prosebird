@@ -1,10 +1,6 @@
 // import splitWithSpaces from "../_utils/splitWithSpaces";
 
-export default function formatScript(
-  nodes: any,
-  userId: any
-  // scriptParticipants: any
-) {
+export default function formatScript(nodes: any) {
   const words: any = [];
   const chapters: any = {};
   // const speakers: any = [];

@@ -12,7 +12,7 @@ export async function POST(request: Request) {
     const { script, userId, scriptParticipants } = await request.json();
 
     // Format the script for the presentation
-    const { formattedScript } = formatScript(script.data.nodes, userId);
+    const { formattedScript } = formatScript(script.data.nodes);
 
     // Prepare participants data
     // const participants = scriptParticipants.map((scriptsParticipant: any) => ({

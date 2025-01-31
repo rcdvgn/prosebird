@@ -168,8 +168,11 @@ export default function ScriptEditor() {
                 className="button-icon !h-[25px] !bg-transparent"
               >
                 <StarIcon
-                  className="stroke-1 h-3"
-                  filled={scriptData?.isFavorite}
+                  className={`h-3 ${
+                    scriptData?.isFavorite
+                      ? "!text-favorite-yellow fill-current"
+                      : ""
+                  }`}
                 />
               </span>
               <span className="button-icon !h-[25px] !bg-transparent">

@@ -60,6 +60,7 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
   // const [pusherChannel, setPusherChannel] = useState<any>(null);
 
   const speedMultiplier = 1;
+  const fontSize = "36";
 
   const getController = (currentPosition: any) => {
     let isController = false;
@@ -176,7 +177,8 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
               presentation.nodes.words,
               presentation.nodes.chapters,
               containerWidth,
-              speedMultiplier
+              speedMultiplier,
+              fontSize
             );
 
           setTotalDuration(totalDuration);

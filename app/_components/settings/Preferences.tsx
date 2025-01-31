@@ -10,13 +10,13 @@ const Hr = () => {
 };
 
 export default function Preferences() {
-  const playbackSpeedSelectedOptionContainer = useRef<any>(null);
+  const speedMultiplierSelectedOptionContainer = useRef<any>(null);
 
-  const [playbackSpeed, setPlaybackSpeed] = useState<any>(1);
-  const [isPlaybackSpeedExpanded, setIsPlaybackSpeedExpanded] =
+  const [speedMultiplier, setSpeedMultiplier] = useState<any>(1);
+  const [isSpeedMultiplierExpanded, setIsSpeedMultiplierExpanded] =
     useState<any>(false);
 
-  const playbackSpeedOptions = [
+  const speedMultiplierOptions = [
     { name: "0.25x", value: 0.25 },
     { name: "0.5x", value: 0.5 },
     { name: "0.75x", value: 0.75 },
@@ -27,12 +27,14 @@ export default function Preferences() {
     { name: "2x", value: 2 },
   ];
 
-  const handleClosePlaybackSpeed = () => {
-    isPlaybackSpeedExpanded ? setIsPlaybackSpeedExpanded(false) : "";
+  const handleCloseSpeedMultiplier = () => {
+    isSpeedMultiplierExpanded ? setIsSpeedMultiplierExpanded(false) : "";
   };
 
-  const handleSelectPlaybackSpeed = (selectedOption: any) => {
-    selectedOption !== playbackSpeed ? setPlaybackSpeed(selectedOption) : "";
+  const handleSelectSpeedMultiplier = (selectedOption: any) => {
+    selectedOption !== speedMultiplier
+      ? setSpeedMultiplier(selectedOption)
+      : "";
   };
 
   return (
@@ -54,31 +56,33 @@ export default function Preferences() {
 
         <div className="relative">
           <div
-            ref={playbackSpeedSelectedOptionContainer}
-            onClick={() => setIsPlaybackSpeedExpanded(!isPlaybackSpeedExpanded)}
+            ref={speedMultiplierSelectedOptionContainer}
+            onClick={() =>
+              setIsSpeedMultiplierExpanded(!isSpeedMultiplierExpanded)
+            }
             className="group py-2 px-4 hover:bg-hover rounded-[10px] cursor-pointer select-none"
           >
             <span className="font-bold text-sm text-inactive group-hover:text-primary">
-              {playbackSpeed + "x"}
+              {speedMultiplier + "x"}
             </span>
           </div>
 
           <OutsideClickHandler
-            onOutsideClick={handleClosePlaybackSpeed}
-            exceptionRefs={[playbackSpeedSelectedOptionContainer]}
+            onOutsideClick={handleCloseSpeedMultiplier}
+            exceptionRefs={[speedMultiplierSelectedOptionContainer]}
           >
             <div
               className={`${
-                isPlaybackSpeedExpanded ? "opacity-100" : "opacity-0"
+                isSpeedMultiplierExpanded ? "opacity-100" : "opacity-0"
               } absolute right-0 top-[calc(100%+8px)] min-w-[180px] bg-background border-[1px] border-border rounded-[10px] p-2 transition-opacity ease-in-out duration-100`}
             >
-              {playbackSpeedOptions.map((item: any, index: any) => {
+              {speedMultiplierOptions.map((item: any, index: any) => {
                 return (
                   <div
                     key={index}
-                    onClick={() => handleSelectPlaybackSpeed(item.value)}
+                    onClick={() => handleSelectSpeedMultiplier(item.value)}
                     className={`group px-3 py-2.5 rounded-md flex items-center justify-between gap-2 cursor-pointer ${
-                      playbackSpeed === item.value
+                      speedMultiplier === item.value
                         ? "bg-selected"
                         : "hover:bg-hover"
                     }`}
@@ -86,14 +90,14 @@ export default function Preferences() {
                     <span className="flex items-center justify-start">
                       {/* <TrashCanIcon
                       className={`h-3 ${
-                        playbackSpeed === item.value
+                        speedMultiplier === item.value
                           ? "text-primary"
                           : "text-inactive group-hover:text-primary"
                       }`}
                     /> */}
                       <span
                         className={`font-bold text-[13px] ${
-                          playbackSpeed === item.value
+                          speedMultiplier === item.value
                             ? "text-primary"
                             : "text-inactive group-hover:text-primary"
                         }`}
@@ -102,7 +106,7 @@ export default function Preferences() {
                       </span>
                     </span>
 
-                    {playbackSpeed === item.value && (
+                    {speedMultiplier === item.value && (
                       <CircledCheckIcon className="h-3.5 text-primary fill-brand" />
                     )}
                   </div>
