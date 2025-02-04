@@ -81,7 +81,7 @@ export default function Preferences() {
                   <div
                     key={index}
                     onClick={() => handleSelectSpeedMultiplier(item.value)}
-                    className={`group px-3 py-2.5 rounded-md flex items-center justify-between gap-2 cursor-pointer ${
+                    className={`group px-3 py-2.5 rounded-lg flex items-center justify-between gap-2 cursor-pointer ${
                       speedMultiplier === item.value
                         ? "bg-selected"
                         : "hover:bg-hover"

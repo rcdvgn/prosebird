@@ -10,6 +10,7 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
 } from "firebase/auth";
+
 import {
   doc,
   getDoc,
@@ -30,6 +31,12 @@ interface AuthContextType {
 // Create the AuthContext
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// A helper function to check if a URL looks like a user-uploaded image (from Google Cloud Storage)
+const isUserUploadedURL = (url: string): boolean => {
+  // Adjust the prefix based on your Cloud Storage URL pattern
+  return url.startsWith("https://storage.googleapis.com/");
+};
+
 // AuthProvider component
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -37,50 +44,49 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [user, setUser] = useState<any | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
-  // Listen for auth state changes and handle Firestore user creation/retrieval
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      // if logging in
       if (currentUser) {
-        // Check if the user already exists in Firestore
         const userDocRef = doc(db, "users", currentUser.uid);
         const userDoc = await getDoc(userDocRef);
 
         const providerPhotoURL = currentUser.photoURL || null;
 
+        // if logging in but the user doesnt exist yet
         if (!userDoc.exists()) {
-          // New user setup
           const newUser: any = {
             email: currentUser.email,
             createdAt: serverTimestamp(),
-            profilePicture: {
-              userUploaded: null, // No custom upload yet
-              provider: providerPhotoURL, // Use provider's photo if available
-            },
+            profilePictureURL: providerPhotoURL,
           };
 
           await setDoc(userDocRef, newUser);
           setUser({ id: currentUser.uid, ...newUser });
+
+          // if logging in and the user already exists
         } else {
-          // Existing user, update provider photo if it has changed
           const userData = userDoc.data();
+
           if (
             providerPhotoURL &&
-            userData.profilePicture?.provider !== providerPhotoURL
+            (!userData.profilePictureURL ||
+              (!isUserUploadedURL(userData.profilePictureURL) &&
+                userData.profilePictureURL !== providerPhotoURL))
           ) {
             await updateDoc(userDocRef, {
-              "profilePicture.provider": providerPhotoURL,
+              profilePictureURL: providerPhotoURL,
             });
           }
-          setUser({ id: currentUser.uid, ...userDoc.data() });
+          setUser({ id: currentUser.uid, ...userData });
         }
+        // if logging out
       } else {
-        // User logged out, clear the user state
         setUser(null);
       }
       setLoading(false);
     });
 
-    // Cleanup the subscription on unmount
     return () => unsubscribe();
   }, []);
 
@@ -98,36 +104,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const googleLogin = async () => {
     try {
       const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-
-      // Check if Firestore needs updating after Google login
-      const userDocRef = doc(db, "users", user.uid);
-      const userDoc = await getDoc(userDocRef);
-
-      if (!userDoc.exists()) {
-        // Create new user document
-        const newUser: any = {
-          email: user.email,
-          createdAt: serverTimestamp(),
-          profilePicture: {
-            userUploaded: null,
-            provider: user.photoURL || null,
-          },
-        };
-
-        await setDoc(userDocRef, newUser);
-      } else {
-        // Update provider photo if it has changed
-        if (
-          user.photoURL &&
-          userDoc.data().profilePicture?.provider !== user.photoURL
-        ) {
-          await updateDoc(userDocRef, {
-            "profilePicture.provider": user.photoURL,
-          });
-        }
-      }
+      await signInWithPopup(auth, provider);
     } catch (error) {
       console.error("Google login error:", error);
       throw error;

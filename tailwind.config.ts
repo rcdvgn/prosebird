@@ -34,6 +34,7 @@ const config: Config = {
         "success-green": "rgba(var(--success-green), <alpha-value>)",
         "money-green": "rgba(var(--money-green), <alpha-value>)",
         "favorite-yellow": "rgba(var(--favorite-yellow), <alpha-value>)",
+        "live-red": "rgba(var(--live-red), <alpha-value>)",
       },
     },
   },

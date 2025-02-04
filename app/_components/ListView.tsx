@@ -206,7 +206,7 @@ export default function ListView({ recentlyModified, displayType }: any) {
                           item?.isFavorite
                             ? ""
                             : "group-hover/main:visible invisible"
-                        } button-icon`}
+                        } button-icon !bg-transparent`}
                       >
                         <StarIcon
                           className={`h-4 ${

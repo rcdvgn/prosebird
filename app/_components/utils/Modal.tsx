@@ -12,9 +12,12 @@ const Modal: React.FC<{}> = () => {
   if (!currentModal) return null;
 
   return (
-    <div className="z-50 h-screen w-screen fixed top-0 left-0 bg-red-500/50 flex justify-center items-center">
+    <div
+      className="z-50 h-screen w-screen fixed top-0 left-0 bg-background/25 backdrop-blur-md
+ flex justify-center items-center"
+    >
       <OutsideClickHandler onOutsideClick={closeModal} exceptionRefs={[]}>
-        {currentModal}
+        {currentModal?.content}
       </OutsideClickHandler>
     </div>
   );

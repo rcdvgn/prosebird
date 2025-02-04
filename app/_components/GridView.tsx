@@ -63,10 +63,6 @@ export default function GridView({ recentlyModified, displayType }: any) {
     getScriptPreviews();
   }, [recentlyModified, user?.id]);
 
-  useEffect(() => {
-    console.log(recentlyModifiedScripts);
-  }, [recentlyModifiedScripts]);
-
   return (
     <div
       className={`gap-y-7 gap-x-5 ${

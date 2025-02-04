@@ -2,13 +2,13 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 
-type ModalContextType = {
-  currentModal: React.ReactNode | null;
-  openModal: (modalContent: React.ReactNode) => void;
-  closeModal: () => void;
-};
+// type ModalContextType = {
+//   currentModal: React.ReactNode | null;
+//   openModal: (modalContent: React.ReactNode) => void;
+//   closeModal: () => void;
+// };
 
-const ModalContext = createContext<ModalContextType | undefined>(undefined);
+const ModalContext = createContext<any>(undefined);
 
 export const ModalProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -17,8 +17,8 @@ export const ModalProvider: React.FC<{ children: React.ReactNode }> = ({
     null
   );
 
-  const openModal = (modalContent: React.ReactNode) => {
-    setCurrentModal(modalContent);
+  const openModal = (modalObject: any) => {
+    setCurrentModal(modalObject);
   };
 
   const closeModal = () => {

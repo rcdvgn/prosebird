@@ -35,7 +35,7 @@ export default function Settings() {
   };
 
   return (
-    <div className="w-[760px] h-[530px] rounded-[10px] bg-middleground border-border border-[1px] flex flex-col">
+    <div className="w-[760px] h-[530px] rounded-xl bg-background flex flex-col">
       <div className="py-5 px-6 flex justify-between items-center border-b-[1px] border-border">
         <span className="text-primary font-bold text-lg">Settings</span>
         <span

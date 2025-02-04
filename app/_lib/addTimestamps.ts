@@ -14,7 +14,6 @@ async function loadFontAndContext(
   );
   await font.load();
   document.fonts.add(font);
-  console.log(`${fontSize}px Public-Sans`);
   context.font = `${fontSize}px Public-Sans`; // Adjust the size as needed
 
   return context;
@@ -36,9 +35,6 @@ function calculateLineBreaks(
       (currentLine.length > 0 ? " " : "") +
       wordObject.word;
     const testWidth = context.measureText(testLine).width;
-
-    console.log(testLine + ":");
-    console.log(containerWidth, testWidth);
 
     // Check if the word's key is a chapter start
     if (chapterKeys.has(wordObject.position)) {
