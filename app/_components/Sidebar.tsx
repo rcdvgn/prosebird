@@ -5,6 +5,7 @@ import {
   AddIcon,
   CloseIcon,
   DashboardIcon,
+  EndedIcon,
   HelpIcon,
   InboxIcon,
   LogoIcon,
@@ -16,21 +17,25 @@ import {
   ShrinkIcon,
   SideBarExpandIcon,
 } from "../_assets/icons";
-import Logo from "../_assets/logo";
 
 import { useRouter } from "next/navigation";
 
-import { createScript, getUserScripts } from "@/app/_services/client";
+import { getPeople, getUserScripts } from "@/app/_services/client";
 
 import { useAuth } from "../_contexts/AuthContext";
-import { useScriptEditor } from "../_contexts/ScriptEditorContext";
 
 import { useRecentScripts } from "@/app/_contexts/RecentScriptsContext";
 import { useModal } from "../_contexts/ModalContext";
 import Settings from "./modals/Settings";
 import Input3 from "./ui/Input3";
+import { useScriptEditor } from "../_contexts/ScriptEditorContext";
+import { useRealtimeData } from "../_contexts/RealtimeDataContext";
+import ProfilePicture from "./ProfilePicture";
+import { notificationTypes } from "../_lib/notificationTypes";
 
-const Inbox = () => {
+const Inbox = ({ notifications, people }: any) => {
+  const router = useRouter();
+
   return (
     <div>
       <div className="w-full h-8 flex items-center justify-start gap-2 mb-5">
@@ -52,66 +57,69 @@ const Inbox = () => {
       </span>
 
       <div className="flex flex-col gap-4">
-        {Array.from({ length: 4 }).map((items: any, index: any) => {
-          return (
-            <div key={index} className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <div
-                  style={{
-                    backgroundImage: `url("/pfps/profile1.png")`,
-                  }}
-                  className="cursor-pointer h-8 aspect-square rounded-full bg-cover bg-center flex-shrink-0"
-                ></div>
+        {notifications &&
+          people &&
+          notifications.map((notification: any, index: any) => {
+            return (
+              <div key={index} className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <ProfilePicture
+                    profilePictureURL={
+                      people[notification.data.presentationHost]
+                        ?.profilePictureURL
+                    }
+                    className="h-8"
+                  />
 
-                <div className="grow leading-4">
-                  <span className="font-bold text-[13px] text-primary hover:underline cursor-pointer">
-                    Juan Carrera
-                  </span>
-                  <span className="font-medium text-xs text-primary">
-                    {" "}
-                    invited you to a presentation.{" "}
-                  </span>
-                  <span className="font-medium text-xs text-secondary">1h</span>
+                  <div className="grow leading-4">
+                    <span className="font-bold text-[13px] text-primary hover:underline cursor-pointer">
+                      {people[notification.data.presentationHost].firstName +
+                        " " +
+                        people[notification.data.presentationHost].lastName}
+                    </span>
+                    <span className="font-medium text-xs text-primary">
+                      {" " + notificationTypes[notification.type].text[0] + " "}
+                    </span>
+                    <span className="font-medium text-xs text-secondary">
+                      1h
+                    </span>
+                  </div>
                 </div>
-              </div>
 
-              <button className="hover:underline border-none outline-none font-bold text-[13px] text-brand px-2 py-1">
-                Join
-              </button>
-            </div>
-          );
-        })}
+                <button
+                  onClick={() =>
+                    router.push(`/p/${notification.data.presentationCode}`)
+                  }
+                  className="hover:underline border-none outline-none font-bold text-[13px] text-brand px-2 py-1"
+                >
+                  Join
+                </button>
+              </div>
+            );
+          })}
       </div>
     </div>
   );
 };
 
-const Scripts = ({ recentlyModified }: any) => {
-  const { user, logout } = useAuth();
-  const { script, setScript } = useScriptEditor();
+const Scripts = ({ scripts }: any) => {
+  const { user } = useAuth();
+  const { script } = useScriptEditor();
 
-  const [scriptList, setScriptList] = useState<any>(null);
+  // const [scriptList, setScriptList] = useState<any>(null);
 
   const router = useRouter();
 
-  const handleCreateScript = async () => {
-    if (user !== null) {
-      const newScript = await createScript(user.id);
-      setScript(newScript);
-      router.push(`/file/${newScript.id}`);
-    }
-  };
+  // useEffect(() => {
+  //   const handleGetAllScripts = async (userId: any) => {
+  //     const newScriptList = await getUserScripts(userId);
 
-  useEffect(() => {
-    const handleGetAllScripts = async (userId: any) => {
-      const newScriptList = await getUserScripts(userId);
-
-      setScriptList(newScriptList);
-    };
-    if (user) {
-      handleGetAllScripts(user.id);
-    }
-  }, [user]);
+  //     setScriptList(newScriptList);
+  //   };
+  //   if (user) {
+  //     handleGetAllScripts(user.id);
+  //   }
+  // }, [user]);
 
   return (
     <div>
@@ -120,22 +128,32 @@ const Scripts = ({ recentlyModified }: any) => {
       </span>
 
       <div className="flex flex-col">
-        {recentlyModified &&
-          recentlyModified.map((item: any, index: any) => {
+        {scripts &&
+          scripts.map((item: any, index: any) => {
             return (
               <div
                 key={index}
                 onClick={() => router.push(`/file/${item.id}`)}
-                className="group h-11 w-full rounded-[10px] pl-[18px] pr-1 flex items-center justify-between cursor-pointer hover:bg-hover"
+                className={`group h-11 w-full rounded-[10px] pl-[18px] pr-1 flex items-center justify-between cursor-pointer ${
+                  script?.id === item.id
+                    ? "bg-brand text-primary"
+                    : "text-inactive hover:text-primary hover:bg-hover"
+                }`}
               >
                 <div className="flex justify-start items-center grow min-w-0 gap-3">
-                  <ScriptIcon className="h-4 text-inactive group-hover:text-primary shrink-0" />
-                  <span className="block h-[18px] font-semibold text-[13px] text-inactive group-hover:text-primary truncate">
-                    The death of a world
+                  <ScriptIcon className="h-4 shrink-0" />
+                  <span className="block h-[18px] font-semibold text-[13px] truncate">
+                    {item?.title}
                   </span>
                 </div>
 
-                <span className="button-icon !bg-transparent opacity-0 group-hover:opacity-100">
+                <span
+                  className={`button-icon !bg-transparent ${
+                    script?.id === item.id
+                      ? "text-primary"
+                      : "opacity-0 group-hover:opacity-100"
+                  }`}
+                >
                   <MoreIcon className="h-3" />
                 </span>
               </div>
@@ -146,7 +164,7 @@ const Scripts = ({ recentlyModified }: any) => {
   );
 };
 
-const Presentations = () => {
+const Presentations = ({ presentations }: any) => {
   return (
     <div>
       <span className="block font-semibold text-xs text-secondary mb-4">
@@ -154,47 +172,70 @@ const Presentations = () => {
       </span>
 
       <div className="flex flex-col">
-        {Array.from({ length: 4 }).map((items: any, index: any) => {
-          return (
-            <div
-              key={index}
-              className="group p-2.5 w-full rounded-[10px] flex items-center justify-start gap-2 cursor-pointer hover:bg-battleground"
-            >
-              <div className="flex items-center h-8">
-                <div
-                  style={{
-                    backgroundImage: `url("/pfps/profile1.png")`,
-                  }}
-                  className="ring-2 ring-background group-hover:ring-battleground h-full aspect-square rounded-full bg-cover bg-center flex-shrink-0"
-                ></div>
+        {presentations &&
+          presentations.map((item: any, index: any) => {
+            return (
+              <div
+                key={index}
+                className="group p-2.5 w-full rounded-[10px] flex items-center justify-start gap-2 cursor-pointer hover:bg-battleground"
+              >
+                <div className="flex items-center h-8">
+                  <div
+                    style={{
+                      backgroundImage: `url("/pfps/profile1.png")`,
+                    }}
+                    className="ring-2 ring-background group-hover:ring-battleground h-full aspect-square rounded-full bg-cover bg-center flex-shrink-0"
+                  ></div>
 
-                <div className="ring-2 ring-background group-hover:ring-battleground -ml-2 h-full aspect-square grid place-items-center rounded-full bg-selected">
-                  <span className="text-secondary font-bold text-[13px]">
-                    +4
-                  </span>
+                  {Object.keys(item.participants).filter(
+                    (participantId: any) =>
+                      item.participants[participantId].role !== "author"
+                  ).length > 0 && (
+                    <div className="ring-2 ring-background group-hover:ring-battleground -ml-2 h-full aspect-square grid place-items-center rounded-full bg-selected">
+                      <span className="text-secondary font-bold text-[13px]">
+                        +
+                        {
+                          Object.keys(item.participants).filter(
+                            (participantId: any) =>
+                              item.participants[participantId].role !== "author"
+                          ).length
+                        }
+                      </span>
+                    </div>
+                  )}
                 </div>
-              </div>
 
-              <div className="grow min-w-0">
-                <div className="w-full flex items-center gap-2">
-                  <span className="font-bold text-[13px] text-primary truncate">
-                    The Beginning of an Era
-                  </span>
-
-                  <div className="bg-live-red/15 rounded-full py-1 px-2 flex items-center gap-1">
-                    <div className="bg-live-red rounded-full h-[5px] aspect-square"></div>
-                    <span className="text-live-red font-bold text-[11px]">
-                      2
+                <div className="grow min-w-0">
+                  <div className="w-full flex items-center gap-2">
+                    <span className="font-bold text-[13px] text-primary truncate">
+                      {item.title}
                     </span>
+
+                    {item.status === "active" ? (
+                      <div className="bg-live-red/15 rounded-full py-1 px-2 flex items-center gap-1 text-live-red">
+                        <div className="bg-live-red rounded-full h-[5px] aspect-square"></div>
+                        <span className="font-bold text-[11px]">
+                          {
+                            Object.values(item.participants).filter(
+                              (participant: any) => participant.isConnected
+                            ).length
+                          }
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="bg-placeholder/15 rounded-full py-1 px-2 flex items-center gap-1 text-placeholder">
+                        <EndedIcon className="h-1.5" />
+                        <span className="font-bold text-[11px]">Ended</span>
+                      </div>
+                    )}
                   </div>
+                  <span className="block font-semibold text-xs text-secondary">
+                    just now
+                  </span>
                 </div>
-                <span className="block font-semibold text-xs text-secondary">
-                  just now
-                </span>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
       </div>
     </div>
   );
@@ -202,26 +243,30 @@ const Presentations = () => {
 
 export default function Sidebar(fileId: any) {
   const { openModal, currentModal } = useModal();
+  const { user, logout } = useAuth();
+  // const { recentlyModified } = useRecentScripts();
+  const { scripts, presentations, notifications } = useRealtimeData();
 
-  const { recentlyModified } = useRecentScripts();
+  const router = useRouter();
 
   // const [isSearchOn, setIsSearchOn] = useState<any>(false);
+  const [people, setPeople] = useState<any>({});
 
   const [currentTab, setCurrentTab] = useState<any>(null);
 
   const sidebarTabs: any = {
     scripts: {
-      content: <Scripts recentlyModified={recentlyModified} />,
+      content: <Scripts scripts={scripts} />,
       icon: <ScriptIcon className="h-5" />,
       name: "Scripts",
     },
     presentations: {
-      content: <Presentations />,
+      content: <Presentations presentations={presentations} />,
       icon: <PresentationIcon className="w-5" />,
       name: "Presentations",
     },
     inbox: {
-      content: <Inbox />,
+      content: <Inbox notifications={notifications} people={people} />,
       icon: <InboxIcon className="h-5" />,
       name: "Inbox",
     },
@@ -229,16 +274,58 @@ export default function Sidebar(fileId: any) {
 
   // const [scriptCount, setScriptCount] = useState(1);
 
-  // TEMPORARY
   const handleSettings = () => {
     openModal({ content: <Settings />, name: "settings" });
   };
+
+  useEffect(() => {
+    if (!user) return;
+
+    const getNotificationPeople = async (userIds: any) => {
+      const notificationPeople = await getPeople(userIds, []);
+
+      const formattedNotificationPeople = notificationPeople.reduce(
+        (acc, user) => {
+          if (user.id && userIds.includes(user.id)) {
+            acc[user.id] = { ...user };
+            delete acc[user.id].id;
+          }
+          return acc;
+        },
+        {}
+      );
+
+      const newPeople = { ...formattedNotificationPeople, ...people };
+
+      setPeople(newPeople);
+    };
+
+    if (notifications) {
+      const userIds = notifications.map((notification: any) => {
+        switch (notification.type) {
+          case "presentationInvite":
+            return notification.data.presentationHost;
+          default:
+            console.error("Unhandled notification type:", notification.type);
+        }
+
+        return null;
+      });
+
+      getNotificationPeople(userIds);
+    }
+  }, [user?.id, notifications]);
 
   return (
     <div className="flex shrink-0">
       <div className="flex flex-col items-center justify-start w-[80px]">
         <div className="h-[68px] w-full grid place-items-center">
-          <LogoIcon className="h-5" />
+          <span
+            className="cursor-pointer"
+            onClick={() => router.push(`/files`)}
+          >
+            <LogoIcon className="h-5" />
+          </span>
         </div>
 
         <div className="flex flex-col gap-4 items-center">
@@ -288,7 +375,7 @@ export default function Sidebar(fileId: any) {
       </div>
 
       {currentTab && (
-        <div className="w-[300px] px-4">
+        <div className="w-[300px] pl-2 pr-4">
           <div className="h-[68px] w-full flex justify-between items-center">
             <Input3 />
 

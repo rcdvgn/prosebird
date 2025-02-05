@@ -134,6 +134,10 @@ textarea::-webkit-scrollbar {
     @apply bg-brand/15 rounded-lg text-brand text-[13px] font-bold px-[14px] flex justify-center items-center gap-[6px] hover:bg-brand/20 outline-none border-none focus:outline-brand focus:outline outline-offset-2;
   }
 
+  .btn-1-sm {
+    @apply btn-1 h-[32px];
+  }
+
   .btn-1-md {
     @apply btn-1 h-[36px];
   }

@@ -19,6 +19,7 @@ import { changeFavoriteStatus } from "../_services/client";
 import Draggable from "react-draggable";
 
 export default function ScriptEditor() {
+  const draggableRef = useRef<any>(null);
   const { script, setScript, participants } = useScriptEditor();
   const scriptData = script.data;
   const { user } = useAuth();
@@ -225,8 +226,12 @@ export default function ScriptEditor() {
                   onStart={handleDragStart}
                   onDrag={handleDragMove}
                   onStop={handleDragStop}
+                  nodeRef={draggableRef}
                 >
-                  <div className="group absolute left-0 top-0 w-full h-full m-auto flex items-center py-2.5 pr-2 rounded-[10px] hover:bg-hover">
+                  <div
+                    ref={draggableRef}
+                    className="group absolute left-0 top-0 w-full h-full m-auto flex items-center py-2.5 pr-2 rounded-[10px] hover:bg-hover"
+                  >
                     <div className="button-icon !bg-transparent">
                       <span className="font-semibold text-[13px] text-secondary group-hover:hidden">
                         1.

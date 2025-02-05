@@ -16,6 +16,7 @@ import {
   addDoc,
   orderBy,
   documentId,
+  serverTimestamp,
 } from "firebase/firestore";
 
 import {
@@ -28,17 +29,20 @@ import {
   equalTo,
   onDisconnect,
   set,
+  child,
+  update,
 } from "firebase/database";
 
 import { db, rtdb } from "../_config/firebase/client";
 import defaultPreferences from "../_lib/defaultPreferences";
+import { gracePeriod } from "../_lib/gracePeriod";
 
 export const createScript: any = async (userId: any) => {
   const blankScript = {
     title: "Untitled",
     createdBy: userId,
-    createdAt: Timestamp.now(),
-    lastModified: Timestamp.now(),
+    createdAt: serverTimestamp(),
+    lastModified: serverTimestamp(),
     isFavorite: false,
     editors: [],
     viewers: [],
@@ -126,7 +130,7 @@ export const saveScript = async (script: any) => {
     // Update the script data without nodes
     const updatedScriptData = {
       ...scriptData,
-      lastModified: Timestamp.now(),
+      lastModified: serverTimestamp(),
     };
     await updateDoc(docRef, updatedScriptData);
 
@@ -531,3 +535,228 @@ export async function getUserPreferences(userId: string) {
     return defaultPreferences;
   }
 }
+
+export const subscribeToScripts = (
+  userId: string,
+  onUpdate: (data: any) => void
+) => {
+  const scriptsCollection = collection(db, "scripts");
+
+  // Queries for createdBy, editors, and viewers
+  const createdByQuery = query(
+    scriptsCollection,
+    where("createdBy", "==", userId),
+    orderBy("lastModified", "desc")
+  );
+
+  const editorsQuery = query(
+    scriptsCollection,
+    where("editors", "array-contains", userId),
+    orderBy("lastModified", "desc")
+  );
+
+  const viewersQuery = query(
+    scriptsCollection,
+    where("viewers", "array-contains", userId),
+    orderBy("lastModified", "desc")
+  );
+
+  const unsubscribeCreatedBy = onSnapshot(createdByQuery, (querySnapshot) => {
+    const createdByData = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    updateData(createdByData);
+  });
+
+  const unsubscribeEditors = onSnapshot(editorsQuery, (querySnapshot) => {
+    const editorsData = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    updateData(editorsData);
+  });
+
+  const unsubscribeViewers = onSnapshot(viewersQuery, (querySnapshot) => {
+    const viewersData = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    updateData(viewersData);
+  });
+
+  const allScripts: any[] = [];
+  const updateData = (newData: any[]) => {
+    allScripts.push(...newData);
+    onUpdate(allScripts);
+  };
+
+  return () => {
+    unsubscribeCreatedBy();
+    unsubscribeEditors();
+    unsubscribeViewers();
+  };
+};
+
+export const subscribeToPresentationParticipants = (
+  userId: any,
+  onUpdate: any
+) => {
+  const presentationParticipantsCollection = collection(
+    db,
+    "presentationParticipants"
+  );
+
+  const q = query(
+    presentationParticipantsCollection,
+    where("participants", "array-contains", userId),
+    orderBy("createdAt", "desc")
+    // limit(10)
+  );
+
+  // Return the actual unsubscribe function from onSnapshot
+  return onSnapshot(q, (querySnapshot) => {
+    const presentationIds = querySnapshot.docs.map((doc) => doc.id);
+
+    onUpdate(presentationIds);
+  });
+};
+
+export const createPresentationSubscriptions = (
+  onUpdate: (presentations: any[]) => void
+) => {
+  // Holds the latest data for each presentation.
+  const presentationDataMap: Record<string, any> = {};
+  // Holds the unsubscribe functions for each active presentation subscription.
+  const subscriptions: Record<string, () => void> = {};
+
+  const updateSubscriptions = (newPresentationIds: string[]) => {
+    // 1. Subscribe to only new presentation IDs.
+    newPresentationIds.forEach((id) => {
+      if (!subscriptions[id]) {
+        const presentationRef = ref(rtdb, `presentations/${id}`);
+        const listener = onValue(presentationRef, (snapshot) => {
+          const presentationData = snapshot.val();
+          if (presentationData) {
+            presentationDataMap[id] = { ...presentationData, id }; // Ensure ID is included
+          } else {
+            delete presentationDataMap[id]; // Handle case where presentation is deleted
+          }
+
+          // Build the ordered presentations array according to the newPresentationIds order.
+          const orderedPresentations = newPresentationIds
+            .map((pid) => presentationDataMap[pid])
+            .filter(Boolean); // Remove any undefined entries
+
+          onUpdate(orderedPresentations);
+        });
+
+        // Save the unsubscribe function.
+        subscriptions[id] = () => off(presentationRef, "value", listener);
+      }
+    });
+
+    // 2. Unsubscribe from IDs that are no longer in the list.
+    Object.keys(subscriptions).forEach((id) => {
+      if (!newPresentationIds.includes(id)) {
+        subscriptions[id](); // Unsubscribe
+        delete subscriptions[id];
+        delete presentationDataMap[id];
+      }
+    });
+  };
+
+  const unsubscribeAll = () => {
+    Object.keys(subscriptions).forEach((id) => subscriptions[id]());
+  };
+
+  return { updateSubscriptions, unsubscribeAll };
+};
+
+export const subscribeToNotifications = (
+  userId: string,
+  onUpdate: (data: any) => void
+) => {
+  const notificationsCollection = collection(db, "notifications");
+  // Query notifications for the current user, ordered by createdAt descending.
+  const q = query(
+    notificationsCollection,
+    where("targets", "array-contains", userId),
+    orderBy("createdAt", "desc")
+  );
+  const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    const notificationsData = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    onUpdate(notificationsData);
+  });
+
+  return unsubscribe;
+};
+
+export async function getServerTimestampRTDB(): Promise<number> {
+  try {
+    const tempRef = ref(rtdb, "temp/serverTime");
+
+    // Write server timestamp and read it back
+    await set(tempRef, { timestamp: serverTimestamp() });
+
+    const snapshot = await get(child(ref(rtdb), "temp/serverTime/timestamp"));
+
+    if (!snapshot.exists()) {
+      throw new Error("Failed to retrieve server timestamp.");
+    }
+
+    return snapshot.val();
+  } catch (error) {
+    console.error("Error getting server timestamp:", error);
+    throw error;
+  }
+}
+
+export async function updatePresentationStatus(
+  presentationId: string,
+  status: string
+): Promise<void> {
+  if (!presentationId || !status) {
+    throw new Error("Both presentationId and status are required.");
+  }
+
+  try {
+    const presentationRef = ref(rtdb, `/presentations/${presentationId}`);
+
+    await update(presentationRef, { status });
+  } catch (error) {
+    console.error("Error updating presentation status:", error);
+    throw error;
+  }
+}
+
+export const checkPresentationStatus = async (presentations: any) => {
+  try {
+    const now = Date.now();
+
+    const updatedPresentations = await Promise.all(
+      presentations.map(async (presentation: any) => {
+        if (
+          presentation?.lastParticipantDisconnectedAt &&
+          now - presentation.lastParticipantDisconnectedAt > gracePeriod
+        ) {
+          await updatePresentationStatus(presentation.id, "ended");
+          return { ...presentation, status: "ended" };
+        }
+        return presentation;
+      })
+    );
+
+    return updatedPresentations;
+  } catch (error) {
+    console.error("Error checking presentation status:", error);
+    throw error;
+  }
+};

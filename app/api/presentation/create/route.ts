@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 import {
   generateUniquePresentationCode,
   createPresentation,
+  addPresentationParticipants,
 } from "@/app/_services/server";
 
 export async function POST(request: Request) {
@@ -26,6 +27,8 @@ export async function POST(request: Request) {
     // Build the presentation data
     const presentation = {
       createdAt: serverTimestamp(),
+      title: script.data.title,
+      createdBy: userId,
       host: userId,
       nodes: formattedScript,
       scriptId: script.id,
@@ -39,7 +42,12 @@ export async function POST(request: Request) {
       },
     };
 
-    await createPresentation(presentation);
+    const presentationId: any = await createPresentation(presentation);
+
+    await addPresentationParticipants(
+      presentationId,
+      Object.keys(scriptParticipants)
+    );
 
     // Return the generated code for the presentation
     return new Response(generatedCode);

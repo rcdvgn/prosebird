@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
-import { useRecentScripts } from "@/app/_contexts/RecentScriptsContext";
 import ListView from "./ListView";
 import GridView from "./GridView";
 import { GridViewIcon, ListViewIcon } from "../_assets/icons";
+import { useRealtimeData } from "../_contexts/RealtimeDataContext";
 
 export default function AllDocuments() {
-  const { recentlyModified } = useRecentScripts();
+  // const { recentlyModified } = useRecentScripts();
+  const { scripts } = useRealtimeData();
 
   const [displayType, setDisplayType] = useState<any>("grid");
 
@@ -38,8 +39,8 @@ export default function AllDocuments() {
         </div>
       </div>
 
-      <ListView displayType={displayType} recentlyModified={recentlyModified} />
-      <GridView displayType={displayType} recentlyModified={recentlyModified} />
+      <ListView displayType={displayType} scripts={scripts} />
+      <GridView displayType={displayType} scripts={scripts} />
     </div>
   );
 }

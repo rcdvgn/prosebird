@@ -5,6 +5,7 @@ import {
   updatePresentationStatus,
   getServerTimestampRTDB,
 } from "@/app/_services/server";
+import { gracePeriod } from "@/app/_lib/gracePeriod";
 
 export async function POST(request: Request) {
   try {
@@ -36,11 +37,11 @@ export async function POST(request: Request) {
     const serverTimestamp: any = await getServerTimestampRTDB();
 
     if (
+      // If no participants for 5+ minutes or `lastParticipantDisconnectedAt` is null
       serverTimestamp - presentation.lastParticipantDisconnectedAt >
-      5 * 60 * 1000
+      gracePeriod
     ) {
-      // If no participants for 55+ minutes or `lastParticipantDisconnectedAt` is null
-      await updatePresentationStatus(presentation.id, "inactive");
+      await updatePresentationStatus(presentation.id, "ended");
 
       return NextResponse.json(
         {

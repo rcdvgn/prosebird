@@ -55,14 +55,14 @@ export async function updatePresentationStatus(
 }
 
 export async function getServerTimestampRTDB(): Promise<number> {
-  const tempRef = admin.database().ref("temp/serverTime");
+  const tempRef = rtdb.ref("temp/serverTime");
   await tempRef.set({ ".sv": "timestamp" });
 
   const snapshot = await tempRef.once("value");
   return snapshot.val();
 }
 
-export async function createPresentation(presentation: any): Promise<void> {
+export async function createPresentation(presentation: any) {
   //   console.log(admin);
   try {
     // Initialize RTDB reference using Admin SDK
@@ -73,6 +73,7 @@ export async function createPresentation(presentation: any): Promise<void> {
     await newPresentationRef.set(presentation);
 
     console.log(`Presentation created with ID: ${newPresentationRef.key}`);
+    return newPresentationRef.key;
   } catch (error) {
     console.error("Error creating presentation:", error);
     throw error;
@@ -211,5 +212,30 @@ export const handleSubscriptionUpdate = async (subscription: any) => {
   } catch (error) {
     console.error("Error handling subscription update:", error);
     throw error;
+  }
+};
+
+export const addPresentationParticipants = async (
+  presentationId: string,
+  participants: string[]
+) => {
+  try {
+    // Create or update the presentation document in Firestore
+    const presentationDocRef = db
+      .collection("presentationParticipants")
+      .doc(presentationId);
+
+    await presentationDocRef.set(
+      {
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        participants: participants,
+      },
+      { merge: true } // Merge to prevent overwriting other fields if they already exist
+    );
+
+    console.log(`Presentation ${presentationId} updated successfully.`);
+  } catch (error) {
+    console.error(`Failed to update presentation ${presentationId}:`, error);
+    throw new Error("Failed to update presentation participants.");
   }
 };

@@ -4,9 +4,24 @@ import { MoreIcon, PlusIcon, SearchIcon } from "@/app/_assets/icons";
 import AllDocuments from "@/app/_components/AllDocuments";
 import ProfilePicture from "@/app/_components/ProfilePicture";
 import { useAuth } from "@/app/_contexts/AuthContext";
+import { useRouter } from "next/navigation";
+
+import { createScript } from "@/app/_services/client";
+import { useScriptEditor } from "@/app/_contexts/ScriptEditorContext";
 
 export default function Files() {
+  const { script, setScript } = useScriptEditor();
+
   const { user } = useAuth();
+  const router = useRouter();
+
+  const handleCreateScript = async () => {
+    if (user !== null) {
+      const newScript = await createScript(user.id);
+      setScript(newScript);
+      router.push(`/file/${newScript.id}`);
+    }
+  };
 
   return (
     <div className="flex flex-col w-full">
@@ -24,12 +39,15 @@ export default function Files() {
         </div>
 
         <div className="flex items-center justify-start gap-6">
-          <button className="btn-1-md">
+          <button onClick={handleCreateScript} className="btn-1-md">
             <PlusIcon className="text-primary h-2.5" />
             <span className="">New</span>
           </button>
 
-          <ProfilePicture profilePictureURL={user?.profilePictureURL} />
+          <ProfilePicture
+            profilePictureURL={user?.profilePictureURL}
+            className="h-9"
+          />
         </div>
       </div>
       <div className="slate">

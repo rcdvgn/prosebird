@@ -13,9 +13,12 @@ import formatScript from "../_lib/formatScript";
 import { getNodes, getUserPreferences } from "../_services/client";
 import { useAuth } from "../_contexts/AuthContext";
 import formatTimestamp from "../_utils/formatTimestamp";
+import { useRouter } from "next/navigation";
 
-export default function GridView({ recentlyModified, displayType }: any) {
+export default function GridView({ scripts, displayType }: any) {
   const { user } = useAuth();
+
+  const router = useRouter();
 
   const [recentlyModifiedScripts, setRecentlyModifiedScripts] =
     useState<any>(null);
@@ -25,14 +28,14 @@ export default function GridView({ recentlyModified, displayType }: any) {
   const fontSize: any = "20";
 
   useEffect(() => {
-    if (!recentlyModified || !user?.id) return;
+    if (!scripts || !user?.id) return;
 
     const getScriptPreviews = async () => {
       try {
         const userPreferences: any = await getUserPreferences(user.id);
 
         const newRecentlyModifiedScripts = await Promise.all(
-          recentlyModified.map(async (script: any) => {
+          scripts.map(async (script: any) => {
             const nodes = await getNodes(script.id);
 
             const { formattedScript } = formatScript(nodes);
@@ -50,7 +53,7 @@ export default function GridView({ recentlyModified, displayType }: any) {
               line.map((wordObj: any) => wordObj.word).join(" ")
             );
 
-            return { lines, duration: totalDuration };
+            return { ...script, lines, duration: totalDuration };
           })
         );
 
@@ -61,7 +64,7 @@ export default function GridView({ recentlyModified, displayType }: any) {
     };
 
     getScriptPreviews();
-  }, [recentlyModified, user?.id]);
+  }, [scripts, user?.id]);
 
   return (
     <div
@@ -77,6 +80,7 @@ export default function GridView({ recentlyModified, displayType }: any) {
           return (
             <div
               key={index}
+              onClick={() => router.push(`/file/${script.id}`)}
               className="group/container w-full ring-1 ring-stroke hover:ring-border rounded-[10px] cursor-pointer hover:translate-y-[-5px] transition-all duration-200 ease-in-out"
             >
               <div

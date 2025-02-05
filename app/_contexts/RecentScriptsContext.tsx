@@ -6,27 +6,22 @@ import React, {
   ReactNode,
 } from "react";
 import { useAuth } from "./AuthContext";
-import { subscribeToRecentScripts } from "../_services/client"; // Import the action
+import { subscribeToRecentScripts } from "../_services/client";
 import { getScriptPeople } from "../_services/client";
-// Define the type for the script object
 interface Script {
   id: string;
   title: string;
-  lastModified: any; // Firestore timestamp type
-  // Add any other fields you expect in the script object
+  lastModified: any;
 }
 
-// Define the context type
 interface RecentScriptsContextType {
   recentlyModified: Script[] | null;
 }
 
-// Create the context
 const RecentScriptsContext = createContext<
   RecentScriptsContextType | undefined
 >(undefined);
 
-// Provider component
 export const RecentScriptsProvider = ({
   children,
 }: {
@@ -57,17 +52,12 @@ export const RecentScriptsProvider = ({
             };
           })
         );
-        // console.log(scriptsWithPeople);
         setRecentlyModified(scriptsWithPeople);
       }
     );
 
     return () => unsubscribe();
   }, []);
-
-  //   useEffect(() => {
-  //     console.log(recentlyModified);
-  //   }, [recentlyModified]);
 
   return (
     <RecentScriptsContext.Provider value={{ recentlyModified }}>
@@ -76,7 +66,6 @@ export const RecentScriptsProvider = ({
   );
 };
 
-// Hook to use the RecentScriptsContext
 export const useRecentScripts = (): RecentScriptsContextType => {
   const context = useContext(RecentScriptsContext);
   if (context === undefined) {
