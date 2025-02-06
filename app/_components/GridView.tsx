@@ -14,9 +14,11 @@ import { getNodes, getUserPreferences } from "../_services/client";
 import { useAuth } from "../_contexts/AuthContext";
 import formatTimestamp from "../_utils/formatTimestamp";
 import { useRouter } from "next/navigation";
+import { useRealtimeData } from "../_contexts/RealtimeDataContext";
 
-export default function GridView({ scripts, displayType }: any) {
+export default function GridView({ displayType }: any) {
   const { user } = useAuth();
+  const { scripts } = useRealtimeData();
 
   const router = useRouter();
 

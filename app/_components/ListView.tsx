@@ -5,8 +5,12 @@ import { CheckIcon, MoreIcon, StarIcon } from "../_assets/icons";
 import { lastModifiedFormatter } from "../_utils/lastModifiedFormater";
 import OutsideClickHandler from "./utils/OutsideClickHandler";
 import { changeFavoriteStatus } from "../_services/client";
+import { useRealtimeData } from "../_contexts/RealtimeDataContext";
+import ProfilePicture from "./ProfilePicture";
 
-export default function ListView({ recentlyModified, displayType }: any) {
+export default function ListView({ displayType }: any) {
+  const { scripts, people } = useRealtimeData();
+
   const [selectedDocuments, setSelectedDocuments] = useState<any>([]);
   const selectAllButton = useRef(null);
 
@@ -35,16 +39,16 @@ export default function ListView({ recentlyModified, displayType }: any) {
     console.log("About to open document " + docId);
   };
 
-  const allSelected = recentlyModified
-    ? selectedDocuments.length === recentlyModified.length
+  const allSelected = scripts
+    ? selectedDocuments.length === scripts.length
     : false;
 
   const handleSelectAll = () => {
     if (allSelected) {
       setSelectedDocuments([]);
     } else {
-      if (recentlyModified) {
-        setSelectedDocuments(recentlyModified.map((item: any) => item.id));
+      if (scripts) {
+        setSelectedDocuments(scripts.map((script: any) => script.id));
       }
     }
   };
@@ -109,50 +113,50 @@ export default function ListView({ recentlyModified, displayType }: any) {
         }}
         exceptionRefs={[selectAllButton]}
       >
-        <div className="">
-          {recentlyModified &&
-            recentlyModified.map((item: any, index: any) => {
+        <div className="flex flex-col gap-1">
+          {scripts &&
+            scripts.map((script: any) => {
               return (
                 <div
-                  key={item.id}
-                  onClick={() => setSelectedDocuments([item.id])}
-                  onDoubleClick={() => handleOpenDocument(item.id)}
+                  key={script.id}
+                  onClick={() => setSelectedDocuments([script.id])}
+                  onDoubleClick={() => handleOpenDocument(script.id)}
                   className={`group/main h-[54px] px-4 flex gap-4 items-center justify-start select-none rounded-[14px] ${
-                    selectedDocuments.includes(item.id)
+                    selectedDocuments.includes(script.id)
                       ? "bg-selected"
-                      : "hover:bg-hover"
+                      : "hover:bg-battleground"
                   }`}
                 >
                   <div
-                    onClick={(e) => handleSelectDocument(item.id, e)}
+                    onClick={(e) => handleSelectDocument(script.id, e)}
                     className={`script-select ${
-                      selectedDocuments.includes(item.id)
+                      selectedDocuments.includes(script.id)
                         ? ""
                         : "!bg-transparent"
                     }`}
                   >
-                    {selectedDocuments.includes(item.id) && (
+                    {selectedDocuments.includes(script.id) && (
                       <CheckIcon className="w-2.5 text-primary mb-[-1px] mr-[-1px]" />
                     )}
                   </div>
 
                   <div className="w-[33%] flex">
                     <span
-                      onClick={() => handleOpenDocument(item.id)}
+                      onClick={() => handleOpenDocument(script.id)}
                       className="block text-primary font-semibold text-sm truncate hover:underline cursor-pointer"
                     >
-                      {item.title}
+                      {script.title}
                     </span>
                   </div>
 
                   <div className="grow flex items-center justify-between">
                     <div className="flex justify-start items-center gap-2.5 w-[110px]">
-                      <div
-                        style={{
-                          backgroundImage: `url("/pfps/profile1.png")`,
-                        }}
-                        className="h-[30px] aspect-square rounded-full bg-cover bg-center flex-shrink-0"
-                      ></div>
+                      <ProfilePicture
+                        profilePictureURL={
+                          people[script.createdBy]?.profilePictureURL
+                        }
+                        className="h-[30px]"
+                      />
                       <span className="text-inactive font-semibold text-sm mb-[-3px] truncate group-hover/main:text-primary cursor-pointer hover:underline">
                         You
                       </span>
@@ -160,7 +164,7 @@ export default function ListView({ recentlyModified, displayType }: any) {
 
                     <div className="w-[110px] overflow-visible">
                       <span className="text-inactive font-semibold text-[13px]">
-                        {lastModifiedFormatter(item.lastModified)}
+                        {lastModifiedFormatter(script.lastModified)}
                       </span>
                     </div>
 
@@ -173,9 +177,9 @@ export default function ListView({ recentlyModified, displayType }: any) {
                               backgroundImage: `url("/pfps/profile1.png")`,
                             }}
                             className={`h-[30px] aspect-square rounded-full bg-cover bg-center flex-shrink-0 ring-2 -mr-1 ${
-                              selectedDocuments.includes(item.id)
+                              selectedDocuments.includes(script.id)
                                 ? "ring-selected"
-                                : "group-hover/main:ring-foreground ring-middleground"
+                                : "group-hover/main:ring-battleground ring-middleground"
                             }`}
                           ></div>
                         );
@@ -183,9 +187,9 @@ export default function ListView({ recentlyModified, displayType }: any) {
 
                       <div
                         className={`h-[30px] aspect-square rounded-full bg-battleground ring-2 -mr-1 grid place-items-center ${
-                          selectedDocuments.includes(item.id)
+                          selectedDocuments.includes(script.id)
                             ? "ring-selected"
-                            : "group-hover/main:ring-foreground ring-middleground"
+                            : "group-hover/main:ring-battleground ring-middleground"
                         }`}
                       >
                         <span className="text-secondary font-bold text-[13px]">
@@ -198,19 +202,19 @@ export default function ListView({ recentlyModified, displayType }: any) {
                       <div
                         onClick={() =>
                           changeFavoriteStatus(
-                            item.id,
-                            item?.isFavorite ? false : true
+                            script.id,
+                            script?.isFavorite ? false : true
                           )
                         }
                         className={`${
-                          item?.isFavorite
+                          script?.isFavorite
                             ? ""
                             : "group-hover/main:visible invisible"
                         } button-icon !bg-transparent`}
                       >
                         <StarIcon
                           className={`h-4 ${
-                            item?.isFavorite
+                            script?.isFavorite
                               ? "!text-favorite-yellow fill-current"
                               : ""
                           }`}

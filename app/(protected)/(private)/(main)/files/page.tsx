@@ -17,12 +17,13 @@ import OutsideClickHandler from "@/app/_components/utils/OutsideClickHandler";
 export default function Files() {
   const { setScript } = useScriptEditor();
   const { openModal } = useModal();
+  const { user, logout } = useAuth();
+  const profilePictureURL = user?.profilePictureURL;
 
   const profilePictureWrapper = useRef<any>(null);
 
   const [isUserOptionsVisible, setIsUserOptionsVisible] = useState<any>(false);
 
-  const { user, logout } = useAuth();
   const router = useRouter();
 
   const handleCreateScript = async () => {
@@ -77,7 +78,7 @@ export default function Files() {
               className="block"
             >
               <ProfilePicture
-                profilePictureURL={user?.profilePictureURL}
+                profilePictureURL={profilePictureURL}
                 className="h-9"
               />
             </span>

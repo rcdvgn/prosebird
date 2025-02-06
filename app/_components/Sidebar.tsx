@@ -245,12 +245,11 @@ export default function Sidebar(fileId: any) {
   const { openModal, currentModal } = useModal();
   const { user, logout } = useAuth();
   // const { recentlyModified } = useRecentScripts();
-  const { scripts, presentations, notifications } = useRealtimeData();
+  const { scripts, presentations, notifications, people } = useRealtimeData();
 
   const router = useRouter();
 
   // const [isSearchOn, setIsSearchOn] = useState<any>(false);
-  const [people, setPeople] = useState<any>({});
 
   const [currentTab, setCurrentTab] = useState<any>(null);
 
@@ -277,44 +276,6 @@ export default function Sidebar(fileId: any) {
   const handleSettings = () => {
     openModal({ content: <Settings />, name: "settings" });
   };
-
-  useEffect(() => {
-    if (!user) return;
-
-    const getNotificationPeople = async (userIds: any) => {
-      const notificationPeople = await getPeople(userIds, []);
-
-      const formattedNotificationPeople = notificationPeople.reduce(
-        (acc, user) => {
-          if (user.id && userIds.includes(user.id)) {
-            acc[user.id] = { ...user };
-            delete acc[user.id].id;
-          }
-          return acc;
-        },
-        {}
-      );
-
-      const newPeople = { ...formattedNotificationPeople, ...people };
-
-      setPeople(newPeople);
-    };
-
-    if (notifications) {
-      const userIds = notifications.map((notification: any) => {
-        switch (notification.type) {
-          case "presentationInvite":
-            return notification.data.presentationHost;
-          default:
-            console.error("Unhandled notification type:", notification.type);
-        }
-
-        return null;
-      });
-
-      getNotificationPeople(userIds);
-    }
-  }, [user?.id, notifications]);
 
   return (
     <div className="flex shrink-0">

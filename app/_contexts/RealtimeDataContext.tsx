@@ -28,11 +28,13 @@ import {
 import {
   checkPresentationStatus,
   createPresentationSubscriptions,
+  getPeople,
   getScriptPeople,
   subscribeToNotifications,
   subscribeToPresentationParticipants,
   subscribeToScripts,
 } from "../_services/client";
+import _ from "lodash";
 
 // Type definitions
 interface Script {
@@ -64,9 +66,7 @@ interface RealtimeDataContextType {
 }
 
 // Create the context
-const RealtimeDataContext = createContext<RealtimeDataContextType | undefined>(
-  undefined
-);
+const RealtimeDataContext = createContext<any>(undefined);
 
 // Provider component
 export const RealtimeDataProvider = ({ children }: { children: ReactNode }) => {
@@ -80,105 +80,132 @@ export const RealtimeDataProvider = ({ children }: { children: ReactNode }) => {
     null
   );
 
-  // --- Scripts from Firestore ---
+  const [people, setPeople] = useState<any>({});
+
+  // Combined useEffect for subscriptions that depend on user?.id
   useEffect(() => {
     if (!user) return;
 
+    // --- Scripts Subscription ---
     const onScriptsUpdate = async (scriptsData: any) => {
-      const uniqueScripts = Array.from(
+      const uniqueScripts: any = Array.from(
         new Map(scriptsData.map((script: any) => [script.id, script])).values()
       );
 
-      const scriptsWithPeople = await Promise.all(
-        uniqueScripts.map(async (script: any) => {
-          const people = await getScriptPeople(
-            script.createdBy,
-            script.editors,
-            script.viewers
-          );
-
-          return {
-            ...script,
-            editors: people.editors,
-            viewers: people.viewers,
-            createdBy: people.createdBy,
-          };
-        })
-      );
-
-      // Sort combined results by lastModified
-      scriptsWithPeople.sort(
-        (a: any, b: any) => b.lastModified - a.lastModified
-      );
-      setScripts(scriptsWithPeople);
+      uniqueScripts.sort((a: any, b: any) => b.lastModified - a.lastModified);
+      setScripts(uniqueScripts);
     };
+    const unsubscribeScripts = subscribeToScripts(user.id, onScriptsUpdate);
 
-    const unsubscribe = subscribeToScripts(user.id, onScriptsUpdate);
-
-    return () => unsubscribe();
-  }, [user?.id]);
-
-  // --- Presentations from Realtime Database ---
-  useEffect(() => {
-    if (!user) return;
-
-    // This callback is invoked whenever any presentation data is updated.
+    // --- Presentations Subscription ---
     const onPresentationsUpdate = async (updatedPresentations: any[]) => {
-      // Optionally update your component's state with the new presentation data.
-
       const correctedStatusPresentations: any = await checkPresentationStatus(
         updatedPresentations
       );
-
       setPresentations(correctedStatusPresentations);
     };
 
-    // Create the subscription manager for presentations.
+    // Create a presentation subscriptions manager
     const presentationSubscriptions = createPresentationSubscriptions(
       onPresentationsUpdate
     );
 
-    // Called when the Firestore query (presentation participants) returns new presentation IDs.
     const onPresentationParticipantsUpdate = (
       updatedPresentationIds: string[]
     ) => {
       setPresentationIds(updatedPresentationIds);
-      // Update subscriptions only for new/untracked presentation IDs.
       presentationSubscriptions.updateSubscriptions(updatedPresentationIds);
     };
-
-    // Subscribe to presentation participants from Firestore.
     const unsubscribeParticipants = subscribeToPresentationParticipants(
       user.id,
       onPresentationParticipantsUpdate
     );
 
-    // Cleanup: Unsubscribe from both Firestore and RTDB subscriptions.
-    return () => {
-      unsubscribeParticipants();
-      presentationSubscriptions.unsubscribeAll();
-    };
-  }, [user?.id]);
-
-  //   --- Notifications from Firestore ---
-  useEffect(() => {
-    if (!user) return;
-
+    // --- Notifications Subscription ---
     const onNotificationsUpdate = (updatedNotifications: any) => {
       setNotifications(updatedNotifications);
     };
-
-    const unsubscribe = subscribeToNotifications(
+    const unsubscribeNotifications = subscribeToNotifications(
       user.id,
       onNotificationsUpdate
     );
 
-    return () => unsubscribe();
+    // Cleanup all subscriptions on unmount or when user changes
+    return () => {
+      unsubscribeScripts();
+      unsubscribeParticipants();
+      presentationSubscriptions.unsubscribeAll();
+      unsubscribeNotifications();
+    };
   }, [user?.id]);
+
+  const formatUserDataIntoPeople = (userIds: any, rawUserData: any) => {
+    return rawUserData.reduce((acc: any, user: any) => {
+      if (user.id && userIds.includes(user.id)) {
+        acc[user.id] = { ...user };
+        delete acc[user.id].id;
+      }
+      return acc;
+    }, {});
+  };
+
+  const getUserData = async (userIds: any) => {
+    const unfetchedUserIds = _.uniq(_.difference(userIds, Object.keys(people)));
+    if (!unfetchedUserIds.length) return;
+
+    const fetchedPeople = await getPeople(unfetchedUserIds, []);
+
+    const formattedFetchedPeople: any = formatUserDataIntoPeople(
+      userIds,
+      fetchedPeople
+    );
+
+    const newPeople = { ...formattedFetchedPeople, ...people };
+    setPeople(newPeople);
+  };
+
+  useEffect(() => {
+    if (!user) return;
+
+    if (scripts) {
+      const userIds = scripts
+        .map((script: any) => [
+          script.createdBy,
+          ...script.editors,
+          ...script.viewers,
+        ])
+        .flat();
+
+      getUserData(userIds);
+    }
+
+    if (presentations) {
+      const userIds = presentations.map((presentation: any) =>
+        Object.keys(presentation.participants || {})
+      );
+
+      getUserData(userIds);
+    }
+
+    if (notifications) {
+      const userIds = notifications.map((notification: any) => {
+        switch (notification.type) {
+          case "presentationInvite":
+            return notification.data.presentationHost;
+          default:
+            console.error("Unhandled notification type:", notification.type);
+        }
+
+        return null;
+      });
+
+      getUserData(userIds);
+    }
+  }, [user?.id, scripts, notifications, notifications]);
 
   return (
     <RealtimeDataContext.Provider
-      value={{ scripts, presentations, notifications }}
+      value={{ scripts, presentations, notifications, people }}
     >
       {children}
     </RealtimeDataContext.Provider>
@@ -186,7 +213,7 @@ export const RealtimeDataProvider = ({ children }: { children: ReactNode }) => {
 };
 
 // Custom hook to use the context
-export const useRealtimeData = (): RealtimeDataContextType => {
+export const useRealtimeData = (): any => {
   const context = useContext(RealtimeDataContext);
   if (context === undefined) {
     throw new Error(
