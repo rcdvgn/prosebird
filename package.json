@@ -14,6 +14,7 @@
     "@types/uuid": "^10.0.0",
     "firebase": "^10.13.2",
     "firebase-admin": "^13.0.2",
+    "framer-motion": "^12.3.1",
     "lodash": "^4.17.21",
     "next": "14.2.13",
     "overlayscrollbars-react": "^0.5.6",

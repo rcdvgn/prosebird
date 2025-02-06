@@ -8,7 +8,7 @@
   --foreground: 25, 25, 25;
   --battleground: 32, 32, 32;
 
-  --hover: rgba(255, 255, 255, 0.06);
+  --hover: rgba(255, 255, 255, 0.1);
   --selected: 41, 41, 41;
 
   --primary: 255, 255, 255;

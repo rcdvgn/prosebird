@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "framer-motion";
 import { MoreIcon, PlusIcon, SearchIcon } from "@/app/_assets/icons";
 import AllDocuments from "@/app/_components/AllDocuments";
 import ProfilePicture from "@/app/_components/ProfilePicture";
@@ -8,11 +9,20 @@ import { useRouter } from "next/navigation";
 
 import { createScript } from "@/app/_services/client";
 import { useScriptEditor } from "@/app/_contexts/ScriptEditorContext";
+import { useModal } from "@/app/_contexts/ModalContext";
+import Settings from "@/app/_components/modals/Settings";
+import { useEffect, useRef, useState } from "react";
+import OutsideClickHandler from "@/app/_components/utils/OutsideClickHandler";
 
 export default function Files() {
-  const { script, setScript } = useScriptEditor();
+  const { setScript } = useScriptEditor();
+  const { openModal } = useModal();
 
-  const { user } = useAuth();
+  const profilePictureWrapper = useRef<any>(null);
+
+  const [isUserOptionsVisible, setIsUserOptionsVisible] = useState<any>(false);
+
+  const { user, logout } = useAuth();
   const router = useRouter();
 
   const handleCreateScript = async () => {
@@ -22,6 +32,22 @@ export default function Files() {
       router.push(`/file/${newScript.id}`);
     }
   };
+
+  const handleCloseProfileOptions = () => {
+    setIsUserOptionsVisible(false);
+  };
+
+  const handleSettings = () => {
+    openModal({ content: <Settings />, name: "settings" });
+  };
+
+  const [shouldRender, setShouldRender] = useState(isUserOptionsVisible);
+
+  useEffect(() => {
+    if (isUserOptionsVisible) {
+      setShouldRender(true);
+    }
+  }, [isUserOptionsVisible]);
 
   return (
     <div className="flex flex-col w-full">
@@ -44,10 +70,64 @@ export default function Files() {
             <span className="">New</span>
           </button>
 
-          <ProfilePicture
-            profilePictureURL={user?.profilePictureURL}
-            className="h-9"
-          />
+          <div className="relative">
+            <span
+              ref={profilePictureWrapper}
+              onClick={() => setIsUserOptionsVisible((prev: boolean) => !prev)}
+              className="block"
+            >
+              <ProfilePicture
+                profilePictureURL={user?.profilePictureURL}
+                className="h-9"
+              />
+            </span>
+
+            <OutsideClickHandler
+              onOutsideClick={handleCloseProfileOptions}
+              exceptionRefs={[profilePictureWrapper]}
+              isActive={isUserOptionsVisible}
+            >
+              <motion.div
+                initial={{ opacity: 0, translateY: -4 }}
+                animate={{
+                  opacity: isUserOptionsVisible ? 1 : 0,
+                  translateY: isUserOptionsVisible ? 0 : -4,
+                }}
+                transition={{ duration: 0.2, ease: "easeInOut" }}
+                onAnimationComplete={() => {
+                  if (!isUserOptionsVisible) setShouldRender(false); // Hide AFTER exit animation
+                }}
+                className={`absolute right-0 top-full mt-4 flex-col gap-1 min-w-44 p-1 bg-foreground rounded-[10px] ring-1 ring-stroke ${
+                  shouldRender ? "flex" : "hidden"
+                }`}
+              >
+                {[
+                  {
+                    text: "Settings",
+                    onClick: handleSettings,
+                  },
+                  {
+                    text: "Log out",
+                    onClick: logout,
+                  },
+                  {
+                    text: "Get desktop app",
+                    onClick: () => console.log("You clicked 'Get desktop app'"),
+                  },
+                ].map((item: any, index: any) => {
+                  return (
+                    <div
+                      key={index}
+                      onClick={item.onClick}
+                      className="px-3 py-2.5 rounded-md hover:bg-hover cursor-pointer font-bold text-[13px] text-inactive hover:text-primary"
+                    >
+                      {item.text}
+                    </div>
+                  );
+                })}
+              </motion.div>
+            </OutsideClickHandler>
+          </div>
         </div>
       </div>
       <div className="slate">

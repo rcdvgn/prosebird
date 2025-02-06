@@ -136,7 +136,7 @@ const Scripts = ({ scripts }: any) => {
                 onClick={() => router.push(`/file/${item.id}`)}
                 className={`group h-11 w-full rounded-[10px] pl-[18px] pr-1 flex items-center justify-between cursor-pointer ${
                   script?.id === item.id
-                    ? "bg-brand text-primary"
+                    ? "bg-battleground text-primary"
                     : "text-inactive hover:text-primary hover:bg-hover"
                 }`}
               >

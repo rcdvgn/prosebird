@@ -5,14 +5,13 @@ function OutsideClickHandler({
   children,
   onOutsideClick,
   exceptionRefs = [],
-}: {
-  children: any;
-  onOutsideClick: any;
-  exceptionRefs: any;
-}) {
+  isActive = true,
+}: any) {
   const ref = useRef<any>(null);
 
   useEffect(() => {
+    if (!isActive) return;
+
     function handleClickOutside(event: any) {
       // Check if the click is outside the main ref
       if (ref.current && !ref.current.contains(event.target)) {
@@ -32,7 +31,7 @@ function OutsideClickHandler({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [onOutsideClick, exceptionRefs]);
+  }, [isActive, onOutsideClick, exceptionRefs]);
 
   return <div ref={ref}>{children}</div>;
 }
