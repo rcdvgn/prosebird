@@ -32,235 +32,265 @@ import { useScriptEditor } from "../_contexts/ScriptEditorContext";
 import { useRealtimeData } from "../_contexts/RealtimeDataContext";
 import ProfilePicture from "./ProfilePicture";
 import { notificationTypes } from "../_lib/notificationTypes";
+import { timeAgoFormatter } from "../_utils/timeAgoFormatter";
+import { groupInstancesByTime } from "../_utils/groupInstancesByTime";
+import capitalizeFirstLetter from "../_utils/capitalizeFirstLetter";
+import Scripts from "./sidebar/Scripts";
+import Presentations from "./sidebar/presentations";
+import Inbox from "./sidebar/Inbox";
 
-const Inbox = ({ notifications, people }: any) => {
-  const router = useRouter();
+// const Inbox = ({ notifications, people }: any) => {
+//   const router = useRouter();
 
-  return (
-    <div>
-      <div className="w-full h-8 flex items-center justify-start gap-2 mb-5">
-        <div className="bg-battleground rounded-full h-full aspect-square text-inactive grid place-items-center hover:bg-hover hover:text-primary cursor-pointer">
-          <CloseIcon className="h-2.5" />
-        </div>
+//   if (!notifications || !people) return null;
 
-        <div className="bg-brand rounded-full h-[30px] flex justify-center items-center px-3.5 cursor-pointer text-primary">
-          <span className="font-bold text-[13px]">Active</span>
-        </div>
+//   const organizedNotifications = groupInstancesByTime(
+//     notifications,
+//     "createdAt"
+//   );
 
-        <div className="bg-battleground rounded-full h-full flex justify-center items-center px-3.5 cursor-pointer text-inactive hover:text-primary hover:bg-hover">
-          <span className="font-bold text-[13px]">Solo</span>
-        </div>
-      </div>
+//   return (
+//     <>
+//       <div className="w-full h-8 flex items-center justify-start gap-2 mb-5">
+//         <div className="bg-battleground rounded-full h-full aspect-square text-inactive grid place-items-center hover:bg-hover hover:text-primary cursor-pointer">
+//           <CloseIcon className="h-2.5" />
+//         </div>
 
-      <span className="block font-semibold text-xs text-secondary mb-4">
-        Today
-      </span>
+//         <div className="bg-brand rounded-full h-[30px] flex justify-center items-center px-3.5 cursor-pointer text-primary">
+//           <span className="font-bold text-[13px]">Active</span>
+//         </div>
 
-      <div className="flex flex-col gap-4">
-        {notifications &&
-          people &&
-          notifications.map((notification: any, index: any) => {
-            return (
-              <div key={index} className="flex items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <ProfilePicture
-                    profilePictureURL={
-                      people[notification.data.presentationHost]
-                        ?.profilePictureURL
-                    }
-                    className="h-8"
-                  />
+//         <div className="bg-battleground rounded-full h-full flex justify-center items-center px-3.5 cursor-pointer text-inactive hover:text-primary hover:bg-hover">
+//           <span className="font-bold text-[13px]">Solo</span>
+//         </div>
+//       </div>
 
-                  <div className="grow leading-4">
-                    <span className="font-bold text-[13px] text-primary hover:underline cursor-pointer">
-                      {people[notification.data.presentationHost].firstName +
-                        " " +
-                        people[notification.data.presentationHost].lastName}
-                    </span>
-                    <span className="font-medium text-xs text-primary">
-                      {" " + notificationTypes[notification.type].text[0] + " "}
-                    </span>
-                    <span className="font-medium text-xs text-secondary">
-                      1h
-                    </span>
-                  </div>
-                </div>
+//       <div className="flex flex-col gap-8">
+//         {Object.entries(organizedNotifications).map(([slot, notifs]: any) => {
+//           return (
+//             <div key={slot}>
+//               <span className="block font-semibold text-xs text-secondary mb-2">
+//                 {capitalizeFirstLetter(slot)}
+//               </span>
 
-                <button
-                  onClick={() =>
-                    router.push(`/p/${notification.data.presentationCode}`)
-                  }
-                  className="hover:underline border-none outline-none font-bold text-[13px] text-brand px-2 py-1"
-                >
-                  Join
-                </button>
-              </div>
-            );
-          })}
-      </div>
-    </div>
-  );
-};
+//               <div className="flex flex-col gap-4">
+//                 {notifs.map((notification: any, index: any) => {
+//                   return (
+//                     <div key={index} className="flex items-center gap-4">
+//                       <div className="flex items-center gap-2">
+//                         <ProfilePicture
+//                           profilePictureURL={
+//                             people[notification.data.presentationHost]
+//                               ?.profilePictureURL
+//                           }
+//                           className="h-8"
+//                         />
 
-const Scripts = ({ scripts }: any) => {
-  const { user } = useAuth();
-  const { script } = useScriptEditor();
+//                         <div className="grow leading-4">
+//                           <span className="font-bold text-[13px] text-primary hover:underline cursor-pointer">
+//                             {people[notification.data.presentationHost]
+//                               .firstName +
+//                               " " +
+//                               people[notification.data.presentationHost]
+//                                 .lastName}
+//                           </span>
+//                           <span className="font-medium text-xs text-primary">
+//                             {" " +
+//                               notificationTypes[notification.type].text[0] +
+//                               " "}
+//                           </span>
+//                           <span className="font-medium text-xs text-secondary">
+//                             {timeAgoFormatter(notification.createdAt)}
+//                           </span>
+//                         </div>
+//                       </div>
 
-  // const [scriptList, setScriptList] = useState<any>(null);
+//                       <button
+//                         onClick={() =>
+//                           router.push(
+//                             `/p/${notification.data.presentationCode}`
+//                           )
+//                         }
+//                         className="hover:underline border-none outline-none font-bold text-[13px] text-brand px-2 py-1"
+//                       >
+//                         Join
+//                       </button>
+//                     </div>
+//                   );
+//                 })}
+//               </div>
+//             </div>
+//           );
+//         })}
+//       </div>
+//     </>
+//   );
+// };
 
-  const router = useRouter();
+// const Scripts = ({ scripts, people }: any) => {
+//   if (!scripts || !people) return null;
 
-  // useEffect(() => {
-  //   const handleGetAllScripts = async (userId: any) => {
-  //     const newScriptList = await getUserScripts(userId);
+//   const { script: currentScript } = useScriptEditor();
+//   const router = useRouter();
 
-  //     setScriptList(newScriptList);
-  //   };
-  //   if (user) {
-  //     handleGetAllScripts(user.id);
-  //   }
-  // }, [user]);
+//   const organizedScripts = groupInstancesByTime(scripts, "createdAt");
 
-  return (
-    <div>
-      <span className="block font-semibold text-xs text-secondary mb-4">
-        Today
-      </span>
+//   return (
+//     <div className="flex flex-col gap-8">
+//       {Object.entries(organizedScripts).map(([slot, scrips]: any) => {
+//         return (
+//           <div key={slot}>
+//             <span className="block font-semibold text-xs text-secondary mb-2">
+//               {capitalizeFirstLetter(slot)}
+//             </span>
 
-      <div className="flex flex-col">
-        {scripts &&
-          scripts.map((item: any, index: any) => {
-            return (
-              <div
-                key={index}
-                onClick={() => router.push(`/file/${item.id}`)}
-                className={`group h-11 w-full rounded-[10px] pl-[18px] pr-1 flex items-center justify-between cursor-pointer ${
-                  script?.id === item.id
-                    ? "bg-battleground text-primary"
-                    : "text-inactive hover:text-primary hover:bg-hover"
-                }`}
-              >
-                <div className="flex justify-start items-center grow min-w-0 gap-3">
-                  <ScriptIcon className="h-4 shrink-0" />
-                  <span className="block h-[18px] font-semibold text-[13px] truncate">
-                    {item?.title}
-                  </span>
-                </div>
+//             <div className="flex flex-col gap-4">
+//               {scrips.map((script: any, index: any) => {
+//                 return (
+//                   <div
+//                     key={index}
+//                     onClick={() => router.push(`/file/${script.id}`)}
+//                     className={`group h-11 w-full rounded-[10px] pl-[18px] pr-1 flex items-center justify-between cursor-pointer ${
+//                       currentScript?.id === script.id
+//                         ? "bg-battleground text-primary"
+//                         : "text-inactive hover:text-primary hover:bg-hover"
+//                     }`}
+//                   >
+//                     <div className="flex justify-start items-center grow min-w-0 gap-3">
+//                       <ScriptIcon className="h-4 shrink-0" />
+//                       <span className="block h-[18px] font-semibold text-[13px] truncate">
+//                         {script?.title}
+//                       </span>
+//                     </div>
 
-                <span
-                  className={`button-icon !bg-transparent ${
-                    script?.id === item.id
-                      ? "text-primary"
-                      : "opacity-0 group-hover:opacity-100"
-                  }`}
-                >
-                  <MoreIcon className="h-3" />
-                </span>
-              </div>
-            );
-          })}
-      </div>
-    </div>
-  );
-};
+//                     <span
+//                       className={`button-icon !bg-transparent ${
+//                         currentScript?.id === script.id
+//                           ? "text-primary"
+//                           : "opacity-0 group-hover:opacity-100"
+//                       }`}
+//                     >
+//                       <MoreIcon className="h-3" />
+//                     </span>
+//                   </div>
+//                 );
+//               })}
+//             </div>
+//           </div>
+//         );
+//       })}
+//     </div>
+//   );
+// };
 
-const Presentations = ({ presentations }: any) => {
-  return (
-    <div>
-      <span className="block font-semibold text-xs text-secondary mb-4">
-        Today
-      </span>
+// const Presentations = ({ presentations, people }: any) => {
+//   if (!presentations || !people) return null;
 
-      <div className="flex flex-col">
-        {presentations &&
-          presentations.map((item: any, index: any) => {
-            return (
-              <div
-                key={index}
-                className="group p-2.5 w-full rounded-[10px] flex items-center justify-start gap-2 cursor-pointer hover:bg-battleground"
-              >
-                <div className="flex items-center h-8">
-                  <div
-                    style={{
-                      backgroundImage: `url("/pfps/profile1.png")`,
-                    }}
-                    className="ring-2 ring-background group-hover:ring-battleground h-full aspect-square rounded-full bg-cover bg-center flex-shrink-0"
-                  ></div>
+//   const organizedPresentations = groupInstancesByTime(
+//     presentations,
+//     "createdAt"
+//   );
 
-                  {Object.keys(item.participants).filter(
-                    (participantId: any) =>
-                      item.participants[participantId].role !== "author"
-                  ).length > 0 && (
-                    <div className="ring-2 ring-background group-hover:ring-battleground -ml-2 h-full aspect-square grid place-items-center rounded-full bg-selected">
-                      <span className="text-secondary font-bold text-[13px]">
-                        +
-                        {
-                          Object.keys(item.participants).filter(
-                            (participantId: any) =>
-                              item.participants[participantId].role !== "author"
-                          ).length
-                        }
-                      </span>
-                    </div>
-                  )}
-                </div>
+//   return (
+//     <div className="flex flex-col gap-8">
+//       {Object.entries(organizedPresentations).map(([slot, presents]: any) => {
+//         return (
+//           <div key={slot}>
+//             <span className="block font-semibold text-xs text-secondary mb-2">
+//               {capitalizeFirstLetter(slot)}
+//             </span>
 
-                <div className="grow min-w-0">
-                  <div className="w-full flex items-center gap-2">
-                    <span className="font-bold text-[13px] text-primary truncate">
-                      {item.title}
-                    </span>
+//             <div className="flex flex-col gap-4">
+//               {presents.map((presentation: any, index: any) => {
+//                 return (
+//                   <div
+//                     key={index}
+//                     className="group px-2.5 py-1.5 w-full rounded-[10px] flex items-center justify-start gap-2 cursor-pointer hover:bg-battleground"
+//                   >
+//                     <div className="flex items-center h-8">
+//                       <div
+//                         style={{
+//                           backgroundImage: `url("/pfps/profile1.png")`,
+//                         }}
+//                         className="ring-2 ring-background group-hover:ring-battleground h-full aspect-square rounded-full bg-cover bg-center flex-shrink-0"
+//                       ></div>
 
-                    {item.status === "active" ? (
-                      <div className="bg-live-red/15 rounded-full py-1 px-2 flex items-center gap-1 text-live-red">
-                        <div className="bg-live-red rounded-full h-[5px] aspect-square"></div>
-                        <span className="font-bold text-[11px]">
-                          {
-                            Object.values(item.participants).filter(
-                              (participant: any) => participant.isConnected
-                            ).length
-                          }
-                        </span>
-                      </div>
-                    ) : (
-                      <div className="bg-placeholder/15 rounded-full py-1 px-2 flex items-center gap-1 text-placeholder">
-                        <EndedIcon className="h-1.5" />
-                        <span className="font-bold text-[11px]">Ended</span>
-                      </div>
-                    )}
-                  </div>
-                  <span className="block font-semibold text-xs text-secondary">
-                    just now
-                  </span>
-                </div>
-              </div>
-            );
-          })}
-      </div>
-    </div>
-  );
-};
+//                       {Object.keys(presentation.participants).filter(
+//                         (participantId: any) =>
+//                           presentation.participants[participantId].role !==
+//                           "author"
+//                       ).length > 0 && (
+//                         <div className="ring-2 ring-background group-hover:ring-battleground -ml-2 h-full aspect-square grid place-items-center rounded-full bg-selected">
+//                           <span className="text-secondary font-bold text-[13px]">
+//                             +
+//                             {
+//                               Object.keys(presentation.participants).filter(
+//                                 (participantId: any) =>
+//                                   presentation.participants[participantId]
+//                                     .role !== "author"
+//                               ).length
+//                             }
+//                           </span>
+//                         </div>
+//                       )}
+//                     </div>
+
+//                     <div className="grow min-w-0">
+//                       <div className="w-full flex items-center gap-2">
+//                         <span className="font-bold text-[13px] text-primary truncate">
+//                           {presentation.title}
+//                         </span>
+
+//                         {presentation.status === "active" ? (
+//                           <div className="bg-live-red/15 rounded-full py-1 px-2 flex items-center gap-1 text-live-red">
+//                             <div className="bg-live-red rounded-full h-[5px] aspect-square"></div>
+//                             <span className="font-bold text-[11px]">
+//                               {
+//                                 Object.values(presentation.participants).filter(
+//                                   (participant: any) => participant.isConnected
+//                                 ).length
+//                               }
+//                             </span>
+//                           </div>
+//                         ) : (
+//                           <div className="bg-placeholder/15 rounded-full py-1 px-2 flex items-center gap-1 text-placeholder">
+//                             <EndedIcon className="h-1.5" />
+//                             <span className="font-bold text-[11px]">Ended</span>
+//                           </div>
+//                         )}
+//                       </div>
+//                       <span className="block font-semibold text-xs text-secondary">
+//                         just now
+//                       </span>
+//                     </div>
+//                   </div>
+//                 );
+//               })}
+//             </div>
+//           </div>
+//         );
+//       })}
+//     </div>
+//   );
+// };
 
 export default function Sidebar(fileId: any) {
   const { openModal, currentModal } = useModal();
   const { user, logout } = useAuth();
-  // const { recentlyModified } = useRecentScripts();
   const { scripts, presentations, notifications, people } = useRealtimeData();
 
   const router = useRouter();
-
-  // const [isSearchOn, setIsSearchOn] = useState<any>(false);
 
   const [currentTab, setCurrentTab] = useState<any>(null);
 
   const sidebarTabs: any = {
     scripts: {
-      content: <Scripts scripts={scripts} />,
+      content: <Scripts scripts={scripts} people={people} />,
       icon: <ScriptIcon className="h-5" />,
       name: "Scripts",
     },
     presentations: {
-      content: <Presentations presentations={presentations} />,
+      content: <Presentations presentations={presentations} people={people} />,
       icon: <PresentationIcon className="w-5" />,
       name: "Presentations",
     },

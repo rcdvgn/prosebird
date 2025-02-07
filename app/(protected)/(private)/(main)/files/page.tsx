@@ -52,8 +52,8 @@ export default function Files() {
 
   return (
     <div className="flex flex-col w-full">
-      <div className="px-10 h-[68px] w-full shrink-0 flex items-center justify-between">
-        <div className="flex items-center w-[350px] h-11 bg-battleground rounded-[10px] px-2.5">
+      <div className="pr-10 h-[68px] w-full shrink-0 flex items-center justify-between">
+        <div className="flex items-center w-[400px] h-11 bg-foreground focus-within:bg-battleground rounded-[10px] px-2.5">
           <span className="p-1">
             <SearchIcon className="text-secondary h-3.5" />
           </span>
