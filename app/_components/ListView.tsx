@@ -7,9 +7,11 @@ import OutsideClickHandler from "./utils/OutsideClickHandler";
 import { changeFavoriteStatus } from "../_services/client";
 import { useRealtimeData } from "../_contexts/RealtimeDataContext";
 import ProfilePicture from "./ProfilePicture";
+import { useAuth } from "../_contexts/AuthContext";
 
 export default function ListView({ displayType }: any) {
   const { scripts, people } = useRealtimeData();
+  const { user } = useAuth();
 
   const [selectedDocuments, setSelectedDocuments] = useState<any>([]);
   const selectAllButton = useRef(null);
@@ -156,6 +158,8 @@ export default function ListView({ displayType }: any) {
                           people[script.createdBy]?.profilePictureURL
                         }
                         className="h-[30px]"
+                        firstName={user?.firstName}
+                        lastName={user?.lastName}
                       />
                       <span className="text-inactive font-semibold text-sm mb-[-3px] truncate group-hover/main:text-primary cursor-pointer hover:underline">
                         You

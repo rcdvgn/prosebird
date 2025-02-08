@@ -18,7 +18,6 @@ export default function Files() {
   const { setScript } = useScriptEditor();
   const { openModal } = useModal();
   const { user, logout } = useAuth();
-  const profilePictureURL = user?.profilePictureURL;
 
   const profilePictureWrapper = useRef<any>(null);
 
@@ -78,8 +77,10 @@ export default function Files() {
               className="block"
             >
               <ProfilePicture
-                profilePictureURL={profilePictureURL}
-                className="h-9"
+                profilePictureURL={user?.profilePictureURL}
+                className="h-9 cursor-pointer"
+                firstName={user?.firstName}
+                lastName={user?.lastName}
               />
             </span>
 

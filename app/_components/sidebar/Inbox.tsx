@@ -5,10 +5,13 @@ import { GroupByTime } from "./GroupByTime";
 import ProfilePicture from "../ProfilePicture";
 import { timeAgoFormatter } from "@/app/_utils/timeAgoFormatter";
 import { notificationTypes } from "@/app/_lib/notificationTypes";
+import { useAuth } from "@/app/_contexts/AuthContext";
 
 const Inbox = ({ notifications, people }: any) => {
-  const router = useRouter();
   if (!notifications || !people) return null;
+
+  const router = useRouter();
+  const { user } = useAuth();
 
   return (
     <>
@@ -35,6 +38,8 @@ const Inbox = ({ notifications, people }: any) => {
                   people[notification.data.presentationHost]?.profilePictureURL
                 }
                 className="h-8"
+                firstName={user?.firstName}
+                lastName={user?.lastName}
               />
               <div className="grow leading-4">
                 <span className="font-bold text-[13px] text-primary hover:underline cursor-pointer">
