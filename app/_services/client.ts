@@ -546,19 +546,22 @@ export const subscribeToScripts = (
   const createdByQuery = query(
     scriptsCollection,
     where("createdBy", "==", userId),
-    orderBy("lastModified", "desc")
+    orderBy("lastModified", "desc"),
+    limit(10)
   );
 
   const editorsQuery = query(
     scriptsCollection,
     where("editors", "array-contains", userId),
-    orderBy("lastModified", "desc")
+    orderBy("lastModified", "desc"),
+    limit(10)
   );
 
   const viewersQuery = query(
     scriptsCollection,
     where("viewers", "array-contains", userId),
-    orderBy("lastModified", "desc")
+    orderBy("lastModified", "desc"),
+    limit(10)
   );
 
   const unsubscribeCreatedBy = onSnapshot(createdByQuery, (querySnapshot) => {

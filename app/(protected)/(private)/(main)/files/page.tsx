@@ -99,7 +99,7 @@ export default function Files() {
                 onAnimationComplete={() => {
                   if (!isUserOptionsVisible) setShouldRender(false); // Hide AFTER exit animation
                 }}
-                className={`absolute right-0 top-full mt-4 flex-col gap-1 min-w-44 p-1 bg-foreground rounded-[10px] ring-1 ring-stroke ${
+                className={`absolute right-0 top-full mt-4 flex-col gap-1 min-w-48 p-1 bg-foreground rounded-[10px] ring-1 ring-stroke ${
                   shouldRender ? "flex" : "hidden"
                 }`}
               >

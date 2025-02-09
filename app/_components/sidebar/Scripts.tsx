@@ -10,7 +10,7 @@ const Scripts = ({ scripts, people }: any) => {
   const router = useRouter();
 
   return (
-    <GroupByTime unorganizedInstances={scripts} criteria="createdAt">
+    <GroupByTime unorganizedInstances={scripts} criteria="lastModified">
       {(script: any) => (
         <div
           onClick={() => router.push(`/file/${script.id}`)}

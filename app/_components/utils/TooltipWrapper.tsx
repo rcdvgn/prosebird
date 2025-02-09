@@ -1,19 +1,31 @@
 "use client";
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, forwardRef } from "react";
 
-interface TooltipWrapperProps {
-  children: React.ReactNode;
-  options: {
-    text: string;
-    position?: "top" | "bottom" | "left" | "right";
-    type?: "default" | "about";
-  };
-}
+// Tooltip components
+const DefaultTooltip = forwardRef<HTMLDivElement, any>(
+  ({ data, className, style }, ref) => (
+    <div ref={ref} className={`tooltip-default ${className}`} style={style}>
+      {data.text}
+    </div>
+  )
+);
 
+const AboutTooltip = forwardRef<HTMLDivElement, any>(
+  ({ data, className, style }, ref) => (
+    <div ref={ref} className={`tooltip-about ${className}`} style={style}>
+      {data.text}
+    </div>
+  )
+);
+
+// TooltipWrapper component
 export default function TooltipWrapper({
   children,
-  options,
-}: TooltipWrapperProps) {
+  position = "top",
+  tooltipType: TooltipComponent,
+  data,
+  customSpacing = null,
+}: any) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
   const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
@@ -23,80 +35,62 @@ export default function TooltipWrapper({
       const wrapperRect = wrapperRef.current.getBoundingClientRect();
       const tooltipRect = tooltipRef.current.getBoundingClientRect();
 
-      switch (options.position) {
-        case "top":
-          setTooltipPosition({
-            top: wrapperRect.top - tooltipRect.height,
-            left:
-              wrapperRect.left + wrapperRect.width / 2 - tooltipRect.width / 2,
-          });
-          break;
-        case "bottom":
-          setTooltipPosition({
-            top: wrapperRect.bottom,
-            left:
-              wrapperRect.left + wrapperRect.width / 2 - tooltipRect.width / 2,
-          });
-          break;
-        case "left":
-          setTooltipPosition({
-            top:
-              wrapperRect.top + wrapperRect.height / 2 - tooltipRect.height / 2,
-            left: wrapperRect.left - tooltipRect.width,
-          });
-          break;
-        case "right":
-          setTooltipPosition({
-            top:
-              wrapperRect.top + wrapperRect.height / 2 - tooltipRect.height / 2,
-            left: wrapperRect.right,
-          });
-          break;
-        default:
-          setTooltipPosition({
-            top: wrapperRect.top - tooltipRect.height,
-            left:
-              wrapperRect.left + wrapperRect.width / 2 - tooltipRect.width / 2,
-          });
-          break;
-      }
+      const positions: any = {
+        top: {
+          top: wrapperRect.top - tooltipRect.height,
+          left:
+            wrapperRect.left + wrapperRect.width / 2 - tooltipRect.width / 2,
+        },
+        bottom: {
+          top: wrapperRect.bottom,
+          left:
+            wrapperRect.left + wrapperRect.width / 2 - tooltipRect.width / 2,
+        },
+        left: {
+          top:
+            wrapperRect.top + wrapperRect.height / 2 - tooltipRect.height / 2,
+          left: wrapperRect.left - tooltipRect.width,
+        },
+        right: {
+          top:
+            wrapperRect.top + wrapperRect.height / 2 - tooltipRect.height / 2,
+          left: wrapperRect.right,
+        },
+      };
+
+      setTooltipPosition(positions[position]);
     }
   };
-
-  const types: any = { default: "tooltip-default", about: "tooltip-about" };
 
   useEffect(() => {
     updateTooltipPosition();
     window.addEventListener("resize", updateTooltipPosition);
-
     return () => {
       window.removeEventListener("resize", updateTooltipPosition);
     };
-  }, [options.position]);
+  }, [position]);
+
+  const getTranslateClass = () => {
+    const translations: any = {
+      top: "group-hover:-translate-y-4",
+      bottom: "group-hover:translate-y-4",
+      left: "group-hover:-translate-x-4",
+      right: "group-hover:translate-x-4",
+    };
+    return translations[position];
+  };
 
   return (
     <div className="relative group" ref={wrapperRef}>
       {children}
-      <div
+      <TooltipComponent
         ref={tooltipRef}
-        className={`fixed z-[9999] opacity-0 group-hover:opacity-100 pointer-events-none transition-all ease-in-out delay-500 duration-200 ${
-          options?.type ? types[options.type] : "tooltip-default"
-        } ${
-          options.position === "top"
-            ? "group-hover:-translate-y-4"
-            : options.position === "bottom"
-            ? "group-hover:translate-y-4"
-            : options.position === "left"
-            ? "group-hover:-translate-x-4"
-            : "group-hover:-translate-y-4"
-        }`}
-        style={{
-          top: tooltipPosition.top,
-          left: tooltipPosition.left,
-        }}
-      >
-        {options.text}
-      </div>
+        data={data}
+        className={`fixed z-[9999] opacity-0 group-hover:opacity-100 pointer-events-none transition-all ease-in-out delay-500 duration-200 ${getTranslateClass()}`}
+        style={{ top: tooltipPosition.top, left: tooltipPosition.left }}
+      />
     </div>
   );
 }
+
+export { DefaultTooltip, AboutTooltip };

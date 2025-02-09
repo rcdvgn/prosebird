@@ -36,7 +36,7 @@ import { timeAgoFormatter } from "../_utils/timeAgoFormatter";
 import { groupInstancesByTime } from "../_utils/groupInstancesByTime";
 import capitalizeFirstLetter from "../_utils/capitalizeFirstLetter";
 import Scripts from "./sidebar/Scripts";
-import Presentations from "./sidebar/presentations";
+import Presentations from "./sidebar/Presentations";
 import Inbox from "./sidebar/Inbox";
 
 // const Inbox = ({ notifications, people }: any) => {
@@ -285,17 +285,14 @@ export default function Sidebar(fileId: any) {
 
   const sidebarTabs: any = {
     scripts: {
-      content: <Scripts scripts={scripts} people={people} />,
       icon: <ScriptIcon className="h-5" />,
       name: "Scripts",
     },
     presentations: {
-      content: <Presentations presentations={presentations} people={people} />,
       icon: <PresentationIcon className="w-5" />,
       name: "Presentations",
     },
     inbox: {
-      content: <Inbox notifications={notifications} people={people} />,
       icon: <InboxIcon className="h-5" />,
       name: "Inbox",
     },
@@ -331,7 +328,7 @@ export default function Sidebar(fileId: any) {
                         ? setCurrentTab(null)
                         : setCurrentTab(tabName)
                     }
-                    className={`h-[44px] aspect-square grid place-items-center transition-bg ease-in-out duration-100 rounded-xl cursor-pointer ${
+                    className={`h-[44px] aspect-square grid place-items-center transition-all ease-in-out duration-150 rounded-xl cursor-pointer ${
                       currentTab === tabName
                         ? "text-brand bg-brand/15 hover:bg-brand/20"
                         : "text-placeholder hover:text-primary hover:bg-hover"
@@ -347,13 +344,13 @@ export default function Sidebar(fileId: any) {
           <div className="w-7 h-[1px] rounded-full bg-border"></div>
 
           <div className="flex flex-col items-center justify-start gap-4 w-full px-[18px] py-2.5">
-            <div className="h-[44px] aspect-square grid place-items-center transition-bg ease-in-out duration-100 rounded-xl cursor-pointer text-placeholder hover:text-primary hover:bg-hover">
+            <div className="h-[44px] aspect-square grid place-items-center transition-all ease-in-out duration-150 rounded-xl cursor-pointer text-placeholder hover:text-primary hover:bg-hover">
               <HelpIcon className="h-5" />
             </div>
 
             <div
               onClick={handleSettings}
-              className={`h-[44px] aspect-square grid place-items-center transition-bg ease-in-out duration-100 rounded-xl cursor-pointer hover:bg-hover ${
+              className={`h-[44px] aspect-square grid place-items-center transition-all ease-in-out duration-150 rounded-xl cursor-pointer hover:bg-hover ${
                 currentModal?.name === "settings"
                   ? "text-primary"
                   : "text-placeholder hover:text-primary"
@@ -366,7 +363,9 @@ export default function Sidebar(fileId: any) {
       </div>
 
       {currentTab && (
-        <div className="w-[300px] pl-2 pr-4">
+        <div
+          className={`w-[300px] pl-2 pr-4 ${currentTab ? "block" : "hidden"}`}
+        >
           <div className="h-[68px] w-full flex justify-between items-center">
             <Input3 />
 
@@ -385,81 +384,34 @@ export default function Sidebar(fileId: any) {
               </span>
             </div>
 
-            {sidebarTabs[currentTab]?.content}
+            <div
+              className={
+                sidebarTabs[currentTab]?.name === "Scripts" ? "block" : "hidden"
+              }
+            >
+              <Scripts scripts={scripts} people={people} />
+            </div>
+
+            <div
+              className={
+                sidebarTabs[currentTab]?.name === "Presentations"
+                  ? "block"
+                  : "hidden"
+              }
+            >
+              <Presentations presentations={presentations} people={people} />
+            </div>
+
+            <div
+              className={
+                sidebarTabs[currentTab]?.name === "Inbox" ? "block" : "hidden"
+              }
+            >
+              <Inbox notifications={notifications} people={people} />{" "}
+            </div>
           </div>
         </div>
       )}
-
-      {/* <button
-        onClick={logout}
-        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-      >
-        Logout
-      </button> */}
     </div>
   );
-}
-
-{
-  /* <div className="flex items-center justify-between h-[55px]">
-        <span onClick={handleSettings} className="ml-[10px]">
-          <Logo />
-        </span>
-        <span className="w-[30px] grid place-items-center cursor-pointer">
-          <SideBarExpandIcon className="fill-text-primary" />
-        </span>
-      </div>
-      <div className="">
-        <div
-          onClick={() => router.push(`/files`)}
-          className="cursor-pointer flex items-center justify-start rounded-lg hover:bg-hover select-none h-[42px]"
-        >
-          <span className="ml-[10px] font-bold text-sm text-primary">Home</span>
-        </div>
-        <input type="text" className="hidden" />
-      </div>
-      <div className="">
-        
-        <div className="py-3 px-[18px]">
-          <span className="text-xs font-semibold text-secondary">Today</span>
-        </div>
-        <div className="flex flex-col">
-          {recentlyModified &&
-            recentlyModified.map((item: any, index: any) => {
-              return (
-                <div
-                  onClick={() => router.push(`/file/${item.id}`)}
-                  key={index}
-                  className={`${
-                    script
-                      ? item.id === fileId?.fileId
-                        ? "bg-selected"
-                        : "hover:bg-hover"
-                      : ""
-                  } select-none cursor-pointer rounded-[10px] flex items-center justify-start gap-3 pl-[18px] pr-1 h-[40px] group`}
-                >
-                  <span className="w-[14px] aspect-square grid place-items-center shrink-0">
-                    <ScriptIcon className="text-primary h-4" />
-                  </span>
-                  <span className="font-semibold text-[13px] text-primary whitespace-nowrap overflow-hidden text-ellipsis">
-                    {item.title}
-                  </span>
-                  <span
-                    className={`
-                      button-icon ml-auto !bg-transparent ${
-                        script
-                          ? item.id === fileId?.fileId
-                            ? ""
-                            : "invisible group-hover:visible"
-                          : ""
-                      }
-                    `}
-                  >
-                    <MoreIcon className="h-3" />
-                  </span>
-                </div>
-              );
-            })}
-        </div>
-      </div>*/
 }

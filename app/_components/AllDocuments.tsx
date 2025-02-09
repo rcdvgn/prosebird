@@ -11,7 +11,7 @@ export default function AllDocuments() {
   const [displayType, setDisplayType] = useState<any>("grid");
 
   return (
-    <div className="grow px-10 py-6">
+    <div className="grow px-8 py-6">
       <div className="flex justify-between items-center mb-10">
         <span className="font-extrabold text-xl text-primary">
           All documents

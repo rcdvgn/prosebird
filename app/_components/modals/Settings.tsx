@@ -49,15 +49,15 @@ export default function Settings() {
 
       <div className="flex grow min-h-0">
         {/* <OverlayScrollbarsComponent defer> */}
-        <div className="m-2 overflow-y-auto flex flex-col gap-1">
+        <div className="p-2 overflow-y-auto flex flex-col gap-1">
           {settings.map((item: any, index: any) => {
             return (
               <div
                 key={index}
                 onClick={() => handleChangeSettings(index)}
                 className={
-                  "group w-[180px] py-2.5 px-5 flex items-center justify-start rounded-lg cursor-pointer gap-2 " +
-                  (currentSettings === index ? "bg-selected" : "")
+                  "group w-[180px] py-2 px-5 flex items-center justify-start rounded-lg cursor-pointer gap-2 " +
+                  (currentSettings === index ? "bg-selected" : "hover:bg-hover")
                 }
               >
                 <span

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { CloseIcon } from "@/app/_assets/icons";
 import { GroupByTime } from "./GroupByTime";
@@ -11,7 +11,6 @@ const Inbox = ({ notifications, people }: any) => {
   if (!notifications || !people) return null;
 
   const router = useRouter();
-  const { user } = useAuth();
 
   return (
     <>
@@ -38,8 +37,8 @@ const Inbox = ({ notifications, people }: any) => {
                   people[notification.data.presentationHost]?.profilePictureURL
                 }
                 className="h-8"
-                firstName={user?.firstName}
-                lastName={user?.lastName}
+                firstName={people[notification.data.presentationHost].firstName}
+                lastName={people[notification.data.presentationHost].lastName}
               />
               <div className="grow leading-4">
                 <span className="font-bold text-[13px] text-primary hover:underline cursor-pointer">

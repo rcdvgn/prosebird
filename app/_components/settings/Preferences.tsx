@@ -3,7 +3,7 @@
 import { AboutIcon, CircledCheckIcon, TrashCanIcon } from "@/app/_assets/icons";
 import React, { useRef, useState } from "react";
 import OutsideClickHandler from "../utils/OutsideClickHandler";
-import TooltipWrapper from "../utils/TooltipWrapper";
+import TooltipWrapper, { AboutTooltip } from "../utils/TooltipWrapper";
 
 const Hr = () => {
   return <div className="w-full h-[1px] rounded-full bg-border"></div>;
@@ -45,9 +45,9 @@ export default function Preferences() {
             Playback speed
           </span>
           <TooltipWrapper
-            options={{
+            tooltipType={AboutTooltip}
+            data={{
               text: "Setting up your preferred languages helps for more accurate live transcriptions",
-              type: "about",
             }}
           >
             <AboutIcon className="text-inactive h-3 hover:text-primary" />
