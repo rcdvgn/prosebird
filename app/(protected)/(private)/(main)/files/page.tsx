@@ -13,6 +13,7 @@ import { useModal } from "@/app/_contexts/ModalContext";
 import Settings from "@/app/_components/modals/Settings";
 import { useEffect, useRef, useState } from "react";
 import OutsideClickHandler from "@/app/_components/wrappers/OutsideClickHandler";
+import DropdownWrapper from "@/app/_components/wrappers/DropdownWrapper";
 
 export default function Files() {
   const { setScript } = useScriptEditor();
@@ -43,6 +44,10 @@ export default function Files() {
 
   const [shouldRender, setShouldRender] = useState(isUserOptionsVisible);
 
+  const handleOptionClick = (option: any) => {
+    console.log(option);
+  };
+
   useEffect(() => {
     if (isUserOptionsVisible) {
       setShouldRender(true);
@@ -70,7 +75,17 @@ export default function Files() {
             <span className="">New</span>
           </button>
 
-          <div className="relative">
+          <DropdownWrapper
+            align="right"
+            options={[
+              { text: "Settings", onClick: handleSettings },
+              { text: "Log out", onClick: logout },
+              {
+                text: "Get desktop app",
+                onClick: () => console.log("You clicked 'Get desktop app'"),
+              },
+            ]}
+          >
             <span
               ref={profilePictureWrapper}
               onClick={() => setIsUserOptionsVisible((prev: boolean) => !prev)}
@@ -83,53 +98,7 @@ export default function Files() {
                 lastName={user?.lastName}
               />
             </span>
-
-            <OutsideClickHandler
-              onOutsideClick={handleCloseProfileOptions}
-              exceptionRefs={[profilePictureWrapper]}
-              isActive={isUserOptionsVisible}
-            >
-              <motion.div
-                initial={{ opacity: 0, translateY: -4 }}
-                animate={{
-                  opacity: isUserOptionsVisible ? 1 : 0,
-                  translateY: isUserOptionsVisible ? 0 : -4,
-                }}
-                transition={{ duration: 0.2, ease: "easeInOut" }}
-                onAnimationComplete={() => {
-                  if (!isUserOptionsVisible) setShouldRender(false);
-                }}
-                className={`absolute right-0 top-full mt-4 flex-col gap-1 min-w-48 p-1 bg-foreground rounded-[10px] ring-1 ring-stroke z-50 ${
-                  shouldRender ? "flex" : "hidden"
-                }`}
-              >
-                {[
-                  {
-                    text: "Settings",
-                    onClick: handleSettings,
-                  },
-                  {
-                    text: "Log out",
-                    onClick: logout,
-                  },
-                  {
-                    text: "Get desktop app",
-                    onClick: () => console.log("You clicked 'Get desktop app'"),
-                  },
-                ].map((item: any, index: any) => {
-                  return (
-                    <div
-                      key={index}
-                      onClick={item.onClick}
-                      className="px-3 py-2.5 rounded-md hover:bg-hover cursor-pointer font-bold text-[13px] text-inactive hover:text-primary"
-                    >
-                      {item.text}
-                    </div>
-                  );
-                })}
-              </motion.div>
-            </OutsideClickHandler>
-          </div>
+          </DropdownWrapper>
         </div>
       </div>
       <div className="slate">
