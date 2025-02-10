@@ -29,6 +29,8 @@ import { useRealtimeData } from "../_contexts/RealtimeDataContext";
 import Scripts from "./sidebar/Scripts";
 import Presentations from "./sidebar/Presentations";
 import Inbox from "./sidebar/Inbox";
+import TooltipWrapper from "./wrappers/TooltipWrapper";
+import capitalizeFirstLetter from "../_utils/capitalizeFirstLetter";
 
 export default function Sidebar(fileId: any) {
   const { openModal, currentModal } = useModal();
@@ -75,20 +77,28 @@ export default function Sidebar(fileId: any) {
             {Object.entries(sidebarTabs).map(
               ([tabName, tabValues]: any, index: any) => {
                 return (
-                  <div
-                    key={index}
-                    onClick={() =>
-                      currentTab === tabName
-                        ? setCurrentTab(null)
-                        : setCurrentTab(tabName)
-                    }
-                    className={`h-[44px] aspect-square grid place-items-center transition-all ease-in-out duration-150 rounded-xl cursor-pointer ${
-                      currentTab === tabName
-                        ? "text-brand bg-brand/15 hover:bg-brand/20"
-                        : "text-placeholder hover:text-primary hover:bg-hover"
-                    }`}
-                  >
-                    {tabValues.icon}
+                  <div key={index}>
+                    <TooltipWrapper
+                      position="right"
+                      data={{
+                        text: capitalizeFirstLetter(tabName),
+                      }}
+                    >
+                      <div
+                        onClick={() =>
+                          currentTab === tabName
+                            ? setCurrentTab(null)
+                            : setCurrentTab(tabName)
+                        }
+                        className={`nav-tabs ${
+                          currentTab === tabName
+                            ? "text-brand bg-brand/15 hover:bg-brand/20"
+                            : "text-placeholder hover:text-primary hover:bg-hover"
+                        }`}
+                      >
+                        {tabValues.icon}
+                      </div>
+                    </TooltipWrapper>
                   </div>
                 );
               }
@@ -98,20 +108,34 @@ export default function Sidebar(fileId: any) {
           <div className="w-7 h-[1px] rounded-full bg-border"></div>
 
           <div className="flex flex-col items-center justify-start gap-4 w-full px-[18px] py-2.5">
-            <div className="h-[44px] aspect-square grid place-items-center transition-all ease-in-out duration-150 rounded-xl cursor-pointer text-placeholder hover:text-primary hover:bg-hover">
-              <HelpIcon className="h-5" />
-            </div>
-
-            <div
-              onClick={handleSettings}
-              className={`h-[44px] aspect-square grid place-items-center transition-all ease-in-out duration-150 rounded-xl cursor-pointer hover:bg-hover ${
-                currentModal?.name === "settings"
-                  ? "text-primary"
-                  : "text-placeholder hover:text-primary"
-              }`}
+            <TooltipWrapper
+              position="right"
+              data={{
+                text: "Help",
+              }}
             >
-              <SettingsIcon className="h-5" />
-            </div>
+              <div className="nav-tabs text-placeholder hover:text-primary hover:bg-hover">
+                <HelpIcon className="h-5" />
+              </div>
+            </TooltipWrapper>
+
+            <TooltipWrapper
+              position="right"
+              data={{
+                text: "Settings",
+              }}
+            >
+              <div
+                onClick={handleSettings}
+                className={`nav-tabs hover:bg-hover ${
+                  currentModal?.name === "settings"
+                    ? "text-primary"
+                    : "text-placeholder hover:text-primary"
+                }`}
+              >
+                <SettingsIcon className="h-5" />
+              </div>
+            </TooltipWrapper>
           </div>
         </div>
       </div>
@@ -122,13 +146,19 @@ export default function Sidebar(fileId: any) {
         >
           <div className="h-[68px] w-full flex justify-between items-center">
             <Input3 />
-
-            <span
-              onClick={() => setCurrentTab(null)}
-              className="group button-icon !bg-transparent text-placeholder"
+            <TooltipWrapper
+              position="bottom"
+              data={{
+                text: "Shrink sidebar",
+              }}
             >
-              <ShrinkIcon className="h-3 transition-transform duration-200 ease-in-out group-hover:-translate-x-1" />
-            </span>
+              <span
+                onClick={() => setCurrentTab(null)}
+                className="group button-icon !bg-transparent text-placeholder"
+              >
+                <ShrinkIcon className="h-3 transition-transform duration-200 ease-in-out group-hover:-translate-x-1" />
+              </span>
+            </TooltipWrapper>
           </div>
 
           <div className="">

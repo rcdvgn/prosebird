@@ -1,10 +1,11 @@
 "use client";
 import React, { useRef, useState, useEffect } from "react";
+import DefaultTooltip from "../tooltips/DefaultTooltip";
 
 export default function TooltipWrapper({
   children,
   position = "top",
-  tooltipType: TooltipComponent,
+  tooltipType: TooltipComponent = DefaultTooltip,
   data,
 }: any) {
   const wrapperRef = useRef<HTMLDivElement>(null);
