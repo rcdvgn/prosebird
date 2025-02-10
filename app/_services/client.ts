@@ -285,10 +285,10 @@ export const getPeople = async (userIds: any, exceptionIds: any) => {
   if (userIds.length === 0) {
     return [];
   }
+
   try {
     const userDocs = await Promise.all(
       userIds.map(async (id: any) => {
-        // Need to explicitly return null for excluded IDs
         if (exceptionIds.includes(id)) {
           return null;
         }

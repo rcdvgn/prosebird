@@ -1,30 +1,11 @@
 "use client";
-import React, { useRef, useState, useEffect, forwardRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 
-// Tooltip components
-const DefaultTooltip = forwardRef<HTMLDivElement, any>(
-  ({ data, className, style }, ref) => (
-    <div ref={ref} className={`tooltip-default ${className}`} style={style}>
-      {data.text}
-    </div>
-  )
-);
-
-const AboutTooltip = forwardRef<HTMLDivElement, any>(
-  ({ data, className, style }, ref) => (
-    <div ref={ref} className={`tooltip-about ${className}`} style={style}>
-      {data.text}
-    </div>
-  )
-);
-
-// TooltipWrapper component
 export default function TooltipWrapper({
   children,
   position = "top",
   tooltipType: TooltipComponent,
   data,
-  customSpacing = null,
 }: any) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
@@ -86,11 +67,9 @@ export default function TooltipWrapper({
       <TooltipComponent
         ref={tooltipRef}
         data={data}
-        className={`fixed z-[9999] opacity-0 group-hover:opacity-100 pointer-events-none transition-all ease-in-out delay-500 duration-200 ${getTranslateClass()}`}
+        className={`fixed z-[9999] opacity-0 group-hover:opacity-100 pointer-events-none ${getTranslateClass()}`}
         style={{ top: tooltipPosition.top, left: tooltipPosition.left }}
       />
     </div>
   );
 }
-
-export { DefaultTooltip, AboutTooltip };

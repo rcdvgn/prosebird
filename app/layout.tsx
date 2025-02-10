@@ -3,7 +3,7 @@ import { Public_Sans } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "./_contexts/AuthContext";
 import { ModalProvider } from "./_contexts/ModalContext";
-import Modal from "./_components/utils/Modal";
+import Modal from "./_components/wrappers/Modal";
 
 const publicSans = Public_Sans({ subsets: ["latin"] });
 

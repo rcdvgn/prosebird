@@ -12,7 +12,7 @@ import {
   PersonalIcon,
   ProfessionalIcon,
 } from "@/app/_assets/icons";
-import OutsideClickHandler from "@/app/_components/utils/OutsideClickHandler";
+import OutsideClickHandler from "@/app/_components/wrappers/OutsideClickHandler";
 import { plans } from "@/app/_lib/plans";
 import { onboardUser } from "@/app/_services/client";
 

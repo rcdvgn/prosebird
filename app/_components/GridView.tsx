@@ -115,11 +115,13 @@ export default function GridView({ displayType }: any) {
                 <div className="flex justify-between items-center">
                   <div className="flex justify-start items-center gap-2 min-w-0">
                     <span className="text-primary font-bold text-sm truncate">
-                      End of Beginning
+                      {script.title}
                     </span>
                     <div className="flex items-center justify-start gap-1.5">
                       <CollaboratorsIcon className="h-2.5 text-placeholder" />
-                      <IsFavoriteIcon className="h-3 text-placeholder" />
+                      {script.isFavorite && (
+                        <IsFavoriteIcon className="h-3 text-placeholder" />
+                      )}
                     </div>
                   </div>
                   <span className="group/icon px-3.5 cursor-pointer">

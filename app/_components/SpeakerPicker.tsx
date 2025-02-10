@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { addScriptGuest, changeNodeSpeaker } from "../_services/client";
 import { useScriptEditor } from "@/app/_contexts/ScriptEditorContext";
-import OutsideClickHandler from "./utils/OutsideClickHandler";
+import OutsideClickHandler from "./wrappers/OutsideClickHandler";
 import { useAuth } from "../_contexts/AuthContext";
 
 export default function SpeakerPicker({

@@ -12,7 +12,7 @@ import { useScriptEditor } from "@/app/_contexts/ScriptEditorContext";
 import { useModal } from "@/app/_contexts/ModalContext";
 import Settings from "@/app/_components/modals/Settings";
 import { useEffect, useRef, useState } from "react";
-import OutsideClickHandler from "@/app/_components/utils/OutsideClickHandler";
+import OutsideClickHandler from "@/app/_components/wrappers/OutsideClickHandler";
 
 export default function Files() {
   const { setScript } = useScriptEditor();

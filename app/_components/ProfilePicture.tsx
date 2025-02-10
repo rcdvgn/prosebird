@@ -1,31 +1,43 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { AnonymousIcon } from "../_assets/icons";
 
-const ProfilePicturePlaceholder = ({
-  className = "",
-  firstName,
-  lastName,
-}: any) => (
-  <div
-    className={`aspect-square rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0 min-w-0 ${className}`}
-  >
-    <span className="text-gray-500 text-[length:2cqmin] font-bold">
-      {(firstName[0] + lastName[0]).toUpperCase()}
-    </span>
-  </div>
-);
+const ProfilePicturePlaceholder = ({ className, firstName, lastName }: any) => {
+  const isAnonymous = !firstName || !lastName;
+
+  return isAnonymous ? (
+    <div
+      className={`aspect-square rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0 min-w-0 ${className}`}
+    >
+      <AnonymousIcon className="text-placeholder h-3/5" />
+    </div>
+  ) : (
+    <div
+      className={`aspect-square rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0 min-w-0 ${className}`}
+    >
+      <span className="text-gray-500 text-[length:2cqmin] font-bold">
+        {(firstName[0] + lastName[0]).toUpperCase()}
+      </span>
+    </div>
+  );
+};
 
 const ProfilePicture = ({
   profilePictureURL,
   className = "",
-  firstName = "",
-  lastName = "",
+  firstName,
+  lastName,
 }: any) => {
   const [imageError, setImageError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    if (firstName && lastName) {
+      console.log(
+        `${firstName + " " + lastName}: ${profilePictureURL ? "True" : "False"}`
+      );
+    }
     if (!profilePictureURL) return;
 
     setIsLoading(true);

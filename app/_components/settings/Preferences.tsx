@@ -2,8 +2,9 @@
 
 import { AboutIcon, CircledCheckIcon, TrashCanIcon } from "@/app/_assets/icons";
 import React, { useRef, useState } from "react";
-import OutsideClickHandler from "../utils/OutsideClickHandler";
-import TooltipWrapper, { AboutTooltip } from "../utils/TooltipWrapper";
+import OutsideClickHandler from "../wrappers/OutsideClickHandler";
+import AboutTooltip from "../tooltips/AboutTooltip";
+import TooltipWrapper from "../wrappers/TooltipWrapper";
 
 const Hr = () => {
   return <div className="w-full h-[1px] rounded-full bg-border"></div>;

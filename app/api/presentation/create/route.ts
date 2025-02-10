@@ -29,7 +29,7 @@ export async function POST(request: Request) {
       createdAt: serverTimestamp(),
       title: script.data.title,
       createdBy: userId,
-      host: userId,
+      hosts: [userId],
       nodes: formattedScript,
       scriptId: script.id,
       participants: scriptParticipants,

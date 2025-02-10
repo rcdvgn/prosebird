@@ -3,7 +3,7 @@
 import React, { useState, useRef } from "react";
 import { CheckIcon, MoreIcon, StarIcon } from "../_assets/icons";
 import { lastModifiedFormatter } from "../_utils/lastModifiedFormater";
-import OutsideClickHandler from "./utils/OutsideClickHandler";
+import OutsideClickHandler from "./wrappers/OutsideClickHandler";
 import { changeFavoriteStatus } from "../_services/client";
 import { useRealtimeData } from "../_contexts/RealtimeDataContext";
 import ProfilePicture from "./ProfilePicture";

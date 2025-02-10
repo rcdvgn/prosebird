@@ -9,27 +9,9 @@ import React, {
 } from "react";
 import { useAuth } from "./AuthContext";
 import {
-  collection,
-  query as fsQuery,
-  where,
-  orderBy,
-  limit,
-  onSnapshot,
-} from "firebase/firestore";
-import { db, rtdb } from "@/app/_config/firebase/client";
-import {
-  getDatabase,
-  ref,
-  query as rtdbQuery,
-  orderByChild,
-  equalTo,
-  onValue,
-} from "firebase/database";
-import {
   checkPresentationStatus,
   createPresentationSubscriptions,
   getPeople,
-  getScriptPeople,
   subscribeToNotifications,
   subscribeToPresentationParticipants,
   subscribeToScripts,
@@ -41,19 +23,17 @@ interface Script {
   id: string;
   title: string;
   lastModified: any;
-  // ... other fields
 }
 
 interface Presentation {
   id: string;
   createdAt: any;
-  // ... other fields (and likely createdBy)
   createdBy: string;
 }
 
 interface Notification {
   id: string;
-  type: string; // can be literal like "friendRequest" or coded like "03"
+  type: string;
   userId: string;
   createdAt: any;
   data: any;
@@ -65,10 +45,8 @@ interface RealtimeDataContextType {
   notifications: Notification[] | null;
 }
 
-// Create the context
 const RealtimeDataContext = createContext<any>(undefined);
 
-// Provider component
 export const RealtimeDataProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
   const [scripts, setScripts] = useState<Script[] | null>(null);
@@ -82,7 +60,6 @@ export const RealtimeDataProvider = ({ children }: { children: ReactNode }) => {
 
   const [people, setPeople] = useState<any>({});
 
-  // Combined useEffect for subscriptions that depend on user?.id
   useEffect(() => {
     if (!user) return;
 
@@ -150,58 +127,80 @@ export const RealtimeDataProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const getUserData = async (userIds: any) => {
-    const unfetchedUserIds = _.uniq(_.difference(userIds, Object.keys(people)));
-    if (!unfetchedUserIds.length) return;
-
-    const fetchedPeople = await getPeople(unfetchedUserIds, []);
-
-    const formattedFetchedPeople: any = formatUserDataIntoPeople(
-      userIds,
-      fetchedPeople
+    const flatUserIds = userIds.flat();
+    const unfetchedUserIds = _.uniq(
+      _.difference(flatUserIds, Object.keys(people))
     );
 
-    const newPeople = { ...formattedFetchedPeople, ...people };
-    setPeople(newPeople);
+    if (!unfetchedUserIds.length) return;
+
+    try {
+      const fetchedPeople = await getPeople(unfetchedUserIds, []);
+
+      setPeople((prevPeople: any) => {
+        const formattedFetchedPeople = fetchedPeople.reduce(
+          (acc: any, user: any) => {
+            if (user?.id && flatUserIds.includes(user.id)) {
+              acc[user.id] = { ...user };
+              delete acc[user.id].id;
+            }
+            return acc;
+          },
+          {}
+        );
+
+        return { ...prevPeople, ...formattedFetchedPeople };
+      });
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
   };
 
+  // Then modify the useEffect to prevent unnecessary re-renders
   useEffect(() => {
     if (!user) return;
 
-    if (scripts) {
-      const userIds = scripts
-        .map((script: any) => [
-          script.createdBy,
-          ...script.editors,
-          ...script.viewers,
-        ])
-        .flat();
+    const getAllUserIds = () => {
+      const userIds = [];
 
+      if (scripts) {
+        userIds.push(
+          ...scripts.map((script: any) => [
+            script.createdBy,
+            ...(script.editors || []),
+            ...(script.viewers || []),
+          ])
+        );
+      }
+
+      if (presentations) {
+        userIds.push(
+          ...presentations.map((presentation: any) => [
+            ...(Object.keys(presentation.participants) || []),
+            ...(presentation.hosts || []),
+          ])
+        );
+      }
+
+      if (notifications) {
+        userIds.push(
+          ...notifications.map((notification: any) => {
+            if (notification.type === "presentationInvite") {
+              return notification.data.presentationHosts || [];
+            }
+            return [];
+          })
+        );
+      }
+
+      return userIds;
+    };
+
+    const userIds = getAllUserIds();
+    if (userIds.length > 0) {
       getUserData(userIds);
     }
-
-    if (presentations) {
-      const userIds = presentations.map((presentation: any) =>
-        Object.keys(presentation.participants || {})
-      );
-
-      getUserData(userIds);
-    }
-
-    if (notifications) {
-      const userIds = notifications.map((notification: any) => {
-        switch (notification.type) {
-          case "presentationInvite":
-            return notification.data.presentationHost;
-          default:
-            console.error("Unhandled notification type:", notification.type);
-        }
-
-        return null;
-      });
-
-      getUserData(userIds);
-    }
-  }, [user?.id, scripts, notifications, notifications]);
+  }, [user?.id, scripts, presentations, notifications]);
 
   return (
     <RealtimeDataContext.Provider
