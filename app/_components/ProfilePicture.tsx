@@ -33,11 +33,6 @@ const ProfilePicture = ({
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (firstName && lastName) {
-      console.log(
-        `${firstName + " " + lastName}: ${profilePictureURL ? "True" : "False"}`
-      );
-    }
     if (!profilePictureURL) return;
 
     setIsLoading(true);

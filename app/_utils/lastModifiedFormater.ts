@@ -18,7 +18,7 @@ const getTimeDifference = (timestamp: Timestamp) => {
   // Check if the event happened yesterday
   const yesterday = new Date(now.getTime() - oneDayInMs);
   if (yesterday.toDateString() === targetDate.toDateString()) {
-    return "yesterday";
+    return "Yesterday";
   }
 
   // Format as abbreviated date (e.g., Jan. 27, 2025)

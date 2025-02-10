@@ -1,16 +1,21 @@
 "use client";
 
-import React, { useState, useRef } from "react";
-import { CheckIcon, MoreIcon, StarIcon } from "../_assets/icons";
+import React, { useState, useRef, useEffect } from "react";
+import { CheckIcon, ClockIcon, MoreIcon, StarIcon } from "../_assets/icons";
 import { lastModifiedFormatter } from "../_utils/lastModifiedFormater";
 import OutsideClickHandler from "./wrappers/OutsideClickHandler";
-import { changeFavoriteStatus } from "../_services/client";
+import {
+  changeFavoriteStatus,
+  getNodes,
+  getUserPreferences,
+} from "../_services/client";
 import { useRealtimeData } from "../_contexts/RealtimeDataContext";
 import ProfilePicture from "./ProfilePicture";
+import formatTimestamp from "../_utils/formatTimestamp";
 import { useAuth } from "../_contexts/AuthContext";
 
-export default function ListView({ displayType }: any) {
-  const { scripts, people } = useRealtimeData();
+export default function ListView({ displayType, scriptsWithTimestamps }: any) {
+  const { people } = useRealtimeData();
   const { user } = useAuth();
 
   const [selectedDocuments, setSelectedDocuments] = useState<any>([]);
@@ -23,7 +28,7 @@ export default function ListView({ displayType }: any) {
   ];
 
   const handleSelectDocument = (docId: any, e: any) => {
-    e.stopPropagation(); // Prevent triggering parent handlers
+    e.stopPropagation();
 
     if (selectedDocuments.includes(docId)) {
       let updatedSelectedDocuments = [...selectedDocuments];
@@ -41,16 +46,18 @@ export default function ListView({ displayType }: any) {
     console.log("About to open document " + docId);
   };
 
-  const allSelected = scripts
-    ? selectedDocuments.length === scripts.length
+  const allSelected = scriptsWithTimestamps
+    ? selectedDocuments.length === scriptsWithTimestamps.length
     : false;
 
   const handleSelectAll = () => {
     if (allSelected) {
       setSelectedDocuments([]);
     } else {
-      if (scripts) {
-        setSelectedDocuments(scripts.map((script: any) => script.id));
+      if (scriptsWithTimestamps) {
+        setSelectedDocuments(
+          scriptsWithTimestamps.map((script: any) => script.id)
+        );
       }
     }
   };
@@ -97,12 +104,14 @@ export default function ListView({ displayType }: any) {
             </span>
           </div>
 
-          <div className="flex items-center justify-between w-[70px] invisible">
-            <div className="button-icon">
+          <div className="flex items-center justify-between w-[110px]">
+            <div className="button-icon !invisible">
               <StarIcon className="h-4" />
             </div>
 
-            <div className="button-icon">
+            <ClockIcon className="text-secondary h-[13px]" />
+
+            <div className="button-icon !invisible">
               <MoreIcon className="h-3" />
             </div>
           </div>
@@ -116,8 +125,8 @@ export default function ListView({ displayType }: any) {
         exceptionRefs={[selectAllButton]}
       >
         <div className="flex flex-col gap-1">
-          {scripts &&
-            scripts.map((script: any) => {
+          {scriptsWithTimestamps &&
+            scriptsWithTimestamps.map((script: any) => {
               return (
                 <div
                   key={script.id}
@@ -202,7 +211,7 @@ export default function ListView({ displayType }: any) {
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between w-[70px]">
+                    <div className="flex items-center justify-between w-[110px]">
                       <div
                         onClick={() =>
                           changeFavoriteStatus(
@@ -210,19 +219,19 @@ export default function ListView({ displayType }: any) {
                             script?.isFavorite ? false : true
                           )
                         }
-                        className={`${
-                          script?.isFavorite
-                            ? ""
-                            : "group-hover/main:visible invisible"
-                        } button-icon !bg-transparent`}
+                        className=" group-hover/main:visible invisible button-icon !bg-transparent"
                       >
                         <StarIcon
-                          className={`h-4 ${
+                          className={`h-3.5 ${
                             script?.isFavorite
                               ? "!text-favorite-yellow fill-current"
                               : ""
                           }`}
                         />
+                      </div>
+
+                      <div className="text-inactive font-semibold text-[13px]">
+                        {formatTimestamp(script.duration)}
                       </div>
 
                       <div className="button-icon">

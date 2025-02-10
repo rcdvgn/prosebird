@@ -7,66 +7,17 @@ import {
   MoreIcon,
 } from "@/app/_assets/icons";
 
-import React, { useEffect, useState } from "react";
-import calculateTimestamps from "../_lib/addTimestamps";
-import formatScript from "../_lib/formatScript";
-import { getNodes, getUserPreferences } from "../_services/client";
-import { useAuth } from "../_contexts/AuthContext";
 import formatTimestamp from "../_utils/formatTimestamp";
 import { useRouter } from "next/navigation";
-import { useRealtimeData } from "../_contexts/RealtimeDataContext";
 
-export default function GridView({ displayType }: any) {
-  const { user } = useAuth();
-  const { scripts } = useRealtimeData();
-
+export default function GridView({
+  displayType,
+  scriptsWithTimestamps,
+  itemWidth,
+  itemPx,
+  fontSize,
+}: any) {
   const router = useRouter();
-
-  const [recentlyModifiedScripts, setRecentlyModifiedScripts] =
-    useState<any>(null);
-
-  const itemWidth: any = 250;
-  const itemPx: any = 18;
-  const fontSize: any = "20";
-
-  useEffect(() => {
-    if (!scripts || !user?.id) return;
-
-    const getScriptPreviews = async () => {
-      try {
-        const userPreferences: any = await getUserPreferences(user.id);
-
-        const newRecentlyModifiedScripts = await Promise.all(
-          scripts.map(async (script: any) => {
-            const nodes = await getNodes(script.id);
-
-            const { formattedScript } = formatScript(nodes);
-
-            const { scriptWithTimestamps, totalDuration } =
-              await calculateTimestamps(
-                formattedScript.words,
-                formattedScript.chapters,
-                itemWidth - itemPx * 2,
-                userPreferences.speedMultiplier,
-                fontSize
-              );
-
-            const lines = Object.values(scriptWithTimestamps).map((line: any) =>
-              line.map((wordObj: any) => wordObj.word).join(" ")
-            );
-
-            return { ...script, lines, duration: totalDuration };
-          })
-        );
-
-        setRecentlyModifiedScripts(newRecentlyModifiedScripts);
-      } catch (error) {
-        console.error("Error fetching script previews:", error);
-      }
-    };
-
-    getScriptPreviews();
-  }, [scripts, user?.id]);
 
   return (
     <div
@@ -77,8 +28,8 @@ export default function GridView({ displayType }: any) {
         gridTemplateColumns: `repeat(auto-fill, ${itemWidth}px)`,
       }}
     >
-      {recentlyModifiedScripts &&
-        recentlyModifiedScripts.map((script: any, index: any) => {
+      {scriptsWithTimestamps &&
+        scriptsWithTimestamps.map((script: any, index: any) => {
           return (
             <div
               key={index}
