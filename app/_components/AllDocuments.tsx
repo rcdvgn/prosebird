@@ -3,19 +3,32 @@
 import React, { useEffect, useState } from "react";
 import ListView from "./ListView";
 import GridView from "./GridView";
-import { GridViewIcon, ListViewIcon } from "../_assets/icons";
+import {
+  ArrowIcon,
+  GridViewIcon,
+  ListViewIcon,
+  TriangleExpandIcon,
+} from "../_assets/icons";
 import { useRealtimeData } from "../_contexts/RealtimeDataContext";
 import formatScript from "../_lib/formatScript";
 import calculateTimestamps from "../_lib/addTimestamps";
 import { getNodes, getUserPreferences } from "../_services/client";
 import { useAuth } from "../_contexts/AuthContext";
+import { lastModifiedFormatter } from "../_utils/lastModifiedFormater";
 
 export default function AllDocuments() {
   // const { recentlyModified } = useRecentScripts();
+
+  const [sorting, setSorting] = useState<any>({
+    sortedBy: "lastModified",
+    order: "desc",
+  });
   const { scripts } = useRealtimeData();
   const { user } = useAuth();
 
   const [displayType, setDisplayType] = useState<any>("grid");
+  const [isSortDropdownExpanded, setIsSortDropdownExpanded] =
+    useState<any>(false);
 
   const [scriptsWithTimestamps, setScriptsWithTimestamps] = useState<any>(null);
 
@@ -62,9 +75,40 @@ export default function AllDocuments() {
     getScriptPreviews();
   }, [scripts, user?.id]);
 
+  const sortScripts = (scripts: any) => {
+    if (!scripts) return;
+
+    let sortedScripts;
+
+    if (sorting.sortedBy === "lastModified") {
+      sortedScripts = [...scripts];
+    } else if (sorting.sortedBy === "title") {
+      sortedScripts = scripts.sort((a: any, b: any) =>
+        a.title
+          .toLowerCase()
+          .localeCompare(b.title.toLowerCase(), undefined, { numeric: true })
+      );
+    } else {
+      sortedScripts = [];
+    }
+
+    return sorting.order === "asc" ? sortedScripts.reverse() : sortedScripts;
+  };
+
+  useEffect(() => {
+    if (!sorting || !scriptsWithTimestamps) return;
+
+    console.log(
+      sorting.order,
+      sortScripts(scriptsWithTimestamps).map((script: any) => {
+        return lastModifiedFormatter(script.lastModified);
+      })
+    );
+  }, [sorting, scriptsWithTimestamps]);
+
   return (
     <div className="grow px-8 py-6">
-      <div className="flex justify-between items-center mb-10">
+      <div className="flex justify-between items-center mb-6">
         <span className="font-extrabold text-xl text-primary">
           All documents
         </span>
@@ -89,16 +133,58 @@ export default function AllDocuments() {
         </div>
       </div>
 
+      <div className="flex justify-between h-8 w-full mb-2">
+        <div className=""></div>
+
+        <div className="h-full flex gap-1">
+          <span
+            onClick={() => {
+              setSorting((oldSorting: any) => ({
+                ...oldSorting,
+                order: sorting.order === "asc" ? "desc" : "asc",
+              }));
+            }}
+            className="z-0 grid place-items-center h-full aspect-square rounded-lg text-inactive hover:bg-hover hover:text-primary cursor-pointer"
+          >
+            <ArrowIcon
+              className={`h-3.5 transition-rotate duration-150 ease-in-out ${
+                sorting.order === "asc" ? "rotate-180" : ""
+              }`}
+            />
+          </span>
+
+          <span
+            onClick={() => setIsSortDropdownExpanded(!isSortDropdownExpanded)}
+            className={`flex items-center gap-2 rounded-lg p-2 ${
+              isSortDropdownExpanded
+                ? "text-inactive cursor-default"
+                : "text-inactive hover:bg-hover hover:text-primary cursor-pointer"
+            }`}
+          >
+            <span className="text-[13px] font-semibold">Last modified</span>
+            <TriangleExpandIcon
+              className={`w-2 transition-rotate duration-150 ease-in-out ${
+                isSortDropdownExpanded ? "rotate-180" : ""
+              }`}
+            />
+          </span>
+        </div>
+      </div>
+
       <ListView
         displayType={displayType}
-        scriptsWithTimestamps={scriptsWithTimestamps}
+        scriptsWithTimestamps={sortScripts(scriptsWithTimestamps)}
+        sorting={sorting}
+        setSorting={setSorting}
       />
       <GridView
         displayType={displayType}
-        scriptsWithTimestamps={scriptsWithTimestamps}
+        scriptsWithTimestamps={sortScripts(scriptsWithTimestamps)}
         itemWidth={itemWidth}
         itemPx={itemPx}
         fontSize={fontSize}
+        sorting={sorting}
+        setSorting={setSorting}
       />
     </div>
   );

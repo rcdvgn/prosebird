@@ -949,3 +949,35 @@ export function AnonymousIcon({ className }: any) {
     </svg>
   );
 }
+
+export function ArrowIcon({ className }: any) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 8 9"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M6.12631 4.62434C6.39739 4.89541 6.83689 4.89541 7.10797 4.62434C7.37905 4.35326 7.37905 3.91376 7.10797 3.64268L4.27627 0.810975C4.12335 0.65806 3.87543 0.65806 3.72251 0.810976L0.890808 3.64268C0.61973 3.91376 0.619731 4.35326 0.890808 4.62434C1.16189 4.89541 1.60139 4.89541 1.87247 4.62434L3.3245 3.1723V8.0214C3.3245 8.39413 3.62666 8.69629 3.99939 8.69629C4.37212 8.69629 4.67428 8.39413 4.67428 8.0214V3.1723L6.12631 4.62434Z"
+        className="fill-current"
+      />
+    </svg>
+  );
+}
+
+export function TriangleExpandIcon({ className }: any) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 8 6"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M0.595006 1.42617C0.364859 1.16841 0.547823 0.759766 0.893381 0.759766H7.10662C7.45218 0.759766 7.63514 1.16841 7.40499 1.42617L4.29838 4.90559C4.13934 5.08371 3.86067 5.08371 3.70162 4.90559L0.595006 1.42617Z"
+        className="fill-current"
+      />
+    </svg>
+  );
+}

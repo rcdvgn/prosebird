@@ -1,7 +1,13 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { CheckIcon, ClockIcon, MoreIcon, StarIcon } from "../_assets/icons";
+import {
+  ArrowIcon,
+  CheckIcon,
+  ClockIcon,
+  MoreIcon,
+  StarIcon,
+} from "../_assets/icons";
 import { lastModifiedFormatter } from "../_utils/lastModifiedFormater";
 import OutsideClickHandler from "./wrappers/OutsideClickHandler";
 import {
@@ -14,7 +20,35 @@ import ProfilePicture from "./ProfilePicture";
 import formatTimestamp from "../_utils/formatTimestamp";
 import { useAuth } from "../_contexts/AuthContext";
 
-export default function ListView({ displayType, scriptsWithTimestamps }: any) {
+const ScriptAtributeTitle = ({ children, sorting, setSorting, value }: any) => {
+  return (
+    <div className="relative flex items-center gap-1.5">
+      {children}
+      {sorting.sortedBy === value.sortedBy && (
+        <span
+          className={`rounded-full h-3.5 w-3.5 grid place-items-center bg-brand transition-rotate duration-150 ease-in-out ${
+            value.order === "asc" ? "" : "rotate-180"
+          }`}
+        >
+          <ArrowIcon className="h-2 text-primary" />
+        </span>
+      )}
+      <div
+        onClick={() => {
+          setSorting(value);
+        }}
+        className="absolute inset-y-0 left-1/2 transform -translate-x-1/2 m-auto bg-hover rounded-lg h-[calc(100%+16px)] w-[calc(100%+16px)] opacity-0 group-hover:opacity-100 transition-opacity duration-75 ease-in-out"
+      ></div>
+    </div>
+  );
+};
+
+export default function ListView({
+  displayType,
+  scriptsWithTimestamps,
+  sorting,
+  setSorting,
+}: any) {
   const { people } = useRealtimeData();
   const { user } = useAuth();
 
@@ -62,6 +96,11 @@ export default function ListView({ displayType, scriptsWithTimestamps }: any) {
     }
   };
 
+  useEffect(() => {
+    if (!scriptsWithTimestamps) return;
+    console.log(scriptsWithTimestamps);
+  }, [scriptsWithTimestamps]);
+
   return (
     <div
       className={`flex-col w-full ${
@@ -72,33 +111,63 @@ export default function ListView({ displayType, scriptsWithTimestamps }: any) {
         <div
           ref={selectAllButton}
           onClick={handleSelectAll}
-          className={`script-select ${allSelected ? "" : "!bg-transparent"}`}
+          className={`script-select ${
+            allSelected ? "!border-none" : "!bg-transparent"
+          }`}
         >
           {allSelected && (
             <CheckIcon className="w-2.5 text-primary mb-[-1px] mr-[-1px]" />
           )}
         </div>
 
-        <div className="w-[33%] flex items-center">
-          <span className="block text-secondary font-semibold text-[13px] truncate">
-            Name
-          </span>
+        <div className="w-[33%] flex items-center group cursor-pointer">
+          <ScriptAtributeTitle
+            sorting={sorting}
+            setSorting={setSorting}
+            value={{
+              sortedBy: "title",
+              order:
+                sorting.sortedBy === "title" // Changed from sorting.sortBy
+                  ? sorting.order === "asc"
+                    ? "desc"
+                    : "asc"
+                  : "desc",
+            }}
+          >
+            <span className="block group-hover:text-primary text-secondary font-semibold text-[13px] truncate">
+              Title
+            </span>
+          </ScriptAtributeTitle>
         </div>
 
         <div className="grow flex items-center justify-between">
-          <div className="w-[110px] flex items-center">
+          <div className="w-[110px] flex items-center group">
             <span className="text-secondary font-semibold text-[13px]">
               Created by
             </span>
           </div>
 
-          <div className="w-[110px] flex items-center">
-            <span className="text-secondary font-semibold text-[13px]">
-              Last modified
-            </span>
+          <div className="w-[110px] flex items-center group cursor-pointer">
+            <ScriptAtributeTitle
+              sorting={sorting}
+              setSorting={setSorting}
+              value={{
+                sortedBy: "lastModified",
+                order:
+                  sorting.sortedBy === "lastModified" // Changed from sorting.sortBy
+                    ? sorting.order === "asc"
+                      ? "desc"
+                      : "asc"
+                    : "desc",
+              }}
+            >
+              <span className="group-hover:text-primary text-secondary font-semibold text-[13px]">
+                Last modified
+              </span>
+            </ScriptAtributeTitle>
           </div>
 
-          <div className="w-[110px] pr-1 flex items-center">
+          <div className="w-[110px] pr-1 flex items-center group">
             <span className="text-secondary font-semibold text-[13px]">
               Participants
             </span>
@@ -108,9 +177,7 @@ export default function ListView({ displayType, scriptsWithTimestamps }: any) {
             <div className="button-icon !invisible">
               <StarIcon className="h-4" />
             </div>
-
             <ClockIcon className="text-secondary h-[13px]" />
-
             <div className="button-icon !invisible">
               <MoreIcon className="h-3" />
             </div>
@@ -132,7 +199,7 @@ export default function ListView({ displayType, scriptsWithTimestamps }: any) {
                   key={script.id}
                   onClick={() => setSelectedDocuments([script.id])}
                   onDoubleClick={() => handleOpenDocument(script.id)}
-                  className={`group/main h-[54px] px-4 flex gap-4 items-center justify-start select-none rounded-[14px] ${
+                  className={`group/main h-[54px] px-4 flex gap-4 items-center justify-start select-none rounded-[10px] ${
                     selectedDocuments.includes(script.id)
                       ? "bg-selected"
                       : "hover:bg-battleground"
@@ -142,7 +209,7 @@ export default function ListView({ displayType, scriptsWithTimestamps }: any) {
                     onClick={(e) => handleSelectDocument(script.id, e)}
                     className={`script-select ${
                       selectedDocuments.includes(script.id)
-                        ? ""
+                        ? "!border-none"
                         : "!bg-transparent"
                     }`}
                   >
@@ -170,7 +237,7 @@ export default function ListView({ displayType, scriptsWithTimestamps }: any) {
                         firstName={user?.firstName}
                         lastName={user?.lastName}
                       />
-                      <span className="text-inactive font-semibold text-sm mb-[-3px] truncate group-hover/main:text-primary cursor-pointer hover:underline">
+                      <span className="text-inactive font-semibold text-[13px] mb-[-3px] truncate group-hover/main:text-primary cursor-pointer hover:underline">
                         You
                       </span>
                     </div>

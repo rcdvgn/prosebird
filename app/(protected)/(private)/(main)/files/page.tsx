@@ -97,9 +97,9 @@ export default function Files() {
                 }}
                 transition={{ duration: 0.2, ease: "easeInOut" }}
                 onAnimationComplete={() => {
-                  if (!isUserOptionsVisible) setShouldRender(false); // Hide AFTER exit animation
+                  if (!isUserOptionsVisible) setShouldRender(false);
                 }}
-                className={`absolute right-0 top-full mt-4 flex-col gap-1 min-w-48 p-1 bg-foreground rounded-[10px] ring-1 ring-stroke ${
+                className={`absolute right-0 top-full mt-4 flex-col gap-1 min-w-48 p-1 bg-foreground rounded-[10px] ring-1 ring-stroke z-50 ${
                   shouldRender ? "flex" : "hidden"
                 }`}
               >

@@ -5,11 +5,6 @@ import ProfilePicture from "../ProfilePicture";
 
 const PresentationTooltip = forwardRef<any, any>(
   ({ data, className, style }, ref) => {
-    useEffect(() => {
-      //   console.log("Hosts:", data.presentationHosts);
-      console.log("Participants:", data.presentationParticipants);
-    }, [data]);
-
     return (
       <div
         ref={ref}
