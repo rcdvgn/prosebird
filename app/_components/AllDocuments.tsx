@@ -15,8 +15,8 @@ import formatScript from "../_lib/formatScript";
 import calculateTimestamps from "../_lib/addTimestamps";
 import { getNodes, getUserPreferences } from "../_services/client";
 import { useAuth } from "../_contexts/AuthContext";
-import { lastModifiedFormatter } from "../_utils/lastModifiedFormater";
 import DropdownWrapper from "./wrappers/DropdownWrapper";
+import { isScriptShared } from "../_utils/isScriptShared";
 
 export default function AllDocuments() {
   // const { recentlyModified } = useRecentScripts();
@@ -33,6 +33,8 @@ export default function AllDocuments() {
     useState<any>(false);
 
   const [roleFilter, setRoleFilter] = useState<any>(null);
+  const [favoriteFilter, setFavoriteFilter] = useState<any>(null);
+  const [sharedFilter, setSharedFilter] = useState<any>(null);
 
   const { scripts } = useRealtimeData();
   const { user } = useAuth();
@@ -84,6 +86,16 @@ export default function AllDocuments() {
     getScriptPreviews();
   }, [scripts, user?.id]);
 
+  const matchToRole = (script: any) => {
+    if (roleFilter === "Author" && script.createdBy === user?.id) return true;
+    if (roleFilter === "Editor" && script.editors.includes(user?.id))
+      return true;
+    if (roleFilter === "Viewer" && script.viewers.includes(user?.id))
+      return true;
+
+    return false;
+  };
+
   const sortScripts = (scripts: any) => {
     if (!scripts) return;
 
@@ -101,20 +113,12 @@ export default function AllDocuments() {
       sortedScripts = [];
     }
 
-    const matchRole = (script: any) => {
-      if (roleFilter === "Author" && script.createdBy === user?.id) return true;
-      if (roleFilter === "Editor" && script.editors.includes(user?.id))
-        return true;
-      if (roleFilter === "Viewer" && script.viewers.includes(user?.id))
-        return true;
-
-      return false;
-    };
-
     const filteredScripts = sortedScripts.filter((script: any) => {
-      const filterByRole = roleFilter ? matchRole(script) : true;
+      const filterByRole = roleFilter ? matchToRole(script) : true;
+      const filterByFavorite = favoriteFilter ? script.isFavorite : true;
+      const filterByShared = sharedFilter ? isScriptShared(script) : true;
 
-      return filterByRole;
+      return filterByRole && filterByFavorite && filterByShared;
     });
 
     return sorting.order === "asc"
@@ -164,7 +168,7 @@ export default function AllDocuments() {
                 setIsVisible={setIsRoleFilterOptionsVisible}
                 options={roleFilterOptions}
               >
-                <div className="filter-1-selected !rounded-r-none">
+                <div className="filter-1 filter-1-selected !rounded-r-none">
                   <span className="font-semibold text-[13px] flex items-center">
                     {roleFilter}
                   </span>
@@ -189,7 +193,7 @@ export default function AllDocuments() {
               setIsVisible={setIsRoleFilterOptionsVisible}
               options={roleFilterOptions}
             >
-              <div className="filter-1-default">
+              <div className="filter-1 filter-1-inactive">
                 <span className="font-semibold text-[13px]">Role</span>
                 <TriangleExpandIcon
                   className={`w-1.5 transition-rotate duration-150 ease-in-out ${
@@ -199,6 +203,34 @@ export default function AllDocuments() {
               </div>
             </DropdownWrapper>
           )}
+
+          <div
+            onClick={() =>
+              setFavoriteFilter(
+                (currFavoriteFilter: any) => !currFavoriteFilter
+              )
+            }
+            className={`filter-1 ${
+              favoriteFilter
+                ? "bg-brand/10 hover:bg-brand/15 text-brand"
+                : "bg-battleground text-inactive hover:text-primary"
+            }`}
+          >
+            <span className="font-semibold text-[13px]">Favorite</span>
+          </div>
+
+          <div
+            onClick={() =>
+              setSharedFilter((currSharedFilter: any) => !currSharedFilter)
+            }
+            className={`filter-1 ${
+              sharedFilter
+                ? "bg-brand/10 hover:bg-brand/15 text-brand"
+                : "bg-battleground text-inactive hover:text-primary"
+            }`}
+          >
+            <span className="font-semibold text-[13px]">Shared</span>
+          </div>
         </div>
 
         <div className="h-full flex gap-1">

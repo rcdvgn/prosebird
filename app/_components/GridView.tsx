@@ -9,6 +9,7 @@ import {
 
 import formatTimestamp from "../_utils/formatTimestamp";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function GridView({
   displayType,
@@ -18,6 +19,10 @@ export default function GridView({
   fontSize,
 }: any) {
   const router = useRouter();
+
+  useEffect(() => {
+    console.log(scriptsWithTimestamps);
+  }, [scriptsWithTimestamps]);
 
   return (
     <div

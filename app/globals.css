@@ -179,12 +179,16 @@ textarea::-webkit-scrollbar {
     @apply h-[44px] aspect-square grid place-items-center transition-all ease-in-out duration-150 rounded-xl cursor-pointer;
   }
 
-  .filter-1-default {
-    @apply flex h-8 items-center gap-2 px-3 text-inactive hover:text-primary cursor-pointer rounded-lg bg-battleground hover:bg-hover;
+  .filter-1 {
+    @apply flex h-8 items-center gap-2 px-3 rounded-lg cursor-pointer;
+  }
+
+  .filter-1-inactive {
+    @apply text-inactive bg-battleground hover:text-primary hover:bg-hover;
   }
 
   .filter-1-selected {
-    @apply px-3 flex h-8 items-center gap-2 text-brand bg-brand/10 hover:bg-brand/15 rounded-lg cursor-pointer;
+    @apply text-brand bg-brand/10 hover:bg-brand/15;
   }
 
   .filter-1-selected-clear {
