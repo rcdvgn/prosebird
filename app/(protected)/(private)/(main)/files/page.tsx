@@ -20,9 +20,7 @@ export default function Files() {
   const { openModal } = useModal();
   const { user, logout } = useAuth();
 
-  const profilePictureWrapper = useRef<any>(null);
-
-  const [isUserOptionsVisible, setIsUserOptionsVisible] = useState<any>(false);
+  const [isVisible, setIsVisible] = useState<any>(false);
 
   const router = useRouter();
 
@@ -34,25 +32,15 @@ export default function Files() {
     }
   };
 
-  const handleCloseProfileOptions = () => {
-    setIsUserOptionsVisible(false);
-  };
-
   const handleSettings = () => {
     openModal({ content: <Settings />, name: "settings" });
   };
 
-  const [shouldRender, setShouldRender] = useState(isUserOptionsVisible);
+  // const [shouldRender, setShouldRender] = useState(isUserOptionsVisible);
 
   const handleOptionClick = (option: any) => {
     console.log(option);
   };
-
-  useEffect(() => {
-    if (isUserOptionsVisible) {
-      setShouldRender(true);
-    }
-  }, [isUserOptionsVisible]);
 
   return (
     <div className="flex flex-col w-full">
@@ -77,6 +65,8 @@ export default function Files() {
 
           <DropdownWrapper
             align="right"
+            isVisible={isVisible}
+            setIsVisible
             options={[
               { text: "Settings", onClick: handleSettings },
               { text: "Log out", onClick: logout },
@@ -86,18 +76,12 @@ export default function Files() {
               },
             ]}
           >
-            <span
-              ref={profilePictureWrapper}
-              onClick={() => setIsUserOptionsVisible((prev: boolean) => !prev)}
-              className="block"
-            >
-              <ProfilePicture
-                profilePictureURL={user?.profilePictureURL}
-                className="h-9 cursor-pointer"
-                firstName={user?.firstName}
-                lastName={user?.lastName}
-              />
-            </span>
+            <ProfilePicture
+              profilePictureURL={user?.profilePictureURL}
+              className="h-9 cursor-pointer"
+              firstName={user?.firstName}
+              lastName={user?.lastName}
+            />
           </DropdownWrapper>
         </div>
       </div>

@@ -10,6 +10,7 @@ import {
 } from "../_assets/icons";
 import { lastModifiedFormatter } from "../_utils/lastModifiedFormater";
 import OutsideClickHandler from "./wrappers/OutsideClickHandler";
+import { useRouter } from "next/navigation";
 import {
   changeFavoriteStatus,
   getNodes,
@@ -27,7 +28,7 @@ const ScriptAtributeTitle = ({ children, sorting, setSorting, value }: any) => {
       {sorting.sortedBy === value.sortedBy && (
         <span
           className={`rounded-full h-3.5 w-3.5 grid place-items-center bg-brand transition-rotate duration-150 ease-in-out ${
-            value.order === "asc" ? "" : "rotate-180"
+            value.order === "asc" ? "rotate-180" : ""
           }`}
         >
           <ArrowIcon className="h-2 text-primary" />
@@ -51,6 +52,7 @@ export default function ListView({
 }: any) {
   const { people } = useRealtimeData();
   const { user } = useAuth();
+  const router = useRouter();
 
   const [selectedDocuments, setSelectedDocuments] = useState<any>([]);
   const selectAllButton = useRef(null);
@@ -76,10 +78,6 @@ export default function ListView({
     }
   };
 
-  const handleOpenDocument = (docId: any) => {
-    console.log("About to open document " + docId);
-  };
-
   const allSelected = scriptsWithTimestamps
     ? selectedDocuments.length === scriptsWithTimestamps.length
     : false;
@@ -95,11 +93,6 @@ export default function ListView({
       }
     }
   };
-
-  useEffect(() => {
-    if (!scriptsWithTimestamps) return;
-    console.log(scriptsWithTimestamps);
-  }, [scriptsWithTimestamps]);
 
   return (
     <div
@@ -198,7 +191,7 @@ export default function ListView({
                 <div
                   key={script.id}
                   onClick={() => setSelectedDocuments([script.id])}
-                  onDoubleClick={() => handleOpenDocument(script.id)}
+                  onDoubleClick={() => router.push("/file/" + script.id)}
                   className={`group/main h-[54px] px-4 flex gap-4 items-center justify-start select-none rounded-[10px] ${
                     selectedDocuments.includes(script.id)
                       ? "bg-selected"
@@ -220,7 +213,7 @@ export default function ListView({
 
                   <div className="w-[33%] flex">
                     <span
-                      onClick={() => handleOpenDocument(script.id)}
+                      onClick={() => router.push("/file/" + script.id)}
                       className="block text-primary font-semibold text-sm truncate hover:underline cursor-pointer"
                     >
                       {script.title}

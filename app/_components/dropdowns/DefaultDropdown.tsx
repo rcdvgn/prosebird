@@ -1,15 +1,24 @@
 import { motion } from "framer-motion";
 
-const DefaultDropdown = ({ options, align }: any) => {
+const DefaultDropdown = ({
+  options,
+  align,
+  isVisible,
+  shouldRender,
+  setShouldRender,
+}: any) => {
   return (
     <motion.div
       initial={{ opacity: 0, translateY: -4 }}
-      animate={{ opacity: 1, translateY: 0 }}
+      animate={{ opacity: isVisible ? 1 : 0, translateY: isVisible ? 0 : -4 }}
       exit={{ opacity: 0, translateY: -4 }}
       transition={{ duration: 0.2, ease: "easeInOut" }}
+      onAnimationComplete={() => {
+        if (!isVisible) setShouldRender(false);
+      }}
       className={`absolute top-full mt-4 flex-col gap-1 min-w-48 p-1 bg-foreground rounded-[10px] ring-1 ring-stroke z-50 ${
         align === "right" ? "right-0" : "left-0"
-      }`}
+      } ${shouldRender ? "flex" : "hidden"}`}
     >
       {options.map((item: any, index: any) => (
         <div

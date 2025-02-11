@@ -1,28 +1,44 @@
 "use client";
 
-import React, { useState, useRef, ReactNode } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import OutsideClickHandler from "./OutsideClickHandler";
 import DefaultDropdown from "../dropdowns/DefaultDropdown";
+
+interface DropdownWrapperProps {
+  dropdownType?: React.ComponentType<any>;
+  align?: "left" | "right";
+  options: Array<{ text: string; onClick: () => void }>;
+  isVisible: boolean;
+  setIsVisible: (value: boolean | ((prev: boolean) => boolean)) => void;
+  children: React.ReactNode;
+}
 
 const DropdownWrapper: any = ({
   dropdownType: DropdownType = DefaultDropdown,
   align = "left",
   options,
+  isVisible,
+  setIsVisible,
   children,
-}: any) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const [shouldRender, setShouldRender] = useState(true);
+}: DropdownWrapperProps) => {
+  const [shouldRender, setShouldRender] = useState<any>(isVisible);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const handleOutsideClick = () => {
     setIsVisible(false);
   };
 
+  useEffect(() => {
+    if (isVisible) {
+      setShouldRender(true);
+    }
+  }, [isVisible]);
+
   return (
     <div className="relative">
       <span
         ref={wrapperRef}
-        onClick={() => setIsVisible((prev) => !prev)}
+        onClick={() => setIsVisible((prev: any) => !prev)}
         className="block"
       >
         {children}
@@ -33,9 +49,13 @@ const DropdownWrapper: any = ({
         exceptionRefs={[wrapperRef]}
         isActive={isVisible}
       >
-        {shouldRender && isVisible && (
-          <DropdownType options={options} align={align} />
-        )}
+        <DropdownType
+          options={options}
+          align={align}
+          isVisible={isVisible}
+          shouldRender={shouldRender}
+          setShouldRender={setShouldRender}
+        />
       </OutsideClickHandler>
     </div>
   );

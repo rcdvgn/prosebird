@@ -15,6 +15,7 @@ import calculateTimestamps from "../_lib/addTimestamps";
 import { getNodes, getUserPreferences } from "../_services/client";
 import { useAuth } from "../_contexts/AuthContext";
 import { lastModifiedFormatter } from "../_utils/lastModifiedFormater";
+import DropdownWrapper from "./wrappers/DropdownWrapper";
 
 export default function AllDocuments() {
   // const { recentlyModified } = useRecentScripts();
@@ -23,12 +24,12 @@ export default function AllDocuments() {
     sortedBy: "lastModified",
     order: "desc",
   });
+  const [isVisible, setIsVisible] = useState<any>(false);
+
   const { scripts } = useRealtimeData();
   const { user } = useAuth();
 
   const [displayType, setDisplayType] = useState<any>("grid");
-  const [isSortDropdownExpanded, setIsSortDropdownExpanded] =
-    useState<any>(false);
 
   const [scriptsWithTimestamps, setScriptsWithTimestamps] = useState<any>(null);
 
@@ -95,20 +96,9 @@ export default function AllDocuments() {
     return sorting.order === "asc" ? sortedScripts.reverse() : sortedScripts;
   };
 
-  useEffect(() => {
-    if (!sorting || !scriptsWithTimestamps) return;
-
-    console.log(
-      sorting.order,
-      sortScripts(scriptsWithTimestamps).map((script: any) => {
-        return lastModifiedFormatter(script.lastModified);
-      })
-    );
-  }, [sorting, scriptsWithTimestamps]);
-
   return (
     <div className="grow px-8 py-6">
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-4">
         <span className="font-extrabold text-xl text-primary">
           All documents
         </span>
@@ -133,14 +123,14 @@ export default function AllDocuments() {
         </div>
       </div>
 
-      <div className="flex justify-between h-8 w-full mb-2">
+      <div className="flex justify-between h-8 w-full mb-4">
         <div className=""></div>
 
         <div className="h-full flex gap-1">
           <span
             onClick={() => {
-              setSorting((oldSorting: any) => ({
-                ...oldSorting,
+              setSorting((currSorting: any) => ({
+                ...currSorting,
                 order: sorting.order === "asc" ? "desc" : "asc",
               }));
             }}
@@ -148,26 +138,53 @@ export default function AllDocuments() {
           >
             <ArrowIcon
               className={`h-3.5 transition-rotate duration-150 ease-in-out ${
-                sorting.order === "asc" ? "rotate-180" : ""
+                sorting.order === "asc" ? "" : "rotate-180"
               }`}
             />
           </span>
 
-          <span
-            onClick={() => setIsSortDropdownExpanded(!isSortDropdownExpanded)}
-            className={`flex items-center gap-2 rounded-lg p-2 ${
-              isSortDropdownExpanded
-                ? "text-inactive cursor-default"
-                : "text-inactive hover:bg-hover hover:text-primary cursor-pointer"
-            }`}
+          <DropdownWrapper
+            align="right"
+            isVisible={isVisible}
+            setIsVisible={setIsVisible}
+            options={[
+              {
+                text: "Title",
+                onClick: () => {
+                  setSorting((currSorting: any) => ({
+                    ...currSorting,
+                    sortedBy: "title",
+                  }));
+                },
+              },
+              {
+                text: "Last modified",
+                onClick: () => {
+                  setSorting((currSorting: any) => ({
+                    ...currSorting,
+                    sortedBy: "lastModified",
+                  }));
+                },
+              },
+            ]}
           >
-            <span className="text-[13px] font-semibold">Last modified</span>
-            <TriangleExpandIcon
-              className={`w-2 transition-rotate duration-150 ease-in-out ${
-                isSortDropdownExpanded ? "rotate-180" : ""
+            <span
+              className={`flex items-center gap-2 rounded-lg p-2 cursor-pointer ${
+                isVisible
+                  ? "bg-hover text-primary"
+                  : "text-inactive hover:bg-hover hover:text-primary"
               }`}
-            />
-          </span>
+            >
+              <span className="text-[13px] font-semibold">
+                {sorting === "createdAt" ? "Created at" : "Last modified"}
+              </span>
+              <TriangleExpandIcon
+                className={`w-2 transition-rotate duration-150 ease-in-out ${
+                  isVisible ? "rotate-180" : ""
+                }`}
+              />
+            </span>
+          </DropdownWrapper>
         </div>
       </div>
 
