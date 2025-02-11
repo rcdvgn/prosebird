@@ -1,6 +1,6 @@
 "use client";
 
-import { forwardRef, useEffect } from "react";
+import { forwardRef } from "react";
 import ProfilePicture from "../ProfilePicture";
 
 const PresentationTooltip = forwardRef<any, any>(

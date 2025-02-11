@@ -20,8 +20,6 @@ export default function Files() {
   const { openModal } = useModal();
   const { user, logout } = useAuth();
 
-  const [isVisible, setIsVisible] = useState<any>(false);
-
   const router = useRouter();
 
   const handleCreateScript = async () => {
@@ -65,8 +63,6 @@ export default function Files() {
 
           <DropdownWrapper
             align="right"
-            isVisible={isVisible}
-            setIsVisible
             options={[
               { text: "Settings", onClick: handleSettings },
               { text: "Log out", onClick: logout },

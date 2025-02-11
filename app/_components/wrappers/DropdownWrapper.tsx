@@ -8,20 +8,26 @@ interface DropdownWrapperProps {
   dropdownType?: React.ComponentType<any>;
   align?: "left" | "right";
   options: Array<{ text: string; onClick: () => void }>;
-  isVisible: boolean;
-  setIsVisible: (value: boolean | ((prev: boolean) => boolean)) => void;
+  isVisible?: boolean; // Made optional
+  setIsVisible?: (value: boolean | ((prev: boolean) => boolean)) => void; // Made optional
+  closeOnClick?: boolean;
   children: React.ReactNode;
 }
 
-const DropdownWrapper: any = ({
+const DropdownWrapper: React.FC<DropdownWrapperProps> = ({
   dropdownType: DropdownType = DefaultDropdown,
   align = "left",
   options,
-  isVisible,
-  setIsVisible,
+  isVisible: externalIsVisible,
+  setIsVisible: externalSetIsVisible,
+  closeOnClick = true,
   children,
-}: DropdownWrapperProps) => {
-  const [shouldRender, setShouldRender] = useState<any>(isVisible);
+}) => {
+  const [internalIsVisible, setInternalIsVisible] = useState<boolean>(false);
+  const isVisible = externalIsVisible ?? internalIsVisible;
+  const setIsVisible = externalSetIsVisible ?? setInternalIsVisible;
+
+  const [shouldRender, setShouldRender] = useState<boolean>(isVisible);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const handleOutsideClick = () => {
@@ -38,7 +44,7 @@ const DropdownWrapper: any = ({
     <div className="relative">
       <span
         ref={wrapperRef}
-        onClick={() => setIsVisible((prev: any) => !prev)}
+        onClick={() => setIsVisible((prev) => !prev)}
         className="block"
       >
         {children}
@@ -53,8 +59,10 @@ const DropdownWrapper: any = ({
           options={options}
           align={align}
           isVisible={isVisible}
+          setIsVisible={setIsVisible}
           shouldRender={shouldRender}
           setShouldRender={setShouldRender}
+          closeOnClick={closeOnClick}
         />
       </OutsideClickHandler>
     </div>

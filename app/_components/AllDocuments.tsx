@@ -24,7 +24,14 @@ export default function AllDocuments() {
     sortedBy: "lastModified",
     order: "desc",
   });
-  const [isVisible, setIsVisible] = useState<any>(false);
+
+  const [isSortingOptionsVisible, setIsSortingOptionsVisible] =
+    useState<any>(false);
+
+  const [isRoleFilterOptionsVisible, setIsRoleFilterOptionsVisible] =
+    useState<any>(false);
+
+  const [roleFilter, setRoleFilter] = useState<any>(null);
 
   const { scripts } = useRealtimeData();
   const { user } = useAuth();
@@ -98,7 +105,7 @@ export default function AllDocuments() {
 
   return (
     <div className="grow px-8 py-6">
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-between items-center mb-8">
         <span className="font-extrabold text-xl text-primary">
           All documents
         </span>
@@ -123,8 +130,43 @@ export default function AllDocuments() {
         </div>
       </div>
 
-      <div className="flex justify-between h-8 w-full mb-4">
-        <div className=""></div>
+      <div className="flex justify-between h-8 w-full mb-6">
+        <div className="flex items-center gap-2">
+          <DropdownWrapper
+            isVisible={isRoleFilterOptionsVisible}
+            setIsVisible={setIsRoleFilterOptionsVisible}
+            options={[
+              { text: "Author", onClick: () => setRoleFilter("Author") },
+              { text: "Editor", onClick: () => setRoleFilter("Editor") },
+              { text: "Viewer", onClick: () => setRoleFilter("Viewer") },
+            ]}
+          >
+            {roleFilter ? (
+              <div className="flex h-8 gap-[2px] text-brand">
+                <span className="bg-brand/10 hover:brand/15 h-full rounded-l-lg font-semibold text-[13px] flex items-center px-3 cursor-pointer">
+                  {roleFilter}
+                </span>
+
+                <span className="bg-brand/10 hover:brand/15 h-full rounded-r-lg flex items-center px-2.5 cursor-pointer">
+                  <TriangleExpandIcon
+                    className={`w-1.5 ${
+                      isRoleFilterOptionsVisible ? "rotate-180" : ""
+                    }`}
+                  />
+                </span>
+              </div>
+            ) : (
+              <div className="flex h-8 items-center gap-2 px-3 text-inactive hover:text-primary cursor-pointer rounded-lg bg-battleground hover:bg-hover">
+                <span className="font-semibold text-[13px]">Role</span>
+                <TriangleExpandIcon
+                  className={`w-1.5 ${
+                    isRoleFilterOptionsVisible ? "rotate-180" : ""
+                  }`}
+                />
+              </div>
+            )}
+          </DropdownWrapper>
+        </div>
 
         <div className="h-full flex gap-1">
           <span
@@ -145,8 +187,8 @@ export default function AllDocuments() {
 
           <DropdownWrapper
             align="right"
-            isVisible={isVisible}
-            setIsVisible={setIsVisible}
+            isVisible={isSortingOptionsVisible}
+            setIsVisible={setIsSortingOptionsVisible}
             options={[
               {
                 text: "Title",
@@ -170,7 +212,7 @@ export default function AllDocuments() {
           >
             <span
               className={`flex items-center gap-2 rounded-lg p-2 cursor-pointer ${
-                isVisible
+                isSortingOptionsVisible
                   ? "bg-hover text-primary"
                   : "text-inactive hover:bg-hover hover:text-primary"
               }`}
@@ -179,8 +221,8 @@ export default function AllDocuments() {
                 {sorting === "createdAt" ? "Created at" : "Last modified"}
               </span>
               <TriangleExpandIcon
-                className={`w-2 transition-rotate duration-150 ease-in-out ${
-                  isVisible ? "rotate-180" : ""
+                className={`w-1.5 transition-rotate duration-150 ease-in-out ${
+                  isSortingOptionsVisible ? "rotate-180" : ""
                 }`}
               />
             </span>

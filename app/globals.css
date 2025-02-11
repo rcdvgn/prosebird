@@ -116,7 +116,7 @@ textarea::-webkit-scrollbar {
   }
 
   .script-select {
-    @apply rounded-[5px] h-5 w-5 border-2 border-border cursor-pointer shrink-0 bg-brand grid place-items-center;
+    @apply rounded-[5px] h-5 w-5 border-[1px] border-border cursor-pointer shrink-0 bg-brand grid place-items-center;
   }
 
   .input-default {

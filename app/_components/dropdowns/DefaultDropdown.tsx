@@ -4,9 +4,16 @@ const DefaultDropdown = ({
   options,
   align,
   isVisible,
+  setIsVisible,
   shouldRender,
   setShouldRender,
+  closeOnClick,
 }: any) => {
+  const handleClick = (func: any) => {
+    func();
+    closeOnClick ? setIsVisible(false) : "";
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, translateY: -4 }}
@@ -23,8 +30,8 @@ const DefaultDropdown = ({
       {options.map((item: any, index: any) => (
         <div
           key={index}
-          onClick={item.onClick}
-          className="px-3 py-2.5 rounded-md hover:bg-hover cursor-pointer font-bold text-[13px] text-inactive hover:text-primary"
+          onClick={() => handleClick(item.onClick)}
+          className="px-3 py-2.5 rounded-md hover:bg-hover cursor-pointer font-semibold text-[13px] text-inactive hover:text-primary"
         >
           {item.text}
         </div>

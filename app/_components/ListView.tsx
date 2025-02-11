@@ -105,7 +105,9 @@ export default function ListView({
           ref={selectAllButton}
           onClick={handleSelectAll}
           className={`script-select ${
-            allSelected ? "!border-none" : "!bg-transparent"
+            allSelected
+              ? "!border-none"
+              : "!bg-transparent hover:!border-placeholder"
           }`}
         >
           {allSelected && (
@@ -203,7 +205,7 @@ export default function ListView({
                     className={`script-select ${
                       selectedDocuments.includes(script.id)
                         ? "!border-none"
-                        : "!bg-transparent"
+                        : "!bg-transparent group-hover/main:!border-placeholder"
                     }`}
                   >
                     {selectedDocuments.includes(script.id) && (
