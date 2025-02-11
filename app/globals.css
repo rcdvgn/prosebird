@@ -180,7 +180,7 @@ textarea::-webkit-scrollbar {
   }
 
   .filter-1 {
-    @apply flex h-8 items-center gap-2 px-3 rounded-lg cursor-pointer;
+    @apply flex h-8 items-center gap-2 px-3.5 rounded-full cursor-pointer;
   }
 
   .filter-1-inactive {
@@ -192,6 +192,6 @@ textarea::-webkit-scrollbar {
   }
 
   .filter-1-selected-clear {
-    @apply flex text-brand bg-brand/10 hover:bg-brand/15 h-full rounded-r-lg items-center px-2.5 cursor-pointer;
+    @apply flex text-brand bg-brand/10 hover:bg-brand/15 h-full rounded-r-full items-center px-2.5 cursor-pointer;
   }
 }

@@ -38,7 +38,7 @@ const ScriptAtributeTitle = ({ children, sorting, setSorting, value }: any) => {
         onClick={() => {
           setSorting(value);
         }}
-        className="absolute inset-y-0 left-1/2 transform -translate-x-1/2 m-auto bg-hover rounded-lg h-[calc(100%+16px)] w-[calc(100%+16px)] opacity-0 group-hover:opacity-100 transition-opacity duration-75 ease-in-out"
+        className="absolute inset-y-0 left-1/2 transform -translate-x-1/2 m-auto bg-hover rounded-lg h-[calc(100%+8px)] w-[calc(100%+16px)] opacity-0 group-hover:opacity-100 transition-opacity duration-75 ease-in-out"
       ></div>
     </div>
   );

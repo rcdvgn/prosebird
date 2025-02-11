@@ -134,7 +134,7 @@ export default function AllDocuments() {
 
   return (
     <div className="grow px-8 py-6">
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex justify-between items-center mb-6">
         <span className="font-extrabold text-xl text-primary">
           All documents
         </span>
@@ -283,7 +283,7 @@ export default function AllDocuments() {
               }`}
             >
               <span className="text-[13px] font-semibold">
-                {sorting === "createdAt" ? "Created at" : "Last modified"}
+                {sorting.sortedBy === "title" ? "Title" : "Last modified"}
               </span>
               <TriangleExpandIcon
                 className={`w-1.5 transition-rotate duration-150 ease-in-out ${

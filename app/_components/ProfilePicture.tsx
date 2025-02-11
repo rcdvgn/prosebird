@@ -16,7 +16,7 @@ const ProfilePicturePlaceholder = ({ className, firstName, lastName }: any) => {
     <div
       className={`aspect-square rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0 min-w-0 ${className}`}
     >
-      <span className="text-gray-500 text-[length:2cqmin] font-bold">
+      <span className="text-gray-500 text-[2cqb] font-bold">
         {(firstName[0] + lastName[0]).toUpperCase()}
       </span>
     </div>

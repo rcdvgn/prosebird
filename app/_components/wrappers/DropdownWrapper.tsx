@@ -7,21 +7,25 @@ import DefaultDropdown from "../dropdowns/DefaultDropdown";
 interface DropdownWrapperProps {
   dropdownType?: React.ComponentType<any>;
   align?: "left" | "right";
+  position?: "top" | "bottom";
   options: Array<{ text: string; onClick: () => void }>;
   isVisible?: boolean; // Made optional
   setIsVisible?: (value: boolean | ((prev: boolean) => boolean)) => void; // Made optional
   closeOnClick?: boolean;
   children: React.ReactNode;
+  isActive?: boolean; // Added isActive
 }
 
 const DropdownWrapper: React.FC<DropdownWrapperProps> = ({
   dropdownType: DropdownType = DefaultDropdown,
   align = "left",
+  position = "bottom",
   options,
   isVisible: externalIsVisible,
   setIsVisible: externalSetIsVisible,
   closeOnClick = true,
   children,
+  isActive = true, // Default to true
 }) => {
   const [internalIsVisible, setInternalIsVisible] = useState<boolean>(false);
   const isVisible = externalIsVisible ?? internalIsVisible;
@@ -31,7 +35,7 @@ const DropdownWrapper: React.FC<DropdownWrapperProps> = ({
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const handleOutsideClick = () => {
-    setIsVisible(false);
+    if (isActive) setIsVisible(false);
   };
 
   useEffect(() => {
@@ -40,11 +44,16 @@ const DropdownWrapper: React.FC<DropdownWrapperProps> = ({
     }
   }, [isVisible]);
 
+  // If isActive is false, render children without functionality
+  if (!isActive) {
+    return <div className="relative">{children}</div>;
+  }
+
   return (
     <div className="relative">
       <span
         ref={wrapperRef}
-        onClick={() => setIsVisible((prev) => !prev)}
+        onClick={() => isActive && setIsVisible((prev) => !prev)}
         className="block"
       >
         {children}
@@ -58,6 +67,7 @@ const DropdownWrapper: React.FC<DropdownWrapperProps> = ({
         <DropdownType
           options={options}
           align={align}
+          position={position}
           isVisible={isVisible}
           setIsVisible={setIsVisible}
           shouldRender={shouldRender}

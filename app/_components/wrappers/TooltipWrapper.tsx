@@ -5,6 +5,7 @@ import DefaultTooltip from "../tooltips/DefaultTooltip";
 export default function TooltipWrapper({
   children,
   position = "top",
+  className = "",
   tooltipType: TooltipComponent = DefaultTooltip,
   data,
 }: any) {
@@ -68,7 +69,7 @@ export default function TooltipWrapper({
       <TooltipComponent
         ref={tooltipRef}
         data={data}
-        className={`fixed z-[9999] opacity-0 group-hover:opacity-100 pointer-events-none ${getTranslateClass()}`}
+        className={`fixed z-[9999] opacity-0 group-hover:opacity-100 pointer-events-none ${className} ${getTranslateClass()}`}
         style={{ top: tooltipPosition.top, left: tooltipPosition.left }}
       />
     </div>

@@ -9,7 +9,6 @@ import {
 
 import formatTimestamp from "../_utils/formatTimestamp";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
 export default function GridView({
   displayType,
@@ -19,10 +18,6 @@ export default function GridView({
   fontSize,
 }: any) {
   const router = useRouter();
-
-  useEffect(() => {
-    console.log(scriptsWithTimestamps);
-  }, [scriptsWithTimestamps]);
 
   return (
     <div
@@ -60,7 +55,7 @@ export default function GridView({
                   );
                 })}
 
-                <div className="absolute opacity-0 group-hover/container:opacity-100 flex items-center gap-2 right-[18px] bottom-3 p-2 rounded-full bg-background transition-opacity duration-300 ease-in-out">
+                <div className="absolute opacity-0 group-hover/container:opacity-100 flex items-center gap-2 right-[18px] bottom-3 p-2 rounded-full bg-battleground transition-opacity duration-300 ease-in-out">
                   <ClockIcon className="h-3 text-secondary" />
                   <span className="font-semibold text-xs text-primary">
                     {formatTimestamp(script.duration)}
