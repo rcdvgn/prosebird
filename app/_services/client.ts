@@ -44,7 +44,7 @@ export const createScript: any = async (userId: any) => {
     createdAt: serverTimestamp(),
     lastModified: serverTimestamp(),
     isFavorite: false,
-    editors: [],
+    editors: [userId],
     viewers: [],
     guests: [],
   };

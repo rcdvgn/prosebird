@@ -906,7 +906,7 @@ export function HelpIcon({ className }: any) {
   );
 }
 
-export function EndedIcon({ className }: any) {
+export function XIcon({ className }: any) {
   return (
     <svg
       className={className}

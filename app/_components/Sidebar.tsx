@@ -5,7 +5,7 @@ import {
   AddIcon,
   CloseIcon,
   DashboardIcon,
-  EndedIcon,
+  XIcon,
   HelpIcon,
   InboxIcon,
   LogoIcon,

@@ -5,6 +5,7 @@ import ListView from "./ListView";
 import GridView from "./GridView";
 import {
   ArrowIcon,
+  XIcon,
   GridViewIcon,
   ListViewIcon,
   TriangleExpandIcon,
@@ -100,8 +101,32 @@ export default function AllDocuments() {
       sortedScripts = [];
     }
 
-    return sorting.order === "asc" ? sortedScripts.reverse() : sortedScripts;
+    const matchRole = (script: any) => {
+      if (roleFilter === "Author" && script.createdBy === user?.id) return true;
+      if (roleFilter === "Editor" && script.editors.includes(user?.id))
+        return true;
+      if (roleFilter === "Viewer" && script.viewers.includes(user?.id))
+        return true;
+
+      return false;
+    };
+
+    const filteredScripts = sortedScripts.filter((script: any) => {
+      const filterByRole = roleFilter ? matchRole(script) : true;
+
+      return filterByRole;
+    });
+
+    return sorting.order === "asc"
+      ? filteredScripts.reverse()
+      : filteredScripts;
   };
+
+  const roleFilterOptions = [
+    { text: "Author", onClick: () => setRoleFilter("Author") },
+    { text: "Editor", onClick: () => setRoleFilter("Editor") },
+    { text: "Viewer", onClick: () => setRoleFilter("Viewer") },
+  ];
 
   return (
     <div className="grow px-8 py-6">
@@ -132,40 +157,48 @@ export default function AllDocuments() {
 
       <div className="flex justify-between h-8 w-full mb-6">
         <div className="flex items-center gap-2">
-          <DropdownWrapper
-            isVisible={isRoleFilterOptionsVisible}
-            setIsVisible={setIsRoleFilterOptionsVisible}
-            options={[
-              { text: "Author", onClick: () => setRoleFilter("Author") },
-              { text: "Editor", onClick: () => setRoleFilter("Editor") },
-              { text: "Viewer", onClick: () => setRoleFilter("Viewer") },
-            ]}
-          >
-            {roleFilter ? (
-              <div className="flex h-8 gap-[2px] text-brand">
-                <span className="bg-brand/10 hover:brand/15 h-full rounded-l-lg font-semibold text-[13px] flex items-center px-3 cursor-pointer">
-                  {roleFilter}
-                </span>
-
-                <span className="bg-brand/10 hover:brand/15 h-full rounded-r-lg flex items-center px-2.5 cursor-pointer">
+          {roleFilter ? (
+            <div className="flex gap-[1px] h-8">
+              <DropdownWrapper
+                isVisible={isRoleFilterOptionsVisible}
+                setIsVisible={setIsRoleFilterOptionsVisible}
+                options={roleFilterOptions}
+              >
+                <div className="filter-1-selected !rounded-r-none">
+                  <span className="font-semibold text-[13px] flex items-center">
+                    {roleFilter}
+                  </span>
                   <TriangleExpandIcon
-                    className={`w-1.5 ${
+                    className={`w-1.5 transition-rotate duration-150 ease-in-out ${
                       isRoleFilterOptionsVisible ? "rotate-180" : ""
                     }`}
                   />
-                </span>
+                </div>
+              </DropdownWrapper>
+
+              <div
+                onClick={() => setRoleFilter(null)}
+                className="filter-1-selected-clear"
+              >
+                <XIcon className="h-2" />
               </div>
-            ) : (
-              <div className="flex h-8 items-center gap-2 px-3 text-inactive hover:text-primary cursor-pointer rounded-lg bg-battleground hover:bg-hover">
+            </div>
+          ) : (
+            <DropdownWrapper
+              isVisible={isRoleFilterOptionsVisible}
+              setIsVisible={setIsRoleFilterOptionsVisible}
+              options={roleFilterOptions}
+            >
+              <div className="filter-1-default">
                 <span className="font-semibold text-[13px]">Role</span>
                 <TriangleExpandIcon
-                  className={`w-1.5 ${
+                  className={`w-1.5 transition-rotate duration-150 ease-in-out ${
                     isRoleFilterOptionsVisible ? "rotate-180" : ""
                   }`}
                 />
               </div>
-            )}
-          </DropdownWrapper>
+            </DropdownWrapper>
+          )}
         </div>
 
         <div className="h-full flex gap-1">
