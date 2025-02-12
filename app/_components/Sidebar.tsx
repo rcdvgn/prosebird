@@ -35,6 +35,75 @@ import TooltipWrapper from "./wrappers/TooltipWrapper";
 import capitalizeFirstLetter from "../_utils/capitalizeFirstLetter";
 import DropdownWrapper from "./wrappers/DropdownWrapper";
 import ProfilePicture from "./ProfilePicture";
+import { clearUnseenNotifications } from "../_services/client";
+
+const findUnseenNotifications = (notifications: any, onlyIds: any) => {
+  let newUnseenNotifications = notifications
+    .map((noti: any) => {
+      if (noti.unseen) {
+        return onlyIds ? noti.id : noti;
+      }
+      return null;
+    })
+    .filter((noti: any) => noti !== null && noti !== undefined);
+
+  return newUnseenNotifications;
+};
+
+const NotificationNotifier = ({ notifications, iconSelected }: any) => {
+  const [unseenNotifications, setUnseenNotifications] = useState<any>([]);
+
+  useEffect(() => {
+    if (!notifications) return;
+
+    const newUnseenNotifications = findUnseenNotifications(
+      notifications,
+      false
+    );
+
+    setUnseenNotifications(newUnseenNotifications);
+  }, [notifications]);
+
+  return unseenNotifications.length ? (
+    <div
+      className={`absolute aspect-square bg-brand rounded-full ring-2 grid place-items-center h-4 -top-2 -right-2
+        ${
+          iconSelected
+            ? "ring-transparent"
+            : "ring-background group-hover:ring-hover-solid"
+        }`}
+    >
+      <span className="text-primary text-[11px] font-semibold -translate-y-[1px]">
+        {unseenNotifications.length}
+      </span>
+    </div>
+  ) : null;
+};
+
+const LivePresentationNotifier = ({ presentations, iconSelected }: any) => {
+  const [livePresentations, setLivePresentations] = useState<any>([]);
+
+  useEffect(() => {
+    if (!presentations) return;
+
+    const newLivePresentations = presentations.filter(
+      (presentation: any) => presentation.status === "active"
+    );
+
+    setLivePresentations(newLivePresentations);
+  }, [presentations]);
+
+  return livePresentations.length ? (
+    <div
+      className={`absolute aspect-square bg-attention-red rounded-full ring-2 grid place-items-center h-1.5 -top-1 -right-1
+      ${
+        iconSelected
+          ? "ring-transparent"
+          : "ring-background group-hover:ring-hover-solid"
+      }`}
+    ></div>
+  ) : null;
+};
 
 export default function Sidebar(fileId: any) {
   const { openModal, currentModal } = useModal();
@@ -63,6 +132,20 @@ export default function Sidebar(fileId: any) {
   const handleSettings = () => {
     openModal({ content: <Settings />, name: "settings" });
   };
+
+  useEffect(() => {
+    if (currentTab !== "inbox") return;
+
+    const handleUnseenNotifications = async (unseenNotificationIds: any) => {
+      await clearUnseenNotifications(unseenNotificationIds);
+    };
+
+    const newUnseenNotificationIds = findUnseenNotifications(
+      notifications,
+      true
+    );
+    handleUnseenNotifications(newUnseenNotificationIds);
+  }, [currentTab]);
 
   return (
     <div className="flex flex-col shrink-0 pb-2">
@@ -98,11 +181,25 @@ export default function Sidebar(fileId: any) {
                           }
                           className={`nav-tabs ${
                             currentTab === tabName
-                              ? "text-brand bg-brand/15 hover:bg-brand/20"
-                              : "text-placeholder hover:text-primary hover:bg-hover"
+                              ? "group text-brand bg-brand/15 hover:bg-brand/20"
+                              : "text-placeholder hover:text-primary hover:bg-hover-solid"
                           }`}
                         >
-                          {tabValues.icon}
+                          <span className="relative">
+                            {tabValues.icon}
+                            {tabName === "presentations" && (
+                              <LivePresentationNotifier
+                                presentations={presentations}
+                                iconSelected={currentTab === tabName}
+                              />
+                            )}
+                            {tabName === "inbox" && (
+                              <NotificationNotifier
+                                notifications={notifications}
+                                iconSelected={currentTab === tabName}
+                              />
+                            )}
+                          </span>
                         </div>
                       </TooltipWrapper>
                     </div>

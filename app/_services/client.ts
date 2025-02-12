@@ -763,3 +763,16 @@ export const checkPresentationStatus = async (presentations: any) => {
     throw error;
   }
 };
+
+export const clearUnseenNotifications = async (notificationIds: string[]) => {
+  try {
+    const batchPromises = notificationIds.map(async (notificationId) => {
+      const notificationRef = doc(db, "notifications", notificationId);
+      await updateDoc(notificationRef, { unseen: false });
+    });
+
+    await Promise.all(batchPromises);
+  } catch (error) {
+    console.error("Error clearing unseen notifications:", error);
+  }
+};

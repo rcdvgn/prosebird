@@ -18,6 +18,7 @@ const config: Config = {
         battleground: "rgba(var(--battleground), <alpha-value>)",
 
         hover: "var(--hover)",
+        "hover-solid": "rgba(var(--hover-solid), <alpha-value>)",
         selected: "rgba(var(--selected), <alpha-value>)",
 
         primary: "rgba(var(--primary), <alpha-value>)",
@@ -35,7 +36,7 @@ const config: Config = {
         "money-green": "rgba(var(--money-green), <alpha-value>)",
         "online-green": "rgba(var(--online-green), <alpha-value>)",
         "favorite-yellow": "rgba(var(--favorite-yellow), <alpha-value>)",
-        "live-red": "rgba(var(--live-red), <alpha-value>)",
+        "attention-red": "rgba(var(--attention-red), <alpha-value>)",
       },
     },
   },
