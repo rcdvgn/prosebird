@@ -230,7 +230,7 @@ export default function Sidebar(fileId: any) {
             currentTab ? "mx-[18px]" : "items-center"
           }`}
         >
-          <div className="flex justify-between">
+          <div className="flex justify-between items-center">
             <DropdownWrapper
               isActive={currentTab ? false : true}
               position="top"
@@ -245,8 +245,8 @@ export default function Sidebar(fileId: any) {
             >
               <ProfilePicture
                 profilePictureURL={user?.profilePictureURL}
-                className={`transition-all duration-300 ease-in-out h-${
-                  !currentTab ? "9" : "7"
+                className={`transition-all duration-300 ease-in-out ${
+                  !currentTab ? "h-9" : "h-8"
                 } cursor-pointer`}
                 firstName={user?.firstName}
                 lastName={user?.lastName}
@@ -276,10 +276,10 @@ export default function Sidebar(fileId: any) {
 
           {currentTab && (
             <div className="">
-              <span className="block font-semibold text-primary text-sm mb-[2px]">
+              <span className="block font-semibold text-primary text-[15px] mb-[2px]">
                 {user?.firstName + " " + user?.lastName}
               </span>
-              <span className="block font-medium text-secondary text-[13px]">
+              <span className="block font-medium text-secondary text-sm">
                 ricardorpvigliano@gmail.com
               </span>
             </div>
