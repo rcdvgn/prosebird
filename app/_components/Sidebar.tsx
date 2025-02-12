@@ -317,9 +317,9 @@ export default function Sidebar(fileId: any) {
 
       <div className="my-5">
         <div
-          className={`transition-all duration-300 ease-in-out flex flex-col gap-4 py-3.5 px-[18px] rounded-[10px] ring-1  ${
+          className={`transition-all duration-300 ease-in-out flex flex-col gap-4 px-[18px] rounded-[10px] ring-1  ${
             currentTab
-              ? "mx-[18px] bg-foreground ring-stroke"
+              ? "py-3.5 mx-[18px] bg-foreground ring-stroke"
               : "bg-transparent ring-transparent items-center"
           }`}
         >

@@ -5,7 +5,6 @@ import ListView from "./ListView";
 import GridView from "./GridView";
 import {
   ArrowIcon,
-  ClearIcon,
   GridViewIcon,
   ListViewIcon,
   TriangleExpandIcon,
@@ -15,38 +14,38 @@ import formatScript from "../_lib/formatScript";
 import calculateTimestamps from "../_lib/addTimestamps";
 import { getNodes, getUserPreferences } from "../_services/client";
 import { useAuth } from "../_contexts/AuthContext";
-import DropdownWrapper from "./wrappers/DropdownWrapper";
+import GenericFilters, { FilterConfig } from "./filters/GenericFilters";
 import { isScriptShared } from "../_utils/isScriptShared";
-import DefaultFilters from "./filters/DefaultFilters";
+import DropdownWrapper from "./wrappers/DropdownWrapper";
 
 export default function AllDocuments() {
-  // const { recentlyModified } = useRecentScripts();
-
+  // Sorting state
   const [sorting, setSorting] = useState<any>({
     sortedBy: "lastModified",
     order: "desc",
   });
-
   const [isSortingOptionsVisible, setIsSortingOptionsVisible] =
-    useState<any>(false);
+    useState<boolean>(false);
 
+  // Filter states
+  const [roleFilter, setRoleFilter] = useState<string | null>(null);
+  const [favoriteFilter, setFavoriteFilter] = useState<boolean>(false);
+  const [sharedFilter, setSharedFilter] = useState<boolean>(false);
+
+  // Dropdown visibility state for the role filter
   const [isRoleFilterOptionsVisible, setIsRoleFilterOptionsVisible] =
-    useState<any>(false);
-
-  const [roleFilter, setRoleFilter] = useState<any>(null);
-  const [favoriteFilter, setFavoriteFilter] = useState<any>(null);
-  const [sharedFilter, setSharedFilter] = useState<any>(null);
+    useState<boolean>(false);
 
   const { scripts } = useRealtimeData();
   const { user } = useAuth();
 
-  const [displayType, setDisplayType] = useState<any>("grid");
+  const [displayType, setDisplayType] = useState<"grid" | "list">("grid");
 
   const [scriptsWithTimestamps, setScriptsWithTimestamps] = useState<any>(null);
 
-  const itemWidth: any = 250;
-  const itemPx: any = 18;
-  const fontSize: any = "20";
+  const itemWidth = 250;
+  const itemPx = 18;
+  const fontSize = "20";
 
   useEffect(() => {
     if (!scripts || !user?.id) return;
@@ -55,7 +54,7 @@ export default function AllDocuments() {
       try {
         const userPreferences: any = await getUserPreferences(user.id);
 
-        const newRecentlyModifiedScripts = await Promise.all(
+        const newScripts = await Promise.all(
           scripts.map(async (script: any) => {
             const nodes = await getNodes(script.id);
 
@@ -78,7 +77,7 @@ export default function AllDocuments() {
           })
         );
 
-        setScriptsWithTimestamps(newRecentlyModifiedScripts);
+        setScriptsWithTimestamps(newScripts);
       } catch (error) {
         console.error("Error fetching script previews:", error);
       }
@@ -87,20 +86,20 @@ export default function AllDocuments() {
     getScriptPreviews();
   }, [scripts, user?.id]);
 
+  // A helper to filter scripts based on role, favorite and shared filters.
   const matchToRole = (script: any) => {
     if (roleFilter === "Author" && script.createdBy === user?.id) return true;
     if (roleFilter === "Editor" && script.editors.includes(user?.id))
       return true;
     if (roleFilter === "Viewer" && script.viewers.includes(user?.id))
       return true;
-
     return false;
   };
 
   const sortScripts = (scripts: any) => {
     if (!scripts) return;
 
-    let sortedScripts;
+    let sortedScripts: any[];
 
     if (sorting.sortedBy === "lastModified") {
       sortedScripts = [...scripts];
@@ -118,7 +117,6 @@ export default function AllDocuments() {
       const filterByRole = roleFilter ? matchToRole(script) : true;
       const filterByFavorite = favoriteFilter ? script.isFavorite : true;
       const filterByShared = sharedFilter ? isScriptShared(script) : true;
-
       return filterByRole && filterByFavorite && filterByShared;
     });
 
@@ -127,10 +125,56 @@ export default function AllDocuments() {
       : filteredScripts;
   };
 
+  // Options for the role filter dropdown
   const roleFilterOptions = [
-    { text: "Author", onClick: () => setRoleFilter("Author") },
-    { text: "Editor", onClick: () => setRoleFilter("Editor") },
-    { text: "Viewer", onClick: () => setRoleFilter("Viewer") },
+    {
+      text: "Author",
+      onClick: () => {
+        setRoleFilter("Author");
+        setIsRoleFilterOptionsVisible(false);
+      },
+    },
+    {
+      text: "Editor",
+      onClick: () => {
+        setRoleFilter("Editor");
+        setIsRoleFilterOptionsVisible(false);
+      },
+    },
+    {
+      text: "Viewer",
+      onClick: () => {
+        setRoleFilter("Viewer");
+        setIsRoleFilterOptionsVisible(false);
+      },
+    },
+  ];
+
+  // Create the filter configuration array for the GenericFilters component
+  const filtersConfig: FilterConfig[] = [
+    {
+      type: "dropdown",
+      label: "Role",
+      value: roleFilter,
+      isVisible: isRoleFilterOptionsVisible,
+      setIsVisible: setIsRoleFilterOptionsVisible,
+      options: roleFilterOptions,
+      onClear: () => setRoleFilter(null),
+    },
+    {
+      type: "toggle",
+      label: "Favorite",
+      value: favoriteFilter,
+      onToggle: () => setFavoriteFilter((curr) => !curr),
+      onClear: () => setFavoriteFilter(false),
+    },
+    {
+      type: "toggle",
+      label: "Shared",
+      value: sharedFilter,
+      onToggle: () => setSharedFilter((curr) => !curr),
+      onClear: () => setSharedFilter(false),
+    },
   ];
 
   return (
@@ -161,17 +205,7 @@ export default function AllDocuments() {
       </div>
 
       <div className="flex justify-between h-8 w-full mb-6">
-        <DefaultFilters
-          roleFilter={roleFilter}
-          isRoleFilterOptionsVisible={isRoleFilterOptionsVisible}
-          setIsRoleFilterOptionsVisible={setIsRoleFilterOptionsVisible}
-          roleFilterOptions={roleFilterOptions}
-          setRoleFilter={setRoleFilter}
-          setFavoriteFilter={setFavoriteFilter}
-          favoriteFilter={favoriteFilter}
-          setSharedFilter={setSharedFilter}
-          sharedFilter={sharedFilter}
-        />
+        <GenericFilters filters={filtersConfig} />
 
         <div className="h-full flex gap-1">
           <span
