@@ -18,6 +18,7 @@ export interface FilterConfig {
   options?: FilterOption[];
   onClear?: () => void;
   onToggle?: () => void;
+  excludes?: string[];
 }
 
 interface GenericFiltersProps {
@@ -25,6 +26,15 @@ interface GenericFiltersProps {
 }
 
 const GenericFilters: React.FC<GenericFiltersProps> = ({ filters }) => {
+  // Check if any filter is active.
+  const hasActiveFilters = filters.some((filter) => {
+    if (typeof filter.value === "boolean") {
+      return filter.value;
+    }
+    return filter.value !== null && filter.value !== undefined;
+  });
+
+  // When "Clear All" is clicked, call each filter's onClear callback if provided.
   const clearAllFilters = () => {
     filters.forEach((filter) => {
       if (filter.onClear) {
@@ -35,12 +45,15 @@ const GenericFilters: React.FC<GenericFiltersProps> = ({ filters }) => {
 
   return (
     <div className="flex items-center gap-2 h-8">
-      <div
-        onClick={clearAllFilters}
-        className="bg-battleground rounded-full h-full aspect-square text-inactive grid place-items-center hover:bg-hover hover:text-primary cursor-pointer"
-      >
-        <CloseIcon className="h-2.5" />
-      </div>
+      {/* Show the "Clear All" button only if at least one filter is active */}
+      {hasActiveFilters && (
+        <div
+          onClick={clearAllFilters}
+          className="bg-battleground rounded-full h-full aspect-square text-inactive grid place-items-center hover:bg-hover hover:text-primary cursor-pointer"
+        >
+          <CloseIcon className="h-2.5" />
+        </div>
+      )}
       {filters.map((filter, idx) => {
         if (filter.type === "dropdown") {
           return (
@@ -91,9 +104,34 @@ const GenericFilters: React.FC<GenericFiltersProps> = ({ filters }) => {
             </div>
           );
         } else if (filter.type === "toggle") {
+          // For toggle filters, wrap the onClick handler to support exclusions.
+          const handleToggle = () => {
+            // If turning the filter on (i.e. it's currently inactive)
+            if (!filter.value) {
+              if (filter.excludes && filter.excludes.length > 0) {
+                filters.forEach((otherFilter) => {
+                  // If the other filter is listed in this filter's "excludes" list...
+                  if (
+                    otherFilter.label !== filter.label &&
+                    filter.excludes?.includes(otherFilter.label)
+                  ) {
+                    // ...and it is active, clear it.
+                    if (otherFilter.onClear && otherFilter.value) {
+                      otherFilter.onClear();
+                    }
+                  }
+                });
+              }
+            }
+            // Finally, toggle this filter.
+            if (filter.onToggle) {
+              filter.onToggle();
+            }
+          };
+
           return (
             <div
-              onClick={filter.onToggle}
+              onClick={handleToggle}
               key={idx}
               className={`filter-1 ${
                 filter.value

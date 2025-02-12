@@ -17,6 +17,8 @@ import { useAuth } from "../_contexts/AuthContext";
 import GenericFilters, { FilterConfig } from "./filters/GenericFilters";
 import { isScriptShared } from "../_utils/isScriptShared";
 import DropdownWrapper from "./wrappers/DropdownWrapper";
+import matchToRole from "../_utils/matchToRole";
+import { filterScripts, sortScripts } from "../_utils/organizeScripts";
 
 export default function AllDocuments() {
   // Sorting state
@@ -86,46 +88,6 @@ export default function AllDocuments() {
     getScriptPreviews();
   }, [scripts, user?.id]);
 
-  // A helper to filter scripts based on role, favorite and shared filters.
-  const matchToRole = (script: any) => {
-    if (roleFilter === "Author" && script.createdBy === user?.id) return true;
-    if (roleFilter === "Editor" && script.editors.includes(user?.id))
-      return true;
-    if (roleFilter === "Viewer" && script.viewers.includes(user?.id))
-      return true;
-    return false;
-  };
-
-  const sortScripts = (scripts: any) => {
-    if (!scripts) return;
-
-    let sortedScripts: any[];
-
-    if (sorting.sortedBy === "lastModified") {
-      sortedScripts = [...scripts];
-    } else if (sorting.sortedBy === "title") {
-      sortedScripts = scripts.sort((a: any, b: any) =>
-        a.title
-          .toLowerCase()
-          .localeCompare(b.title.toLowerCase(), undefined, { numeric: true })
-      );
-    } else {
-      sortedScripts = [];
-    }
-
-    const filteredScripts = sortedScripts.filter((script: any) => {
-      const filterByRole = roleFilter ? matchToRole(script) : true;
-      const filterByFavorite = favoriteFilter ? script.isFavorite : true;
-      const filterByShared = sharedFilter ? isScriptShared(script) : true;
-      return filterByRole && filterByFavorite && filterByShared;
-    });
-
-    return sorting.order === "asc"
-      ? filteredScripts.reverse()
-      : filteredScripts;
-  };
-
-  // Options for the role filter dropdown
   const roleFilterOptions = [
     {
       text: "Author",
@@ -176,6 +138,15 @@ export default function AllDocuments() {
       onClear: () => setSharedFilter(false),
     },
   ];
+
+  const processedScripts = sortScripts(
+    filterScripts(
+      scriptsWithTimestamps,
+      { roleFilter, favoriteFilter, sharedFilter },
+      user
+    ),
+    sorting
+  );
 
   return (
     <div className="grow px-8 py-6">
@@ -271,13 +242,13 @@ export default function AllDocuments() {
 
       <ListView
         displayType={displayType}
-        scriptsWithTimestamps={sortScripts(scriptsWithTimestamps)}
+        scriptsWithTimestamps={processedScripts}
         sorting={sorting}
         setSorting={setSorting}
       />
       <GridView
         displayType={displayType}
-        scriptsWithTimestamps={sortScripts(scriptsWithTimestamps)}
+        scriptsWithTimestamps={processedScripts}
         itemWidth={itemWidth}
         itemPx={itemPx}
         fontSize={fontSize}

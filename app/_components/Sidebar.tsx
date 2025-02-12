@@ -288,7 +288,7 @@ export default function Sidebar(fileId: any) {
                     : "hidden"
                 }
               >
-                <Scripts scripts={scripts} people={people} />
+                <Scripts scripts={scripts} people={people} user={user} />
               </div>
 
               <div

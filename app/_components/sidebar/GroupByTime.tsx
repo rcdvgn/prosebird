@@ -2,17 +2,11 @@ import React from "react";
 import { groupInstancesByTime } from "../../_utils/groupInstancesByTime"; // adjust the path as needed
 import capitalizeFirstLetter from "../../_utils/capitalizeFirstLetter";
 
-interface GroupByTimeProps {
-  unorganizedInstances: any[];
-  criteria: string;
-  children: (instance: any, index: number) => JSX.Element;
-}
-
-export const GroupByTime: React.FC<GroupByTimeProps> = ({
+export const GroupByTime = ({
   unorganizedInstances,
   criteria,
   children,
-}) => {
+}: any) => {
   const organizedInstances = groupInstancesByTime(
     unorganizedInstances,
     criteria
