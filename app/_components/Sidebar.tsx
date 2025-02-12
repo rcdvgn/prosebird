@@ -45,8 +45,6 @@ export default function Sidebar(fileId: any) {
 
   const [currentTab, setCurrentTab] = useState<any>(null);
 
-  const [renderSidebar, setRenderSidebar] = useState<any>(false);
-
   const sidebarTabs: any = {
     scripts: {
       icon: <ScriptIcon className="h-5" />,
@@ -65,10 +63,6 @@ export default function Sidebar(fileId: any) {
   const handleSettings = () => {
     openModal({ content: <Settings />, name: "settings" });
   };
-
-  // useEffect(() => {
-
-  // }, [currentTab])
 
   return (
     <div className="flex flex-col shrink-0 pb-2">
@@ -226,8 +220,10 @@ export default function Sidebar(fileId: any) {
 
       <div className="my-5">
         <div
-          className={`transition-all duration-300 ease-in-out flex flex-col gap-4 py-3.5 px-[18px] rounded-[10px] ${
-            currentTab ? "mx-[18px]" : "items-center"
+          className={`transition-all duration-300 ease-in-out flex flex-col gap-4 py-3.5 px-[18px] rounded-[10px] ring-1  ${
+            currentTab
+              ? "mx-[18px] bg-foreground ring-stroke"
+              : "bg-transparent ring-transparent items-center"
           }`}
         >
           <div className="flex justify-between items-center">
@@ -246,7 +242,7 @@ export default function Sidebar(fileId: any) {
               <ProfilePicture
                 profilePictureURL={user?.profilePictureURL}
                 className={`transition-all duration-300 ease-in-out ${
-                  !currentTab ? "h-9" : "h-8"
+                  !currentTab ? "h-9" : "h-7"
                 } cursor-pointer`}
                 firstName={user?.firstName}
                 lastName={user?.lastName}

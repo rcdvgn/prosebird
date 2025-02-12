@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@allwqre/react-responsive-font-size": "^1.2.0",
     "@deepgram/sdk": "^3.9.0",
     "@tailwindcss/container-queries": "^0.1.1",
     "@types/uuid": "^10.0.0",

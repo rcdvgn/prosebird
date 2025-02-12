@@ -2,6 +2,8 @@
 
 import stc from "string-to-color";
 // @ts-ignore
+import { ResponsiveFontSize } from "@allwqre/react-responsive-font-size";
+// @ts-ignore
 import hexToHsl from "hex-to-hsl";
 import { useState, useEffect } from "react";
 import { AnonymousIcon } from "../_assets/icons";
@@ -24,10 +26,17 @@ const ProfilePicturePlaceholder = ({ className, firstName, lastName }: any) => {
 
   return (
     <div
-      className={`aspect-square rounded-full flex items-center justify-center flex-shrink-0 min-w-0 ${className}`}
+      className={`aspect-square rounded-full flex items-center justify-center flex-shrink-0 min-w-0 text-primary font-semibold [&>div]:grid [&>div]:place-items-center ${className}`}
       style={{ backgroundColor: `hsl(${nameColorHue}, 78%, 37%)` }}
     >
-      <span className="text-primary text-[2cqb] font-semibold">{fullName}</span>
+      <ResponsiveFontSize
+        ratio={0.4}
+        optionsObject={{
+          setFontSize: true,
+        }}
+      >
+        {fullName}
+      </ResponsiveFontSize>
     </div>
   );
 };
