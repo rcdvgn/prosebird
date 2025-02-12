@@ -3,7 +3,7 @@ import { GroupByTime } from "./GroupByTime";
 import TooltipWrapper from "../wrappers/TooltipWrapper";
 import PresentationTooltip from "../tooltips/PresentationTooltip";
 import ProfilePicture from "../ProfilePicture";
-import { XIcon } from "@/app/_assets/icons";
+import { ClearIcon } from "@/app/_assets/icons";
 
 const Presentations = ({ presentations, people }: any) => {
   if (!presentations || !people) return null;
@@ -94,7 +94,7 @@ const Presentations = ({ presentations, people }: any) => {
                   </div>
                 ) : (
                   <div className="bg-placeholder/15 rounded-full py-1 px-2 flex items-center gap-1 text-placeholder">
-                    <XIcon className="h-[6px]" />
+                    <ClearIcon className="h-[6px]" />
                     <span className="font-bold text-[11px]">Ended</span>
                   </div>
                 )}
