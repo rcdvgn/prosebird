@@ -68,6 +68,10 @@ textarea::-webkit-scrollbar {
   width: 0;
 }
 
+/* .dnd-container::-webkit-scrollbar {
+  width: 0;
+} */
+
 * {
   box-sizing: border-box;
 }

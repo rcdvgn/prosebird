@@ -16,9 +16,12 @@ import {
 import { useScriptEditor } from "@/app/_contexts/ScriptEditorContext";
 import { useAuth } from "@/app/_contexts/AuthContext";
 import { changeFavoriteStatus } from "../_services/client";
-import VirtualizedChapterList from "./VirtualizedChaptersList";
+import Draggable from "react-draggable";
 
 export default function ScriptEditor() {
+  const draggableRef = useRef<any>(null);
+  const containerRef: any = useRef(null);
+
   const { script, setScript, participants } = useScriptEditor();
   const scriptData = script.data;
   const { user } = useAuth();
@@ -210,8 +213,38 @@ export default function ScriptEditor() {
             </div>
           </div>
 
-          <div className="w-[280px] bg-foreground border-border border-[1px] rounded-[10px] m-2.5 py-2.5 px-2 overflow-y-auto">
-            <VirtualizedChapterList />
+          <div
+            ref={containerRef}
+            className="w-[280px] bg-foreground border-border border-[1px] rounded-[10px] m-2.5 py-2.5 px-2 ring-attention-red ring-1 overflow-y-auto"
+          >
+            {Array.from({ length: 20 }).map((_: any, index: any) => {
+              return (
+                <div className="h-12 w-full ring-brand ring-1" key={index}>
+                  {/* <div className="ring-brand ring-1 rounded-[10px] h-full w-full"></div> */}
+
+                  <div
+                    ref={draggableRef}
+                    className="group w-full h-full m-auto flex items-center py-2.5 pr-2 rounded-[10px] hover:bg-hover"
+                  >
+                    <div className="button-icon !bg-transparent">
+                      <span className="font-semibold text-[13px] text-secondary group-hover:hidden">
+                        {index + 1 + "."}
+                      </span>
+                      <DragIcon className="h-3 hidden group-hover:block" />
+                    </div>
+                    <div
+                      style={{
+                        backgroundImage: `url("/pfps/profile1.png")`,
+                      }}
+                      className="h-7 aspect-square rounded-full bg-cover bg-center flex-shrink-0 mr-2.5"
+                    ></div>
+                    <div className="font-semibold text-[13px] text-primary grow truncate">
+                      {"This is chapter " + (index + 1)}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
 
           {/* <div className="w-[378px]">
