@@ -128,7 +128,7 @@ export default function ScriptEditor() {
 
   return (
     <div className="flex flex-col w-full">
-      <div className="flex justify-between items-center p-[10px] h-[68px] shrink-0">
+      <div className="flex justify-between items-center p-[10px] h-16 shrink-0">
         <div className="grow flex items-center gap-3 min-w-0">
           <div className="icon-container">
             <ScriptIcon className="text-primary" />
@@ -210,8 +210,13 @@ export default function ScriptEditor() {
             </div>
           </div>
 
-          <div className="w-[280px] bg-foreground border-border border-[1px] rounded-[10px] m-2.5 py-2.5 px-2 overflow-y-auto">
-            <VirtualizedChapterList />
+          <div className="w-[280px] bg-background border-stroke border-[1px] rounded-[10px] m-2.5 pb-2.5 overflow-y-auto flex flex-col">
+            <div className="p-3.5 border-stroke border-b-[1px]">
+              <span className="text-sm font-medium text-primary">Chapters</span>
+            </div>
+            <div className="grow w-full px-2 pt-2">
+              <VirtualizedChapterList />
+            </div>
           </div>
 
           {/* <div className="w-[378px]">
