@@ -4,6 +4,7 @@ import useAutosizeTextArea from "../_utils/useAutosizeTextArea";
 import { useScriptEditor } from "@/app/_contexts/ScriptEditorContext";
 
 import SpeakerPicker from "./SpeakerPicker";
+import { useAuth } from "../_contexts/AuthContext";
 
 export default function ScriptNode({
   node,
@@ -13,6 +14,7 @@ export default function ScriptNode({
   position: number;
 }) {
   const { script, setScript, addNode, deleteNode } = useScriptEditor();
+  const { user } = useAuth();
   const scriptData = script.data;
   const [isTitleSpellCheckEnabled, setIsTitleSpellCheckEnabled] =
     useState(false);
@@ -77,7 +79,7 @@ export default function ScriptNode({
   ) => {
     if (e.key === "Tab") {
       e.preventDefault();
-      addNode(position + 1);
+      addNode(position + 1, user, script?.data?.nodes.length);
     }
   };
 
@@ -92,7 +94,7 @@ export default function ScriptNode({
   return (
     <div className="w-full p-[10px]">
       <div className="flex items-center justify-start">
-        <div className="mr-5 h-[34px] shrink-0">
+        <div className="mr-5 h-9 shrink-0">
           <div className="relative h-full">
             <div
               ref={speakerPictureRef}
@@ -128,7 +130,7 @@ export default function ScriptNode({
           value={chapterTitle}
           rows={1}
           spellCheck={isTitleSpellCheckEnabled}
-          className="block grow w-full bg-transparent overflow-y-scroll border-text-danger outline-none resize-none text-base text-primary font-bold py-[2px] rounded-sm"
+          className="block grow w-full bg-transparent overflow-y-scroll border-text-danger outline-none resize-none text-xl text-primary font-bold py-[2px] rounded-sm"
         ></textarea>
       </div>
       <textarea
@@ -140,7 +142,8 @@ export default function ScriptNode({
         onBlur={() => setIsParagraphSpellCheckEnabled(false)}
         spellCheck={isParagraphSpellCheckEnabled}
         rows={1}
-        className="block mt-2.5 pl-[54px] w-full bg-transparent overflow-y-scroll border-none outline-none resize-none text-sm text-primary font-regular leading-[22px]"
+        placeholder="Say something great..."
+        className="block mt-[18px] pl-[54px] w-full bg-transparent overflow-y-scroll border-none outline-none resize-none text-sm text-primary font-regular leading-[22px] placeholder:text-placeholder"
       ></textarea>
     </div>
   );

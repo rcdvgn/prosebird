@@ -41,9 +41,10 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
     return !cond;
   };
 
-  const addNode = (position: number, user: any) => {
+  const addNode = (position: number, user: any, numberOfChapters: any) => {
     const newNode: any = {
-      ...emptyNode,
+      title: "Chapter " + (numberOfChapters + 1),
+      paragraph: "",
       speaker: user.id,
       id: uuidv4(),
     };

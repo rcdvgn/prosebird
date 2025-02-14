@@ -8,7 +8,7 @@ import AutoSizer from "react-virtualized-auto-sizer";
 import { AddChapterIcon, AddIcon, DragIcon } from "../_assets/icons";
 
 // Create an array of 20 chapter objects
-const initialChapters = Array.from({ length: 10 }, (_, index) => ({
+const initialChapters = Array.from({ length: 14 }, (_, index) => ({
   id: `chapter-${index + 1}`,
   name: `This is chapter ${index + 1}`,
 }));
@@ -28,7 +28,7 @@ const Row = React.memo(({ data, index, style }: any) => {
           ...style,
           height: `${itemSize} !important`,
         }}
-        className="group bg-foreground hover:bg-battleground border-[1px] border-border rounded-lg h-12 w-full flex items-center justify-center cursor-pointer"
+        className="group bg-foreground hover:bg-battleground border-[1px] border-border rounded-[10px] h-12 w-full flex items-center justify-center cursor-pointer"
       >
         <AddChapterIcon className="h-3.5 text-inactive group-hover:text-primary" />
       </div>
@@ -52,7 +52,7 @@ const Row = React.memo(({ data, index, style }: any) => {
               marginBottom: gap,
               backgroundColor: "rgba(0, 0, 255, 0.1)",
               border: "1px blue dashed",
-              borderRadius: "8px",
+              borderRadius: "10px",
               boxSizing: "border-box",
               pointerEvents: "none",
             }}
@@ -74,7 +74,7 @@ const Row = React.memo(({ data, index, style }: any) => {
               {/* Wrap content in a div that applies a bottom margin equal to the gap */}
               <div style={{ marginBottom: gap }}>
                 <div
-                  className={`group w-full h-full m-auto flex items-center justify-between py-2.5 pl-3 pr-2 rounded-lg transition-all duration-150 ease-in-out ${
+                  className={`group w-full h-full m-auto flex items-center justify-between py-2.5 pl-3 pr-2 rounded-[10px] transition-all duration-150 ease-in-out ${
                     snapshot.isDragging
                       ? "scale-90 bg-battleground/90 shadow-[0px_4px_5px_0px_rgba(0,0,0,0.25)] backdrop-sepia-50 ring-1 ring-border"
                       : isDragging
@@ -174,7 +174,7 @@ export default function VirtualizedChapterList() {
           >
             <div style={{ marginBottom: gap }}>
               <div
-                className={`group w-full h-full m-auto flex items-center justify-between py-2.5 pl-3 pr-2 rounded-lg transition-all duration-150 ease-in-out ${
+                className={`group w-full h-full m-auto flex items-center justify-between py-2.5 pl-3 pr-2 rounded-[10px] transition-all duration-150 ease-in-out ${
                   snapshot.isDragging
                     ? "scale-90 bg-battleground/90 shadow-[0px_4px_5px_0px_rgba(0,0,0,0.25)] backdrop-sepia-50 ring-1 ring-border"
                     : isDragging

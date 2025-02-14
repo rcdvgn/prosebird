@@ -176,7 +176,7 @@ export default function ScriptEditor() {
           </div>
         </div>
         <div className="flex gap-2.5 items-center">
-          <div className="flex h-[26px]">
+          <div className="flex h-7">
             {Array.from({ length: 3 }).map((item: any, index: any) => {
               return (
                 <div
@@ -210,9 +210,9 @@ export default function ScriptEditor() {
             </div>
           </div>
 
-          <div className="w-[280px] bg-background border-stroke border-[1px] rounded-[10px] m-2.5 pb-2.5 overflow-y-auto flex flex-col">
-            <div className="p-3.5 border-stroke border-b-[1px]">
-              <span className="text-sm font-medium text-primary">Chapters</span>
+          <div className="w-[300px] bg-background border-stroke border-[1px] rounded-[10px] m-2.5 pb-2.5 overflow-y-auto flex flex-col">
+            <div className="px-5 py-4 border-stroke border-b-[1px]">
+              <span className="text-base font-bold text-primary">Chapters</span>
             </div>
             <div className="grow w-full px-2 pt-2">
               <VirtualizedChapterList />

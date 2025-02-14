@@ -182,7 +182,7 @@ textarea::-webkit-scrollbar {
   }
 
   .nav-tabs {
-    @apply h-[44px] aspect-square grid place-items-center transition-all ease-in-out duration-150 rounded-xl cursor-pointer;
+    @apply h-[48px] aspect-square grid place-items-center transition-all ease-in-out duration-150 rounded-xl cursor-pointer;
   }
 
   .filter-1 {

@@ -51,7 +51,8 @@ export const createScript: any = async (userId: any) => {
 
   const blankNodes: any = [
     {
-      ...emptyNode,
+      title: "Chapter 1",
+      paragraph: "",
       speaker: userId,
       id: uuidv4(),
     },
