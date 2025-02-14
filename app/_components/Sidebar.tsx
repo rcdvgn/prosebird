@@ -151,7 +151,7 @@ export default function Sidebar(fileId: any) {
     <div className="flex flex-col shrink-0 pb-2">
       <div className="flex grow">
         <div className="flex flex-col items-center justify-start w-[80px]">
-          <div className="h-[68px] w-full grid place-items-center">
+          <div className="h-16 w-full grid place-items-center">
             <span
               className="cursor-pointer"
               onClick={() => router.push(`/files`)}
@@ -257,7 +257,7 @@ export default function Sidebar(fileId: any) {
                 : "right-full pointer-events-none opacity-0"
             }`}
           >
-            <div className="h-[68px] w-full flex justify-between items-center">
+            <div className="h-16 w-full flex justify-between items-center">
               <Input3 />
               <TooltipWrapper
                 position="bottom"

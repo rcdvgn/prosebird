@@ -63,7 +63,7 @@ const Row = React.memo(({ data, index, style }: any) => {
                 {/* Wrap DragIcon in a span and apply dragHandleProps ONLY here */}
                 <span
                   {...provided.dragHandleProps}
-                  className="hidden group-hover:block cursor-grab"
+                  className="hidden group-hover:grid cursor-grab w-full h-full place-items-center"
                 >
                   <DragIcon className="h-3" />
                 </span>
@@ -161,7 +161,7 @@ export default function VirtualizedChapterList() {
                 </span>
                 <span
                   {...provided.dragHandleProps}
-                  className="hidden group-hover:block"
+                  className="hidden group-hover:grid cursor-grab w-full h-full place-items-center"
                 >
                   <DragIcon className="h-3" />
                 </span>

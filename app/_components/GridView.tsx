@@ -76,7 +76,7 @@ export default function GridView({
                     </div>
                   </div>
                   <span className="group/icon px-3.5 cursor-pointer">
-                    <MoreIcon className="group-hover/icon:text-primary h-3 text-inactive" />
+                    <MoreIcon className="group-hover/icon:text-primary w-3.5 rotate-90 text-inactive" />
                   </span>
                 </div>
                 <span className="font-semibold text-[13px] text-secondary">

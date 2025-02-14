@@ -128,7 +128,7 @@ export default function ScriptEditor() {
 
   return (
     <div className="flex flex-col w-full">
-      <div className="flex justify-between items-center p-[10px] h-[55px] shrink-0">
+      <div className="flex justify-between items-center p-[10px] h-[68px] shrink-0">
         <div className="grow flex items-center gap-3 min-w-0">
           <div className="icon-container">
             <ScriptIcon className="text-primary" />

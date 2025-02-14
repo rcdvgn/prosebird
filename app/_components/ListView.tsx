@@ -174,7 +174,7 @@ export default function ListView({
             </div>
             <ClockIcon className="text-secondary h-[13px]" />
             <div className="button-icon !invisible">
-              <MoreIcon className="h-3" />
+              <MoreIcon className="w-3.5" />
             </div>
           </div>
         </div>
@@ -297,7 +297,7 @@ export default function ListView({
                       </div>
 
                       <div className="button-icon">
-                        <MoreIcon className="h-3" />
+                        <MoreIcon className="w-3.5" />
                       </div>
                     </div>
                   </div>

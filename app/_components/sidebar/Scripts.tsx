@@ -108,7 +108,7 @@ const Scripts = ({ scripts, people, user }: any) => {
                   : "opacity-0 group-hover:opacity-100"
               }`}
             >
-              <MoreIcon className="h-3" />
+              <MoreIcon className="w-3 rotate-90" />
             </span>
           </div>
         )}
