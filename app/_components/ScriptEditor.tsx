@@ -170,7 +170,7 @@ export default function ScriptEditor() {
                 />
               </span>
               <span className="button-icon !h-[25px] !bg-transparent">
-                <MoreIcon className="w-4" />
+                <MoreIcon className="rotate-90 w-3.5" />
               </span>
             </div>
           </div>
@@ -201,16 +201,15 @@ export default function ScriptEditor() {
         </div>
       </div>
       <div className="slate">
-        <div className="flex grow min-h-0">
-          <div className="flex flex-col grow">
-            {/* <div className="h-[46px] border-b-[1px] border-stroke shrink-0"></div> */}
-            <div className="relative grow flex flex-col items-center min-h-0 overflow-y-auto">
-              <ScriptArea />
-              <ScriptAreaInfo />
-            </div>
+        <div className="flex grow min-h-0 p-2">
+          {/* <div className="flex flex-col grow"> */}
+          <div className="relative grow flex flex-col items-center min-h-0 overflow-y-auto pt-10">
+            <ScriptArea />
+            <ScriptAreaInfo />
           </div>
+          {/* </div> */}
 
-          <div className="w-[300px] bg-background border-stroke border-[1px] rounded-[10px] m-2.5 pb-2.5 overflow-y-auto flex flex-col">
+          <div className="w-[300px] bg-background border-stroke border-[1px] rounded-[10px] pb-2.5 overflow-y-auto flex flex-col">
             <div className="px-5 py-4 border-stroke border-b-[1px]">
               <span className="text-base font-bold text-primary">Chapters</span>
             </div>

@@ -6,26 +6,48 @@ export default function ScriptArea() {
   const { script } = useScriptEditor();
   const scriptData = script.data;
 
+  const focusOnLastNode = () => {
+    const lastIndex = scriptData.nodes.length - 1;
+    const lastParagraph = document.getElementById(
+      `chapterParagraph-${lastIndex}`
+    ) as HTMLTextAreaElement;
+
+    if (lastParagraph) {
+      lastParagraph.focus();
+      lastParagraph.setSelectionRange(
+        lastParagraph.value.length,
+        lastParagraph.value.length
+      );
+    }
+  };
+
   return (
-    <div className="w-[683px] pt-[15px] grow flex flex-col gap-7">
-      {/* <ChapterDivider position={0} /> */}
-      {[...scriptData.nodes]
-        .sort(
-          (a, b) => scriptData.nodes.indexOf(a) - scriptData.nodes.indexOf(b)
-        )
-        .map((node: any, index: any) => {
-          return (
-            <div className="group/chapter relative" key={index}>
-              <ChapterDivider className="bottom-full" position={index} />
+    <div className="grow w-full px-12 flex flex-col justify-start items-center gap-7">
+      <div className="flex flex-col gap-7 max-w-[800px] w-full">
+        {/* <ChapterDivider position={0} /> */}
+        {[...scriptData.nodes]
+          .sort(
+            (a, b) => scriptData.nodes.indexOf(a) - scriptData.nodes.indexOf(b)
+          )
+          .map((node: any, index: any) => {
+            return (
+              <div className="group/chapter relative" key={index}>
+                <ChapterDivider className="bottom-full" position={index} />
 
-              <div className="flex justify-center py-8">
-                <ScriptNode node={node} position={index} />
+                <div className="flex justify-center py-[18px]">
+                  <ScriptNode node={node} position={index} />
+                </div>
+
+                <ChapterDivider className="top-full" position={index + 1} />
               </div>
+            );
+          })}
+      </div>
 
-              <ChapterDivider className="top-full" position={index + 1} />
-            </div>
-          );
-        })}
+      <div
+        onClick={focusOnLastNode}
+        className="grow cursor-text w-full min-h-0"
+      ></div>
     </div>
   );
 }

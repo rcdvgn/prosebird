@@ -22,7 +22,8 @@
   --placeholder: 102, 102, 102;
   --text-danger: #b51b1d;
 
-  --brand: 50, 94, 241;
+  /* --brand: 50, 94, 241; */
+  --brand: 18, 70, 241;
 
   /* #292929 */
   --border: 41, 41, 41;
@@ -106,7 +107,7 @@ textarea::-webkit-scrollbar {
 
 @layer components {
   .slate {
-    @apply grow flex flex-col min-w-0 bg-middleground border-[1px] border-stroke mr-2 mb-2 rounded-[10px] overflow-y-auto;
+    @apply grow flex flex-col min-w-0 bg-middleground mr-2 mb-2 rounded-[10px] overflow-y-auto;
   }
 
   .icon-container {

@@ -92,7 +92,7 @@ export default function ScriptNode({
   }, [script?.data?.nodes[position].title]);
 
   return (
-    <div className="w-full p-[10px]">
+    <div className="w-full">
       <div className="flex items-center justify-start">
         <div className="mr-5 h-9 shrink-0">
           <div className="relative h-full">
@@ -134,6 +134,7 @@ export default function ScriptNode({
         ></textarea>
       </div>
       <textarea
+        id={`chapterParagraph-${position}`}
         ref={chapterParagraph}
         onChange={handleParagraphChange}
         value={node.paragraph}

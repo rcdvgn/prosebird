@@ -17,12 +17,12 @@ export default function ChapterDivider({ className, position }: any) {
         <div className="absolute w-full h-[1px] top-0 bottom-0 m-auto">
           <div className="left-0 top-0 w-full h-full bg-stroke"></div>
 
-          <div className="left-0 rigt-0 top-0 m-auto h-full bg-brand group-hover:w-full w-0 transition-all duration-300 ease-in-out"></div>
+          <div className="left-0 rigt-0 top-0 m-auto h-full bg-brand group-hover:w-full w-0 transition-all duration-200 ease-in-out delay-75"></div>
         </div>
 
         <button
           onClick={() => addNode(position, user, script?.data?.nodes.length)}
-          className="z-10 m-auto h-7 w-7 rounded-full bg-brand grid place-items-center group-hover:opacity-100 opacity-0 transition-all duration-300 ease-in-out"
+          className="z-10 m-auto h-7 w-7 rounded-full bg-brand grid place-items-center group-hover:opacity-100 opacity-0 transition-all duration-200 ease-in-out delay-75"
         >
           <AddIcon className="text-primary h-3" />
         </button>
