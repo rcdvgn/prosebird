@@ -1,6 +1,7 @@
 import { Timestamp } from "firebase/firestore";
 
 const getTimeDifference = (timestamp: Timestamp) => {
+  if (!timestamp) return null;
   const now = new Date();
   const targetDate = timestamp.toDate();
 

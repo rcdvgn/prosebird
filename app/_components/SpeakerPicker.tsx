@@ -44,7 +44,7 @@ export default function SpeakerPicker({
 
   const handleKeyDown = async (e: any) => {
     if (e.key === "Enter") {
-      if (newGuest.length && !script.data.guests.includes(newGuest)) {
+      if (newGuest.length && !script.guests.includes(newGuest)) {
         const trimmedNewGuest = newGuest.trim();
 
         await handleChangeSpeaker(trimmedNewGuest);
@@ -64,7 +64,7 @@ export default function SpeakerPicker({
       onOutsideClick={handleOutsideClick}
       exceptionRefs={[speakerPictureRef]}
     >
-      <div className="w-64 -translate-x-[17rem] absolute left-0 top-0 m-auto p-2 rounded-[10px] bg-foreground border-[1px] border-border">
+      <div className="w-64 translate-x-[17rem] absolute left-0 top-0 m-auto p-2 rounded-[10px] bg-foreground border-[1px] border-border">
         <div className="flex justify-between px-2 font-semibold text-sm mb-1">
           <span className="text-text-secondary">Participants</span>
           <span
@@ -95,7 +95,7 @@ export default function SpeakerPicker({
                 <div
                   key={index}
                   onClick={() => {
-                    participant.id !== script.data.nodes[position].speaker
+                    participant.id !== script.nodes[position].speaker
                       ? handleChangeSpeaker(participant.id)
                       : "";
                   }}
@@ -104,7 +104,7 @@ export default function SpeakerPicker({
                   {participant.role === "guest"
                     ? participant.id
                     : `${participant.firstName} ${participant.lastName}`}
-                  {participant.id === script.data.nodes[position].speaker
+                  {participant.id === script.nodes[position].speaker
                     ? " •"
                     : ""}
                 </div>

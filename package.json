@@ -35,7 +35,8 @@
     "server-only": "^0.0.1",
     "string-to-color": "^2.2.2",
     "stripe": "^17.4.0",
-    "uuid": "^10.0.0"
+    "uuid": "^10.0.0",
+    "yjs": "^13.6.23"
   },
   "devDependencies": {
     "@types/lodash": "^4.17.9",

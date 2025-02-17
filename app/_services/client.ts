@@ -37,6 +37,7 @@ import { db, rtdb } from "../_config/firebase/client";
 import defaultPreferences from "../_lib/defaultPreferences";
 import { gracePeriod } from "../_lib/gracePeriod";
 
+// rtdb nodes compliant
 export const createScript: any = async (userId: any) => {
   const blankScript = {
     title: "Untitled",
@@ -62,14 +63,16 @@ export const createScript: any = async (userId: any) => {
     const docRef = await addDoc(collection(db, "scripts"), blankScript);
     const docId = docRef.id;
 
-    await setDoc(doc(db, "nodes", docId), { nodes: blankNodes });
+    // Store nodes in Realtime Database
+    await set(ref(rtdb, `nodes/${docId}`), blankNodes);
 
-    return { data: { ...blankScript, nodes: blankNodes }, id: docId };
+    return { ...blankScript, nodes: blankNodes, id: docId };
   } catch (error) {
     console.error("Error creating script: ", error);
   }
 };
 
+// rtdb nodes compliant
 export async function getScriptAndNodes(fileId: string) {
   try {
     const scriptRef = doc(db, "scripts", fileId);
@@ -82,26 +85,22 @@ export async function getScriptAndNodes(fileId: string) {
 
     const scriptData = scriptDoc.data();
 
-    // Fetch nodes separately from the "nodes" collection
-    const nodesRef = doc(db, "nodes", fileId);
-    const nodesDoc = await getDoc(nodesRef);
-    const nodes = nodesDoc.exists() ? nodesDoc.data().nodes : [];
+    const nodes = await getNodes(fileId);
 
-    // Merge nodes with script data
-    return { id: scriptDoc.id, data: { ...scriptData, nodes } };
+    return { id: scriptDoc.id, ...scriptData, nodes };
   } catch (error) {
     console.error("Error fetching script data:", error);
     return null;
   }
 }
 
+// rtdb nodes compliant
 export async function getNodes(scriptId: string) {
   try {
-    const nodesRef = doc(db, "nodes", scriptId);
-    const nodesDoc = await getDoc(nodesRef);
-    const nodes = nodesDoc.exists() ? nodesDoc.data().nodes : [];
+    const nodesRef = ref(rtdb, `nodes/${scriptId}`);
+    const snapshot = await get(nodesRef);
 
-    return nodes;
+    return snapshot.exists() ? snapshot.val() : [emptyNode];
   } catch (error) {
     console.error("Error fetching script nodes:", error);
     return null;
@@ -121,23 +120,21 @@ export async function getUserScripts(userId: string) {
   return scripts;
 }
 
+// rtdb nodes compliant
 export const saveScript = async (script: any) => {
   try {
     const docRef = doc(db, "scripts", script.id);
 
-    // Separate nodes from the rest of the script data
-    const { nodes, ...scriptData } = script.data;
+    const { nodes, ...scriptData } = script;
 
-    // Update the script data without nodes
     const updatedScriptData = {
       ...scriptData,
       lastModified: serverTimestamp(),
     };
     await updateDoc(docRef, updatedScriptData);
 
-    // Update nodes in the separate collection
-    const nodesRef = doc(db, "nodes", script.id);
-    await updateDoc(nodesRef, { nodes });
+    const nodesRef = ref(rtdb, `nodes/${script.id}`);
+    await set(nodesRef, nodes);
   } catch (error) {
     console.error("Error saving script:", error);
   }
@@ -152,10 +149,8 @@ export const subscribeToScript = (localScript: any, onUpdate: any) => {
 
       const serverScript = {
         id: localScript.id,
-        data: {
-          ...scriptData,
-          nodes: localScript.data.nodes,
-        },
+        nodes: localScript.nodes,
+        ...scriptData,
       };
 
       onUpdate(serverScript);
@@ -165,39 +160,39 @@ export const subscribeToScript = (localScript: any, onUpdate: any) => {
   return unsubscribeScript;
 };
 
+// rtdb nodes compliant
 export const subscribeToNodes = (localScript: any, onUpdate: any) => {
-  const nodesRef = doc(db, "nodes", localScript.id);
+  const nodesRef = ref(rtdb, `nodes/${localScript.id}`);
 
-  const unsubscribeNodes = onSnapshot(nodesRef, (nodesSnapshot) => {
-    const nodesData = nodesSnapshot.exists()
-      ? nodesSnapshot.data().nodes
-      : [emptyNode];
+  const unsubscribeNodes = onValue(nodesRef, (snapshot) => {
+    const nodesData = snapshot.exists() ? snapshot.val() : [emptyNode];
 
     const serverScript = {
       id: localScript.id,
-      data: {
-        ...localScript.data,
-        nodes: nodesData,
-      },
+      nodes: nodesData,
+      ...localScript,
     };
 
     onUpdate(serverScript);
   });
-  return unsubscribeNodes;
+
+  return () => off(nodesRef, "value", unsubscribeNodes);
 };
 
+// rtdb nodes compliant
 export const getRealtimeNodes = (scriptId: any, onUpdate: any) => {
-  const nodesRef = doc(db, "nodes", scriptId);
+  const nodesRef = ref(rtdb, `nodes/${scriptId}`);
 
-  const unsubscribeNodes = onSnapshot(nodesRef, (nodesSnapshot) => {
-    if (nodesSnapshot.exists()) {
-      const latestNodes = nodesSnapshot.data().nodes;
+  const unsubscribeNodes = onValue(nodesRef, (snapshot) => {
+    if (snapshot.exists()) {
+      const latestNodes = snapshot.val();
       onUpdate(latestNodes);
     } else {
       console.error("Nodes not found using script id: " + scriptId);
     }
   });
-  return unsubscribeNodes;
+
+  return () => off(nodesRef, "value", unsubscribeNodes);
 };
 
 export const subscribeToRecentScripts = (
@@ -310,7 +305,7 @@ export const getPeople = async (userIds: any, exceptionIds: any) => {
 };
 
 export const addScriptGuest = async (script: any, newGuest: any) => {
-  const updatedGuests = [...script.data.guests, newGuest];
+  const updatedGuests = [...script.guests, newGuest];
 
   try {
     const docRef = doc(db, "scripts", script.id);
@@ -321,21 +316,15 @@ export const addScriptGuest = async (script: any, newGuest: any) => {
   }
 };
 
+// rtdb nodes compliant
 export const changeNodeSpeaker = async (
   script: any,
-  nodePosition: any,
-  newSpeakerId: any
+  nodeId: string, // Using nodeId instead of position for better scalability
+  newSpeakerId: string
 ) => {
-  const updatedNode = {
-    ...script.data.nodes[nodePosition],
-    speaker: newSpeakerId,
-  };
-  let updatedNodes = [...script.data.nodes];
-  updatedNodes[nodePosition] = updatedNode;
-
   try {
-    const docRef = doc(db, "nodes", script.id);
-    await updateDoc(docRef, { nodes: updatedNodes });
+    const nodeRef = ref(rtdb, `nodes/${script.id}/${nodeId}`);
+    await update(nodeRef, { speaker: newSpeakerId }); // Only updates the speaker field
   } catch (error) {
     console.error("Error changing node speaker", error);
   }

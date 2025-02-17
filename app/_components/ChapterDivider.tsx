@@ -7,7 +7,6 @@ export default function ChapterDivider({ className, position }: any) {
   const { user } = useAuth();
 
   const { script, addNode } = useScriptEditor();
-  const scriptData = script.data;
 
   return (
     <div
@@ -21,7 +20,7 @@ export default function ChapterDivider({ className, position }: any) {
         </div>
 
         <button
-          onClick={() => addNode(position, user, script?.data?.nodes.length)}
+          onClick={() => addNode(position, user, script?.nodes.length)}
           className="z-10 m-auto h-7 w-7 rounded-full bg-brand grid place-items-center group-hover:opacity-100 opacity-0 transition-all duration-200 ease-in-out delay-75"
         >
           <AddIcon className="text-primary h-3" />

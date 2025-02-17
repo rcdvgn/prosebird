@@ -34,8 +34,8 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
 
   const hasUnsavedChanges = () => {
     const cond = _.isEqual(
-      { ...script, lastModified: null },
-      { ...lastSavedScript, lastModified: null }
+      { ...script.data, lastModified: null },
+      { ...lastSavedScript.data, lastModified: null }
     );
 
     return !cond;
@@ -49,21 +49,21 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
       id: uuidv4(),
     };
 
-    let copyScriptData = { ...script };
+    let copyScriptData = { ...script.data };
     copyScriptData.nodes.splice(position, 0, newNode);
-    setScript({ ...script, ...copyScriptData });
+    setScript({ ...script, data: copyScriptData });
   };
 
   const deleteNode = (id: string) => {
-    let copyScriptData = { ...script };
+    let copyScriptData = { ...script.data };
     copyScriptData.nodes = copyScriptData.nodes.filter(
       (node: any) => node.id !== id
     );
-    setScript({ ...script, ...copyScriptData });
+    setScript({ ...script, data: copyScriptData });
   };
 
   useEffect(() => {
-    const handleSave = async () => {
+    const handleSave = debounce(async () => {
       if (hasUnsavedChanges()) {
         console.log("about to be saved to server");
         await saveScript(script);
@@ -71,7 +71,7 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
       }
 
       setIsSaved(true);
-    };
+    }, 1000);
 
     if (script) {
       if (!lastSavedScript) {
@@ -83,6 +83,10 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
         handleSave();
       }
     }
+
+    return () => {
+      handleSave.cancel();
+    };
   }, [script]);
 
   useEffect(() => {
@@ -91,8 +95,8 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
     const applyServerChanges = (serverScript: any) => {
       if (
         !_.isEqual(
-          { ...serverScript, lastModified: null },
-          { ...script, lastModified: null }
+          { ...serverScript.data, lastModified: null },
+          { ...script.data, lastModified: null }
         )
       ) {
         setScript(serverScript);
@@ -115,10 +119,10 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (!script || !user) return;
 
-    const editors = script?.editors || [];
-    const viewers = script?.viewers || [];
-    const guests = script?.guests || [];
-    const author = script?.createdBy;
+    const editors = script.data.editors || [];
+    const viewers = script.data.viewers || [];
+    const guests = script.data.guests || [];
+    const author = script.data.createdBy;
 
     const combinedParticipants = [...editors, ...viewers, ...guests, author];
 
@@ -128,12 +132,10 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
       const fetchParticipants = async () => {
         try {
           // Fix Promise.all destructuring to match number of promises
-
           const [editorsDocs, viewersDocs, authorDoc]: any = await Promise.all([
             getPeople(editors, []),
             getPeople(viewers, []),
             // user.id !== author ? getPeople([author], []) : Promise.resolve([]),
-
             getPeople([author], []),
           ]);
 

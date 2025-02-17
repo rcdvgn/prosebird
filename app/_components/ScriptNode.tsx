@@ -15,7 +15,7 @@ export default function ScriptNode({
 }) {
   const { script, setScript, addNode, deleteNode } = useScriptEditor();
   const { user } = useAuth();
-  const scriptData = script.data;
+
   const [isTitleSpellCheckEnabled, setIsTitleSpellCheckEnabled] =
     useState(false);
   const [isParagraphSpellCheckEnabled, setIsParagraphSpellCheckEnabled] =
@@ -38,13 +38,13 @@ export default function ScriptNode({
 
   const handleChapterTitleFocusOut = () => {
     if (chapterTitle.length) {
-      if (chapterTitle !== scriptData.nodes[position].title) {
-        let copyScriptData = { ...scriptData };
+      if (chapterTitle !== script.nodes[position].title) {
+        let copyScriptData = { ...script };
         copyScriptData.nodes[position] = {
           ...node,
           title: chapterTitle,
         };
-        setScript({ ...script, data: copyScriptData });
+        setScript(copyScriptData);
       }
     } else {
       if (chapterParagraph.current && !chapterParagraph.current.value) {
@@ -69,9 +69,9 @@ export default function ScriptNode({
   useAutosizeTextArea(chapterParagraph.current, node.paragraph);
 
   const handleParagraphChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    let copyScriptData = { ...scriptData };
+    let copyScriptData = { ...script };
     copyScriptData.nodes[position] = { ...node, paragraph: e.target.value };
-    setScript({ ...script, data: copyScriptData });
+    setScript(copyScriptData);
   };
 
   const handleParagraphKeyDown = (
@@ -85,8 +85,8 @@ export default function ScriptNode({
 
   useEffect(() => {
     if (script) {
-      if (scriptData?.nodes[position].title !== chapterTitle) {
-        setChapterTitle(scriptData.nodes[position].title);
+      if (script?.nodes[position].title !== chapterTitle) {
+        setChapterTitle(script.nodes[position].title);
       }
     }
   }, [script?.data?.nodes[position].title]);

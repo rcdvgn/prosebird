@@ -34,8 +34,11 @@ export function groupInstancesByTime(
 
   instances.forEach((instance) => {
     const rawTimestamp = instance[criteria];
-    let date: Date;
+    if (rawTimestamp == null) {
+      return;
+    }
 
+    let date: Date;
     try {
       date = normalizeTimestamp(rawTimestamp);
     } catch (error) {

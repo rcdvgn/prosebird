@@ -20,7 +20,6 @@ import VirtualizedChapterList from "./VirtualizedChaptersList";
 
 export default function ScriptEditor() {
   const { script, setScript, participants } = useScriptEditor();
-  const scriptData = script.data;
   const { user } = useAuth();
 
   const router = useRouter();
@@ -30,7 +29,7 @@ export default function ScriptEditor() {
   const documentTitleRef = useRef<HTMLInputElement | null>(null);
   const inputContainerRef = useRef<HTMLSpanElement | null>(null);
 
-  const [documentTitle, setDocumentTitle] = useState(scriptData.title);
+  const [documentTitle, setDocumentTitle] = useState(script?.title);
 
   const handleDocumentTitleChange = (e: any) => {
     setDocumentTitle(e.target.value);
@@ -38,9 +37,9 @@ export default function ScriptEditor() {
 
   const handleDocumentTitleFocusOut = () => {
     if (documentTitle.length) {
-      let copyScriptData = { ...scriptData };
+      let copyScriptData = { ...script };
       copyScriptData.title = documentTitle;
-      setScript({ ...script, data: copyScriptData });
+      setScript(copyScriptData);
     } else {
       setDocumentTitle(documentTitle);
     }
@@ -120,11 +119,11 @@ export default function ScriptEditor() {
 
   useEffect(() => {
     if (script) {
-      if (scriptData?.title !== documentTitle) {
-        setDocumentTitle(scriptData.title);
+      if (script?.title !== documentTitle) {
+        setDocumentTitle(script.title);
       }
     }
-  }, [scriptData?.title]);
+  }, [script?.title]);
 
   return (
     <div className="flex flex-col w-full">
@@ -157,13 +156,13 @@ export default function ScriptEditor() {
             <div className="flex items-center gap-1">
               <span
                 onClick={() =>
-                  changeFavoriteStatus(script.id, !scriptData.isFavorite)
+                  changeFavoriteStatus(script.id, !script.isFavorite)
                 }
                 className="button-icon !h-[25px] !bg-transparent"
               >
                 <StarIcon
                   className={`h-4 ${
-                    scriptData?.isFavorite
+                    script?.isFavorite
                       ? "!text-favorite-yellow fill-current"
                       : ""
                   }`}
