@@ -5,7 +5,7 @@ import { CloseIcon, PersonalIcon } from "../../_assets/icons";
 // import { OverlayScrollbarsComponent } from "overlayscrollbars-react";
 import "overlayscrollbars/overlayscrollbars.css";
 import { useModal } from "../../_contexts/ModalContext";
-import Preferences from "../settings/Preferences";
+import PreferencesModal from "../settings/PreferencesModal";
 
 export default function Settings() {
   const { closeModal } = useModal();
@@ -16,17 +16,17 @@ export default function Settings() {
     {
       name: "Preferences",
       icon: <PersonalIcon className="h-4" />,
-      component: <Preferences />,
+      component: <PreferencesModal />,
     },
     {
       name: "Preferences",
       icon: <PersonalIcon className="h-4" />,
-      component: <Preferences />,
+      component: <PreferencesModal />,
     },
     {
       name: "Preferences",
       icon: <PersonalIcon className="h-4" />,
-      component: <Preferences />,
+      component: <PreferencesModal />,
     },
   ];
 
@@ -86,7 +86,7 @@ export default function Settings() {
         {/* </OverlayScrollbarsComponent> */}
 
         <div className="grow overflow-y-auto py-5 px-6">
-          <Preferences />
+          <PreferencesModal />
         </div>
       </div>
     </div>

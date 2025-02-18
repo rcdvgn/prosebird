@@ -8,29 +8,38 @@ import {
   MinusFontSizeIcon,
   PlusFontSizeIcon,
   TextAlignCenterIcon,
+  TextAlignJustifyIcon,
   TextAlignLeftIcon,
 } from "../_assets/icons";
 import { motion } from "framer-motion";
 
-const FontSizeControl = () => {
-  const [fontSize, setFontSize] = useState<any>(14);
-
+const FontSizeControl = ({ editorOptions, setEditorOptions }: any) => {
   return (
     <div className="flex items-center h-full">
       <span
         className="pl-3.5 text-inactive hover:text-primary h-full cursor-pointer flex items-center"
-        onClick={() => setFontSize((currFontSize: any) => currFontSize - 1)}
+        onClick={() =>
+          setEditorOptions((currEditorOptions: any) => ({
+            ...currEditorOptions,
+            fontSize: currEditorOptions.fontSize - 1,
+          }))
+        }
       >
         <MinusFontSizeIcon className="w-3" />
       </span>
       <div className="w-11 text-center cursor-pointer select-none">
         <span className="font-bold text-sm text-inactive hover:text-primary">
-          {fontSize}
+          {editorOptions.fontSize}
         </span>
       </div>
       <span
         className="pr-3.5 text-inactive hover:text-primary h-full cursor-pointer flex items-center"
-        onClick={() => setFontSize((currFontSize: any) => currFontSize + 1)}
+        onClick={() =>
+          setEditorOptions((currEditorOptions: any) => ({
+            ...currEditorOptions,
+            fontSize: currEditorOptions.fontSize + 1,
+          }))
+        }
       >
         <PlusFontSizeIcon className="h-3" />
       </span>
@@ -42,34 +51,55 @@ const HrDivider = () => {
   return <div className="w-[2px] h-[18px] rounded-full bg-selected"></div>;
 };
 
-const ScriptControls = ({ isVisible, setisVisible }: any) => {
-  const [selectedTextModeSegment, setSelectedTextModeSegment] =
-    useState<any>(0);
-  const textModeSegments = [
+const ScriptControls = ({
+  editorOptions,
+  setEditorOptions,
+  isVisible,
+  setisVisible,
+}: any) => {
+  const textTypeSegments = [
     {
-      id: 0,
       leftIcon: <DefaultTextIcon className="h-3" />,
-      onClick: () => setSelectedTextModeSegment(0),
+      onClick: () =>
+        setEditorOptions((currEditorOptions: any) => ({
+          ...currEditorOptions,
+          textType: "default",
+        })),
     },
     {
-      id: 1,
       leftIcon: <CommentedTextIcon className="h-3.5" />,
-      onClick: () => setSelectedTextModeSegment(1),
+      onClick: () =>
+        setEditorOptions((currEditorOptions: any) => ({
+          ...currEditorOptions,
+          textType: "comment",
+        })),
     },
   ];
 
-  const [selectedTextAlignmentSegment, setSelectedTextAlignmentSegment] =
-    useState<any>(0);
   const textAlignmentSegments = [
     {
-      id: 0,
       leftIcon: <TextAlignLeftIcon className="w-4" />,
-      onClick: () => setSelectedTextAlignmentSegment(0),
+      onClick: () =>
+        setEditorOptions((currEditorOptions: any) => ({
+          ...currEditorOptions,
+          textAligment: "left",
+        })),
     },
     {
-      id: 1,
       leftIcon: <TextAlignCenterIcon className="w-4" />,
-      onClick: () => setSelectedTextAlignmentSegment(1),
+      onClick: () =>
+        setEditorOptions((currEditorOptions: any) => ({
+          ...currEditorOptions,
+          textAligment: "center",
+        })),
+    },
+    {
+      leftIcon: <TextAlignJustifyIcon className="w-4" />,
+      onClick: () =>
+        setEditorOptions((currEditorOptions: any) => ({
+          ...currEditorOptions,
+          textAligment: "justify",
+        })),
     },
   ];
 
@@ -82,20 +112,29 @@ const ScriptControls = ({ isVisible, setisVisible }: any) => {
     >
       <div className="h-8 flex items-center gap-1">
         <SegmentedControl
-          segments={textModeSegments}
-          selectedSegment={selectedTextModeSegment}
+          segments={textTypeSegments}
+          selectedSegment={editorOptions.textType === "default" ? 0 : 1}
           segmentWidth={44}
         />
 
         <HrDivider />
 
-        <FontSizeControl />
+        <FontSizeControl
+          editorOptions={editorOptions}
+          setEditorOptions={setEditorOptions}
+        />
 
         <HrDivider />
 
         <SegmentedControl
           segments={textAlignmentSegments}
-          selectedSegment={selectedTextAlignmentSegment}
+          selectedSegment={
+            editorOptions.textAligment === "left"
+              ? 0
+              : editorOptions.textAligment === "center"
+              ? 1
+              : 2
+          }
           segmentWidth={44}
         />
 
@@ -112,7 +151,12 @@ const ScriptControls = ({ isVisible, setisVisible }: any) => {
   );
 };
 
-export default function ScriptAreaControls({ isVisible, setisVisible }: any) {
+export default function ScriptAreaControls({
+  editorOptions,
+  setEditorOptions,
+  isVisible,
+  setisVisible,
+}: any) {
   return (
     <div className={`z-50 sticky top-0 left-0 w-full pointer-events-none`}>
       <div
@@ -120,7 +164,12 @@ export default function ScriptAreaControls({ isVisible, setisVisible }: any) {
           isVisible ? "h-16" : "h-0"
         }`}
       >
-        <ScriptControls isVisible={isVisible} setisVisible={setisVisible} />
+        <ScriptControls
+          editorOptions={editorOptions}
+          setEditorOptions={setEditorOptions}
+          isVisible={isVisible}
+          setisVisible={setisVisible}
+        />
       </div>
     </div>
   );

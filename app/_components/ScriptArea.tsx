@@ -2,7 +2,7 @@ import ChapterDivider from "./ChapterDivider";
 import ScriptNode from "./ScriptNode";
 import { useScriptEditor } from "@/app/_contexts/ScriptEditorContext";
 
-export default function ScriptArea() {
+export default function ScriptArea({ editorOptions, setEditorOptions }: any) {
   const { script } = useScriptEditor();
 
   const focusOnLastNode = () => {
@@ -36,7 +36,12 @@ export default function ScriptArea() {
                   <ChapterDivider className="bottom-full" position={index} />
 
                   <div className="flex justify-center py-[18px]">
-                    <ScriptNode node={node} position={index} />
+                    <ScriptNode
+                      editorOptions={editorOptions}
+                      setEditorOptions={setEditorOptions}
+                      node={node}
+                      position={index}
+                    />
                   </div>
 
                   <ChapterDivider className="top-full" position={index + 1} />

@@ -7,12 +7,11 @@ import SpeakerPicker from "./SpeakerPicker";
 import { useAuth } from "../_contexts/AuthContext";
 
 export default function ScriptNode({
+  editorOptions,
+  setEditorOptions,
   node,
   position,
-}: {
-  node: any;
-  position: number;
-}) {
+}: any) {
   const { script, setScript, addNode, deleteNode } = useScriptEditor();
   const { user } = useAuth();
 
@@ -144,7 +143,11 @@ export default function ScriptNode({
         spellCheck={isParagraphSpellCheckEnabled}
         rows={1}
         placeholder="Say something great..."
-        className="block mt-[18px] pl-[54px] w-full bg-transparent overflow-y-scroll border-none outline-none resize-none text-sm text-primary font-regular leading-[22px] placeholder:text-placeholder"
+        style={{
+          fontSize: editorOptions.fontSize,
+          textAlign: editorOptions.textAligment,
+        }}
+        className="block mt-[18px] pl-[54px] w-full bg-transparent overflow-y-scroll border-none outline-none resize-none text-primary font-regular leading-[22px] placeholder:text-placeholder"
       ></textarea>
     </div>
   );

@@ -22,7 +22,7 @@ export default function SegmentedControl({
             onClick={segment.onClick}
             style={{ width: `${segmentWidth}px` }}
             className={`z-10 h-full px-1 rounded-lg flex justify-center items-center gap-1 ${
-              selectedSegment === segment.id
+              selectedSegment === index
                 ? "text-primary"
                 : "hover:bg-hover text-secondary hover:text-primary"
             }`}

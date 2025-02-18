@@ -28,6 +28,12 @@ export default function ScriptEditor() {
 
   const router = useRouter();
 
+  const [editorOptions, setEditorOptions] = useState<any>({
+    textType: "default",
+    fontSize: 14,
+    textAlignment: "left",
+  });
+
   const [isSpellCheckEnabled, setIsSpellCheckEnabled] = useState(false);
 
   const [scriptAreaControlsVisible, setScriptAreaControlsVisible] =
@@ -255,10 +261,15 @@ export default function ScriptEditor() {
         {/* <div className="flex flex-col grow"> */}
         <div className="slate relative grow items-center min-h-0 overflow-y-auto">
           <ScriptAreaControls
+            editorOptions={editorOptions}
+            setEditorOptions={setEditorOptions}
             isVisible={scriptAreaControlsVisible}
             setisVisible={setScriptAreaControlsVisible}
           />
-          <ScriptArea />
+          <ScriptArea
+            editorOptions={editorOptions}
+            setEditorOptions={setEditorOptions}
+          />
           <ScriptAreaInfo />
         </div>
         {/* </div> */}

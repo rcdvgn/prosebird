@@ -10,7 +10,7 @@ const Hr = () => {
   return <div className="w-full h-[1px] rounded-full bg-border"></div>;
 };
 
-export default function Preferences() {
+export default function PreferencesModal() {
   const speedMultiplierSelectedOptionContainer = useRef<any>(null);
 
   const [speedMultiplier, setSpeedMultiplier] = useState<any>(1);
