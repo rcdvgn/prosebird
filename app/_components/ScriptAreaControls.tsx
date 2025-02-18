@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import SegmentedControl from "./ui/SegmentedControl";
 import {
   ClearIcon,
@@ -10,6 +10,7 @@ import {
   TextAlignCenterIcon,
   TextAlignLeftIcon,
 } from "../_assets/icons";
+import { motion } from "framer-motion";
 
 const FontSizeControl = () => {
   const [fontSize, setFontSize] = useState<any>(14);
@@ -41,7 +42,7 @@ const HrDivider = () => {
   return <div className="w-[2px] h-[18px] rounded-full bg-selected"></div>;
 };
 
-const ScriptControls = ({ setisVisible }: any) => {
+const ScriptControls = ({ isVisible, setisVisible }: any) => {
   const [selectedTextModeSegment, setSelectedTextModeSegment] =
     useState<any>(0);
   const textModeSegments = [
@@ -73,7 +74,12 @@ const ScriptControls = ({ setisVisible }: any) => {
   ];
 
   return (
-    <div className="p-[3px] rounded-[10px] bg-foreground border-stroke border-[1px]">
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: isVisible ? 1 : 0, scale: isVisible ? 1 : 0.95 }}
+      transition={{ duration: 0.15, delay: isVisible ? 0.15 : 0 }}
+      className="pointer-events-auto p-[3px] rounded-[10px] bg-foreground border-stroke border-[1px]"
+    >
       <div className="h-8 flex items-center gap-1">
         <SegmentedControl
           segments={textModeSegments}
@@ -102,14 +108,20 @@ const ScriptControls = ({ setisVisible }: any) => {
           <CloseIcon className="h-3" />
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
-export default function ScriptAreaControls({ setisVisible }: any) {
+export default function ScriptAreaControls({ isVisible, setisVisible }: any) {
   return (
-    <div className="sticky flex items-center justify-center top-0 left-0 w-full pt-6 px-10">
-      <ScriptControls setisVisible={setisVisible} />
+    <div className={`z-50 sticky top-0 left-0 w-full pointer-events-none`}>
+      <div
+        className={`flex items-end justify-center w-full px-10 transition-all duration-300 ease-in-out overflow-hidden pointer-events-none ${
+          isVisible ? "h-16" : "h-0"
+        }`}
+      >
+        <ScriptControls isVisible={isVisible} setisVisible={setisVisible} />
+      </div>
     </div>
   );
 }

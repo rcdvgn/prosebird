@@ -12,6 +12,8 @@ import {
   SearchIcon,
   MoreIcon,
   DragIcon,
+  PencilIcon,
+  ChaptersIcon,
 } from "../_assets/icons";
 import { useScriptEditor } from "@/app/_contexts/ScriptEditorContext";
 import { useAuth } from "@/app/_contexts/AuthContext";
@@ -202,8 +204,20 @@ export default function ScriptEditor() {
               );
             })}
           </div>
+          <button
+            onClick={() =>
+              setScriptAreaControlsVisible(
+                (currScriptAreaControlsVisible: any) =>
+                  !currScriptAreaControlsVisible
+              )
+            }
+            className="btn-2-md !px-0 !aspect-square"
+          >
+            <PencilIcon className="h-3.5" />
+          </button>
           <button className="btn-2-md !px-0 !aspect-square">
-            <PlayIcon className="h-3" />
+            {/* <PlayIcon className="h-3.5" /> */}
+            <ChaptersIcon className="w-3.5" />
           </button>
           <button onClick={handleShareFile} className="btn-2-md">
             Invite
@@ -217,9 +231,10 @@ export default function ScriptEditor() {
         {/* <div className="flex grow min-h-0 p-2"> */}
         {/* <div className="flex flex-col grow"> */}
         <div className="slate relative grow items-center min-h-0 overflow-y-auto">
-          {scriptAreaControlsVisible && (
-            <ScriptAreaControls setisVisible={setScriptAreaControlsVisible} />
-          )}
+          <ScriptAreaControls
+            isVisible={scriptAreaControlsVisible}
+            setisVisible={setScriptAreaControlsVisible}
+          />
           <ScriptArea />
           <ScriptAreaInfo />
         </div>
