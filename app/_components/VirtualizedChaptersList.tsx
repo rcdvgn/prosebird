@@ -81,9 +81,9 @@ const Row = React.memo(({ data, index, style }: any) => {
                 <div
                   className={`group w-full h-full m-auto flex items-center justify-between py-2.5 pl-3 pr-2 rounded-[10px] transition-all duration-150 ease-in-out ${
                     snapshot.isDragging
-                      ? "scale-90 bg-battleground/90 shadow-[0px_4px_5px_0px_rgba(0,0,0,0.25)] backdrop-sepia-50 ring-1 ring-border"
+                      ? "scale-90 bg-battleground/90 shadow-[0px_4px_5px_0px_rgba(0,0,0,0.25)] backdrop-sepia-50 ring-1 ring-border text-primary"
                       : isDragging
-                      ? "text-primary"
+                      ? "text-inactive"
                       : "hover:bg-hover text-inactive hover:text-primary"
                   }`}
                   // Set explicit height equal to rowHeight
@@ -187,9 +187,9 @@ export default function VirtualizedChapterList({
               <div
                 className={`group w-full h-full m-auto flex items-center justify-between py-2.5 pl-3 pr-2 rounded-[10px] transition-all duration-150 ease-in-out ${
                   snapshot.isDragging
-                    ? "scale-90 bg-battleground/90 shadow-[0px_4px_5px_0px_rgba(0,0,0,0.25)] backdrop-sepia-50 ring-1 ring-border"
+                    ? "scale-90 bg-battleground/90 shadow-[0px_4px_5px_0px_rgba(0,0,0,0.25)] backdrop-sepia-50 ring-1 ring-border text-primary"
                     : isDragging
-                    ? "text-primary"
+                    ? "text-inactive"
                     : "hover:bg-hover text-inactive hover:text-primary"
                 }`}
                 style={{ height: rowHeight }}
@@ -207,13 +207,13 @@ export default function VirtualizedChapterList({
                 </div>
 
                 <span className="flex">
-                  <span className="text-secondary hover:text-primary cursor-pointer  place-items-center w-[32px] aspect-square shrink-0">
+                  <span className="text-secondary hover:text-primary cursor-pointer place-items-center w-[32px] aspect-square shrink-0 grid">
                     <TargetIcon className="h-3" />
                   </span>
 
                   <span
                     {...provided.dragHandleProps}
-                    className="text-secondary hover:text-primary  place-items-center w-[32px] aspect-square shrink-0"
+                    className="text-secondary hover:text-primary cursor-grab  place-items-center w-[32px] aspect-square shrink-0 grid"
                   >
                     <DragIcon className="h-3" />
                   </span>

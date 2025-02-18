@@ -1,5 +1,5 @@
 "use client";
-
+import { motion, AnimatePresence } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import ScriptArea from "./ScriptArea";
 import ScriptAreaInfo from "./ScriptAreaInfo";
@@ -33,6 +33,8 @@ export default function ScriptEditor() {
   const [scriptAreaControlsVisible, setScriptAreaControlsVisible] =
     useState<any>(false);
 
+  const [chaptersViewVisible, setChaptersViewVisible] = useState<any>(false);
+
   const documentTitleRef = useRef<HTMLInputElement | null>(null);
   const inputContainerRef = useRef<HTMLSpanElement | null>(null);
 
@@ -41,6 +43,8 @@ export default function ScriptEditor() {
   const [selectedSegment, setSelectedSegment] = useState<any>(0);
 
   const [chapters, setChapters] = useState(script.nodes);
+
+  const chapterViewWidth = 324;
 
   const handleDocumentTitleChange = (e: any) => {
     setDocumentTitle(e.target.value);
@@ -126,6 +130,11 @@ export default function ScriptEditor() {
     { id: 0, text: "Chapters", onClick: () => setSelectedSegment(0) },
     { id: 1, text: "Preview", onClick: () => setSelectedSegment(1) },
   ];
+
+  const slideVariants = {
+    hidden: { marginRight: "-" + chapterViewWidth + "px", marginLeft: "0" },
+    visible: { marginRight: "0", marginLeft: "8px" },
+  };
 
   useEffect(() => {
     if (inputContainerRef.current && documentTitleRef.current) {
@@ -222,7 +231,14 @@ export default function ScriptEditor() {
           >
             <PencilIcon className="h-3.5" />
           </button>
-          <button className="btn-2-md !px-0 !aspect-square">
+          <button
+            onClick={() =>
+              setChaptersViewVisible(
+                (currChaptersViewVisible: any) => !currChaptersViewVisible
+              )
+            }
+            className="btn-2-md !px-0 !aspect-square"
+          >
             {/* <PlayIcon className="h-3.5" /> */}
             <ChaptersIcon className="w-3.5" />
           </button>
@@ -234,7 +250,7 @@ export default function ScriptEditor() {
           </button>
         </div>
       </div>
-      <div className="grow flex gap-2 overflow-y-auto min-w-0 mr-2 mb-2">
+      <div className="grow flex overflow-x-hidden min-w-0 mr-2 mb-2">
         {/* <div className="flex grow min-h-0 p-2"> */}
         {/* <div className="flex flex-col grow"> */}
         <div className="slate relative grow items-center min-h-0 overflow-y-auto">
@@ -247,23 +263,36 @@ export default function ScriptEditor() {
         </div>
         {/* </div> */}
 
-        <div className="slate w-[324px] px-2.5 overflow-y-auto">
-          <div className="h-16 px-1 border-stroke border-b-[1px] flex justify-center items-center">
-            <div className="rounded-[10px] bg-foreground border-stroke border-[1px] h-[38px] p-[2px]">
-              <SegmentedControl
-                segments={segments}
-                selectedSegment={selectedSegment}
-              />
-            </div>
-          </div>
-          <div className="grow w-full py-2.5">
-            <VirtualizedChapterList
-              chapters={chapters}
-              onChaptersChange={setChapters}
-            />
-          </div>
-        </div>
-
+        <AnimatePresence>
+          {chaptersViewVisible && (
+            <motion.div
+              layout
+              key="slate"
+              className="slate ml-2 px-2.5"
+              style={{ width: chapterViewWidth + "px" }}
+              initial="hidden"
+              animate="visible"
+              exit="hidden"
+              variants={slideVariants}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="h-16 px-1 border-stroke border-b-[1px] flex justify-center items-center">
+                <div className="rounded-[10px] bg-foreground border-stroke border-[1px] h-[38px] p-[2px]">
+                  <SegmentedControl
+                    segments={segments}
+                    selectedSegment={selectedSegment}
+                  />
+                </div>
+              </div>
+              <div className="grow w-full py-2.5">
+                <VirtualizedChapterList
+                  chapters={chapters}
+                  onChaptersChange={setChapters}
+                />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
         {/* <div className="w-[378px]">
           <div className="h-[46px] border-b-[1px] border-stroke flex justify-between items-center px-5">
             <span className="text-sm font-semibold text-primary">
