@@ -1038,3 +1038,169 @@ export function RedoIcon({ className }: any) {
     </svg>
   );
 }
+
+export function TargetIcon({ className }: any) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 12 12"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        fill-rule="evenodd"
+        clip-rule="evenodd"
+        d="M1.2 6C1.2 8.65097 3.34903 10.8 6 10.8C8.65097 10.8 10.8 8.65097 10.8 6C10.8 3.34903 8.65097 1.2 6 1.2C3.34903 1.2 1.2 3.34903 1.2 6ZM6 0C2.68629 0 0 2.68629 0 6C0 9.31371 2.68629 12 6 12C9.31371 12 12 9.31371 12 6C12 2.68629 9.31371 0 6 0Z"
+        className="fill-current"
+      />
+      <path
+        fill-rule="evenodd"
+        clip-rule="evenodd"
+        d="M3.6 6C3.6 7.32548 4.67452 8.4 6 8.4C7.32548 8.4 8.4 7.32548 8.4 6C8.4 4.67452 7.32548 3.6 6 3.6C4.67452 3.6 3.6 4.67452 3.6 6ZM6 2.4C4.01178 2.4 2.4 4.01178 2.4 6C2.4 7.98822 4.01178 9.6 6 9.6C7.98822 9.6 9.6 7.98822 9.6 6C9.6 4.01178 7.98822 2.4 6 2.4Z"
+        className="fill-current"
+      />
+      <path
+        d="M4.92 6C4.92 5.40353 5.40353 4.92 6 4.92C6.59647 4.92 7.08 5.40353 7.08 6C7.08 6.59647 6.59647 7.08 6 7.08C5.40353 7.08 4.92 6.59647 4.92 6Z"
+        className="fill-current"
+      />
+    </svg>
+  );
+}
+
+export function DefaultTextIcon({ className }: any) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 10 11"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M0.387695 10.9996L4.03624 0.794922H6.2169L9.86544 10.9996H7.81181L6.97907 8.63541H3.3023L2.45544 10.9996H0.387695ZM3.76807 6.83584H6.47801L5.1301 2.77798L3.76807 6.83584Z"
+        className="fill-current"
+      />
+    </svg>
+  );
+}
+
+export function CommentedTextIcon({ className }: any) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 20 14"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M16.6406 13.272V12.1005H18.1861L18.1791 1.95935H16.6406V0.794922H19.8728L19.8657 13.272H16.6406Z"
+        className="fill-current"
+      />
+      <path
+        d="M13.0557 11V8.75586H15.3139V11H13.0557Z"
+        className="fill-current"
+      />
+      <path
+        d="M8.75488 11V8.75586H11.0132V11H8.75488Z"
+        className="fill-current"
+      />
+      <path
+        d="M4.4541 11V8.75586H6.71239V11H4.4541Z"
+        className="fill-current"
+      />
+      <path
+        d="M0.0519791 13.272L0.0449219 0.794922H3.28415V1.95935H1.73864V12.1005H3.27709V13.272H0.0519791Z"
+        className="fill-current"
+      />
+    </svg>
+  );
+}
+
+export function MinusFontSizeIcon({ className }: any) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 10 2"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M0.625 1.51465C0.279822 1.51465 0 1.23483 0 0.889648C0 0.54447 0.279822 0.264648 0.625 0.264648H9.375C9.72018 0.264648 10 0.54447 10 0.889648C10 1.23483 9.72018 1.51465 9.375 1.51465H0.625Z"
+        className="fill-current"
+      />
+    </svg>
+  );
+}
+
+export function PlusFontSizeIcon({ className }: any) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 10 11"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M5 0.885742C4.65482 0.885742 4.375 1.16556 4.375 1.51074V5.26074H0.625C0.279822 5.26074 0 5.54056 0 5.88574C0 6.23092 0.279822 6.51074 0.625 6.51074H4.375V10.2607C4.375 10.6059 4.65482 10.8857 5 10.8857C5.34518 10.8857 5.625 10.6059 5.625 10.2607V6.51074H9.375C9.72018 6.51074 10 6.23092 10 5.88574C10 5.54056 9.72018 5.26074 9.375 5.26074H5.625V1.51074C5.625 1.16556 5.34518 0.885742 5 0.885742Z"
+        className="fill-current"
+      />
+    </svg>
+  );
+}
+
+export function TextAlignLeftIcon({ className }: any) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 16 12"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M0 0.705882C0 0.316034 0.316034 0 0.705882 0H15.2941C15.684 0 16 0.316034 16 0.705882C16 1.09573 15.684 1.41176 15.2941 1.41176H0.705882C0.316034 1.41176 0 1.09573 0 0.705882Z"
+        className="fill-current"
+      />
+      <path
+        d="M0 3.99983C0 3.60998 0.316034 3.29395 0.705882 3.29395H8.70588C9.09573 3.29395 9.41176 3.60998 9.41176 3.99983C9.41176 4.38968 9.09573 4.70571 8.70588 4.70571H0.705882C0.316033 4.70571 0 4.38968 0 3.99983Z"
+        className="fill-current"
+      />
+      <path
+        d="M0 10.5877C0 10.1979 0.316034 9.88184 0.705882 9.88184H8.70588C9.09573 9.88184 9.41176 10.1979 9.41176 10.5877C9.41176 10.9776 9.09573 11.2936 8.70588 11.2936H0.705882C0.316033 11.2936 0 10.9776 0 10.5877Z"
+        className="fill-current"
+      />
+      <path
+        d="M0 7.29377C0 6.90392 0.316034 6.58789 0.705882 6.58789H13.4118C13.8016 6.58789 14.1176 6.90392 14.1176 7.29377C14.1176 7.68362 13.8016 7.99966 13.4118 7.99966H0.705883C0.316034 7.99966 0 7.68362 0 7.29377Z"
+        className="fill-current"
+      />
+    </svg>
+  );
+}
+
+export function TextAlignCenterIcon({ className }: any) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 16 10"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M0 0.588235C0 0.263362 0.263362 0 0.588235 0H15.4118C15.7366 0 16 0.263362 16 0.588235C16 0.913109 15.7366 1.17647 15.4118 1.17647H0.588235C0.263362 1.17647 0 0.913109 0 0.588235Z"
+        className="fill-current"
+      />
+      <path
+        d="M3.29395 3.33335C3.29395 3.00848 3.55731 2.74512 3.88218 2.74512H12.1175C12.4423 2.74512 12.7057 3.00848 12.7057 3.33335C12.7057 3.65823 12.4423 3.92159 12.1175 3.92159H3.88218C3.55731 3.92159 3.29395 3.65823 3.29395 3.33335Z"
+        className="fill-current"
+      />
+      <path
+        d="M3.29395 8.82456C3.29395 8.49969 3.55731 8.23633 3.88218 8.23633H12.1175C12.4423 8.23633 12.7057 8.49969 12.7057 8.82456C12.7057 9.14944 12.4423 9.4128 12.1175 9.4128H3.88218C3.55731 9.4128 3.29395 9.14944 3.29395 8.82456Z"
+        className="fill-current"
+      />
+      <path
+        d="M0.941406 6.07847C0.941406 5.7536 1.20477 5.49023 1.52964 5.49023H14.4708C14.7957 5.49023 15.0591 5.7536 15.0591 6.07847C15.0591 6.40334 14.7957 6.6667 14.4708 6.6667H1.52964C1.20477 6.6667 0.941406 6.40334 0.941406 6.07847Z"
+        className="fill-current"
+      />
+    </svg>
+  );
+}

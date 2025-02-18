@@ -21,7 +21,7 @@ export default function ScriptArea() {
   };
 
   return (
-    <div className="grow w-full px-12 flex flex-col justify-start items-center gap-7">
+    <div className="grow w-full px-12 pt-10 flex flex-col justify-start items-center gap-7">
       <div className="flex flex-col gap-7 max-w-[800px] w-full">
         {/* <ChapterDivider position={0} /> */}
         {script.nodes &&

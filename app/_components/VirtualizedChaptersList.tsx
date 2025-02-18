@@ -5,7 +5,12 @@ import { FixedSizeList as List, areEqual } from "react-window";
 import { DragDropContext, Draggable } from "@hello-pangea/dnd";
 import { StrictModeDroppable } from "./StrictModeDroppable";
 import AutoSizer from "react-virtualized-auto-sizer";
-import { AddChapterIcon, AddIcon, DragIcon } from "../_assets/icons";
+import {
+  AddChapterIcon,
+  AddIcon,
+  DragIcon,
+  TargetIcon,
+} from "../_assets/icons";
 
 // Create an array of 20 chapter objects
 const initialChapters = Array.from({ length: 14 }, (_, index) => ({
@@ -78,8 +83,8 @@ const Row = React.memo(({ data, index, style }: any) => {
                     snapshot.isDragging
                       ? "scale-90 bg-battleground/90 shadow-[0px_4px_5px_0px_rgba(0,0,0,0.25)] backdrop-sepia-50 ring-1 ring-border"
                       : isDragging
-                      ? ""
-                      : "hover:bg-hover"
+                      ? "text-primary"
+                      : "hover:bg-hover text-inactive hover:text-primary"
                   }`}
                   // Set explicit height equal to rowHeight
                   style={{ height: rowHeight }}
@@ -91,18 +96,22 @@ const Row = React.memo(({ data, index, style }: any) => {
                       }}
                       className="h-7 aspect-square rounded-full bg-cover bg-center flex-shrink-0 mr-2.5"
                     ></div>
-                    <div className="font-medium text-[13px] text-inactive grow truncate">
+                    <div className="font-medium text-[13px] grow truncate">
                       {chapter.name}
                     </div>
                   </div>
 
-                  <span
-                    {...provided.dragHandleProps}
-                    className={`hidden text-secondary hover:text-primary cursor-grab  place-items-center w-[32px] aspect-square shrink-0 ${
-                      isDragging ? "" : "group-hover:grid"
-                    }`}
-                  >
-                    <DragIcon className="h-3" />
+                  <span className="flex">
+                    <span className="text-secondary hover:text-primary cursor-pointer place-items-center w-[32px] aspect-square shrink-0 grid">
+                      <TargetIcon className="h-3" />
+                    </span>
+
+                    <span
+                      {...provided.dragHandleProps}
+                      className="text-secondary hover:text-primary cursor-grab  place-items-center w-[32px] aspect-square shrink-0 grid"
+                    >
+                      <DragIcon className="h-3" />
+                    </span>
                   </span>
                 </div>
               </div>
@@ -178,8 +187,8 @@ export default function VirtualizedChapterList() {
                   snapshot.isDragging
                     ? "scale-90 bg-battleground/90 shadow-[0px_4px_5px_0px_rgba(0,0,0,0.25)] backdrop-sepia-50 ring-1 ring-border"
                     : isDragging
-                    ? ""
-                    : "hover:bg-hover"
+                    ? "text-primary"
+                    : "hover:bg-hover text-inactive hover:text-primary"
                 }`}
                 style={{ height: rowHeight }}
               >
@@ -190,18 +199,22 @@ export default function VirtualizedChapterList() {
                     }}
                     className="h-7 aspect-square rounded-full bg-cover bg-center flex-shrink-0 mr-2.5"
                   ></div>
-                  <div className="font-medium text-[13px] text-inactive grow truncate">
+                  <div className="font-medium text-[13px] grow truncate">
                     {chapters[rubric.source.index].name}
                   </div>
                 </div>
 
-                <span
-                  {...provided.dragHandleProps}
-                  className={`hidden text-secondary hover:text-primary cursor-grab  place-items-center w-[32px] aspect-square shrink-0 ${
-                    isDragging ? "" : "group-hover:grid"
-                  }`}
-                >
-                  <DragIcon className="h-3" />
+                <span className="flex">
+                  <span className="text-secondary hover:text-primary cursor-pointer  place-items-center w-[32px] aspect-square shrink-0">
+                    <TargetIcon className="h-3" />
+                  </span>
+
+                  <span
+                    {...provided.dragHandleProps}
+                    className="text-secondary hover:text-primary  place-items-center w-[32px] aspect-square shrink-0"
+                  >
+                    <DragIcon className="h-3" />
+                  </span>
                 </span>
               </div>
             </div>

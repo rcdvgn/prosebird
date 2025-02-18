@@ -89,7 +89,7 @@ export default function ScriptNode({
         setChapterTitle(script.nodes[position].title);
       }
     }
-  }, [script?.data?.nodes[position].title]);
+  }, [script?.nodes[position].title]);
 
   return (
     <div className="w-full">

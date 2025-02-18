@@ -14,9 +14,9 @@ export default function ChapterDivider({ className, position }: any) {
     >
       <div className="relative w-full flex justify-center">
         <div className="absolute w-full h-[1px] top-0 bottom-0 m-auto">
-          <div className="left-0 top-0 w-full h-full bg-stroke"></div>
+          <div className="group-hover:opacity-0 left-0 top-0 w-full h-full bg-stroke"></div>
 
-          <div className="left-0 rigt-0 top-0 m-auto h-full bg-brand group-hover:w-full w-0 transition-all duration-200 ease-in-out delay-75"></div>
+          <div className="left-0 right-0 top-0 m-auto h-full bg-brand group-hover:w-full w-0 transition-all duration-200 ease-in-out delay-75"></div>
         </div>
 
         <button

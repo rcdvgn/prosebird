@@ -17,6 +17,8 @@ import { useScriptEditor } from "@/app/_contexts/ScriptEditorContext";
 import { useAuth } from "@/app/_contexts/AuthContext";
 import { changeFavoriteStatus } from "../_services/client";
 import VirtualizedChapterList from "./VirtualizedChaptersList";
+import SegmentedControl from "./ui/SegmentedControl";
+import ScriptAreaControls from "./ScriptAreaControls";
 
 export default function ScriptEditor() {
   const { script, setScript, participants } = useScriptEditor();
@@ -26,10 +28,15 @@ export default function ScriptEditor() {
 
   const [isSpellCheckEnabled, setIsSpellCheckEnabled] = useState(false);
 
+  const [scriptAreaControlsVisible, setScriptAreaControlsVisible] =
+    useState<any>(false);
+
   const documentTitleRef = useRef<HTMLInputElement | null>(null);
   const inputContainerRef = useRef<HTMLSpanElement | null>(null);
 
   const [documentTitle, setDocumentTitle] = useState(script?.title);
+
+  const [selectedSegment, setSelectedSegment] = useState<any>(0);
 
   const handleDocumentTitleChange = (e: any) => {
     setDocumentTitle(e.target.value);
@@ -111,6 +118,11 @@ export default function ScriptEditor() {
     console.log(data.node);
   };
 
+  const segments = [
+    { id: 0, text: "Chapters", onClick: () => setSelectedSegment(0) },
+    { id: 1, text: "Preview", onClick: () => setSelectedSegment(1) },
+  ];
+
   useEffect(() => {
     if (inputContainerRef.current && documentTitleRef.current) {
       documentTitleRef.current.style.width = `${inputContainerRef.current.offsetWidth}px`;
@@ -174,7 +186,7 @@ export default function ScriptEditor() {
             </div>
           </div>
         </div>
-        <div className="flex gap-2.5 items-center">
+        <div className="flex gap-3 items-center">
           <div className="flex h-7">
             {Array.from({ length: 3 }).map((item: any, index: any) => {
               return (
@@ -190,34 +202,44 @@ export default function ScriptEditor() {
               );
             })}
           </div>
+          <button className="btn-2-md !px-0 !aspect-square">
+            <PlayIcon className="h-3" />
+          </button>
           <button onClick={handleShareFile} className="btn-2-md">
-            Share
+            Invite
           </button>
           <button className="btn-1-md" onClick={handlePresent}>
-            <PlayIcon className="text-primary h-3" />
             <span className="">Present</span>
           </button>
         </div>
       </div>
-      <div className="slate">
-        <div className="flex grow min-h-0 p-2">
-          {/* <div className="flex flex-col grow"> */}
-          <div className="relative grow flex flex-col items-center min-h-0 overflow-y-auto pt-10">
-            <ScriptArea />
-            <ScriptAreaInfo />
-          </div>
-          {/* </div> */}
+      <div className="grow flex gap-2 overflow-y-auto min-w-0 mr-2 mb-2">
+        {/* <div className="flex grow min-h-0 p-2"> */}
+        {/* <div className="flex flex-col grow"> */}
+        <div className="slate relative grow items-center min-h-0 overflow-y-auto">
+          {scriptAreaControlsVisible && (
+            <ScriptAreaControls setisVisible={setScriptAreaControlsVisible} />
+          )}
+          <ScriptArea />
+          <ScriptAreaInfo />
+        </div>
+        {/* </div> */}
 
-          <div className="w-[300px] bg-background border-stroke border-[1px] rounded-[10px] pb-2.5 overflow-y-auto flex flex-col">
-            <div className="px-5 py-4 border-stroke border-b-[1px]">
-              <span className="text-base font-bold text-primary">Chapters</span>
-            </div>
-            <div className="grow w-full px-2 pt-2">
-              <VirtualizedChapterList />
+        <div className="slate w-[324px] px-2.5 overflow-y-auto">
+          <div className="h-16 px-1 border-stroke border-b-[1px] flex justify-center items-center">
+            <div className="rounded-[10px] bg-foreground border-stroke border-[1px] h-[38px] p-[2px]">
+              <SegmentedControl
+                segments={segments}
+                selectedSegment={selectedSegment}
+              />
             </div>
           </div>
+          <div className="grow w-full py-2.5">
+            <VirtualizedChapterList />
+          </div>
+        </div>
 
-          {/* <div className="w-[378px]">
+        {/* <div className="w-[378px]">
           <div className="h-[46px] border-b-[1px] border-stroke flex justify-between items-center px-5">
             <span className="text-sm font-semibold text-primary">
               Chapters
@@ -231,7 +253,7 @@ export default function ScriptEditor() {
             </span>
           </div>
         </div> */}
-        </div>
+        {/* </div> */}
       </div>
     </div>
   );

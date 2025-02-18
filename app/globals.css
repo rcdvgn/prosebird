@@ -75,6 +75,7 @@ textarea::-webkit-scrollbar {
 
 * {
   box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* @layer utilities {
@@ -107,7 +108,7 @@ textarea::-webkit-scrollbar {
 
 @layer components {
   .slate {
-    @apply grow flex flex-col min-w-0 bg-middleground mr-2 mb-2 rounded-[10px] overflow-y-auto;
+    @apply flex flex-col bg-middleground rounded-[10px];
   }
 
   .icon-container {
@@ -139,7 +140,7 @@ textarea::-webkit-scrollbar {
   }
 
   .btn-2 {
-    @apply bg-brand/15 rounded-lg text-brand text-[13px] font-bold px-[14px] flex justify-center items-center gap-[6px] hover:bg-brand/20 outline-none border-none focus:outline-brand focus:outline outline-offset-2;
+    @apply bg-battleground/95 rounded-lg text-inactive text-[13px] font-bold px-[14px] flex justify-center items-center gap-[6px] hover:bg-battleground hover:text-primary outline-none border-none focus:outline-brand focus:outline outline-offset-2;
   }
 
   .btn-1-sm {
@@ -147,7 +148,7 @@ textarea::-webkit-scrollbar {
   }
 
   .btn-1-md {
-    @apply btn-1 h-[36px];
+    @apply btn-1 h-8;
   }
 
   .btn-1-lg {
@@ -155,7 +156,7 @@ textarea::-webkit-scrollbar {
   }
 
   .btn-2-md {
-    @apply btn-2 h-[36px];
+    @apply btn-2 h-8;
   }
 
   .button-secondary {
