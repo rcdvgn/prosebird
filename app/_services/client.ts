@@ -293,7 +293,7 @@ export const getPeople = async (userIds: any, exceptionIds: any) => {
         if (docSnap.exists()) {
           return { id: docSnap.id, ...docSnap.data() };
         }
-        console.warn(`No document found for ID: ${id}`);
+        // console.warn(`No document found for ID: ${id}`);
         return null;
       })
     );

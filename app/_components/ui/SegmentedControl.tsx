@@ -15,9 +15,10 @@ export default function SegmentedControl({
         }}
       ></div>
 
-      {segments.map((segment: any) => {
+      {segments.map((segment: any, index: any) => {
         return (
           <div
+            key={index}
             onClick={segment.onClick}
             style={{ width: `${segmentWidth}px` }}
             className={`z-10 h-full px-1 rounded-lg flex justify-center items-center gap-1 ${

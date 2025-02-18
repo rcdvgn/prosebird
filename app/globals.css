@@ -78,6 +78,16 @@ textarea::-webkit-scrollbar {
   -webkit-font-smoothing: antialiased;
 }
 
+/* ::-moz-selection {
+  color: var(-primary);
+  background: var(--brand);
+}
+
+::selection {
+  color: var(-primary);
+  background: var(--brand);
+} */
+
 /* @layer utilities {
   .text-balance {
     text-wrap: balance;

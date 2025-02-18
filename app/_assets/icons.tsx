@@ -1048,14 +1048,14 @@ export function TargetIcon({ className }: any) {
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M1.2 6C1.2 8.65097 3.34903 10.8 6 10.8C8.65097 10.8 10.8 8.65097 10.8 6C10.8 3.34903 8.65097 1.2 6 1.2C3.34903 1.2 1.2 3.34903 1.2 6ZM6 0C2.68629 0 0 2.68629 0 6C0 9.31371 2.68629 12 6 12C9.31371 12 12 9.31371 12 6C12 2.68629 9.31371 0 6 0Z"
         className="fill-current"
       />
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M3.6 6C3.6 7.32548 4.67452 8.4 6 8.4C7.32548 8.4 8.4 7.32548 8.4 6C8.4 4.67452 7.32548 3.6 6 3.6C4.67452 3.6 3.6 4.67452 3.6 6ZM6 2.4C4.01178 2.4 2.4 4.01178 2.4 6C2.4 7.98822 4.01178 9.6 6 9.6C7.98822 9.6 9.6 7.98822 9.6 6C9.6 4.01178 7.98822 2.4 6 2.4Z"
         className="fill-current"
       />

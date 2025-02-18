@@ -40,6 +40,8 @@ export default function ScriptEditor() {
 
   const [selectedSegment, setSelectedSegment] = useState<any>(0);
 
+  const [chapters, setChapters] = useState(script.nodes);
+
   const handleDocumentTitleChange = (e: any) => {
     setDocumentTitle(e.target.value);
   };
@@ -138,6 +140,11 @@ export default function ScriptEditor() {
       }
     }
   }, [script?.title]);
+
+  useEffect(() => {
+    const scriptCopy = { ...script, nodes: chapters };
+    setScript(scriptCopy);
+  }, [chapters]);
 
   return (
     <div className="flex flex-col w-full">
@@ -250,7 +257,10 @@ export default function ScriptEditor() {
             </div>
           </div>
           <div className="grow w-full py-2.5">
-            <VirtualizedChapterList />
+            <VirtualizedChapterList
+              chapters={chapters}
+              onChaptersChange={setChapters}
+            />
           </div>
         </div>
 

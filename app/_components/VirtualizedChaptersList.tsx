@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // @ts-ignore
 import { FixedSizeList as List, areEqual } from "react-window";
 // @ts-ignore
@@ -13,10 +13,10 @@ import {
 } from "../_assets/icons";
 
 // Create an array of 20 chapter objects
-const initialChapters = Array.from({ length: 14 }, (_, index) => ({
-  id: `chapter-${index + 1}`,
-  name: `This is chapter ${index + 1}`,
-}));
+// const initialChapters = Array.from({ length: 14 }, (_, index) => ({
+//   id: `chapter-${index + 1}`,
+//   name: `This is chapter ${index + 1}`,
+// }));
 
 // Define row dimensions and gap
 const rowHeight = 48; // Actual content height
@@ -97,7 +97,7 @@ const Row = React.memo(({ data, index, style }: any) => {
                       className="h-7 aspect-square rounded-full bg-cover bg-center flex-shrink-0 mr-2.5"
                     ></div>
                     <div className="font-medium text-[13px] grow truncate">
-                      {chapter.name}
+                      {chapter.title}
                     </div>
                   </div>
 
@@ -123,8 +123,10 @@ const Row = React.memo(({ data, index, style }: any) => {
   );
 }, areEqual);
 
-export default function VirtualizedChapterList() {
-  const [chapters, setChapters] = useState(initialChapters);
+export default function VirtualizedChapterList({
+  chapters,
+  onChaptersChange,
+}: any) {
   const [isDragging, setIsDragging] = useState(false);
   const [placeholderProps, setPlaceholderProps] = useState({
     height: 0,
@@ -148,7 +150,7 @@ export default function VirtualizedChapterList() {
     const updatedChapters = Array.from(chapters);
     const [removed] = updatedChapters.splice(result.source.index, 1);
     updatedChapters.splice(result.destination.index, 0, removed);
-    setChapters(updatedChapters);
+    onChaptersChange(updatedChapters);
   };
 
   const onDragUpdate = (update: any) => {
@@ -200,7 +202,7 @@ export default function VirtualizedChapterList() {
                     className="h-7 aspect-square rounded-full bg-cover bg-center flex-shrink-0 mr-2.5"
                   ></div>
                   <div className="font-medium text-[13px] grow truncate">
-                    {chapters[rubric.source.index].name}
+                    {chapters[rubric.source.index].title}
                   </div>
                 </div>
 
