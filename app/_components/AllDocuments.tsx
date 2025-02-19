@@ -19,8 +19,12 @@ import { isScriptShared } from "../_utils/isScriptShared";
 import DropdownWrapper from "./wrappers/DropdownWrapper";
 import matchToRole from "../_utils/matchToRole";
 import { filterScripts, sortScripts } from "../_utils/organizeScripts";
+import { useScriptEditor } from "../_contexts/ScriptEditorContext";
 
 export default function AllDocuments() {
+  const { scripts } = useRealtimeData();
+  const { user } = useAuth();
+
   // Sorting state
   const [sorting, setSorting] = useState<any>({
     sortedBy: "lastModified",
@@ -37,9 +41,6 @@ export default function AllDocuments() {
   // Dropdown visibility state for the role filter
   const [isRoleFilterOptionsVisible, setIsRoleFilterOptionsVisible] =
     useState<boolean>(false);
-
-  const { scripts } = useRealtimeData();
-  const { user } = useAuth();
 
   const [displayType, setDisplayType] = useState<"grid" | "list">("grid");
 

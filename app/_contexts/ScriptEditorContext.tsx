@@ -28,7 +28,7 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
   // 'script' holds metadata (editors, viewers, createdBy, etc.)
   const [script, setScriptState] = useState<any>(null);
   // 'nodes' holds the document content (the nodes array)
-  const [nodes, setNodesState] = useState<any>([]);
+  const [nodes, setNodesState] = useState<any>(null);
 
   const [isSaved, setIsSaved] = useState<any>(true);
 
@@ -56,11 +56,16 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
    * Updates nodes locally and persists the change.
    */
   const updateNodesLocal = async (newNodes: any) => {
-    localNodesUpdate.current = true;
-    setNodesState(newNodes);
-    setIsSaved(false);
-    await saveNodes(script?.id, newNodes);
-    setIsSaved(true);
+    if (!nodes) {
+      localNodesUpdate.current = true;
+      setNodesState(newNodes);
+    } else {
+      localNodesUpdate.current = true;
+      setNodesState(newNodes);
+      setIsSaved(false);
+      await saveNodes(script?.id, newNodes);
+      setIsSaved(true);
+    }
   };
 
   /**

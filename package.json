@@ -18,6 +18,7 @@
     "firebase-admin": "^13.0.2",
     "framer-motion": "^12.3.1",
     "hex-to-hsl": "^1.0.2",
+    "json-joy": "^17.29.0",
     "lodash": "^4.17.21",
     "next": "14.2.13",
     "overlayscrollbars-react": "^0.5.6",
