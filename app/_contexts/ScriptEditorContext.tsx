@@ -30,6 +30,8 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
   // 'nodes' holds the document content (the nodes array)
   const [nodes, setNodesState] = useState<any>([]);
 
+  const [isSaved, setIsSaved] = useState<any>(true);
+
   const [participants, setParticipants] = useState<any>([]);
   const [lastFetchedParticipants, setLastFetchedParticipants] = useState<any>(
     []
@@ -45,7 +47,9 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
   const updateScriptLocal = async (newScriptMetadata: any) => {
     localScriptUpdate.current = true;
     setScriptState(newScriptMetadata);
+    setIsSaved(false);
     await saveScript(newScriptMetadata);
+    setIsSaved(true);
   };
 
   /**
@@ -54,7 +58,9 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
   const updateNodesLocal = async (newNodes: any) => {
     localNodesUpdate.current = true;
     setNodesState(newNodes);
+    setIsSaved(false);
     await saveNodes(script?.id, newNodes);
+    setIsSaved(true);
   };
 
   /**
@@ -110,17 +116,15 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
     const unsubscribeNodes = subscribeToNodes(
       script,
       (serverNodesData: any) => {
-        if (localNodesUpdate.current) {
-          localNodesUpdate.current = false;
-          return;
-        }
+        // Remove the localNodesUpdate flag check entirely.
         if (!_.isEqual(serverNodesData.nodes, nodes)) {
+          console.log("Remote update detected");
           setNodesState(serverNodesData.nodes);
         }
       }
     );
     return () => unsubscribeNodes();
-  }, [script?.id]);
+  }, [script?.id, nodes]);
 
   // Participants fetching effect remains unchanged.
   useEffect(() => {
@@ -178,7 +182,7 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
       value={{
         script,
         nodes,
-        // Expose the two separate update functions.
+        isSaved,
         setScript: updateScriptLocal,
         setNodes: updateNodesLocal,
         emptyNode,

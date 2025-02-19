@@ -49,7 +49,7 @@ export default function ScriptEditor() {
 
   const [selectedSegment, setSelectedSegment] = useState<any>(0);
 
-  const [chapters, setChapters] = useState(nodes);
+  // const [chapters, setChapters] = useState(nodes);
 
   const chapterViewWidth = 324;
 
@@ -119,19 +119,8 @@ export default function ScriptEditor() {
     console.log("Handle file sharing");
   };
 
-  const handleDragStart = (e: any, data: any) => {
-    console.log("started");
-    console.log(data.node);
-  };
-
-  const handleDragMove = (e: any) => {
-    // console.log(e.x, e.y);
-  };
-
-  const handleDragStop = (e: any, data: any) => {
-    console.log("stoped");
-
-    console.log(data.node);
+  const setChapters = (newChapters: any) => {
+    setNodes(newChapters);
   };
 
   const segments = [
@@ -158,10 +147,10 @@ export default function ScriptEditor() {
     }
   }, [script?.title]);
 
-  useEffect(() => {
-    const nodesCopy = [...chapters];
-    setNodes(nodesCopy);
-  }, [chapters]);
+  // useEffect(() => {
+  //   const nodesCopy = [...nodes];
+  //   setNodes(nodesCopy);
+  // }, [chapters]);
 
   return (
     <div className="flex flex-col w-full">
@@ -299,7 +288,7 @@ export default function ScriptEditor() {
               </div>
               <div className="grow w-full py-2.5">
                 <VirtualizedChapterList
-                  chapters={chapters}
+                  chapters={nodes}
                   onChaptersChange={setChapters}
                 />
               </div>
