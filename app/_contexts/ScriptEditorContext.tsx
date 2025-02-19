@@ -4,8 +4,8 @@ import React, {
   useState,
   ReactNode,
   useEffect,
+  useRef,
 } from "react";
-import { debounce } from "lodash";
 import { v4 as uuidv4 } from "uuid";
 import _ from "lodash";
 
@@ -14,6 +14,7 @@ import {
   subscribeToNodes,
   subscribeToScript,
   getPeople,
+  saveNodes,
 } from "../_services/client";
 
 import { emptyNode } from "../_utils/emptyNode";
@@ -24,24 +25,46 @@ const ScriptEditorContext = createContext<any>(undefined);
 export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
 
-  const [script, setScript] = useState<any>(null);
-  const [isSaved, setIsSaved] = useState(true);
-  const [lastSavedScript, setLastSavedScript] = useState<any>(null);
+  // 'script' holds metadata (editors, viewers, createdBy, etc.)
+  const [script, setScriptState] = useState<any>(null);
+  // 'nodes' holds the document content (the nodes array)
+  const [nodes, setNodesState] = useState<any>([]);
+
   const [participants, setParticipants] = useState<any>([]);
   const [lastFetchedParticipants, setLastFetchedParticipants] = useState<any>(
     []
   );
 
-  const hasUnsavedChanges = () => {
-    const cond = _.isEqual(
-      { ...script, lastModified: null },
-      { ...lastSavedScript, lastModified: null }
-    );
+  // These refs track if a change was initiated locally for each part.
+  const localScriptUpdate = useRef(false);
+  const localNodesUpdate = useRef(false);
 
-    return !cond;
+  /**
+   * Updates metadata locally and persists the change.
+   */
+  const updateScriptLocal = async (newScriptMetadata: any) => {
+    localScriptUpdate.current = true;
+    setScriptState(newScriptMetadata);
+    await saveScript(newScriptMetadata);
   };
 
-  const addNode = (position: number, user: any, numberOfChapters: any) => {
+  /**
+   * Updates nodes locally and persists the change.
+   */
+  const updateNodesLocal = async (newNodes: any) => {
+    localNodesUpdate.current = true;
+    setNodesState(newNodes);
+    await saveNodes(script?.id, newNodes);
+  };
+
+  /**
+   * Helper function for adding a node.
+   */
+  const addNode = async (
+    position: number,
+    user: any,
+    numberOfChapters: number
+  ) => {
     const newNode: any = {
       title: "Chapter " + (numberOfChapters + 1),
       paragraph: "",
@@ -49,69 +72,57 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
       id: uuidv4(),
     };
 
-    let copyScriptData = { ...script };
-    copyScriptData.nodes.splice(position, 0, newNode);
-    setScript({ ...script, ...copyScriptData });
+    const newNodes = [...nodes];
+    newNodes.splice(position, 0, newNode);
+    await updateNodesLocal(newNodes);
   };
 
-  const deleteNode = (id: string) => {
-    let copyScriptData = { ...script };
-    copyScriptData.nodes = copyScriptData.nodes.filter(
-      (node: any) => node.id !== id
-    );
-    setScript({ ...script, ...copyScriptData });
+  /**
+   * Helper function for deleting a node.
+   */
+  const deleteNode = async (id: string) => {
+    const newNodes = nodes.filter((node: any) => node.id !== id);
+    await updateNodesLocal(newNodes);
   };
 
+  // Subscribe to metadata changes (Firestore).
   useEffect(() => {
-    const handleSave = async () => {
-      if (hasUnsavedChanges()) {
-        console.log("about to be saved to server");
-        await saveScript(script);
-        setLastSavedScript(_.cloneDeep(script));
-      }
-
-      setIsSaved(true);
-    };
-
-    if (script) {
-      if (!lastSavedScript) {
-        setLastSavedScript(_.cloneDeep(script));
-      } else {
-        if (isSaved) {
-          setIsSaved(false);
-        }
-        handleSave();
-      }
-    }
-  }, [script]);
-
-  useEffect(() => {
-    if (!script) return;
-
-    const applyServerChanges = (serverScript: any) => {
-      if (
-        !_.isEqual(
-          { ...serverScript, lastModified: null },
-          { ...script, lastModified: null }
-        )
-      ) {
-        setScript(serverScript);
-        setLastSavedScript(_.cloneDeep(serverScript));
-      }
-    };
-
-    const unsubscribeScript: any = subscribeToScript(
+    if (!script?.id) return;
+    const unsubscribeScript = subscribeToScript(
       script,
-      applyServerChanges
+      (serverScriptData: any) => {
+        if (localScriptUpdate.current) {
+          localScriptUpdate.current = false;
+          return;
+        }
+        setScriptState((prev: any) => ({
+          ...prev,
+          ...serverScriptData,
+        }));
+      }
     );
-    const unsubscribeNodes: any = subscribeToNodes(script, applyServerChanges);
-
-    return () => {
-      unsubscribeScript();
-      unsubscribeNodes();
-    };
+    return () => unsubscribeScript();
   }, [script?.id]);
 
+  // Subscribe to nodes changes (RTDB).
+  useEffect(() => {
+    if (!script?.id) return;
+    const unsubscribeNodes = subscribeToNodes(
+      script,
+      (serverNodesData: any) => {
+        if (localNodesUpdate.current) {
+          localNodesUpdate.current = false;
+          return;
+        }
+        if (!_.isEqual(serverNodesData.nodes, nodes)) {
+          setNodesState(serverNodesData.nodes);
+        }
+      }
+    );
+    return () => unsubscribeNodes();
+  }, [script?.id]);
+
+  // Participants fetching effect remains unchanged.
   useEffect(() => {
     if (!script || !user) return;
 
@@ -127,13 +138,9 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
 
       const fetchParticipants = async () => {
         try {
-          // Fix Promise.all destructuring to match number of promises
-
           const [editorsDocs, viewersDocs, authorDoc]: any = await Promise.all([
             getPeople(editors, []),
             getPeople(viewers, []),
-            // user.id !== author ? getPeople([author], []) : Promise.resolve([]),
-
             getPeople([author], []),
           ]);
 
@@ -145,12 +152,7 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
             ...doc,
             role: "viewer",
           }));
-
-          // Add author to participants if fetched
           const authorWithRole = [{ ...authorDoc[0], role: "author" }];
-          // authorDoc.length > 0 ? [{ ...authorDoc[0], role: "author" }] : [];
-
-          // Handle guests
           const guestsWithRoles = guests.map((guest: any) => ({
             id: guest,
             role: "guest",
@@ -175,11 +177,13 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
     <ScriptEditorContext.Provider
       value={{
         script,
-        setScript,
+        nodes,
+        // Expose the two separate update functions.
+        setScript: updateScriptLocal,
+        setNodes: updateNodesLocal,
         emptyNode,
         addNode,
         deleteNode,
-        isSaved,
         participants,
       }}
     >

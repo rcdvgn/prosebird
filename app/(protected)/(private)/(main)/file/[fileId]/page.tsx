@@ -9,16 +9,19 @@ import { useScriptEditor } from "@/app/_contexts/ScriptEditorContext";
 export default function File({ params }: { params: { fileId: string } }) {
   const { user } = useAuth();
   const router = useRouter();
-  const { script, setScript, participants } = useScriptEditor();
+  const { script, setScript, setNodes, participants } = useScriptEditor();
 
   useEffect(() => {
     if (user) {
       const fetchFileData = async () => {
-        const newScript = await getScriptAndNodes(params.fileId);
+        const { nodes: newNodes, ...newScript }: any = await getScriptAndNodes(
+          params.fileId
+        );
         if (!newScript) {
           router.push("/files");
         } else {
           setScript(newScript);
+          setNodes(newNodes);
         }
       };
       fetchFileData();

@@ -126,14 +126,19 @@ export const saveScript = async (script: any) => {
     const docRef = doc(db, "scripts", script.id);
 
     const { nodes, ...scriptData } = script;
-
     const updatedScriptData = {
       ...scriptData,
       lastModified: serverTimestamp(),
     };
     await updateDoc(docRef, updatedScriptData);
+  } catch (error) {
+    console.error("Error saving script:", error);
+  }
+};
 
-    const nodesRef = ref(rtdb, `nodes/${script.id}`);
+export const saveNodes = async (scriptId: any, nodes: any) => {
+  try {
+    const nodesRef = ref(rtdb, `nodes/${scriptId}`);
     await set(nodesRef, nodes);
   } catch (error) {
     console.error("Error saving script:", error);
@@ -146,13 +151,11 @@ export const subscribeToScript = (localScript: any, onUpdate: any) => {
   const unsubscribeScript = onSnapshot(scriptRef, (scriptSnapshot) => {
     if (scriptSnapshot.exists()) {
       const scriptData = scriptSnapshot.data();
-
+      // Return only metadata—do not merge local nodes.
       const serverScript = {
         id: localScript.id,
-        nodes: localScript.nodes,
         ...scriptData,
       };
-
       onUpdate(serverScript);
     }
   });
@@ -166,14 +169,8 @@ export const subscribeToNodes = (localScript: any, onUpdate: any) => {
 
   const unsubscribeNodes = onValue(nodesRef, (snapshot) => {
     const nodesData = snapshot.exists() ? snapshot.val() : [emptyNode];
-
-    const serverScript = {
-      id: localScript.id,
-      nodes: nodesData,
-      ...localScript,
-    };
-
-    onUpdate(serverScript);
+    // Return an object with just the nodes.
+    onUpdate({ nodes: nodesData });
   });
 
   return () => off(nodesRef, "value", unsubscribeNodes);
@@ -318,12 +315,12 @@ export const addScriptGuest = async (script: any, newGuest: any) => {
 
 // rtdb nodes compliant
 export const changeNodeSpeaker = async (
-  script: any,
-  nodeId: string, // Using nodeId instead of position for better scalability
+  scriptId: any,
+  nodePosition: string, // Using nodeId instead of position for better scalability
   newSpeakerId: string
 ) => {
   try {
-    const nodeRef = ref(rtdb, `nodes/${script.id}/${nodeId}`);
+    const nodeRef = ref(rtdb, `nodes/${scriptId}/${nodePosition}`);
     await update(nodeRef, { speaker: newSpeakerId }); // Only updates the speaker field
   } catch (error) {
     console.error("Error changing node speaker", error);

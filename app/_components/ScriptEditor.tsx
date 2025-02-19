@@ -23,7 +23,8 @@ import SegmentedControl from "./ui/SegmentedControl";
 import ScriptAreaControls from "./ScriptAreaControls";
 
 export default function ScriptEditor() {
-  const { script, setScript, participants } = useScriptEditor();
+  const { script, setScript, nodes, setNodes, participants } =
+    useScriptEditor();
   const { user } = useAuth();
 
   const router = useRouter();
@@ -48,7 +49,7 @@ export default function ScriptEditor() {
 
   const [selectedSegment, setSelectedSegment] = useState<any>(0);
 
-  const [chapters, setChapters] = useState(script.nodes);
+  const [chapters, setChapters] = useState(nodes);
 
   const chapterViewWidth = 324;
 
@@ -96,6 +97,7 @@ export default function ScriptEditor() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           script: script,
+          nodes: nodes,
           userId: user.id,
           scriptParticipants: participantsIdsAndRoles,
         }),
@@ -157,8 +159,8 @@ export default function ScriptEditor() {
   }, [script?.title]);
 
   useEffect(() => {
-    const scriptCopy = { ...script, nodes: chapters };
-    setScript(scriptCopy);
+    const nodesCopy = [...chapters];
+    setNodes(nodesCopy);
   }, [chapters]);
 
   return (

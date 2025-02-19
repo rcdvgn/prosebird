@@ -3,10 +3,10 @@ import ScriptNode from "./ScriptNode";
 import { useScriptEditor } from "@/app/_contexts/ScriptEditorContext";
 
 export default function ScriptArea({ editorOptions, setEditorOptions }: any) {
-  const { script } = useScriptEditor();
+  const { nodes } = useScriptEditor();
 
   const focusOnLastNode = () => {
-    const lastIndex = script?.nodes.length - 1;
+    const lastIndex = nodes.length - 1;
     const lastParagraph = document.getElementById(
       `chapterParagraph-${lastIndex}`
     ) as HTMLTextAreaElement;
@@ -24,12 +24,9 @@ export default function ScriptArea({ editorOptions, setEditorOptions }: any) {
     <div className="grow w-full px-12 pt-10 flex flex-col justify-start items-center gap-7">
       <div className="flex flex-col gap-7 max-w-[800px] w-full">
         {/* <ChapterDivider position={0} /> */}
-        {script.nodes &&
-          script.nodes
-            .sort(
-              (a: any, b: any) =>
-                script.nodes.indexOf(a) - script.nodes.indexOf(b)
-            )
+        {nodes &&
+          nodes
+            .sort((a: any, b: any) => nodes.indexOf(a) - nodes.indexOf(b))
             .map((node: any, index: any) => {
               return (
                 <div className="group/chapter relative" key={index}>

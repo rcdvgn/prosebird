@@ -16,7 +16,7 @@ import OutsideClickHandler from "@/app/_components/wrappers/OutsideClickHandler"
 import DropdownWrapper from "@/app/_components/wrappers/DropdownWrapper";
 
 export default function Files() {
-  const { setScript } = useScriptEditor();
+  const { setScript, setNodes } = useScriptEditor();
   const { openModal } = useModal();
   const { user, logout } = useAuth();
 
@@ -24,8 +24,10 @@ export default function Files() {
 
   const handleCreateScript = async () => {
     if (user !== null) {
-      const newScript = await createScript(user.id);
+      const { nodes: newNodes, ...newScript } = await createScript(user.id);
       setScript(newScript);
+      setNodes(newNodes);
+
       router.push(`/file/${newScript.id}`);
     }
   };
