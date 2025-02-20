@@ -23,8 +23,9 @@ import SegmentedControl from "./ui/SegmentedControl";
 import ScriptAreaControls from "./ScriptAreaControls";
 
 export default function ScriptEditor() {
-  const { script, setScript, nodes, setNodes, participants } =
+  const { script, setScript, nodes, setNodes, undo, redo, participants } =
     useScriptEditor();
+
   const { user } = useAuth();
 
   const router = useRouter();
@@ -147,10 +148,28 @@ export default function ScriptEditor() {
     }
   }, [script?.title]);
 
-  // useEffect(() => {
-  //   const nodesCopy = [...nodes];
-  //   setNodes(nodesCopy);
-  // }, [chapters]);
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // For undo: Ctrl+Z or Cmd+Z
+      if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key === "z") {
+        e.preventDefault();
+        undo();
+      }
+      // For redo: Ctrl+Y or (Ctrl+Shift+Z / Cmd+Shift+Z)
+      else if (
+        (e.ctrlKey || e.metaKey) &&
+        (e.key === "y" || (e.shiftKey && e.key === "z"))
+      ) {
+        e.preventDefault();
+        redo();
+      }
+    };
+
+    // Add the listener on mount.
+    window.addEventListener("keydown", handleKeyDown);
+    // Clean up on unmount.
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [undo, redo]);
 
   return (
     <div className="flex flex-col w-full">
