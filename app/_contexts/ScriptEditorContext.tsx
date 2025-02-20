@@ -229,6 +229,8 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
         deleteNode,
         undo,
         redo,
+        undoStack,
+        redoStack,
         participants,
       }}
     >

@@ -150,13 +150,10 @@ export default function ScriptEditor() {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // For undo: Ctrl+Z or Cmd+Z
       if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key === "z") {
         e.preventDefault();
         undo();
-      }
-      // For redo: Ctrl+Y or (Ctrl+Shift+Z / Cmd+Shift+Z)
-      else if (
+      } else if (
         (e.ctrlKey || e.metaKey) &&
         (e.key === "y" || (e.shiftKey && e.key === "z"))
       ) {

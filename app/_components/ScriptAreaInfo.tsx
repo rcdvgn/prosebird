@@ -2,7 +2,7 @@ import { RedoIcon, UndoIcon } from "../_assets/icons";
 import { useScriptEditor } from "../_contexts/ScriptEditorContext";
 export default function ScriptAreaInfo() {
   const { isSaved } = useScriptEditor();
-  const { undo, redo } = useScriptEditor();
+  const { undo, redo, undoStack, redoStack } = useScriptEditor();
   return (
     <div className="sticky bottom-0 left-0 w-full">
       <div className="relative">
@@ -14,11 +14,25 @@ export default function ScriptAreaInfo() {
           </span>
 
           <div className="flex items-center gap-3">
-            <span onClick={undo} className="button-icon">
+            <span
+              onClick={undo}
+              className={`button-icon ${
+                undoStack.length
+                  ? ""
+                  : "!text-placeholder cursor-not-allowed !bg-transparent"
+              }`}
+            >
               <UndoIcon className="w-3.5" />
             </span>
 
-            <span onClick={redo} className="button-icon">
+            <span
+              onClick={redo}
+              className={`button-icon ${
+                redoStack.length
+                  ? ""
+                  : "!text-placeholder cursor-not-allowed !bg-transparent"
+              }`}
+            >
               <RedoIcon className="w-3.5" />
             </span>
           </div>
