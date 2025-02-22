@@ -3,14 +3,14 @@ import { AddIcon } from "../_assets/icons";
 import { useScriptEditor } from "@/app/_contexts/ScriptEditorContext";
 import { useAuth } from "@/app/_contexts/AuthContext";
 
-export default function ChapterDivider({ className, position }: any) {
+export default function ChapterDivider({ className, position = 0 }: any) {
   const { user } = useAuth();
 
   const { nodes, addNode } = useScriptEditor();
 
   return (
     <div
-      className={`group-hover/chapter:block hidden absolute left-0 group w-full ${className}`}
+      className={`cursor-default group-hover/chapter:block hidden absolute left-0 group w-full ${className}`}
     >
       <div className="relative w-full flex justify-center">
         <div className="absolute w-full h-[1px] top-0 bottom-0 m-auto">

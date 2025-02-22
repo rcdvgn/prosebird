@@ -21,6 +21,7 @@ import { changeFavoriteStatus } from "../_services/client";
 import VirtualizedChapterList from "./VirtualizedChaptersList";
 import SegmentedControl from "./ui/SegmentedControl";
 import ScriptAreaControls from "./ScriptAreaControls";
+import Tiptap from "./_tiptap/Tiptap";
 
 export default function ScriptEditor() {
   const { script, setScript, nodes, setNodes, undo, redo, participants } =
@@ -273,10 +274,11 @@ export default function ScriptEditor() {
             isVisible={scriptAreaControlsVisible}
             setisVisible={setScriptAreaControlsVisible}
           />
-          <ScriptArea
+          <Tiptap />
+          {/* <ScriptArea
             editorOptions={editorOptions}
             setEditorOptions={setEditorOptions}
-          />
+          /> */}
           <ScriptAreaInfo />
         </div>
         {/* </div> */}

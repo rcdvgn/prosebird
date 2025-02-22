@@ -78,6 +78,10 @@ textarea::-webkit-scrollbar {
   -webkit-font-smoothing: antialiased;
 }
 
+.ProseMirror:focus {
+  outline: none;
+}
+
 /* ::-moz-selection {
   color: var(-primary);
   background: var(--brand);
@@ -211,5 +215,21 @@ textarea::-webkit-scrollbar {
 
   .filter-1-selected-clear {
     @apply flex text-brand bg-brand/10 hover:bg-brand/15 h-full rounded-r-full items-center pl-2.5 pr-3 cursor-pointer;
+  }
+
+  .tiptap-editor-parent {
+    @apply grow w-full [&>div]:h-full [&>div]:w-full;
+  }
+
+  .tiptap-editor {
+    @apply px-12 pt-10 w-full h-full;
+  }
+
+  .tiptap-paragraph {
+    @apply mt-[18px] pl-[54px] text-primary font-normal leading-[22px] placeholder:text-placeholder text-sm;
+  }
+
+  .tiptap-title {
+    @apply py-[2px] text-xl text-primary font-bold;
   }
 }
