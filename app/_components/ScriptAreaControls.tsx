@@ -12,6 +12,7 @@ import {
   TextAlignLeftIcon,
 } from "../_assets/icons";
 import { motion } from "framer-motion";
+import { useEditorContext } from "../_contexts/EditorContext";
 
 const FontSizeControl = ({ editorOptions, setEditorOptions }: any) => {
   return (
@@ -57,6 +58,8 @@ const ScriptControls = ({
   isVisible,
   setisVisible,
 }: any) => {
+  const { editor, toggleComment } = useEditorContext();
+
   const textTypeSegments = [
     {
       leftIcon: <DefaultTextIcon className="h-3" />,
@@ -66,13 +69,22 @@ const ScriptControls = ({
           textType: "default",
         })),
     },
+    // {
+    //   leftIcon: <CommentedTextIcon className="h-3.5" />,
+    //   onClick: () =>
+    //     setEditorOptions((currEditorOptions: any) => ({
+    //       ...currEditorOptions,
+    //       textType: "comment",
+    //     })),
+    // },
     {
       leftIcon: <CommentedTextIcon className="h-3.5" />,
-      onClick: () =>
-        setEditorOptions((currEditorOptions: any) => ({
-          ...currEditorOptions,
-          textType: "comment",
-        })),
+      onClick: () => {
+        // Set text type to comment.
+        setEditorOptions((curr: any) => ({ ...curr, textType: "comment" }));
+        // And then toggle comment around selection.
+        if (editor) toggleComment();
+      },
     },
   ];
 
@@ -129,9 +141,9 @@ const ScriptControls = ({
         <SegmentedControl
           segments={textAlignmentSegments}
           selectedSegment={
-            editorOptions.textAligment === "left"
+            editorOptions.textAlignment === "left"
               ? 0
-              : editorOptions.textAligment === "center"
+              : editorOptions.textAlignment === "center"
               ? 1
               : 2
           }
