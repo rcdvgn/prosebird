@@ -214,6 +214,7 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
 
   // Rehydrate content when nodes change, if the update is not local.
   useEffect(() => {
+    console.log(nodes);
     if (!nodes) return;
     if (!localNodesUpdate.current) {
       handleRehydration(nodes);

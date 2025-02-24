@@ -21,10 +21,19 @@ import VirtualizedChapterList from "./VirtualizedChaptersList";
 import SegmentedControl from "./ui/SegmentedControl";
 import ScriptAreaControls from "./ScriptAreaControls";
 import Tiptap from "./_tiptap/Tiptap";
+import { rehydrateEditorContent } from "../_utils/tiptapCommands";
 
 export default function ScriptEditor() {
-  const { script, setScript, nodes, setNodes, undo, redo, participants } =
-    useScriptEditor();
+  const {
+    script,
+    setScript,
+    nodes,
+    setNodes,
+    undo,
+    redo,
+    participants,
+    editor,
+  } = useScriptEditor();
   const { user } = useAuth();
   const router = useRouter();
 
@@ -103,8 +112,12 @@ export default function ScriptEditor() {
     console.log("Handle file sharing");
   };
 
-  const setChapters = (newChapters: any) => {
-    setNodes(newChapters);
+  const setChapters = async (newChapters: any) => {
+    await setNodes(newChapters); // This is updateNodesLocal from context.
+    if (editor) {
+      const content = rehydrateEditorContent(newChapters);
+      editor.commands.setContent(content);
+    }
   };
 
   const segments = [
