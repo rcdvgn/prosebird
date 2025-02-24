@@ -18,6 +18,7 @@ import {
   saveNodes,
 } from "../_services/client";
 
+import History from "@tiptap/extension-history";
 import { emptyNode } from "../_utils/emptyNode";
 import { useAuth } from "./AuthContext";
 
@@ -47,10 +48,6 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
     []
   );
 
-  // Stacks for undo/redo
-  const [undoStack, setUndoStack] = useState<any[]>([]);
-  const [redoStack, setRedoStack] = useState<any[]>([]);
-
   // These refs track if a change was initiated locally.
   const localScriptUpdate = useRef(false);
   const localNodesUpdate = useRef(false);
@@ -58,14 +55,7 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
   const editor = useEditor({
     immediatelyRender: false,
     injectCSS: false,
-    extensions: [
-      Document,
-      Text,
-      Paragraph, // Your custom Paragraph node
-      Title,
-      Chapter,
-      ChapterDivider,
-    ],
+    extensions: [Document, Text, Paragraph, Title, Chapter, ChapterDivider],
     editorProps: {
       attributes: {
         class: "tiptap-editor",
@@ -151,27 +141,6 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  /**
-   * Undo/Redo omitted for brevity; implement as needed.
-   */
-  const undo = async () => {
-    if (undoStack.length > 0) {
-      const previousState = undoStack[undoStack.length - 1];
-      setUndoStack((prev) => prev.slice(0, prev.length - 1));
-      setRedoStack((prev) => [...prev, nodes]);
-      await updateNodesLocal(previousState);
-    }
-  };
-
-  const redo = async () => {
-    if (redoStack.length > 0) {
-      const nextState = redoStack[redoStack.length - 1];
-      setRedoStack((prev) => prev.slice(0, prev.length - 1));
-      setUndoStack((prev) => [...prev, nodes]);
-      await updateNodesLocal(nextState);
-    }
-  };
-
   const handleRehydration = (newNodes: any) => {
     if (editor) {
       const content = rehydrateEditorContent(newNodes);
@@ -214,7 +183,6 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
 
   // Rehydrate content when nodes change, if the update is not local.
   useEffect(() => {
-    console.log(nodes);
     if (!nodes) return;
     if (!localNodesUpdate.current) {
       handleRehydration(nodes);
@@ -277,10 +245,6 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
         emptyNode,
         addNode,
         deleteNode,
-        undo,
-        redo,
-        undoStack,
-        redoStack,
         participants,
       }}
     >

@@ -24,16 +24,8 @@ import Tiptap from "./_tiptap/Tiptap";
 import { rehydrateEditorContent } from "../_utils/tiptapCommands";
 
 export default function ScriptEditor() {
-  const {
-    script,
-    setScript,
-    nodes,
-    setNodes,
-    undo,
-    redo,
-    participants,
-    editor,
-  } = useScriptEditor();
+  const { script, setScript, nodes, setNodes, participants, editor } =
+    useScriptEditor();
   const { user } = useAuth();
   const router = useRouter();
 
@@ -46,7 +38,7 @@ export default function ScriptEditor() {
   const [isSpellCheckEnabled, setIsSpellCheckEnabled] = useState(false);
   const [scriptAreaControlsVisible, setScriptAreaControlsVisible] =
     useState<any>(false);
-  const [chaptersViewVisible, setChaptersViewVisible] = useState<any>(false);
+  const [chaptersViewVisible, setChaptersViewVisible] = useState<any>(true);
 
   const documentTitleRef = useRef<HTMLInputElement | null>(null);
   const inputContainerRef = useRef<HTMLSpanElement | null>(null);
@@ -141,23 +133,6 @@ export default function ScriptEditor() {
       setDocumentTitle(script.title);
     }
   }, [script?.title]);
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key === "z") {
-        e.preventDefault();
-        undo();
-      } else if (
-        (e.ctrlKey || e.metaKey) &&
-        (e.key === "y" || (e.shiftKey && e.key === "z"))
-      ) {
-        e.preventDefault();
-        redo();
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [undo, redo]);
 
   return (
     <div className="flex flex-col w-full">

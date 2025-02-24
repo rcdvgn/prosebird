@@ -164,6 +164,8 @@ export default function VirtualizedChapterList({
     }
   };
 
+  if (!chapters) return null;
+
   return (
     <DragDropContext
       onDragEnd={onDragEnd}
