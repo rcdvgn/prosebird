@@ -53,7 +53,7 @@ export const createScript: any = async (userId: any) => {
   const blankNodes: any = [
     {
       title: "Chapter 1",
-      paragraph: "",
+      paragraphs: [""],
       speaker: userId,
       id: uuidv4(),
     },

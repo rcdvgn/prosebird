@@ -4,7 +4,6 @@ import { useRef, useState, useEffect } from "react";
 import ScriptArea from "./ScriptArea";
 import ScriptAreaInfo from "./ScriptAreaInfo";
 import { useRouter } from "next/navigation";
-
 import {
   StarIcon,
   ScriptIcon,
@@ -26,9 +25,7 @@ import Tiptap from "./_tiptap/Tiptap";
 export default function ScriptEditor() {
   const { script, setScript, nodes, setNodes, undo, redo, participants } =
     useScriptEditor();
-
   const { user } = useAuth();
-
   const router = useRouter();
 
   const [editorOptions, setEditorOptions] = useState<any>({
@@ -38,20 +35,14 @@ export default function ScriptEditor() {
   });
 
   const [isSpellCheckEnabled, setIsSpellCheckEnabled] = useState(false);
-
   const [scriptAreaControlsVisible, setScriptAreaControlsVisible] =
     useState<any>(false);
-
   const [chaptersViewVisible, setChaptersViewVisible] = useState<any>(false);
 
   const documentTitleRef = useRef<HTMLInputElement | null>(null);
   const inputContainerRef = useRef<HTMLSpanElement | null>(null);
-
   const [documentTitle, setDocumentTitle] = useState(script?.title);
-
   const [selectedSegment, setSelectedSegment] = useState<any>(0);
-
-  // const [chapters, setChapters] = useState(nodes);
 
   const chapterViewWidth = 324;
 
@@ -73,26 +64,19 @@ export default function ScriptEditor() {
     if (e.key === "Enter") {
       e.preventDefault();
       handleDocumentTitleFocusOut();
-      if (documentTitleRef.current) {
-        documentTitleRef.current.blur();
-      }
+      documentTitleRef.current?.blur();
     }
   };
-
-  // useEffect(() => {
-  //   participants ? console.log(participants) : "";
-  // }, [participants]);
 
   const handlePresent = async () => {
     const participantsIdsAndRoles = participants.reduce(
       (acc: any, item: any) => {
         const { id, role } = item;
-        acc[id] = { role, isConnected: false }; // Add participant data using `id` as the key
+        acc[id] = { role, isConnected: false };
         return acc;
       },
       {}
     );
-
     try {
       const res = await fetch("/api/presentation/create", {
         method: "POST",
@@ -104,12 +88,10 @@ export default function ScriptEditor() {
           scriptParticipants: participantsIdsAndRoles,
         }),
       });
-
       if (!res.ok) {
         const { error } = await res.json();
         throw new Error(error || "Failed to create presentation");
       }
-
       const presentationCode = await res.text();
       router.push(`/p/${presentationCode}`);
     } catch (error: any) {
@@ -131,7 +113,7 @@ export default function ScriptEditor() {
   ];
 
   const slideVariants = {
-    hidden: { marginRight: "-" + chapterViewWidth + "px", marginLeft: "0" },
+    hidden: { marginRight: `-${chapterViewWidth}px`, marginLeft: "0" },
     visible: { marginRight: "0", marginLeft: "8px" },
   };
 
@@ -142,10 +124,8 @@ export default function ScriptEditor() {
   }, [documentTitle]);
 
   useEffect(() => {
-    if (script) {
-      if (script?.title !== documentTitle) {
-        setDocumentTitle(script.title);
-      }
+    if (script && script?.title !== documentTitle) {
+      setDocumentTitle(script.title);
     }
   }, [script?.title]);
 
@@ -162,16 +142,14 @@ export default function ScriptEditor() {
         redo();
       }
     };
-
-    // Add the listener on mount.
     window.addEventListener("keydown", handleKeyDown);
-    // Clean up on unmount.
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [undo, redo]);
 
   return (
     <div className="flex flex-col w-full">
       <div className="flex justify-between items-center p-[10px] h-16 shrink-0">
+        {/* Top bar with document title and icons */}
         <div className="grow flex items-center gap-3 min-w-0">
           <div className="icon-container">
             <ScriptIcon className="text-primary" />
@@ -220,53 +198,39 @@ export default function ScriptEditor() {
         </div>
         <div className="flex gap-3 items-center">
           <div className="flex h-7">
-            {Array.from({ length: 3 }).map((item: any, index: any) => {
-              return (
-                <div
-                  key={index}
-                  style={{
-                    backgroundImage: `url("/pfps/profile1.png")`,
-                  }}
-                  className={`${
-                    index > 0 ? "-ml-[3px]" : ""
-                  } h-full aspect-square rounded-full box-content ring-2 ring-background bg-cover bg-center flex-shrink-0`}
-                ></div>
-              );
-            })}
+            {Array.from({ length: 3 }).map((_, index) => (
+              <div
+                key={index}
+                style={{
+                  backgroundImage: `url("/pfps/profile1.png")`,
+                }}
+                className={`${
+                  index > 0 ? "-ml-[3px]" : ""
+                } h-full aspect-square rounded-full box-content ring-2 ring-background bg-cover bg-center flex-shrink-0`}
+              ></div>
+            ))}
           </div>
           <button
-            onClick={() =>
-              setScriptAreaControlsVisible(
-                (currScriptAreaControlsVisible: any) =>
-                  !currScriptAreaControlsVisible
-              )
-            }
+            onClick={() => setScriptAreaControlsVisible((curr: any) => !curr)}
             className="btn-2-md !px-0 !aspect-square"
           >
             <PencilIcon className="h-3.5" />
           </button>
           <button
-            onClick={() =>
-              setChaptersViewVisible(
-                (currChaptersViewVisible: any) => !currChaptersViewVisible
-              )
-            }
+            onClick={() => setChaptersViewVisible((curr: any) => !curr)}
             className="btn-2-md !px-0 !aspect-square"
           >
-            {/* <PlayIcon className="h-3.5" /> */}
             <ChaptersIcon className="w-3.5" />
           </button>
           <button onClick={handleShareFile} className="btn-2-md">
             Invite
           </button>
           <button className="btn-1-md" onClick={handlePresent}>
-            <span className="">Present</span>
+            <span>Present</span>
           </button>
         </div>
       </div>
       <div className="grow flex overflow-x-hidden min-w-0 mr-2 mb-2">
-        {/* <div className="flex grow min-h-0 p-2"> */}
-        {/* <div className="flex flex-col grow"> */}
         <div className="slate relative grow items-center min-h-0 overflow-y-auto">
           <ScriptAreaControls
             editorOptions={editorOptions}
@@ -275,14 +239,8 @@ export default function ScriptEditor() {
             setisVisible={setScriptAreaControlsVisible}
           />
           <Tiptap />
-          {/* <ScriptArea
-            editorOptions={editorOptions}
-            setEditorOptions={setEditorOptions}
-          /> */}
           <ScriptAreaInfo />
         </div>
-        {/* </div> */}
-
         <AnimatePresence>
           {chaptersViewVisible && (
             <motion.div
@@ -313,21 +271,6 @@ export default function ScriptEditor() {
             </motion.div>
           )}
         </AnimatePresence>
-        {/* <div className="w-[378px]">
-          <div className="h-[46px] border-b-[1px] border-stroke flex justify-between items-center px-5">
-            <span className="text-sm font-semibold text-primary">
-              Chapters
-              <span className="font-medium text-text-secondary">
-                {" "}
-                ({scriptData?.nodes.length})
-              </span>
-            </span>
-            <span className="btn-3">
-              <SearchIcon className="" />
-            </span>
-          </div>
-        </div> */}
-        {/* </div> */}
       </div>
     </div>
   );

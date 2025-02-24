@@ -2,7 +2,7 @@ import { Node, mergeAttributes } from "@tiptap/core";
 import { ReactNodeViewRenderer } from "@tiptap/react";
 import ChapterDividerNodeView from "../components/ChapterDividerNodeView";
 
-export const ChapterDivider = Node.create({
+const ChapterDivider = Node.create({
   name: "chapterDivider",
   group: "block",
   selectable: false,
@@ -20,3 +20,5 @@ export const ChapterDivider = Node.create({
     return ReactNodeViewRenderer(ChapterDividerNodeView);
   },
 });
+
+export default ChapterDivider;

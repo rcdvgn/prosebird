@@ -2,10 +2,11 @@
 "use client";
 
 import { EditorContent } from "@tiptap/react";
-import { useEditorContext } from "@/app/_contexts/EditorContext";
-
+import { useScriptEditor } from "@/app/_contexts/ScriptEditorContext";
 const Tiptap = () => {
-  const { editor } = useEditorContext();
+  const { editor } = useScriptEditor();
+
+  if (!editor) return null;
 
   return (
     <div className="tiptap-editor-parent">

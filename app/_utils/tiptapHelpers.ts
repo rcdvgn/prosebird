@@ -18,8 +18,12 @@ export function extractChaptersFromDoc(doc: any) {
         .map((para: any) => para.content?.map((c: any) => c.text).join(""));
 
       // Assume the speaker is stored as an attribute on the chapter node
-      const speaker = chapter.attrs?.speaker || undefined;
 
-      return { title: titleText, paragraphs, speaker };
+      return {
+        id: chapter.attrs?.id, // now available
+        speaker: chapter.attrs?.speaker, // now available
+        title: titleText,
+        paragraphs,
+      };
     });
 }

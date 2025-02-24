@@ -1,3 +1,4 @@
+"use client";
 import React, {
   createContext,
   useContext,
@@ -20,6 +21,16 @@ import {
 import { emptyNode } from "../_utils/emptyNode";
 import { useAuth } from "./AuthContext";
 
+import Document from "@tiptap/extension-document";
+import Text from "@tiptap/extension-text";
+import Chapter from "../_components/_tiptap/extensions/Chapter";
+import Title from "../_components/_tiptap/extensions/Title";
+import Paragraph from "../_components/_tiptap/extensions/Paragraph";
+import ChapterDivider from "../_components/_tiptap/extensions/ChapterDivider";
+import { useEditor } from "@tiptap/react";
+import { extractChaptersFromDoc } from "../_utils/tiptapHelpers";
+import { rehydrateEditorContent } from "../_utils/tiptapCommands";
+
 const ScriptEditorContext = createContext<any>(undefined);
 
 export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
@@ -40,12 +51,40 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
   const [undoStack, setUndoStack] = useState<any[]>([]);
   const [redoStack, setRedoStack] = useState<any[]>([]);
 
-  // These refs track if a change was initiated locally for each part.
+  // These refs track if a change was initiated locally.
   const localScriptUpdate = useRef(false);
   const localNodesUpdate = useRef(false);
 
+  const editor = useEditor({
+    immediatelyRender: false,
+    injectCSS: false,
+    extensions: [
+      Document,
+      Text,
+      Paragraph, // Your custom Paragraph node
+      Title,
+      Chapter,
+      ChapterDivider,
+    ],
+    editorProps: {
+      attributes: {
+        class: "tiptap-editor",
+      },
+    },
+    onUpdate: ({ editor }) => {
+      // Only update if we already have a nodes state (avoid initial update)
+      if (!nodes) return;
+      const docJSON = editor.getJSON();
+      const chaptersData = extractChaptersFromDoc(docJSON);
+      // Only update remote if the change is local (not caused by our remote subscription)
+      if (!localNodesUpdate.current) {
+        updateNodesLocal(chaptersData);
+      }
+    },
+  });
+
   /**
-   * Updates metadata locally and persists the change.
+   * Updates script metadata locally and persists the change.
    */
   const updateScriptLocal = async (newScriptMetadata: any) => {
     localScriptUpdate.current = true;
@@ -56,17 +95,14 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
   };
 
   /**
-   * Updates nodes locally and persists the change.
-   * If skipHistory is false (the default), the current nodes are pushed onto the undo stack
-   * and the redo stack is cleared.
+   * Updates nodes locally and propagates changes to remote.
+   * localNodesUpdate flag is used to prevent a rehydration loop.
    */
-  const updateNodesLocal = async (newNodes: any, skipHistory = false) => {
-    // If nodes already exist and we're not in an undo/redo action, save current state
-    if (nodes && !skipHistory) {
-      setUndoStack((prev) => [...prev, nodes]);
-      // Clear the redo stack on a new change
-      setRedoStack([]);
-    }
+  const updateNodesLocal = async (newNodes: any) => {
+    if (!nodes) return;
+    if (_.isEqual(nodes, newNodes)) return;
+
+    // Mark this update as local.
     localNodesUpdate.current = true;
     setNodesState(newNodes);
     setIsSaved(false);
@@ -74,10 +110,14 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
       await saveNodes(script.id, newNodes);
     }
     setIsSaved(true);
+    // Clear the local update flag after a short delay
+    setTimeout(() => {
+      localNodesUpdate.current = false;
+    }, 100);
   };
 
   /**
-   * Helper function for adding a node.
+   * Helper for adding a node.
    */
   const addNode = async (
     position: number,
@@ -86,52 +126,60 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
   ) => {
     const newNode: any = {
       title: "Chapter " + (numberOfChapters + 1),
-      paragraph: "",
+      paragraphs: [""],
       speaker: user.id,
       id: uuidv4(),
     };
-
-    // Create a copy of the current nodes array and insert the new node.
     const newNodes = nodes ? [...nodes] : [];
     newNodes.splice(position, 0, newNode);
     await updateNodesLocal(newNodes);
+    if (editor) {
+      const content = rehydrateEditorContent(newNodes);
+      editor.commands.setContent(content);
+    }
   };
 
   /**
-   * Helper function for deleting a node.
+   * Helper for deleting a node.
    */
   const deleteNode = async (id: string) => {
     const newNodes = nodes.filter((node: any) => node.id !== id);
     await updateNodesLocal(newNodes);
+    if (editor) {
+      const content = rehydrateEditorContent(newNodes);
+      editor.commands.setContent(content);
+    }
   };
 
   /**
-   * Undo the last change.
+   * Undo/Redo omitted for brevity; implement as needed.
    */
   const undo = async () => {
     if (undoStack.length > 0) {
       const previousState = undoStack[undoStack.length - 1];
       setUndoStack((prev) => prev.slice(0, prev.length - 1));
-      // Save current state to redo stack
       setRedoStack((prev) => [...prev, nodes]);
-      await updateNodesLocal(previousState, true);
+      await updateNodesLocal(previousState);
     }
   };
 
-  /**
-   * Redo the last undone change.
-   */
   const redo = async () => {
     if (redoStack.length > 0) {
       const nextState = redoStack[redoStack.length - 1];
       setRedoStack((prev) => prev.slice(0, prev.length - 1));
-      // Save current state to undo stack
       setUndoStack((prev) => [...prev, nodes]);
-      await updateNodesLocal(nextState, true);
+      await updateNodesLocal(nextState);
     }
   };
 
-  // Subscribe to metadata changes (Firestore).
+  const handleRehydration = (newNodes: any) => {
+    if (editor) {
+      const content = rehydrateEditorContent(newNodes);
+      editor.commands.setContent(content);
+    }
+  };
+
+  // Subscribe to script metadata changes.
   useEffect(() => {
     if (!script?.id) return;
     const unsubscribeScript = subscribeToScript(
@@ -141,44 +189,47 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
           localScriptUpdate.current = false;
           return;
         }
-        setScriptState((prev: any) => ({
-          ...prev,
-          ...serverScriptData,
-        }));
+        setScriptState((prev: any) => ({ ...prev, ...serverScriptData }));
       }
     );
     return () => unsubscribeScript();
   }, [script?.id]);
 
-  // Subscribe to nodes changes (RTDB).
+  // Subscribe to nodes changes.
   useEffect(() => {
     if (!script?.id) return;
     const unsubscribeNodes = subscribeToNodes(
       script,
       (serverNodesData: any) => {
-        if (!_.isEqual(serverNodesData.nodes, nodes)) {
-          console.log("Remote update detected");
-          setNodesState(serverNodesData.nodes);
-        }
+        setNodesState((prevNodes: any) => {
+          if (!_.isEqual(serverNodesData.nodes, prevNodes)) {
+            return serverNodesData.nodes;
+          }
+          return prevNodes;
+        });
       }
     );
     return () => unsubscribeNodes();
   }, [script?.id]);
 
+  // Rehydrate content when nodes change, if the update is not local.
+  useEffect(() => {
+    if (!nodes) return;
+    if (!localNodesUpdate.current) {
+      handleRehydration(nodes);
+    }
+  }, [nodes]);
+
   // Participants fetching effect remains unchanged.
   useEffect(() => {
     if (!script || !user) return;
-
     const editors = script?.editors || [];
     const viewers = script?.viewers || [];
     const guests = script?.guests || [];
     const author = script?.createdBy;
-
     const combinedParticipants = [...editors, ...viewers, ...guests, author];
-
     if (!_.isEqual(combinedParticipants, lastFetchedParticipants)) {
       setLastFetchedParticipants(combinedParticipants);
-
       const fetchParticipants = async () => {
         try {
           const [editorsDocs, viewersDocs, authorDoc]: any = await Promise.all([
@@ -186,7 +237,6 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
             getPeople(viewers, []),
             getPeople([author], []),
           ]);
-
           const editorsWithRoles = editorsDocs.map((doc: any) => ({
             ...doc,
             role: "editor",
@@ -200,7 +250,6 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
             id: guest,
             role: "guest",
           }));
-
           setParticipants([
             ...editorsWithRoles,
             ...viewersWithRoles,
@@ -211,7 +260,6 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
           console.error("Error fetching participants:", error);
         }
       };
-
       fetchParticipants();
     }
   }, [script, user]);
@@ -221,6 +269,7 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
       value={{
         script,
         nodes,
+        editor,
         isSaved,
         setScript: updateScriptLocal,
         setNodes: updateNodesLocal,

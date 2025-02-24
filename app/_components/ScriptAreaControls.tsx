@@ -12,7 +12,8 @@ import {
   TextAlignLeftIcon,
 } from "../_assets/icons";
 import { motion } from "framer-motion";
-import { useEditorContext } from "../_contexts/EditorContext";
+import { useScriptEditor } from "../_contexts/ScriptEditorContext";
+import { toggleComment } from "../_utils/tiptapCommands";
 
 const FontSizeControl = ({ editorOptions, setEditorOptions }: any) => {
   return (
@@ -58,7 +59,7 @@ const ScriptControls = ({
   isVisible,
   setisVisible,
 }: any) => {
-  const { editor, toggleComment } = useEditorContext();
+  const { editor } = useScriptEditor();
 
   const textTypeSegments = [
     {
@@ -83,7 +84,7 @@ const ScriptControls = ({
         // Set text type to comment.
         setEditorOptions((curr: any) => ({ ...curr, textType: "comment" }));
         // And then toggle comment around selection.
-        if (editor) toggleComment();
+        if (editor) toggleComment(editor);
       },
     },
   ];

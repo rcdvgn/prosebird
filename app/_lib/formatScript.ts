@@ -1,54 +1,42 @@
-// import splitWithSpaces from "../_utils/splitWithSpaces";
-
 export default function formatScript(nodes: any) {
   const words: any = [];
   const chapters: any = {};
-  // const speakers: any = [];
   let wordIndex = 0;
 
   nodes.forEach((entry: any) => {
-    // if (!speakers.includes(entry.speaker)) {
-    //   if (entry.speaker !== userId) {
-    //     speakers.push(entry.speaker);
-    //   }
-    // }
-
-    const script = entry.paragraph.trim().split(/\s+/);
-    // const script = splitWithSpaces(entry.paragraph.trim());
-
+    // Mark the start of a new chapter at the current global word index.
     chapters[wordIndex] = {
       title: entry.title,
       speaker: entry.speaker,
     };
 
-    script.forEach((word: any) => {
-      words.push({
-        word: word,
-        position: wordIndex,
+    // Now, for each paragraph (which is a string) in the chapter,
+    // split it into words.
+    entry.paragraphs.forEach((paragraph: string, pIndex: number) => {
+      // Trim and split the paragraph by whitespace.
+      const wordsInParagraph = paragraph.trim().split(/\s+/);
+
+      wordsInParagraph.forEach((word: string) => {
+        words.push({
+          word, // The word text
+          position: wordIndex,
+          chapterTitle: entry.title, // Optional: track chapter info per word
+          paragraphIndex: pIndex, // Optional: track which paragraph this word belongs to
+        });
+        wordIndex++;
       });
-      wordIndex++;
+
+      // Optionally, if you want an explicit paragraph break marker,
+      // you can push a special token (for example, a newline marker).
+      // words.push({ word: "\n", position: wordIndex, isParagraphBreak: true });
+      // wordIndex++;
     });
   });
-
-  // if (!speakers.includes(userId)) {
-  //   speakers.push(userId);
-  // }
-
-  // const presentationParticipants: any = [];
-  // scriptParticipants.forEach((scriptsParticipant: any) => {
-  //   if (speakers.includes(scriptsParticipant.id)) {
-  //     presentationParticipants.push({
-  //       ...scriptsParticipant,
-  //       isConnected: false,
-  //     });
-  //   }
-  // });
 
   return {
     formattedScript: {
       words,
       chapters,
     },
-    // participants: presentationParticipants,
   };
 }
