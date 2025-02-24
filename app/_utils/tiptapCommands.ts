@@ -69,3 +69,19 @@ export function rehydrateEditorContent(chapters: ChapterData[]) {
     content: nodes,
   };
 }
+
+import { Editor } from "@tiptap/core";
+import { EditorState } from "prosemirror-state";
+
+export function resetEditorContent(editor: any, newContent: any) {
+  editor.commands.setContent(newContent);
+
+  // Create a new editor state using the current document, plugins, and schema.
+  const newEditorState = EditorState.create({
+    doc: editor.state.doc,
+    plugins: editor.state.plugins,
+    schema: editor.state.schema,
+  });
+  // Update the editor view to clear the history.
+  editor.view.updateState(newEditorState);
+}

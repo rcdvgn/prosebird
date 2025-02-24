@@ -30,7 +30,10 @@ import Paragraph from "../_components/_tiptap/extensions/Paragraph";
 import ChapterDivider from "../_components/_tiptap/extensions/ChapterDivider";
 import { useEditor } from "@tiptap/react";
 import { extractChaptersFromDoc } from "../_utils/tiptapHelpers";
-import { rehydrateEditorContent } from "../_utils/tiptapCommands";
+import {
+  rehydrateEditorContent,
+  resetEditorContent,
+} from "../_utils/tiptapCommands";
 import { fetchParticipants } from "../_utils/fetchParticipants";
 
 const ScriptEditorContext = createContext<any>(undefined);
@@ -49,11 +52,29 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
 
   const localScriptUpdate = useRef(false);
   const localNodesUpdate = useRef(false);
+  const hasClearedHistory = useRef(false);
+
+  const CustomHistory = History.extend({
+    addKeyboardShortcuts() {
+      return {
+        "Mod-z": () => this.editor.commands.undo(),
+        "Mod-y": () => this.editor.commands.redo(),
+      };
+    },
+  });
 
   const editor = useEditor({
     immediatelyRender: false,
     injectCSS: false,
-    extensions: [Document, Text, Paragraph, Title, Chapter, ChapterDivider],
+    extensions: [
+      Document,
+      Text,
+      Paragraph,
+      Title,
+      Chapter,
+      ChapterDivider,
+      CustomHistory,
+    ],
     editorProps: {
       attributes: {
         class: "tiptap-editor",
@@ -125,7 +146,14 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
   const handleRehydration = (newNodes: any) => {
     if (editor) {
       const content = rehydrateEditorContent(newNodes);
-      editor.commands.setContent(content);
+
+      if (!hasClearedHistory.current) {
+        resetEditorContent(editor, content);
+        hasClearedHistory.current = true;
+      } else {
+        // For subsequent updates, simply set the content.
+        editor.commands.setContent(content);
+      }
     }
   };
 
@@ -165,7 +193,7 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
     if (!localNodesUpdate.current) {
       handleRehydration(nodes);
     }
-  }, [nodes]);
+  }, [editor, nodes]);
 
   useEffect(() => {
     if (!script || !user) return;
