@@ -24,6 +24,11 @@ import { useAuth } from "./AuthContext";
 
 import Document from "@tiptap/extension-document";
 import Text from "@tiptap/extension-text";
+import TextStyle from "@tiptap/extension-text-style";
+import TextAlign from "@tiptap/extension-text-align";
+import FontFamily from "@tiptap/extension-font-family";
+import FontSize from "tiptap-extension-font-size";
+
 import Bold from "@tiptap/extension-bold";
 import Italic from "@tiptap/extension-italic";
 
@@ -79,8 +84,16 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
       ChapterDivider,
       CustomHistory,
       Comment,
+      // FontSize,
       Bold,
       Italic,
+      TextAlign.configure({
+        types: ["paragraph"], // Only paragraphs should have text alignment
+        alignments: ["left", "center", "right", "justify"],
+        defaultAlignment: "left",
+      }),
+      TextStyle,
+      FontFamily,
     ],
     editorProps: {
       attributes: {

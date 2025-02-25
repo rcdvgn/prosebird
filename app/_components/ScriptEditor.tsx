@@ -219,7 +219,14 @@ export default function ScriptEditor() {
         </div>
       </div>
       <div className="grow flex overflow-x-hidden min-w-0 mr-2 mb-2">
-        <div className="slate relative grow items-center min-h-0 overflow-y-auto">
+        <div
+          style={
+            {
+              "--editor-font-size": `${editorOptions.fontSize}px`,
+            } as React.CSSProperties
+          }
+          className="slate relative grow items-center min-h-0 overflow-y-auto"
+        >
           <ScriptAreaControls
             editorOptions={editorOptions}
             setEditorOptions={setEditorOptions}

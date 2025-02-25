@@ -18,6 +18,8 @@
     "@tiptap/core": "^2.11.5",
     "@tiptap/extension-collaboration": "^2.11.5",
     "@tiptap/extension-collaboration-cursor": "^2.11.5",
+    "@tiptap/extension-font-family": "^2.11.5",
+    "@tiptap/extension-text-align": "^2.11.5",
     "@tiptap/react": "^2.11.5",
     "@tiptap/starter-kit": "^2.11.5",
     "@types/uuid": "^10.0.0",
@@ -43,6 +45,7 @@
     "server-only": "^0.0.1",
     "string-to-color": "^2.2.2",
     "stripe": "^17.4.0",
+    "tiptap-extension-font-size": "^1.2.0",
     "uuid": "^10.0.0",
     "y-websocket": "^2.1.0",
     "yjs": "^13.6.23"

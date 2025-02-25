@@ -112,6 +112,10 @@ textarea::-webkit-scrollbar {
   background: #555;
 }
 
+.tiptap-paragraph {
+  font-size: var(--editor-font-size);
+}
+
 /* ::-webkit-scrollbar-thumb:hover {
   background: #555;
 } */
@@ -230,7 +234,7 @@ textarea::-webkit-scrollbar {
   }
 
   .tiptap-paragraph {
-    @apply pl-[54px] text-primary font-normal leading-[22px] placeholder:text-placeholder text-sm;
+    @apply pl-[54px] text-primary font-normal leading-[22px] placeholder:text-placeholder;
   }
 
   .tiptap-title {
