@@ -24,6 +24,7 @@ import { useAuth } from "./AuthContext";
 
 import Document from "@tiptap/extension-document";
 import Text from "@tiptap/extension-text";
+import Bold from "@tiptap/extension-bold";
 import Chapter from "../_components/_tiptap/extensions/Chapter";
 import Title from "../_components/_tiptap/extensions/Title";
 import Paragraph from "../_components/_tiptap/extensions/Paragraph";
@@ -35,6 +36,7 @@ import {
   resetEditorContent,
 } from "../_utils/tiptapCommands";
 import { fetchParticipants } from "../_utils/fetchParticipants";
+import { Comment } from "@/app/_components/_tiptap/extensions/CommentMark";
 
 const ScriptEditorContext = createContext<any>(undefined);
 
@@ -74,6 +76,7 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
       Chapter,
       ChapterDivider,
       CustomHistory,
+      Comment,
     ],
     editorProps: {
       attributes: {

@@ -4,7 +4,6 @@ export function extractChaptersFromDoc(doc: any) {
   return doc.content
     .filter((node: any) => node.type === "chapter")
     .map((chapter: any) => {
-      // Extract the title text from the title node
       const titleNode = chapter.content.find(
         (child: any) => child.type === "title"
       );
@@ -12,16 +11,16 @@ export function extractChaptersFromDoc(doc: any) {
         ? titleNode.content?.map((c: any) => c.text).join("")
         : "";
 
-      // Extract all paragraphs (for now, treating them as default paragraphs)
+      console.log(chapter.content);
       const paragraphs = chapter.content
         .filter((child: any) => child.type === "paragraph")
-        .map((para: any) => para.content?.map((c: any) => c.text).join(""));
-
-      // Assume the speaker is stored as an attribute on the chapter node
+        .map((para: any) =>
+          para.content ? para.content.map((c: any) => c.text).join("") : ""
+        );
 
       return {
-        id: chapter.attrs?.id, // now available
-        speaker: chapter.attrs?.speaker, // now available
+        id: chapter.attrs?.id,
+        speaker: chapter.attrs?.speaker,
         title: titleText,
         paragraphs,
       };

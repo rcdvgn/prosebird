@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import ChapterDivider from "./ChapterDivider";
 import ScriptNode from "./ScriptNode";
 import { useScriptEditor } from "@/app/_contexts/ScriptEditorContext";

@@ -61,6 +61,75 @@ const ScriptControls = ({
 }: any) => {
   const { editor } = useScriptEditor();
 
+  // More robust function to check if cursor is within a comment
+  const isCursorInComment = (editor: any) => {
+    if (!editor) return false;
+
+    const { state } = editor;
+    const { from } = state.selection;
+
+    // Get the marks at cursor position
+    const $pos = state.doc.resolve(from);
+
+    // First check if there are marks directly at the cursor position
+    let marks = $pos.marks();
+    console.log(marks);
+
+    // If no marks at exact position and we're at the end of a text node,
+    // we should check the position right before the cursor too
+    if (marks.length === 0 && $pos.parentOffset > 0) {
+      // Try to get marks from the position right before cursor
+      const before = from - 1;
+      const $before = state.doc.resolve(before);
+      if ($before.parent === $pos.parent) {
+        marks = state.doc.rangeHasMark(
+          before,
+          before + 1,
+          editor.schema.marks.comment
+        )
+          ? [editor.schema.marks.comment.create()]
+          : [];
+      }
+    }
+
+    return marks.some((mark: any) => mark.type.name === "comment");
+  };
+
+  // Update the existing useEffect
+  useEffect(() => {
+    if (!editor) return;
+
+    // Function to update the UI based on cursor position
+    const updateTextTypeUI = () => {
+      const isInComment = isCursorInComment(editor);
+
+      // Update the state regardless to ensure UI stays in sync
+      setEditorOptions((curr: any) => ({
+        ...curr,
+        textType: isInComment ? "comment" : "default",
+      }));
+    };
+
+    // Run immediately on mount and editor changes
+    updateTextTypeUI();
+
+    // Create a handler that runs on both selection changes and transactions
+    const handler = () => {
+      // Small delay to ensure DOM is updated
+      setTimeout(updateTextTypeUI, 0);
+    };
+
+    // Add event listeners
+    editor.on("selectionUpdate", handler);
+    editor.on("transaction", handler);
+
+    return () => {
+      // Clean up event listeners
+      editor.off("selectionUpdate", handler);
+      editor.off("transaction", handler);
+    };
+  }, [editor]);
+
   const textTypeSegments = [
     {
       leftIcon: <DefaultTextIcon className="h-3" />,
@@ -70,20 +139,17 @@ const ScriptControls = ({
           textType: "default",
         })),
     },
-    // {
-    //   leftIcon: <CommentedTextIcon className="h-3.5" />,
-    //   onClick: () =>
-    //     setEditorOptions((currEditorOptions: any) => ({
-    //       ...currEditorOptions,
-    //       textType: "comment",
-    //     })),
-    // },
     {
       leftIcon: <CommentedTextIcon className="h-3.5" />,
       onClick: () => {
-        // Set text type to comment.
+        // Check if cursor is already in a comment
+        if (editor && isCursorInComment(editor)) {
+          console.log("already commenting");
+          return;
+        }
+
+        // Otherwise, proceed with comment toggle
         setEditorOptions((curr: any) => ({ ...curr, textType: "comment" }));
-        // And then toggle comment around selection.
         if (editor) toggleComment(editor);
       },
     },

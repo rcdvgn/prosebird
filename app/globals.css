@@ -225,15 +225,19 @@ textarea::-webkit-scrollbar {
     @apply px-12 pt-10 w-full h-full gap-7 flex flex-col justify-start items-center [&>div]:w-full [&>div]:max-w-[800px];
   }
 
+  .chapter-header {
+    @apply mb-[18px];
+  }
+
   .tiptap-paragraph {
-    @apply mt-[18px] pl-[54px] text-primary font-normal leading-[22px] placeholder:text-placeholder text-sm;
+    @apply pl-[54px] text-primary font-normal leading-[22px] placeholder:text-placeholder text-sm;
   }
 
   .tiptap-title {
     @apply py-[2px] text-xl text-primary font-bold;
   }
 
-  /* .node-chapter {
-    @apply max-w-[800px] w-full;
-  } */
+  .tiptap-comment {
+    @apply text-secondary;
+  }
 }

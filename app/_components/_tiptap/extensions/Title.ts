@@ -19,7 +19,8 @@ const Title = Node.create({
       [
         "div",
         {
-          class: "speaker-image mr-5 h-9 w-9 rounded-full bg-cover bg-center",
+          class:
+            "speaker-image mr-5 h-[34px] aspect-square rounded-full bg-cover bg-center cursor-pointer",
           style: "background-image: url('/pfps/profile1.png')",
         },
       ],
