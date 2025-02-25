@@ -4,6 +4,7 @@ const Paragraph = Node.create({
   name: "paragraph",
   group: "block",
   content: "inline*",
+  marks: "comment bold italic",
 
   parseHTML() {
     return [{ tag: "paragraph" }, { tag: "p" }];

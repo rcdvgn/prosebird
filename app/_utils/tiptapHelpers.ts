@@ -15,7 +15,11 @@ export function extractChaptersFromDoc(doc: any) {
       const paragraphs = chapter.content
         .filter((child: any) => child.type === "paragraph")
         .map((para: any) =>
-          para.content ? para.content.map((c: any) => c.text).join("") : ""
+          para.content
+            ? para.content.map((c: any) => {
+                return { text: c.text, marks: c.marks ?? [] };
+              })
+            : ""
         );
 
       return {

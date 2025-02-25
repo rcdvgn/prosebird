@@ -1,7 +1,5 @@
 import { Mark } from "@tiptap/core";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
-import { Decoration, DecorationSet } from "prosemirror-view";
-import { Transaction, EditorState } from "prosemirror-state";
 
 export interface CommentOptions {
   HTMLAttributes: Record<string, any>;
@@ -17,6 +15,7 @@ declare module "@tiptap/core" {
 
 export const Comment = Mark.create<CommentOptions>({
   name: "comment",
+  inclusive: false,
   addOptions() {
     return {
       HTMLAttributes: {
@@ -116,7 +115,8 @@ export const Comment = Mark.create<CommentOptions>({
             const text = node.text || "";
 
             // Find potential comment patterns using regex
-            const commentRegex = /\[([^\[\]]+)\]/g;
+            const commentRegex = /\[([^\[\]\s][^\[\]]*[^\[\]\s]|[^\[\]\s])\]/g;
+
             let match;
 
             while ((match = commentRegex.exec(text)) !== null) {

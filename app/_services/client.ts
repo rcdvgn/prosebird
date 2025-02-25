@@ -137,6 +137,7 @@ export const saveScript = async (script: any) => {
 };
 
 export const saveNodes = async (scriptId: any, nodes: any) => {
+  console.log(nodes);
   try {
     const nodesRef = ref(rtdb, `nodes/${scriptId}`);
     await set(nodesRef, nodes);

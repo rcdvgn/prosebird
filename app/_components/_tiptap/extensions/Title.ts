@@ -4,6 +4,7 @@ const Title = Node.create({
   name: "title",
   group: "block",
   content: "text*",
+  marks: "",
   defining: true,
 
   parseHTML() {

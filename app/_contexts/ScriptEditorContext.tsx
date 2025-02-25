@@ -25,6 +25,8 @@ import { useAuth } from "./AuthContext";
 import Document from "@tiptap/extension-document";
 import Text from "@tiptap/extension-text";
 import Bold from "@tiptap/extension-bold";
+import Italic from "@tiptap/extension-italic";
+
 import Chapter from "../_components/_tiptap/extensions/Chapter";
 import Title from "../_components/_tiptap/extensions/Title";
 import Paragraph from "../_components/_tiptap/extensions/Paragraph";
@@ -77,6 +79,8 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
       ChapterDivider,
       CustomHistory,
       Comment,
+      Bold,
+      Italic,
     ],
     editorProps: {
       attributes: {

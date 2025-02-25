@@ -116,12 +116,41 @@ export function rehydrateEditorContent(chapters: ChapterData[]) {
 
     // Process each paragraph
     chapter.paragraphs.forEach((paragraph) => {
-      // Use a zero-width space if paragraph is empty.
-      const text = paragraph.trim() === "" ? "\u200B" : paragraph;
-      content.push({
-        type: "paragraph",
-        content: [{ type: "text", text }],
-      });
+      // If paragraph is an array (new format with text/marks objects)
+      if (Array.isArray(paragraph)) {
+        const paragraphContent = paragraph.map((item) => {
+          // Create text node with marks if they exist
+          const textNode: any = { type: "text", text: item.text || "" };
+
+          // Add marks if they exist
+          if (item.marks && item.marks.length > 0) {
+            textNode.marks = item.marks;
+          }
+
+          return textNode;
+        });
+
+        // Add paragraph with the content that includes marks
+        content.push({
+          type: "paragraph",
+          content: paragraphContent.length
+            ? paragraphContent
+            : [{ type: "text", text: "\u200B" }],
+        });
+      }
+      // Handle the old string format for backward compatibility
+      else {
+        // Use a zero-width space if paragraph is empty
+        const text =
+          typeof paragraph === "string" && paragraph.trim() === ""
+            ? "\u200B"
+            : paragraph;
+
+        content.push({
+          type: "paragraph",
+          content: [{ type: "text", text }],
+        });
+      }
     });
 
     return [
