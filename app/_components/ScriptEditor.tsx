@@ -37,7 +37,7 @@ export default function ScriptEditor() {
 
   const [isSpellCheckEnabled, setIsSpellCheckEnabled] = useState(false);
   const [scriptAreaControlsVisible, setScriptAreaControlsVisible] =
-    useState<any>(false);
+    useState<any>(true);
   const [chaptersViewVisible, setChaptersViewVisible] = useState<any>(true);
 
   const documentTitleRef = useRef<HTMLInputElement | null>(null);

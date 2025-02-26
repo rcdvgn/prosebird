@@ -54,6 +54,19 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
   const [nodes, setNodesState] = useState<any>(null);
 
   const [isSaved, setIsSaved] = useState<any>(true);
+
+  const [debouncedIsSaved, setDebouncedIsSaved] = useState(true);
+
+  // Set the debounce delay (in ms)
+  const debounceDelay = 500; // adjust this value as needed
+
+  // Create a debounced function that updates debouncedIsSaved
+  const debouncedSetTrue = useRef(
+    _.debounce(() => {
+      setDebouncedIsSaved(true);
+    }, debounceDelay)
+  ).current;
+
   const [participants, setParticipants] = useState<any>([]);
   const [lastFetchedParticipants, setLastFetchedParticipants] = useState<any>(
     []
@@ -178,6 +191,17 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
+    if (isSaved) {
+      // When isSaved becomes true, wait for the debounce delay
+      debouncedSetTrue();
+    } else {
+      // When isSaved becomes false, cancel any pending true update and set immediately
+      debouncedSetTrue.cancel();
+      setDebouncedIsSaved(false);
+    }
+  }, [isSaved, debouncedSetTrue]);
+
+  useEffect(() => {
     if (!script?.id) return;
     const unsubscribeScript = subscribeToScript(
       script,
@@ -242,7 +266,7 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
         script,
         nodes,
         editor,
-        isSaved,
+        isSaved: debouncedIsSaved,
         setScript: updateScriptLocal,
         setNodes: updateNodesLocal,
         emptyNode,

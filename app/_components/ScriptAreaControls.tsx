@@ -204,7 +204,7 @@ const TextAlignment = ({ editorOptions, setEditorOptions }: any) => {
       },
     },
     {
-      leftIcon: <TextAlignLeftIcon className="w-4 rotate-180" />,
+      leftIcon: <TextAlignLeftIcon className="w-4 scale-x-[-1]" />,
       onClick: () => {
         setEditorOptions((curr: any) => ({
           ...curr,

@@ -1,5 +1,6 @@
-import { RedoIcon, UndoIcon } from "../_assets/icons";
+import { LoadingIcon, RedoIcon, SavedIcon, UndoIcon } from "../_assets/icons";
 import { useScriptEditor } from "../_contexts/ScriptEditorContext";
+import TooltipWrapper from "./wrappers/TooltipWrapper";
 export default function ScriptAreaInfo() {
   const { isSaved } = useScriptEditor();
   const { editor } = useScriptEditor();
@@ -10,7 +11,22 @@ export default function ScriptAreaInfo() {
 
         <div className="bg-middleground w-full py-3 px-10 flex items-center justify-between">
           <span className="text-secondary font-medium text-xs">
-            {isSaved ? "All up to date!" : "Unsaved changes!"}
+            {isSaved ? (
+              <TooltipWrapper
+                position="right"
+                data={{
+                  text: "Up to date, all changes have been saved.",
+                }}
+              >
+                <span className="text-secondary h-8 aspect-square grid place-items-center">
+                  <SavedIcon className="h-3" />
+                </span>
+              </TooltipWrapper>
+            ) : (
+              <span className="text-secondary h-8 aspect-square grid place-items-center">
+                <LoadingIcon className="h-3 animate-spin" />
+              </span>
+            )}
           </span>
 
           <div className="flex items-center gap-3">
