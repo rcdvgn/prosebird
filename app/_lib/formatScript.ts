@@ -12,9 +12,15 @@ export default function formatScript(nodes: any) {
 
     // Now, for each paragraph (which is a string) in the chapter,
     // split it into words.
-    entry.paragraphs.forEach((paragraph: string, pIndex: number) => {
+    entry.paragraphs.forEach((paragraph: any, pIndex: number) => {
       // Trim and split the paragraph by whitespace.
-      const wordsInParagraph = paragraph.trim().split(/\s+/);
+
+      const wordsInParagraph = paragraph
+        .map((words: any) => words.text)
+        .join("")
+
+        .trim()
+        .split(/\s+/);
 
       wordsInParagraph.forEach((word: string) => {
         words.push({
