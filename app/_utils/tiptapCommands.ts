@@ -120,8 +120,6 @@ export function rehydrateEditorContent(chapters: ChapterData[]) {
     });
 
     // Process each paragraph in the new format (array of text/marks objects)
-    console.log(chapter.paragraphs.length);
-
     chapter.paragraphs.forEach((paragraph: any) => {
       const paragraphContent = paragraph.map((item: any) => {
         // Use a zero-width space if the text is empty or whitespace only

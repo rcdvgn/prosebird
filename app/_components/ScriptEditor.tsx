@@ -22,12 +22,17 @@ import SegmentedControl from "./ui/SegmentedControl";
 import ScriptAreaControls from "./ScriptAreaControls";
 import Tiptap from "./_tiptap/Tiptap";
 import { rehydrateEditorContent } from "../_utils/tiptapCommands";
+import useResizeObserver from "use-resize-observer";
 
 export default function ScriptEditor() {
   const { script, setScript, nodes, setNodes, participants, editor } =
     useScriptEditor();
   const { user } = useAuth();
   const router = useRouter();
+
+  const { ref: virtualListParent, height } = useResizeObserver<HTMLDivElement>({
+    box: "border-box",
+  });
 
   const [editorOptions, setEditorOptions] = useState<any>({
     textType: "default",
@@ -218,7 +223,7 @@ export default function ScriptEditor() {
           </button>
         </div>
       </div>
-      <div className="grow flex overflow-x-hidden min-w-0 mr-2 mb-2">
+      <div className="grow flex overflow-hidden min-w-0 mr-2 mb-2">
         <div
           style={
             {
@@ -257,10 +262,12 @@ export default function ScriptEditor() {
                   />
                 </div>
               </div>
-              <div className="grow w-full py-2.5">
+
+              <div ref={virtualListParent} className="grow w-full py-2.5">
                 <VirtualizedChapterList
                   chapters={nodes}
                   onChaptersChange={setChapters}
+                  containerHeight={height! - 20}
                 />
               </div>
             </motion.div>

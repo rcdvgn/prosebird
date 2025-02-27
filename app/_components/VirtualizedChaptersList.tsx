@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 // @ts-ignore
 import { FixedSizeList as List, areEqual } from "react-window";
 // @ts-ignore
 import { DragDropContext, Draggable } from "@hello-pangea/dnd";
 import { StrictModeDroppable } from "./StrictModeDroppable";
-import AutoSizer from "react-virtualized-auto-sizer";
 import {
   AddChapterIcon,
   AddIcon,
@@ -12,16 +11,9 @@ import {
   TargetIcon,
 } from "../_assets/icons";
 
-// Create an array of 20 chapter objects
-// const initialChapters = Array.from({ length: 14 }, (_, index) => ({
-//   id: `chapter-${index + 1}`,
-//   name: `This is chapter ${index + 1}`,
-// }));
-
-// Define row dimensions and gap
-const rowHeight = 48; // Actual content height
-const gap = 4; // Gap between rows
-const itemSize = rowHeight + gap; // Total size per item (for react-window)
+const rowHeight = 48;
+const gap = 4;
+const itemSize = rowHeight + gap;
 
 const Row = React.memo(({ data, index, style }: any) => {
   const { chapters, placeholderProps, isDragging } = data;
@@ -42,14 +34,11 @@ const Row = React.memo(({ data, index, style }: any) => {
 
   const chapter = chapters[index];
 
-  // Determine if we should render the placeholder at this index
   const isPlaceholder = placeholderProps.top / itemSize === index;
 
   return (
     <>
       {isPlaceholder && placeholderProps.height > 0 && (
-        // Wrap placeholder in a div that takes the full "item" style,
-        // then add an inner div with the desired rowHeight and gap.
         <div style={style}>
           <div
             style={{
@@ -76,7 +65,6 @@ const Row = React.memo(({ data, index, style }: any) => {
                 ...provided.draggableProps.style,
               }}
             >
-              {/* Wrap content in a div that applies a bottom margin equal to the gap */}
               <div style={{ marginBottom: gap }}>
                 <div
                   className={`group w-full h-full m-auto flex items-center justify-between py-2.5 pl-3 pr-2 rounded-[10px] transition-all duration-150 ease-in-out ${
@@ -86,7 +74,6 @@ const Row = React.memo(({ data, index, style }: any) => {
                       ? "text-inactive"
                       : "hover:bg-hover text-inactive hover:text-primary"
                   }`}
-                  // Set explicit height equal to rowHeight
                   style={{ height: rowHeight }}
                 >
                   <div className="flex items-center grow min-w-0">
@@ -128,6 +115,7 @@ const Row = React.memo(({ data, index, style }: any) => {
 export default function VirtualizedChapterList({
   chapters,
   onChaptersChange,
+  containerHeight,
 }: any) {
   const [isDragging, setIsDragging] = useState(false);
   const [placeholderProps, setPlaceholderProps] = useState({
@@ -231,20 +219,15 @@ export default function VirtualizedChapterList({
         )}
       >
         {(droppableProvided: any) => (
-          <AutoSizer>
-            {({ height, width }) => (
-              <List
-                height={height}
-                width={width}
-                itemCount={chapters.length + 1} // extra row for "Add" button
-                itemSize={itemSize} // Now includes gap
-                outerRef={droppableProvided.innerRef}
-                itemData={{ chapters, placeholderProps, isDragging }}
-              >
-                {Row}
-              </List>
-            )}
-          </AutoSizer>
+          <List
+            height={containerHeight}
+            itemCount={chapters.length + 1}
+            itemSize={itemSize}
+            outerRef={droppableProvided.innerRef}
+            itemData={{ chapters, placeholderProps, isDragging }}
+          >
+            {Row}
+          </List>
         )}
       </StrictModeDroppable>
     </DragDropContext>
