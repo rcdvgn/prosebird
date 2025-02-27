@@ -59,7 +59,7 @@ const HrDivider = () => {
   return <div className="w-[2px] h-[18px] rounded-full bg-selected"></div>;
 };
 
-export const TextFormatting = ({ editorOptions, setEditorOptions }: any) => {
+export const TextFormatting = () => {
   const { editor } = useScriptEditor();
 
   // Function to check if the current selection has a specific mark
@@ -296,10 +296,7 @@ const ScriptControls = ({
       className="pointer-events-auto p-[3px] rounded-[10px] bg-foreground border-stroke border-[1px]"
     >
       <div className="h-8 flex items-center gap-1">
-        <TextFormatting
-          editorOptions={editorOptions}
-          setEditorOptions={setEditorOptions}
-        />
+        <TextFormatting />
 
         <HrDivider />
 

@@ -230,15 +230,15 @@ textarea::-webkit-scrollbar {
   }
 
   .chapter-header {
-    @apply mb-[18px];
+    @apply mb-4;
   }
 
   .tiptap-paragraph {
-    @apply pl-[54px] text-primary font-normal leading-[22px] placeholder:text-placeholder;
+    @apply pl-[50px] text-primary font-normal leading-[22px] placeholder:text-placeholder;
   }
 
   .tiptap-title {
-    @apply py-[2px] text-xl text-primary font-bold;
+    @apply py-[2px] text-xl text-primary font-bold !p-0 h-[34px] flex items-center justify-start;
   }
 
   .tiptap-comment {

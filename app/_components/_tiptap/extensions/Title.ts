@@ -1,4 +1,6 @@
 import { Node, mergeAttributes } from "@tiptap/core";
+import { ReactNodeViewRenderer } from "@tiptap/react"; // Make sure this is imported
+import TitleNodeView from "../components/TitleNodeView";
 
 const Title = Node.create({
   name: "title",
@@ -6,6 +8,20 @@ const Title = Node.create({
   content: "text*",
   marks: "",
   defining: true,
+
+  addAttributes() {
+    return {
+      id: {
+        default: null,
+      },
+      speaker: {
+        default: null,
+      },
+      position: {
+        default: null,
+      },
+    };
+  },
 
   parseHTML() {
     return [{ tag: "title" }];
@@ -15,18 +31,14 @@ const Title = Node.create({
     return [
       "div",
       mergeAttributes(HTMLAttributes, {
-        class: "chapter-header flex items-center",
+        class: "chapter-header flex gap-5",
       }),
-      [
-        "div",
-        {
-          class:
-            "speaker-image mr-5 h-[34px] aspect-square rounded-full bg-cover bg-center cursor-pointer",
-          style: "background-image: url('/pfps/profile1.png')",
-        },
-      ],
-      ["h1", { class: "tiptap-title" }, 0],
+      0,
     ];
+  },
+
+  addNodeView() {
+    return ReactNodeViewRenderer(TitleNodeView);
   },
 });
 

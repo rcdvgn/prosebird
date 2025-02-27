@@ -110,6 +110,7 @@ export function rehydrateEditorContent(chapters: ChapterData[]) {
     if (chapter.title) {
       content.push({
         type: "title",
+        attrs: { id: chapter.id, speaker: chapter.speaker, position: index },
         content: [{ type: "text", text: chapter.title }],
       });
     }
@@ -156,7 +157,6 @@ export function rehydrateEditorContent(chapters: ChapterData[]) {
     return [
       {
         type: "chapter",
-        // Pass along extra attributes
         attrs: { id: chapter.id, speaker: chapter.speaker, position: index },
         content,
       },
@@ -169,7 +169,6 @@ export function rehydrateEditorContent(chapters: ChapterData[]) {
   };
 }
 
-import { Editor } from "@tiptap/core";
 import { EditorState } from "prosemirror-state";
 
 export function resetEditorContent(editor: any, newContent: any) {
