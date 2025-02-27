@@ -246,17 +246,19 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
     const guests = script?.guests || [];
     const author = script?.createdBy;
     const combinedParticipants = [...editors, ...viewers, ...guests, author];
+
     if (!_.isEqual(combinedParticipants, lastFetchedParticipants)) {
       setLastFetchedParticipants(combinedParticipants);
 
-      const fecthedParticipants = fetchParticipants(
-        editors,
-        viewers,
-        author,
-        guests
-      );
-
-      setParticipants(fecthedParticipants);
+      (async () => {
+        const fetchedParticipants = await fetchParticipants(
+          editors,
+          viewers,
+          author,
+          guests
+        );
+        setParticipants(fetchedParticipants);
+      })();
     }
   }, [script, user]);
 

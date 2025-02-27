@@ -141,14 +141,14 @@ export default function ScriptContainer({
     <>
       <div
         ref={scrollContainer}
-        className="group border-[1px] border-pink-500 grow h-full flex flex-col items-center shrink-0 overflow-hidden relative"
+        className="group grow h-full flex flex-col items-center shrink-0 overflow-hidden relative"
       >
         <div
-          className={`border-[1px] border-blue-500 flex justify-center h-full fixed top-0 transition-opacity duration-200 ease-in-out ${
+          className={`flex justify-center h-full fixed top-0 transition-opacity duration-200 ease-in-out ${
             isDragging ? "opacity-100" : "opacity-0 group-hover:opacity-100"
           }`}
         >
-          <div className="pr-6 border-[1px] border-red-500 h-screen grid place-items-center left-0 top-0">
+          <div className="pr-6 h-screen grid place-items-center left-0 top-0">
             <Draggable
               axis="x"
               position={draggablePositionLeft}
@@ -174,7 +174,7 @@ export default function ScriptContainer({
             }}
           ></div>
 
-          <div className="pl-6 border-[1px] border-red-500 h-screen grid place-items-center right-0 top-0">
+          <div className="pl-6 h-screen grid place-items-center right-0 top-0">
             <Draggable
               axis="x"
               position={draggablePositionRight}
@@ -196,7 +196,7 @@ export default function ScriptContainer({
 
         <div
           ref={scriptContainer}
-          className="border-[1px] border-yellow-500 absolute text-left m-auto left-0 right-0"
+          className="absolute text-left m-auto left-0 right-0"
           style={{
             width: tempContainerWidth + "px",
           }}
