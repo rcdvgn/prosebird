@@ -97,7 +97,9 @@ const Row = React.memo(({ data, index, style }: any) => {
                       className="h-7 aspect-square rounded-full bg-cover bg-center flex-shrink-0 mr-2.5"
                     ></div>
                     <div className="font-medium text-[13px] grow truncate">
-                      {chapter.title}
+                      {chapter.title.length && chapter.title !== "\u200B"
+                        ? chapter.title
+                        : `Chapter ${index + 1}`}
                     </div>
                   </div>
 
@@ -204,7 +206,10 @@ export default function VirtualizedChapterList({
                     className="h-7 aspect-square rounded-full bg-cover bg-center flex-shrink-0 mr-2.5"
                   ></div>
                   <div className="font-medium text-[13px] grow truncate">
-                    {chapters[rubric.source.index].title}
+                    {chapters[rubric.source.index].title.length &&
+                    chapters[rubric.source.index].title !== "\u200B"
+                      ? chapters[rubric.source.index].title
+                      : `Chapter ${rubric.source.index + 1}`}
                   </div>
                 </div>
 

@@ -3,11 +3,12 @@ export function extractChaptersFromDoc(doc: any) {
 
   return doc.content
     .filter((node: any) => node.type === "chapter")
-    .map((chapter: any) => {
+    .map((chapter: any, index: any) => {
       const titleNode = chapter.content.find(
         (child: any) => child.type === "title"
       );
-      const titleText = titleNode
+
+      const titleText = titleNode.content
         ? titleNode.content?.map((c: any) => c.text).join("")
         : "";
 
@@ -18,7 +19,7 @@ export function extractChaptersFromDoc(doc: any) {
             ? para.content.map((c: any) => {
                 return { text: c.text, marks: c.marks ?? [] };
               })
-            : ""
+            : [{ text: "" }]
         );
 
       return {

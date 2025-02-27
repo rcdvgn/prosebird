@@ -107,36 +107,41 @@ export function rehydrateEditorContent(chapters: ChapterData[]) {
     const content = [];
 
     // Add title node if exists
-    if (chapter.title) {
-      content.push({
-        type: "title",
-        attrs: { id: chapter.id, speaker: chapter.speaker, position: index },
-        content: [{ type: "text", text: chapter.title }],
-      });
-    }
-    console.log(chapter);
+    const title = chapter.title.trim() === "" ? "\u200B" : chapter.title;
+
+    content.push({
+      type: "title",
+      attrs: {
+        id: chapter.id,
+        speaker: chapter.speaker,
+        position: index,
+      },
+      content: [{ type: "text", text: title }],
+    });
 
     // Process each paragraph in the new format (array of text/marks objects)
-    chapter.paragraphs.forEach((paragraph) => {
-      if (Array.isArray(paragraph)) {
-        const paragraphContent = paragraph.map((item) => {
-          // Use a zero-width space if the text is empty or whitespace only
-          const text = item.text.trim() === "" ? "\u200B" : item.text;
-          const textNode: any = { type: "text", text };
+    console.log(chapter.paragraphs.length);
 
-          // Add marks if they exist
-          if (item.marks && item.marks.length > 0) {
-            textNode.marks = item.marks;
-          }
-          return textNode;
-        });
+    chapter.paragraphs.forEach((paragraph: any) => {
+      const paragraphContent = paragraph.map((item: any) => {
+        // Use a zero-width space if the text is empty or whitespace only
+        const text = item.text.trim() === "" ? "\u200B" : item.text;
+        const textNode: any = { type: "text", text };
 
-        content.push({
-          type: "paragraph",
-          // No need for fallback here since we've already handled empty text in each node
-          content: paragraphContent,
-        });
-      }
+        // Add marks if they exist
+        if (item.marks && item.marks.length > 0) {
+          textNode.marks = item.marks;
+        }
+        return textNode;
+      });
+
+      content.push({
+        type: "paragraph",
+        attrs: {
+          position: index,
+        },
+        content: paragraphContent,
+      });
     });
 
     return [
