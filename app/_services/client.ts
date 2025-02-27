@@ -53,7 +53,14 @@ export const createScript: any = async (userId: any) => {
   const blankNodes: any = [
     {
       title: "Chapter 1",
-      paragraphs: [""],
+      // paragraphs: [""],
+      paragraphs: [
+        [
+          {
+            text: "",
+          },
+        ],
+      ],
       speaker: userId,
       id: uuidv4(),
     },
@@ -62,6 +69,7 @@ export const createScript: any = async (userId: any) => {
   try {
     const docRef = await addDoc(collection(db, "scripts"), blankScript);
     const docId = docRef.id;
+    console.log("docId: ", docId);
 
     // Store nodes in Realtime Database
     await set(ref(rtdb, `nodes/${docId}`), blankNodes);

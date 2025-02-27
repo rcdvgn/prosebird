@@ -3,18 +3,18 @@ export default function formatScript(nodes: any) {
   const chapters: any = {};
   let wordIndex = 0;
 
-  nodes.forEach((entry: any) => {
+  nodes.forEach((chapter: any) => {
     // Mark the start of a new chapter at the current global word index.
     chapters[wordIndex] = {
-      title: entry.title,
-      speaker: entry.speaker,
+      title: chapter.title,
+      speaker: chapter.speaker,
     };
 
     // Now, for each paragraph (which is a string) in the chapter,
     // split it into words.
-    entry.paragraphs.forEach((paragraph: any, pIndex: number) => {
-      // Trim and split the paragraph by whitespace.
 
+    chapter.paragraphs.forEach((paragraph: any, pIndex: number) => {
+      // Trim and split the paragraph by whitespace.
       const wordsInParagraph = paragraph
         .map((words: any) => words.text)
         .join("")
@@ -26,7 +26,7 @@ export default function formatScript(nodes: any) {
         words.push({
           word, // The word text
           position: wordIndex,
-          chapterTitle: entry.title, // Optional: track chapter info per word
+          chapterTitle: chapter.title, // Optional: track chapter info per word
           paragraphIndex: pIndex, // Optional: track which paragraph this word belongs to
         });
         wordIndex++;

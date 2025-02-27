@@ -114,42 +114,27 @@ export function rehydrateEditorContent(chapters: ChapterData[]) {
         content: [{ type: "text", text: chapter.title }],
       });
     }
+    console.log(chapter);
 
-    // Process each paragraph
+    // Process each paragraph in the new format (array of text/marks objects)
     chapter.paragraphs.forEach((paragraph) => {
-      // If paragraph is an array (new format with text/marks objects)
       if (Array.isArray(paragraph)) {
         const paragraphContent = paragraph.map((item) => {
-          // Create text node with marks if they exist
-          const textNode: any = { type: "text", text: item.text || "" };
+          // Use a zero-width space if the text is empty or whitespace only
+          const text = item.text.trim() === "" ? "\u200B" : item.text;
+          const textNode: any = { type: "text", text };
 
           // Add marks if they exist
           if (item.marks && item.marks.length > 0) {
             textNode.marks = item.marks;
           }
-
           return textNode;
         });
 
-        // Add paragraph with the content that includes marks
         content.push({
           type: "paragraph",
-          content: paragraphContent.length
-            ? paragraphContent
-            : [{ type: "text", text: "\u200B" }],
-        });
-      }
-      // Handle the old string format for backward compatibility
-      else {
-        // Use a zero-width space if paragraph is empty
-        const text =
-          typeof paragraph === "string" && paragraph.trim() === ""
-            ? "\u200B"
-            : paragraph;
-
-        content.push({
-          type: "paragraph",
-          content: [{ type: "text", text }],
+          // No need for fallback here since we've already handled empty text in each node
+          content: paragraphContent,
         });
       }
     });
