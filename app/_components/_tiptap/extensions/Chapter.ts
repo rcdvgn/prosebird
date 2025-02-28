@@ -1,4 +1,5 @@
-// extensions/Chapter.ts
+"use client";
+
 import { Node, mergeAttributes } from "@tiptap/core";
 import { ReactNodeViewRenderer } from "@tiptap/react";
 import ChapterNodeView from "../components/ChapterNodeView";

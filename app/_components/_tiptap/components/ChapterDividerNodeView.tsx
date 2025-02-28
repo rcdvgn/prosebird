@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { NodeViewWrapper } from "@tiptap/react";
 import { AddIcon } from "@/app/_assets/icons";

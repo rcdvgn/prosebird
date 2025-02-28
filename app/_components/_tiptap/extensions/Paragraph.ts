@@ -1,3 +1,5 @@
+"use client";
+
 import { Node, mergeAttributes } from "@tiptap/core";
 import ParagraphNodeView from "../components/ParagraphNodeView";
 import { ReactNodeViewRenderer } from "@tiptap/react";

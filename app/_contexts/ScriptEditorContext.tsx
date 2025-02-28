@@ -9,6 +9,7 @@ import React, {
 } from "react";
 import { v4 as uuidv4 } from "uuid";
 import _ from "lodash";
+import { Editor } from "@tiptap/react";
 
 import {
   saveScript,
@@ -18,44 +19,45 @@ import {
   saveNodes,
 } from "../_services/client";
 
-import History from "@tiptap/extension-history";
 import { emptyNode } from "../_utils/emptyNode";
 import { useAuth } from "./AuthContext";
 
-import Document from "@tiptap/extension-document";
-import Text from "@tiptap/extension-text";
-import TextStyle from "@tiptap/extension-text-style";
-import TextAlign from "@tiptap/extension-text-align";
-import FontFamily from "@tiptap/extension-font-family";
-import FontSize from "tiptap-extension-font-size";
-
-import Bold from "@tiptap/extension-bold";
-import Italic from "@tiptap/extension-italic";
-
-import Chapter from "../_components/_tiptap/extensions/Chapter";
-import Title from "../_components/_tiptap/extensions/Title";
-import Paragraph from "../_components/_tiptap/extensions/Paragraph";
-import ChapterDivider from "../_components/_tiptap/extensions/ChapterDivider";
-import { useEditor } from "@tiptap/react";
 import { extractChaptersFromDoc } from "../_utils/tiptapHelpers";
 import {
   rehydrateEditorContent,
   resetEditorContent,
 } from "../_utils/tiptapCommands";
 import { fetchParticipants } from "../_utils/fetchParticipants";
-import { Comment } from "@/app/_components/_tiptap/extensions/CommentMark";
 
-const ScriptEditorContext = createContext<any>(undefined);
+interface ScriptEditorContextType {
+  script: any;
+  nodes: any;
+  isSaved: boolean;
+  editor: Editor | null;
+  setEditor: (editor: Editor) => void;
+  setScript: (newScriptMetadata: any) => Promise<void>;
+  setNodes: (newNodes: any) => Promise<void>;
+  emptyNode: any;
+  addNode: (
+    position: number,
+    user: any,
+    numberOfChapters: number
+  ) => Promise<void>;
+  deleteNode: (id: string) => Promise<void>;
+  participants: any[];
+}
+
+const ScriptEditorContext = createContext<ScriptEditorContextType | undefined>(
+  undefined
+);
 
 export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
-
   const [script, setScriptState] = useState<any>(null);
   const [nodes, setNodesState] = useState<any>(null);
-
-  const [isSaved, setIsSaved] = useState<any>(true);
-
+  const [isSaved, setIsSaved] = useState<boolean>(true);
   const [debouncedIsSaved, setDebouncedIsSaved] = useState(true);
+  const [editor, setEditor] = useState<Editor | null>(null);
 
   // Set the debounce delay (in ms)
   const debounceDelay = 500; // adjust this value as needed
@@ -76,53 +78,6 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
   const localNodesUpdate = useRef(false);
   const hasClearedHistory = useRef(false);
 
-  const CustomHistory = History.extend({
-    addKeyboardShortcuts() {
-      return {
-        "Mod-z": () => this.editor.commands.undo(),
-        "Mod-y": () => this.editor.commands.redo(),
-      };
-    },
-  });
-
-  const editor = useEditor({
-    immediatelyRender: false,
-    injectCSS: false,
-    extensions: [
-      Document,
-      Text,
-      Paragraph,
-      Title,
-      Chapter,
-      ChapterDivider,
-      CustomHistory,
-      Comment,
-      // FontSize,
-      Bold,
-      Italic,
-      TextAlign.configure({
-        types: ["paragraph"], // Only paragraphs should have text alignment
-        alignments: ["left", "center", "right", "justify"],
-        defaultAlignment: "left",
-      }),
-      TextStyle,
-      FontFamily,
-    ],
-    editorProps: {
-      attributes: {
-        class: "tiptap-editor",
-      },
-    },
-    onUpdate: ({ editor }) => {
-      if (!nodes) return;
-      const docJSON = editor.getJSON();
-      const chaptersData = extractChaptersFromDoc(docJSON);
-      if (!localNodesUpdate.current) {
-        updateNodesLocal(chaptersData);
-      }
-    },
-  });
-
   const updateScriptLocal = async (newScriptMetadata: any) => {
     localScriptUpdate.current = true;
     setScriptState(newScriptMetadata);
@@ -138,9 +93,11 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
     localNodesUpdate.current = true;
     setNodesState(newNodes);
     setIsSaved(false);
+
     if (script?.id) {
       await saveNodes(script.id, newNodes);
     }
+
     setIsSaved(true);
     setTimeout(() => {
       localNodesUpdate.current = false;
@@ -158,9 +115,11 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
       speaker: user.id,
       id: uuidv4(),
     };
+
     const newNodes = nodes ? [...nodes] : [];
     newNodes.splice(position, 0, newNode);
     await updateNodesLocal(newNodes);
+
     if (editor) {
       const content = rehydrateEditorContent(newNodes);
       editor.commands.setContent(content);
@@ -170,6 +129,7 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
   const deleteNode = async (id: string) => {
     const newNodes = nodes.filter((node: any) => node.id !== id);
     await updateNodesLocal(newNodes);
+
     if (editor) {
       const content = rehydrateEditorContent(newNodes);
       editor.commands.setContent(content);
@@ -184,12 +144,12 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
         resetEditorContent(editor, content);
         hasClearedHistory.current = true;
       } else {
-        // For subsequent updates, simply set the content.
         editor.commands.setContent(content);
       }
     }
   };
 
+  // Effect for updating debouncedIsSaved
   useEffect(() => {
     if (isSaved) {
       // When isSaved becomes true, wait for the debounce delay
@@ -201,8 +161,10 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [isSaved, debouncedSetTrue]);
 
+  // Subscribe to script changes
   useEffect(() => {
     if (!script?.id) return;
+
     const unsubscribeScript = subscribeToScript(
       script,
       (serverScriptData: any) => {
@@ -213,11 +175,14 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
         setScriptState((prev: any) => ({ ...prev, ...serverScriptData }));
       }
     );
+
     return () => unsubscribeScript();
   }, [script?.id]);
 
+  // Subscribe to nodes changes
   useEffect(() => {
     if (!script?.id) return;
+
     const unsubscribeNodes = subscribeToNodes(
       script,
       (serverNodesData: any) => {
@@ -229,18 +194,47 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
         });
       }
     );
+
     return () => unsubscribeNodes();
   }, [script?.id]);
 
+  // Effect for rehydrating editor content when nodes change
   useEffect(() => {
-    if (!nodes) return;
+    if (!nodes || !editor) return;
+
     if (!localNodesUpdate.current) {
       handleRehydration(nodes);
     }
   }, [editor, nodes]);
 
+  // FIXED: Set up listener for editor updates - fixed the event handler type
+  useEffect(() => {
+    if (!editor || !nodes) return;
+
+    // The correct way to handle editor updates
+    const updateHandler = ({ editor }: { editor: Editor }) => {
+      if (!nodes) return;
+      const docJSON = editor.getJSON();
+      const chaptersData = extractChaptersFromDoc(docJSON);
+
+      if (!localNodesUpdate.current) {
+        updateNodesLocal(chaptersData);
+      }
+    };
+
+    // Add the event listener
+    editor.on("update", updateHandler);
+
+    // Clean up
+    return () => {
+      editor.off("update", updateHandler);
+    };
+  }, [editor, nodes]);
+
+  // Fetch participants
   useEffect(() => {
     if (!script || !user) return;
+
     const editors = script?.editors || [];
     const viewers = script?.viewers || [];
     const guests = script?.guests || [];
@@ -269,6 +263,7 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
         nodes,
         editor,
         isSaved: debouncedIsSaved,
+        setEditor,
         setScript: updateScriptLocal,
         setNodes: updateNodesLocal,
         emptyNode,
@@ -282,7 +277,7 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export const useScriptEditor = (): any => {
+export const useScriptEditor = (): ScriptEditorContextType => {
   const context = useContext(ScriptEditorContext);
   if (!context) {
     throw new Error(

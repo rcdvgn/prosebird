@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { NodeViewWrapper, NodeViewContent } from "@tiptap/react";
 import ChapterDivider from "../../ChapterDivider";

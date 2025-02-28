@@ -1,3 +1,4 @@
+"use client";
 export const toggleComment = (editor: any) => {
   if (!editor) return;
 
@@ -160,8 +161,7 @@ export function rehydrateEditorContent(chapters: ChapterData[]) {
 import { EditorState } from "prosemirror-state";
 
 export function resetEditorContent(editor: any, newContent: any) {
-  editor.commands.setContent(newContent);
-
+  queueMicrotask(() => editor.commands.setContent(newContent));
   // Create a new editor state using the current document, plugins, and schema.
   const newEditorState = EditorState.create({
     doc: editor.state.doc,

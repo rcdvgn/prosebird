@@ -4,6 +4,10 @@ import TooltipWrapper from "./wrappers/TooltipWrapper";
 export default function ScriptAreaInfo() {
   const { isSaved } = useScriptEditor();
   const { editor } = useScriptEditor();
+
+  const canUndo = editor ? editor.can().undo() : false;
+  const canRedo = editor ? editor.can().redo() : false;
+
   return (
     <div className="sticky bottom-0 left-0 w-full">
       <div className="relative">
@@ -31,16 +35,20 @@ export default function ScriptAreaInfo() {
 
           <div className="flex items-center gap-3">
             <button
-              onClick={() => editor.chain().focus().undo().run()}
-              disabled={!editor.can().undo()}
+              onClick={() => {
+                editor ? editor.chain().focus().undo().run() : "";
+              }}
+              disabled={!canUndo}
               className={`button-icon`}
             >
               <UndoIcon className="w-3.5" />
             </button>
 
             <button
-              onClick={() => editor.chain().focus().redo().run()}
-              disabled={!editor.can().redo()}
+              onClick={() => {
+                editor ? editor.chain().focus().redo().run() : "";
+              }}
+              disabled={!canRedo}
               className={`button-icon`}
             >
               <RedoIcon className="w-3.5" />

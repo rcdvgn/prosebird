@@ -1,8 +1,10 @@
+"use client";
+
 import React from "react";
 import { NodeViewProps, NodeViewContent, NodeViewWrapper } from "@tiptap/react";
 
 const TitleNodeView: React.FC<NodeViewProps> = (props: any) => {
-  const { node, editor } = props;
+  const { node } = props;
   const position = node.attrs?.position || 0;
 
   // Dynamic placeholder based on chapter position

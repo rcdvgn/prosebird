@@ -1,3 +1,5 @@
+"use client";
+
 export function extractChaptersFromDoc(doc: any) {
   if (!doc || !doc.content) return [];
 
