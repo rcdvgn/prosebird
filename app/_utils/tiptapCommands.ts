@@ -114,7 +114,7 @@ export function rehydrateEditorContent(chapters: ChapterData[]) {
       type: "title",
       attrs: {
         id: chapter.id,
-        speaker: chapter.speaker,
+        chapterSpeaker: chapter.speaker,
         position: index,
       },
       content: [{ type: "text", text: title }],

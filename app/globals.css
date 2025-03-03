@@ -11,7 +11,7 @@
   --hover: rgba(255, 255, 255, 0.1);
   --hover-solid: 36, 36, 36;
 
-  --selected: 41, 41, 41;
+  --selected: 50, 50, 50;
 
   --primary: 255, 255, 255;
   /* #A1A1A1 */
@@ -133,9 +133,9 @@ textarea::-webkit-scrollbar {
     @apply bg-foreground shrink-0 h-[36px] aspect-square rounded-[10px] border-border border-[1px] grid place-items-center text-inactive [&>svg]:h-4;
   }
 
-  .btn-3 {
+  /* .btn-3 {
     @apply [&>svg]:text-primary [&>svg]:h-[14px] [&>svg]:w-[14px] opacity-70 hover:opacity-100 cursor-pointer h-[30px] aspect-square rounded-[10px] hover:bg-hover grid place-items-center;
-  }
+  } */
 
   .files-section-title {
     @apply text-primary text-xl font-bold;
@@ -154,27 +154,39 @@ textarea::-webkit-scrollbar {
   }
 
   .btn-1 {
-    @apply bg-brand rounded-lg text-primary text-[13px] font-bold px-[14px] flex justify-center items-center gap-[6px] hover:opacity-85 outline-none border-none focus:outline-brand focus:outline outline-offset-2;
+    @apply bg-brand text-primary text-[13px] font-bold px-[14px] flex justify-center items-center gap-[6px] hover:opacity-85 outline-none border-none focus:outline-brand focus:outline outline-offset-2;
   }
 
   .btn-2 {
-    @apply bg-battleground/95 rounded-lg text-inactive text-[13px] font-bold px-[14px] flex justify-center items-center gap-[6px] hover:bg-battleground hover:text-primary outline-none border-none outline-offset-2;
+    @apply bg-battleground/95 text-inactive text-[13px] font-bold px-[14px] flex justify-center items-center gap-[6px] hover:bg-battleground hover:text-primary outline-none border-none outline-offset-2;
+  }
+
+  .btn-3 {
+    @apply text-inactive text-[13px] font-bold px-[14px] flex justify-center items-center gap-[6px] hover:text-primary outline-none border-none ring-1 ring-border hover:bg-hover hover:ring-transparent;
   }
 
   .btn-1-sm {
-    @apply btn-1 h-[32px];
+    @apply btn-1 h-[32px] rounded-lg;
   }
 
   .btn-1-md {
-    @apply btn-1 h-8;
-  }
-
-  .btn-1-lg {
-    @apply btn-1 h-[44px];
+    @apply btn-1 h-8 rounded-lg;
   }
 
   .btn-2-md {
-    @apply btn-2 h-8;
+    @apply btn-2 h-8 rounded-lg;
+  }
+
+  .btn-1-lg {
+    @apply btn-1 h-9 rounded-[10px];
+  }
+
+  .btn-2-lg {
+    @apply btn-2 h-9 rounded-[10px];
+  }
+
+  .btn-3-lg {
+    @apply btn-3 h-9 rounded-[10px];
   }
 
   .button-secondary {
@@ -194,7 +206,7 @@ textarea::-webkit-scrollbar {
   }
 
   .tooltip-about {
-    @apply bg-battleground text-primary font-medium text-xs py-2 px-3 ring-1 ring-border rounded-lg max-w-[300px] leading-5 transition-all ease-in-out delay-500 duration-200;
+    @apply bg-battleground text-primary font-medium text-xs py-2 px-3 ring-1 ring-border rounded-[14px] max-w-[300px] leading-5 transition-all ease-in-out delay-500 duration-200;
   }
 
   .tooltip-presentation {

@@ -82,14 +82,6 @@ export default function ScriptNode({
     }
   };
 
-  useEffect(() => {
-    if (script) {
-      if (nodes[position].title !== chapterTitle) {
-        setChapterTitle(nodes[position].title);
-      }
-    }
-  }, [nodes[position].title]);
-
   return (
     <div className="w-full">
       <div className="flex items-center justify-start">

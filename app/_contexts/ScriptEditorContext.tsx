@@ -251,6 +251,7 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
           author,
           guests
         );
+
         setParticipants(fetchedParticipants);
       })();
     }

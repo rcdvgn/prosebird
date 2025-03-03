@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { CloseIcon, PersonalIcon } from "../../_assets/icons";
-// import { OverlayScrollbarsComponent } from "overlayscrollbars-react";
 import "overlayscrollbars/overlayscrollbars.css";
 import { useModal } from "../../_contexts/ModalContext";
 import PreferencesModal from "../settings/PreferencesModal";

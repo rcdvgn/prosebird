@@ -298,7 +298,7 @@ export const getPeople = async (userIds: any, exceptionIds: any) => {
         if (docSnap.exists()) {
           return { id: docSnap.id, ...docSnap.data() };
         }
-        // console.warn(`No document found for ID: ${id}`);
+        console.warn(`No document found for ID: ${id}`);
         return null;
       })
     );
@@ -309,27 +309,69 @@ export const getPeople = async (userIds: any, exceptionIds: any) => {
   }
 };
 
-export const addScriptGuest = async (script: any, newGuest: any) => {
-  const updatedGuests = [...script.guests, newGuest];
+export const getUsersByEmail = async (
+  userEmails: any,
+  exceptionEmails: any
+) => {
+  if (userEmails.length === 0) {
+    return [];
+  }
 
   try {
+    const userDocs = await Promise.all(
+      userEmails.map(async (email: any) => {
+        if (exceptionEmails.includes(email)) {
+          return null;
+        }
+
+        const usersCollection = collection(db, "users");
+        const q = query(usersCollection, where("email", "==", email));
+        const queySnap = await getDocs(q);
+
+        if (queySnap.empty) {
+          const userDoc = queySnap.docs[0];
+          return { id: userDoc.id, ...userDoc.data() };
+        }
+
+        console.warn(`No document found for ID: ${email}`);
+        return null;
+      })
+    );
+    return userDocs.filter((doc) => doc !== null);
+  } catch (error) {
+    console.error("Error fetching user documents:", error);
+    throw error;
+  }
+};
+
+export const addScriptGuest = async (script: any, newGuestAlias: any) => {
+  try {
+    if (script.guests.includes(newGuestAlias)) {
+      throw new Error("Guest alias already exists in the script.");
+    }
+
+    const updatedGuests = [...script.guests, newGuestAlias];
     const docRef = doc(db, "scripts", script.id);
 
     await updateDoc(docRef, { guests: updatedGuests });
-  } catch (error) {
-    console.error("Error adding guest", error);
+  } catch (error: any) {
+    console.error("Error adding guest:", error.message);
+    return { success: false, message: error.message };
   }
+
+  return { success: true, message: "Guest added successfully." };
 };
 
 // rtdb nodes compliant
 export const changeNodeSpeaker = async (
   scriptId: any,
   nodePosition: string, // Using nodeId instead of position for better scalability
-  newSpeakerId: string
+  speakerId: string,
+  isGuest: boolean
 ) => {
   try {
     const nodeRef = ref(rtdb, `nodes/${scriptId}/${nodePosition}`);
-    await update(nodeRef, { speaker: newSpeakerId }); // Only updates the speaker field
+    await update(nodeRef, { speaker: { id: speakerId, isGuest } }); // Only updates the speaker field
   } catch (error) {
     console.error("Error changing node speaker", error);
   }

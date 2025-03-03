@@ -6,6 +6,8 @@ import DefaultDropdown from "../dropdowns/DefaultDropdown";
 
 interface DropdownWrapperProps {
   dropdownType?: React.ComponentType<any>;
+  metadata?: any;
+  selected?: any;
   align?: "left" | "right";
   position?: "top" | "bottom";
   options: Array<{ text: string; onClick: () => void }>;
@@ -18,6 +20,8 @@ interface DropdownWrapperProps {
 
 const DropdownWrapper: React.FC<DropdownWrapperProps> = ({
   dropdownType: DropdownType = DefaultDropdown,
+  selected = [],
+  metadata = {},
   align = "left",
   position = "bottom",
   options,
@@ -65,6 +69,8 @@ const DropdownWrapper: React.FC<DropdownWrapperProps> = ({
         isActive={isVisible}
       >
         <DropdownType
+          metadata={metadata}
+          selected={selected}
           options={options}
           align={align}
           position={position}

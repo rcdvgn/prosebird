@@ -16,7 +16,7 @@ const Title = Node.create({
       id: {
         default: null,
       },
-      speaker: {
+      chapterSpeaker: {
         default: null,
       },
       position: {

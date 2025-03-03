@@ -45,7 +45,7 @@ const ProfilePicture = ({
   profilePictureURL,
   className = "",
   firstName,
-  lastName,
+  lastName = null,
 }: any) => {
   const [imageError, setImageError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
