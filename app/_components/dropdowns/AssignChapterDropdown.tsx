@@ -6,7 +6,7 @@ import AddGuest from "../modals/AddGuest";
 
 const AssignChapterDropdown = ({
   metadata,
-  options,
+  optionGroups,
   selected,
   align,
   position,
@@ -55,7 +55,7 @@ const AssignChapterDropdown = ({
             Speakers
           </span>
           <span className="h-5 aspect-square rounded-[4px] bg-selected grid place-items-center font-bold text-xs text-secondary">
-            {options.length}
+            {optionGroups.length}
           </span>
         </div>
         <span
@@ -65,7 +65,8 @@ const AssignChapterDropdown = ({
           <AddUserIcon className="h-3.5" />
         </span>
       </div>
-      {options.map((item: any, index: any) => (
+
+      {optionGroups[0].map((item: any, index: any) => (
         <div
           key={index}
           onClick={() => handleClick(item.onClick)}
@@ -79,6 +80,17 @@ const AssignChapterDropdown = ({
           <span className="font-semibold text-[13px]">{item.text}</span>
         </div>
       ))}
+
+      {/* <div className="w-full h-[1px] bg-border"></div>
+
+      {optionGroups[1].map((item: any, index: any) => (
+        <div
+          key={index}
+          className={``}
+        >
+          <span className="">{item.text}</span>
+        </div>
+      ))} */}
     </motion.div>
   );
 };

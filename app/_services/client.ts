@@ -45,7 +45,7 @@ export const createScript: any = async (userId: any) => {
     createdAt: serverTimestamp(),
     lastModified: serverTimestamp(),
     isFavorite: false,
-    editors: [userId],
+    editors: [],
     viewers: [],
     guests: [],
   };
@@ -328,15 +328,16 @@ export const getUsersByEmail = async (
         const q = query(usersCollection, where("email", "==", email));
         const queySnap = await getDocs(q);
 
-        if (queySnap.empty) {
+        if (!queySnap.empty) {
           const userDoc = queySnap.docs[0];
           return { id: userDoc.id, ...userDoc.data() };
         }
 
-        console.warn(`No document found for ID: ${email}`);
+        console.warn(`No document found for email: ${email}`);
         return null;
       })
     );
+
     return userDocs.filter((doc) => doc !== null);
   } catch (error) {
     console.error("Error fetching user documents:", error);
@@ -377,70 +378,20 @@ export const changeNodeSpeaker = async (
   }
 };
 
-// export const getPresentationByCode = async (presentationCode: string) => {
-//   try {
-//     const presentationsRef = collection(db, "presentations");
-//     const q = query(presentationsRef, where("code", "==", presentationCode));
-//     const querySnap = await getDocs(q);
+export const updateScriptParticipants = async (
+  scriptId: any,
+  newParticipants: any
+) => {
+  try {
+    const scriptRef = doc(db, "scripts", scriptId);
+    await updateDoc(scriptRef, newParticipants);
 
-//     if (querySnap.empty) {
-//       console.error("Presentation not found");
-//       return null;
-//     }
-
-//     const doc = querySnap.docs[0];
-//     return {
-//       id: doc.id,
-//       ...doc.data(),
-//     };
-//   } catch (error) {
-//     console.error("Error getting presentation:", error);
-//     throw error;
-//   }
-// };
-
-// export const changeMemberStatus = async (
-//   presentationId: any,
-//   presentationParticipants: any,
-//   memberId: any,
-//   newConnectionStatus: any
-// ) => {
-//   const updatedParticipants = presentationParticipants.map((item: any) => {
-//     if (item.id === memberId) {
-//       return { ...item, isConnected: newConnectionStatus };
-//     } else {
-//       return item;
-//     }
-//   });
-
-//   try {
-//     const docRef = doc(db, "presentations", presentationId);
-
-//     await updateDoc(docRef, { participants: updatedParticipants });
-//   } catch (error) {
-//     console.error("Error updating member connection status:", error);
-//   }
-// };
-
-// export const subscribeToPresentation = (presentationId: any, onUpdate: any) => {
-//   const presentationRef = doc(db, "presentations", presentationId);
-
-//   const unsubscribePresentation = onSnapshot(
-//     presentationRef,
-//     (presentationSnapshot) => {
-//       if (presentationSnapshot.exists()) {
-//         const latestPresentation = {
-//           ...presentationSnapshot.data(),
-//           id: presentationSnapshot.id,
-//         };
-//         onUpdate(latestPresentation);
-//       } else {
-//         console.error("Nodes not found using script id: " + presentationId);
-//       }
-//     }
-//   );
-//   return unsubscribePresentation;
-// };
+    return true; // Return success indicator
+  } catch (error) {
+    console.error("Error updating script participants", error);
+    return false; // Return failure indicator
+  }
+};
 
 export const subscribeToPresentation = (presentationId: any, onUpdate: any) => {
   // Create a reference to the specific presentation in RTDB
@@ -574,7 +525,7 @@ export async function getUserPreferences(userId: string) {
 }
 
 export const subscribeToScripts = (
-  userId: string,
+  userEmail: string,
   onUpdate: (data: any) => void
 ) => {
   const scriptsCollection = collection(db, "scripts");
@@ -582,21 +533,21 @@ export const subscribeToScripts = (
   // Queries for createdBy, editors, and viewers
   const createdByQuery = query(
     scriptsCollection,
-    where("createdBy", "==", userId),
+    where("createdBy", "==", userEmail),
     orderBy("lastModified", "desc"),
     limit(10)
   );
 
   const editorsQuery = query(
     scriptsCollection,
-    where("editors", "array-contains", userId),
+    where("editors", "array-contains", userEmail),
     orderBy("lastModified", "desc"),
     limit(10)
   );
 
   const viewersQuery = query(
     scriptsCollection,
-    where("viewers", "array-contains", userId),
+    where("viewers", "array-contains", userEmail),
     orderBy("lastModified", "desc"),
     limit(10)
   );

@@ -9,8 +9,8 @@ export const fetchParticipants = async (
 ) => {
   try {
     const [editorsDocs, viewersDocs, authorDoc]: any = await Promise.all([
-      getPeople(editors, []),
-      getPeople(viewers, []),
+      getUsersByEmail(editors, []),
+      getUsersByEmail(viewers, []),
       getPeople([author], []),
     ]);
     const editorsWithRoles = editorsDocs.map((doc: any) => ({
@@ -30,25 +30,12 @@ export const fetchParticipants = async (
       role: "guest",
     }));
 
-    return _.uniqWith(
-      [
-        ...editorsWithRoles,
-        ...viewersWithRoles,
-        ...authorWithRole,
-        ...guestsWithRoles,
-      ],
-      (a, b) => {
-        if (a.id && b.id) {
-          // Both have an id: consider duplicates if equal.
-          if (a.id === b.id) return true;
-        } else if (a.alias && b.alias) {
-          // Both have an alias: consider duplicates if equal.
-          if (a.alias === b.alias) return true;
-        }
-        // Otherwise, treat them as distinct.
-        return false;
-      }
-    );
+    return [
+      ...editorsWithRoles,
+      ...viewersWithRoles,
+      ...authorWithRole,
+      ...guestsWithRoles,
+    ];
   } catch (error) {
     console.error("Error fetching participants:", error);
   }

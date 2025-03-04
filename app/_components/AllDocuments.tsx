@@ -200,25 +200,27 @@ export default function AllDocuments() {
             align="right"
             isVisible={isSortingOptionsVisible}
             setIsVisible={setIsSortingOptionsVisible}
-            options={[
-              {
-                text: "Title",
-                onClick: () => {
-                  setSorting((currSorting: any) => ({
-                    ...currSorting,
-                    sortedBy: "title",
-                  }));
+            optionGroups={[
+              [
+                {
+                  text: "Title",
+                  onClick: () => {
+                    setSorting((currSorting: any) => ({
+                      ...currSorting,
+                      sortedBy: "title",
+                    }));
+                  },
                 },
-              },
-              {
-                text: "Last modified",
-                onClick: () => {
-                  setSorting((currSorting: any) => ({
-                    ...currSorting,
-                    sortedBy: "lastModified",
-                  }));
+                {
+                  text: "Last modified",
+                  onClick: () => {
+                    setSorting((currSorting: any) => ({
+                      ...currSorting,
+                      sortedBy: "lastModified",
+                    }));
+                  },
                 },
-              },
+              ],
             ]}
           >
             <span

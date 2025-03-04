@@ -10,7 +10,7 @@ interface DropdownWrapperProps {
   selected?: any;
   align?: "left" | "right";
   position?: "top" | "bottom";
-  options: Array<{ text: string; onClick: () => void }>;
+  optionGroups: any;
   isVisible?: boolean; // Made optional
   setIsVisible?: (value: boolean | ((prev: boolean) => boolean)) => void; // Made optional
   closeOnClick?: boolean;
@@ -24,7 +24,7 @@ const DropdownWrapper: React.FC<DropdownWrapperProps> = ({
   metadata = {},
   align = "left",
   position = "bottom",
-  options,
+  optionGroups,
   isVisible: externalIsVisible,
   setIsVisible: externalSetIsVisible,
   closeOnClick = true,
@@ -71,7 +71,7 @@ const DropdownWrapper: React.FC<DropdownWrapperProps> = ({
         <DropdownType
           metadata={metadata}
           selected={selected}
-          options={options}
+          optionGroups={optionGroups}
           align={align}
           position={position}
           isVisible={isVisible}

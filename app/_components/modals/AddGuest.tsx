@@ -65,7 +65,7 @@ export default function AddGuest({ metadata }: any) {
             value={newGuestAlias}
             placeholder="Speaker's name"
             type="text"
-            className="px-3.5 h-11 rounded-[10px] border-[1px] border-border outline-none bg-transparent w-full text-sm text-primary text-medium placeholder:text-placeholder ring-2 ring-transparent focus:ring-brand"
+            className="input-default w-full"
           />
           <span className="cursor-pointer hover:underline text-medium text-[13px] text-inactive hover:text-primary">
             Invite participant instead

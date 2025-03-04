@@ -63,7 +63,7 @@ const GenericFilters: React.FC<GenericFiltersProps> = ({ filters }) => {
                   <DropdownWrapper
                     isVisible={filter.isVisible!}
                     setIsVisible={filter.setIsVisible!}
-                    options={filter.options!}
+                    optionGroups={[filter.options!]}
                   >
                     <div className="filter-1 filter-1-selected pr-2 !rounded-r-none">
                       <span className="font-semibold text-[13px] flex items-center">
@@ -87,7 +87,7 @@ const GenericFilters: React.FC<GenericFiltersProps> = ({ filters }) => {
                 <DropdownWrapper
                   isVisible={filter.isVisible!}
                   setIsVisible={filter.setIsVisible!}
-                  options={filter.options!}
+                  optionGroups={[filter.options!]}
                 >
                   <div className="filter-1 filter-1-inactive">
                     <span className="font-semibold text-[13px]">

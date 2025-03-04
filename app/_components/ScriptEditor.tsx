@@ -23,12 +23,16 @@ import ScriptAreaControls from "./ScriptAreaControls";
 import Tiptap from "./_tiptap/Tiptap";
 import { rehydrateEditorContent } from "../_utils/tiptapCommands";
 import useResizeObserver from "use-resize-observer";
+import { useModal } from "../_contexts/ModalContext";
+import ManageParticipants from "./modals/ManageParticipants";
 
 export default function ScriptEditor() {
   const { script, setScript, nodes, setNodes, participants, editor } =
     useScriptEditor();
   const { user } = useAuth();
   const router = useRouter();
+
+  const { openModal } = useModal();
 
   const { ref: virtualListParent, height } = useResizeObserver<HTMLDivElement>({
     box: "border-box",
@@ -106,7 +110,19 @@ export default function ScriptEditor() {
   };
 
   const handleShareFile = () => {
-    console.log("Handle file sharing");
+    openModal({
+      content: (
+        <ManageParticipants
+          metadata={{
+            participants,
+            userId: user?.id,
+            scriptId: script?.id,
+            scriptTitle: script?.title,
+          }}
+        />
+      ),
+      name: "manageParticipants",
+    });
   };
 
   const setChapters = async (newChapters: any) => {
@@ -138,6 +154,10 @@ export default function ScriptEditor() {
       setDocumentTitle(script.title);
     }
   }, [script?.title]);
+
+  const currentUserInParticipants = participants.find(
+    (p: any) => p?.id === user?.id
+  );
 
   return (
     <div className="flex flex-col w-full">
@@ -215,9 +235,13 @@ export default function ScriptEditor() {
           >
             <ChaptersIcon className="w-3.5" />
           </button>
-          <button onClick={handleShareFile} className="btn-2-md">
-            Invite
-          </button>
+          {(currentUserInParticipants?.role === "author" ||
+            currentUserInParticipants?.role === "editor") && (
+            <button onClick={handleShareFile} className="btn-2-md">
+              Invite
+            </button>
+          )}
+
           <button className="btn-1-md" onClick={handlePresent}>
             <span>Present</span>
           </button>

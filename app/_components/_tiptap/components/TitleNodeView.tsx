@@ -66,34 +66,36 @@ const TitleNodeView: React.FC<NodeViewProps> = (props: any) => {
         dropdownType={AssignChapterDropdown}
         position="bottom"
         selected={[positionInParticipants]}
-        options={participants.map((participant: any) => {
-          return {
-            profilePicture: (
-              <ProfilePicture
-                profilePictureURL={participant?.profilePictureURL}
-                className={`h-[26px]`}
-                firstName={
-                  participant?.role !== "guest"
-                    ? participant?.firstName
-                    : participant?.alias
-                }
-                lastName={
-                  participant?.role !== "guest" ? participant?.lastName : null
-                }
-              />
-            ),
-            text:
-              participant?.role !== "guest"
-                ? participant.firstName + " " + participant.lastName
-                : participant.alias,
-            onClick: () =>
-              handleChangeSpeaker(
-                participant.role !== "guest"
-                  ? participant?.id
-                  : (participant.alias, true)
+        optionGroups={[
+          participants.map((participant: any) => {
+            return {
+              profilePicture: (
+                <ProfilePicture
+                  profilePictureURL={participant?.profilePictureURL}
+                  className={`h-[26px]`}
+                  firstName={
+                    participant?.role !== "guest"
+                      ? participant?.firstName
+                      : participant?.alias
+                  }
+                  lastName={
+                    participant?.role !== "guest" ? participant?.lastName : null
+                  }
+                />
               ),
-          };
-        })}
+              text:
+                participant?.role !== "guest"
+                  ? participant.firstName + " " + participant.lastName
+                  : participant.alias,
+              onClick: () =>
+                handleChangeSpeaker(
+                  participant.role !== "guest"
+                    ? participant?.id
+                    : (participant.alias, true)
+                ),
+            };
+          }),
+        ]}
       >
         <ProfilePicture
           profilePictureURL={speakerData?.profilePictureURL}

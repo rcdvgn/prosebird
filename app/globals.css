@@ -154,15 +154,15 @@ textarea::-webkit-scrollbar {
   }
 
   .btn-1 {
-    @apply bg-brand text-primary text-[13px] font-bold px-[14px] flex justify-center items-center gap-[6px] hover:opacity-85 outline-none border-none focus:outline-brand focus:outline outline-offset-2;
+    @apply bg-brand text-primary text-[13px] font-bold px-[14px] flex justify-center items-center gap-[6px] hover:opacity-85 outline-none border-none focus:outline-brand focus:outline outline-offset-2 disabled:cursor-not-allowed disabled:opacity-80;
   }
 
   .btn-2 {
-    @apply bg-battleground/95 text-inactive text-[13px] font-bold px-[14px] flex justify-center items-center gap-[6px] hover:bg-battleground hover:text-primary outline-none border-none outline-offset-2;
+    @apply bg-battleground/95 text-inactive text-[13px] font-bold px-[14px] flex justify-center items-center gap-[6px] hover:bg-battleground hover:text-primary outline-none border-none outline-offset-2 disabled:cursor-not-allowed disabled:opacity-80;
   }
 
   .btn-3 {
-    @apply text-inactive text-[13px] font-bold px-[14px] flex justify-center items-center gap-[6px] hover:text-primary outline-none border-none ring-1 ring-border hover:bg-hover hover:ring-transparent;
+    @apply text-inactive text-[13px] font-bold px-[14px] flex justify-center items-center gap-[6px] hover:text-primary outline-none border-none ring-1 ring-border hover:bg-hover hover:ring-transparent disabled:cursor-not-allowed disabled:opacity-80;
   }
 
   .btn-1-sm {

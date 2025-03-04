@@ -327,13 +327,15 @@ export default function Sidebar(fileId: any) {
             <DropdownWrapper
               isActive={currentTab ? false : true}
               position="top"
-              options={[
-                { text: "Settings", onClick: handleSettings },
-                { text: "Log out", onClick: logout },
-                {
-                  text: "Get desktop app",
-                  onClick: () => console.log("You clicked 'Get desktop app'"),
-                },
+              optionGroups={[
+                [
+                  { text: "Settings", onClick: handleSettings },
+                  { text: "Log out", onClick: logout },
+                  {
+                    text: "Get desktop app",
+                    onClick: () => console.log("You clicked 'Get desktop app'"),
+                  },
+                ],
               ]}
             >
               <ProfilePicture

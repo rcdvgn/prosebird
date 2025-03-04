@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 
 const DefaultDropdown = ({
-  options,
+  optionGroups,
   align,
   position,
   isVisible,
@@ -33,7 +33,7 @@ const DefaultDropdown = ({
         shouldRender ? "flex" : "hidden"
       }`}
     >
-      {options.map((item: any, index: any) => (
+      {optionGroups[0].map((item: any, index: any) => (
         <div
           key={index}
           onClick={() => handleClick(item.onClick)}
@@ -42,6 +42,17 @@ const DefaultDropdown = ({
           {item.text}
         </div>
       ))}
+
+      {/* <div className="w-full h-[1px] bg-border"></div>
+
+      {optionGroups[1].map((item: any, index: any) => (
+        <div
+          key={index}
+          className={``}
+        >
+          <span className="">{item.text}</span>
+        </div>
+      ))} */}
     </motion.div>
   );
 };

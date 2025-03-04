@@ -12,6 +12,7 @@ import {
   checkPresentationStatus,
   createPresentationSubscriptions,
   getPeople,
+  getUsersByEmail,
   subscribeToNotifications,
   subscribeToPresentationParticipants,
   subscribeToScripts,
@@ -72,7 +73,7 @@ export const RealtimeDataProvider = ({ children }: { children: ReactNode }) => {
       uniqueScripts.sort((a: any, b: any) => b.lastModified - a.lastModified);
       setScripts(uniqueScripts);
     };
-    const unsubscribeScripts = subscribeToScripts(user.id, onScriptsUpdate);
+    const unsubscribeScripts = subscribeToScripts(user?.email, onScriptsUpdate);
 
     // --- Presentations Subscription ---
     const onPresentationsUpdate = async (updatedPresentations: any[]) => {
@@ -126,7 +127,7 @@ export const RealtimeDataProvider = ({ children }: { children: ReactNode }) => {
     }, {});
   };
 
-  const getUserData = async (userIds: any) => {
+  const getUserData = async (userIds: any, userObjects: any) => {
     const flatUserIds = userIds.flat();
     const unfetchedUserIds = _.uniq(
       _.difference(flatUserIds, Object.keys(people))
@@ -149,28 +150,41 @@ export const RealtimeDataProvider = ({ children }: { children: ReactNode }) => {
           {}
         );
 
-        return { ...prevPeople, ...formattedFetchedPeople };
+        const formattedUserObjects = userObjects.reduce(
+          (acc: any, item: any) => {
+            const { id, ...rest } = item;
+            acc[id] = rest;
+            return acc;
+          },
+          {}
+        );
+
+        const finalData = {
+          ...prevPeople,
+          ...formattedUserObjects,
+          ...formattedFetchedPeople,
+        };
+
+        return finalData;
       });
     } catch (error) {
       console.error("Error fetching user data:", error);
     }
   };
 
-  // Then modify the useEffect to prevent unnecessary re-renders
   useEffect(() => {
     if (!user) return;
 
     const getAllUserIds = () => {
       const userIds = [];
+      const userEmails: any = [];
 
       if (scripts) {
-        userIds.push(
-          ...scripts.map((script: any) => [
-            script.createdBy,
-            ...(script.editors || []),
-            ...(script.viewers || []),
-          ])
-        );
+        scripts.forEach((script: any) => {
+          userIds.push(script.createdBy);
+          userEmails.push(...script.editors);
+          userEmails.push(...script.viewers);
+        });
       }
 
       if (presentations) {
@@ -193,13 +207,18 @@ export const RealtimeDataProvider = ({ children }: { children: ReactNode }) => {
         );
       }
 
-      return userIds;
+      return { userIds, userEmails };
     };
 
-    const userIds = getAllUserIds();
-    if (userIds.length > 0) {
-      getUserData(userIds);
-    }
+    const fetchUserData = async () => {
+      const { userIds, userEmails } = getAllUserIds();
+      const userObjects = userEmails.length
+        ? await getUsersByEmail(userEmails, [])
+        : [];
+      getUserData(userIds, userObjects);
+    };
+
+    fetchUserData();
   }, [user?.id, scripts, presentations, notifications]);
 
   return (
