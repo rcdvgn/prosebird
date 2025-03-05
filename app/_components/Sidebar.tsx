@@ -156,7 +156,7 @@ export default function Sidebar(fileId: any) {
               className="cursor-pointer"
               onClick={() => router.push(`/files`)}
             >
-              <LogoIcon className="h-5" />
+              <LogoIcon className="h-5 text-primary" />
             </span>
           </div>
 

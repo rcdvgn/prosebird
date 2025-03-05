@@ -234,7 +234,7 @@ textarea::-webkit-scrollbar {
   }
 
   .tiptap-editor-parent {
-    @apply grow w-full [&>div]:h-full [&>div]:w-full;
+    @apply grow w-full [&>div]:h-full [&>div]:w-full pb-4;
   }
 
   .tiptap-editor {

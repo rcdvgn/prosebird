@@ -11,7 +11,7 @@ export default function ScriptAreaInfo() {
   return (
     <div className="sticky bottom-0 left-0 w-full">
       <div className="relative">
-        <div className="absolute bottom-full left-0 w-full h-12 pointer-events-none bg-gradient-to-t from-middleground to-middleground/0"></div>
+        {/* <div className="absolute bottom-full left-0 w-full h-12 pointer-events-none bg-gradient-to-t from-middleground to-middleground/0"></div> */}
 
         <div className="bg-middleground w-full py-3 px-10 flex items-center justify-between">
           <span className="text-secondary font-medium text-xs">
