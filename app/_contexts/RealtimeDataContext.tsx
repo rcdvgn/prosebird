@@ -73,7 +73,11 @@ export const RealtimeDataProvider = ({ children }: { children: ReactNode }) => {
       uniqueScripts.sort((a: any, b: any) => b.lastModified - a.lastModified);
       setScripts(uniqueScripts);
     };
-    const unsubscribeScripts = subscribeToScripts(user?.email, onScriptsUpdate);
+    const unsubscribeScripts = subscribeToScripts(
+      user?.id,
+      user?.email,
+      onScriptsUpdate
+    );
 
     // --- Presentations Subscription ---
     const onPresentationsUpdate = async (updatedPresentations: any[]) => {

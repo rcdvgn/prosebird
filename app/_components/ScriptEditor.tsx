@@ -117,6 +117,7 @@ export default function ScriptEditor() {
             participants,
             userId: user?.id,
             scriptId: script?.id,
+            nodes: nodes,
             scriptTitle: script?.title,
           }}
         />

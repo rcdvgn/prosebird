@@ -13,7 +13,8 @@ import ProfilePicture from "../ProfilePicture";
 import _ from "lodash";
 import DropdownWrapper from "../wrappers/DropdownWrapper";
 import SimpleSelectedDropdown from "../dropdowns/SimpleSelectedDropdown";
-import { updateScriptParticipants } from "@/app/_services/client";
+import { updateNodes, updateScriptParticipants } from "@/app/_services/client";
+import ReassignScriptChapters from "./ReassignScriptChapters";
 
 const Participant = ({
   isAuthor,
@@ -116,8 +117,8 @@ const Participant = ({
   );
 };
 
-export default function ManageParticipants({ metadata }: any) {
-  const { closeModal } = useModal();
+function Main({ metadata, setPromptReassignScriptChapters }: any) {
+  const { openModal, closeModal } = useModal();
 
   const [loading, setLoading] = useState<any>(false);
   const [newParticipants, setNewParticipants] = useState<any>(
@@ -145,38 +146,38 @@ export default function ManageParticipants({ metadata }: any) {
     ]);
   };
 
-  const saveParticipants = async () => {
+  const groupParticipantsByRoles = () => {
+    let editors: any = [];
+    let viewers: any = [];
+    let guests: any = [];
+
+    newParticipants.forEach((p: any) => {
+      const containsInRevokedParticipants = _.some(
+        removedParticipants,
+        (item: any) =>
+          _.isEqual(item, {
+            participantId: p?.id,
+            isGuest: p?.role === "guest",
+          })
+      );
+
+      if (containsInRevokedParticipants) return;
+
+      if (p.role === "editor") {
+        editors.push(p.email);
+      } else if (p.role === "viewer") {
+        viewers.push(p.email);
+      } else if (p.role === "guest") {
+        guests.push(p.alias);
+      }
+    });
+
+    return { editors, viewers, guests };
+  };
+
+  const saveParticipants = async (nodesWithNewSpeakers: any = null) => {
     if (pendingChanges && metadata?.scriptId) {
-      setLoading(false);
-
-      const groupParticipantsByRoles = () => {
-        let editors: any = [];
-        let viewers: any = [];
-        let guests: any = [];
-
-        newParticipants.forEach((p: any) => {
-          const containsInRevokedParticipants = _.some(
-            removedParticipants,
-            (item: any) =>
-              _.isEqual(item, {
-                participantId: p?.id,
-                isGuest: p?.role === "guest",
-              })
-          );
-
-          if (containsInRevokedParticipants) return;
-
-          if (p.role === "editor") {
-            editors.push(p.email);
-          } else if (p.role === "viewer") {
-            viewers.push(p.email);
-          } else if (p.role === "guest") {
-            guests.push(p.alias);
-          }
-        });
-
-        return { editors, viewers, guests };
-      };
+      setLoading(true);
 
       const participantsGroupedByRoles = groupParticipantsByRoles();
 
@@ -184,19 +185,75 @@ export default function ManageParticipants({ metadata }: any) {
         metadata.scriptId,
         participantsGroupedByRoles
       );
+
+      if (nodesWithNewSpeakers) {
+        await updateNodes(metadata.scriptId, nodesWithNewSpeakers);
+      }
+
+      setLoading(false);
     }
     closeModal();
+  };
+
+  const findUnassignedChapters = () => {
+    const nodes = metadata?.nodes;
+
+    const unassignedChapters = nodes
+      .map((node: any) => {
+        const containsInRevokedParticipants = _.some(
+          removedParticipants,
+          (item: any) =>
+            _.isEqual(item, {
+              participantId: node?.speaker.id,
+              isGuest: node?.speaker.isGuest,
+            })
+        );
+
+        if (!containsInRevokedParticipants) return;
+
+        return {
+          id: node.id,
+          oldSpeaker: node.speaker,
+          title: node.title,
+        };
+      })
+      .filter(Boolean);
+
+    const unassignedChaptersBySpeaker = _.groupBy(
+      unassignedChapters,
+      (chapter) => `${chapter.oldSpeaker.id}_${chapter.oldSpeaker.isGuest}`
+    );
+
+    _.values(unassignedChaptersBySpeaker).length
+      ? handleReassignChaptersModal(unassignedChaptersBySpeaker)
+      : saveParticipants();
+  };
+
+  const handleReassignChaptersModal = (unassignedChaptersBySpeaker: any) => {
+    setPromptReassignScriptChapters(
+      <ReassignScriptChapters
+        unassignedChaptersBySpeaker={unassignedChaptersBySpeaker}
+        removedParticipants={removedParticipants}
+        setPromptReassignScriptChapters={setPromptReassignScriptChapters}
+        saveParticipants={saveParticipants}
+        participants={metadata?.participants}
+        nodes={metadata?.nodes}
+      />
+    );
   };
 
   useEffect(() => {
     if (!metadata?.participants) return;
 
-    if (!_.isEqual(newParticipants, metadata.participants)) {
+    if (
+      !_.isEqual(newParticipants, metadata.participants) ||
+      removedParticipants.length
+    ) {
       !pendingChanges ? setPendingChanges(true) : "";
     } else {
       pendingChanges ? setPendingChanges(false) : "";
     }
-  }, [newParticipants]);
+  }, [newParticipants, removedParticipants]);
 
   const rolesOptions = (participant: any) => {
     return [
@@ -292,7 +349,7 @@ export default function ManageParticipants({ metadata }: any) {
                 Pending changes
               </span>
             )}
-            <button onClick={saveParticipants} className="btn-1-lg">
+            <button onClick={findUnassignedChapters} className="btn-1-lg">
               {loading ? (
                 <LoadingIcon className="h-3 animate-spin" />
               ) : (
@@ -303,5 +360,29 @@ export default function ManageParticipants({ metadata }: any) {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ManageParticipants({ metadata }: any) {
+  const [promptReassignScriptChapters, setPromptReassignScriptChapters] =
+    useState<any>(null);
+
+  return (
+    <>
+      <div
+        className={promptReassignScriptChapters !== null ? "block" : "hidden"}
+      >
+        {promptReassignScriptChapters}
+      </div>
+
+      <div
+        className={promptReassignScriptChapters !== null ? "hidden" : "block"}
+      >
+        <Main
+          metadata={metadata}
+          setPromptReassignScriptChapters={setPromptReassignScriptChapters}
+        />
+      </div>
+    </>
   );
 }

@@ -112,7 +112,7 @@ export const ScriptEditorProvider = ({ children }: { children: ReactNode }) => {
     const newNode: any = {
       title: "Chapter " + (numberOfChapters + 1),
       paragraphs: [[{ text: "" }]],
-      speaker: user.id,
+      speaker: { id: user.id, isGuest: false },
       id: uuidv4(),
     };
 

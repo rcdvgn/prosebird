@@ -393,6 +393,15 @@ export const updateScriptParticipants = async (
   }
 };
 
+export const updateNodes = async (scriptId: any, newNodes: any) => {
+  try {
+    const nodeRef = ref(rtdb, `nodes/${scriptId}`);
+    await set(nodeRef, newNodes);
+  } catch (error) {
+    console.error("Error updating nodes", error);
+  }
+};
+
 export const subscribeToPresentation = (presentationId: any, onUpdate: any) => {
   // Create a reference to the specific presentation in RTDB
   const presentationRef = ref(rtdb, `presentations/${presentationId}`);
@@ -525,6 +534,7 @@ export async function getUserPreferences(userId: string) {
 }
 
 export const subscribeToScripts = (
+  userId: string,
   userEmail: string,
   onUpdate: (data: any) => void
 ) => {
@@ -533,7 +543,7 @@ export const subscribeToScripts = (
   // Queries for createdBy, editors, and viewers
   const createdByQuery = query(
     scriptsCollection,
-    where("createdBy", "==", userEmail),
+    where("createdBy", "==", userId),
     orderBy("lastModified", "desc"),
     limit(10)
   );

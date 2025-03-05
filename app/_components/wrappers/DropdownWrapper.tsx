@@ -14,6 +14,7 @@ interface DropdownWrapperProps {
   isVisible?: boolean; // Made optional
   setIsVisible?: (value: boolean | ((prev: boolean) => boolean)) => void; // Made optional
   closeOnClick?: boolean;
+  className?: string;
   children: React.ReactNode;
   isActive?: boolean; // Added isActive
 }
@@ -28,6 +29,7 @@ const DropdownWrapper: React.FC<DropdownWrapperProps> = ({
   isVisible: externalIsVisible,
   setIsVisible: externalSetIsVisible,
   closeOnClick = true,
+  className = "",
   children,
   isActive = true, // Default to true
 }) => {
@@ -54,7 +56,7 @@ const DropdownWrapper: React.FC<DropdownWrapperProps> = ({
   }
 
   return (
-    <div className="relative">
+    <div className={`relative ${className}`}>
       <span
         ref={wrapperRef}
         onClick={() => isActive && setIsVisible((prev) => !prev)}
