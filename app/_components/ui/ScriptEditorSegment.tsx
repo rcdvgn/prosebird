@@ -1,4 +1,4 @@
-export default function SegmentedControl({
+export default function ScriptEditorSegment({
   segments,
   selectedSegment,
   segmentWidth = 90,
@@ -8,7 +8,7 @@ export default function SegmentedControl({
   return (
     <div className="relative flex [&>div]:cursor-pointer h-full">
       <div
-        className="transition-all duration-200 ease-in-out z-0 inset-y-0 m-auto bg-selected absolute h-full rounded-lg"
+        className="transition-all duration-200 ease-in-out z-0 inset-y-0 m-auto bg-brand absolute h-full rounded-lg"
         style={{
           width: `${segmentWidth}px`,
           left: `${selectedSegment * segmentWidth}px`,
@@ -24,7 +24,7 @@ export default function SegmentedControl({
             className={`z-10 h-full px-1 rounded-lg flex justify-center items-center gap-1 ${
               selectedSegment === index
                 ? "text-primary"
-                : "text-secondary hover:text-primary"
+                : "hover:bg-hover text-secondary hover:text-primary"
             }`}
           >
             {segment?.leftIcon && segment.leftIcon}

@@ -40,8 +40,9 @@ const TitleNodeView: React.FC<NodeViewProps> = (props: any) => {
         (p: any) => p.id === chapterSpeaker?.id
       );
     } else {
+      // For guests, you're comparing alias with what's stored in chapterSpeaker.id
       positionInParticipants = participants.findIndex(
-        (p: any) => p.alias === chapterSpeaker?.id
+        (p: any) => p.role === "guest" && p.alias === chapterSpeaker?.id
       );
     }
 
@@ -54,10 +55,6 @@ const TitleNodeView: React.FC<NodeViewProps> = (props: any) => {
   };
 
   const { speakerData, positionInParticipants } = findChapterSpeakerData();
-
-  // useEffect(() => {
-  //   console.log(participants);
-  // }, [participants]);
 
   return (
     <NodeViewWrapper className="chapter-header flex gap-4 mb-4 relative">
@@ -91,7 +88,8 @@ const TitleNodeView: React.FC<NodeViewProps> = (props: any) => {
                 handleChangeSpeaker(
                   participant.role !== "guest"
                     ? participant?.id
-                    : (participant.alias, true)
+                    : participant.alias,
+                  participant.role === "guest"
                 ),
             };
           }),

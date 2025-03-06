@@ -372,7 +372,7 @@ export const changeNodeSpeaker = async (
 ) => {
   try {
     const nodeRef = ref(rtdb, `nodes/${scriptId}/${nodePosition}`);
-    await update(nodeRef, { speaker: { id: speakerId, isGuest } }); // Only updates the speaker field
+    await update(nodeRef, { speaker: { id: speakerId, isGuest: isGuest } }); // Only updates the speaker field
   } catch (error) {
     console.error("Error changing node speaker", error);
   }

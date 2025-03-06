@@ -13,6 +13,8 @@ import {
   DragIcon,
   PencilIcon,
   ChaptersIcon,
+  ToggleSidebarIcon,
+  ChapterIcon,
 } from "../_assets/icons";
 import { useScriptEditor } from "@/app/_contexts/ScriptEditorContext";
 import { useAuth } from "@/app/_contexts/AuthContext";
@@ -25,6 +27,8 @@ import { rehydrateEditorContent } from "../_utils/tiptapCommands";
 import useResizeObserver from "use-resize-observer";
 import { useModal } from "../_contexts/ModalContext";
 import ManageParticipants from "./modals/ManageParticipants";
+import ProfilePicture from "./ProfilePicture";
+import _ from "lodash";
 
 export default function ScriptEditor() {
   const { script, setScript, nodes, setNodes, participants, editor } =
@@ -136,7 +140,7 @@ export default function ScriptEditor() {
 
   const segments = [
     { id: 0, text: "Chapters", onClick: () => setSelectedSegment(0) },
-    { id: 1, text: "Preview", onClick: () => setSelectedSegment(1) },
+    { id: 1, text: "People", onClick: () => setSelectedSegment(1) },
   ];
 
   const slideVariants = {
@@ -158,6 +162,11 @@ export default function ScriptEditor() {
 
   const currentUserInParticipants = participants.find(
     (p: any) => p?.id === user?.id
+  );
+
+  const nodesBySpeaker = _.groupBy(
+    nodes,
+    (chapter) => `${chapter.speaker.id}_${chapter.speaker.isGuest}`
   );
 
   return (
@@ -277,23 +286,103 @@ export default function ScriptEditor() {
               animate="visible"
               exit="hidden"
               variants={slideVariants}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.2 }}
             >
-              <div className="h-16 px-1 border-stroke border-b-[1px] flex justify-center items-center">
-                <div className="rounded-[10px] bg-foreground border-stroke border-[1px] h-[38px] p-[2px]">
+              <div className="h-16 border-stroke border-b-[1px] flex justify-between items-center shrink-0">
+                <span
+                  onClick={() => setChaptersViewVisible((curr: any) => !curr)}
+                  className="mx-2 button-icon !bg-transparent"
+                >
+                  <ToggleSidebarIcon className="h-[18px]" />
+                </span>
+
+                <div className="rounded-[10px] h-[36px] p-[2px]">
                   <SegmentedControl
                     segments={segments}
                     selectedSegment={selectedSegment}
                   />
                 </div>
+
+                <span className="invisible mx-2 button-icon !bg-transparent">
+                  <ToggleSidebarIcon className="h-[18px]" />
+                </span>
               </div>
 
-              <div ref={virtualListParent} className="grow w-full py-2.5">
-                <VirtualizedChapterList
-                  chapters={nodes}
-                  onChaptersChange={setChapters}
-                  containerHeight={height! - 20}
-                />
+              <div
+                ref={virtualListParent}
+                className={`grow w-full py-2.5 min-h-0 overflow-y-auto`}
+              >
+                {selectedSegment === 0 ? (
+                  <VirtualizedChapterList
+                    chapters={nodes}
+                    onChaptersChange={setChapters}
+                    containerHeight={height! - 20}
+                  />
+                ) : (
+                  <div className="flex flex-col">
+                    {participants &&
+                      participants.map((participant: any, index: any) => {
+                        const isGuest = participant.role === "guest";
+                        const participantIdentifier = `${
+                          participant?.id || participant?.alias
+                        }_${isGuest}`;
+                        const speakerNodes = _.keys(nodesBySpeaker).includes(
+                          participantIdentifier
+                        )
+                          ? nodesBySpeaker[participantIdentifier]
+                          : [];
+
+                        return (
+                          <div
+                            key={index}
+                            className="flex flex-col rounded-[10px] px-3 py-2.5 hover:bg-background"
+                          >
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2.5 grow min-w-0">
+                                <ProfilePicture
+                                  className="h-8"
+                                  firstName={
+                                    participant?.firstName || participant?.alias
+                                  }
+                                  lastName={participant?.lastName || null}
+                                />
+
+                                <div className="flex flex-col grow min-w-0 cursor-default pr-4">
+                                  <span className="font-bold text-sm text-primary truncate">
+                                    {participant?.role === "guest"
+                                      ? participant?.alias
+                                      : participant?.firstName +
+                                        " " +
+                                        participant?.lastName}
+                                  </span>
+                                  <span className="font-medium text-xs text-secondary truncate">
+                                    {String(participant?.role)
+                                      .charAt(0)
+                                      .toUpperCase() +
+                                      String(participant?.role).slice(1)}
+                                  </span>
+                                </div>
+                              </div>
+
+                              <div className="group py-1 px-2 rounded-md ring-1 ring-stroke hover:bg-battleground hover:ring-transparent cursor-pointer flex items-center gap-1.5">
+                                <ChapterIcon className="text-placeholder group-hover:text-secondary h-3" />
+                                <span className="font-bold text-primary text-xs">
+                                  {speakerNodes.length}
+                                </span>
+                              </div>
+                            </div>
+
+                            <ChapterChips
+                              chapterIcon={false}
+                              commaSeparated={true}
+                              nodes={speakerNodes}
+                              className="mt-2.5"
+                            />
+                          </div>
+                        );
+                      })}
+                  </div>
+                )}
               </div>
             </motion.div>
           )}
@@ -301,4 +390,64 @@ export default function ScriptEditor() {
       </div>
     </div>
   );
+}
+
+const ChapterChips = ({
+  nodes,
+  commaSeparated = false,
+  chapterIcon = false,
+  className = "",
+}: any) => {
+  return (
+    nodes.length > 0 && (
+      <div
+        className={`w-full ${className} ${
+          commaSeparated ? "mx-[-2px]" : "mx-[-4px]"
+        }`}
+      >
+        {nodes.map((chapter: any, chapterIndex: any) => {
+          return (
+            <p
+              key={chapterIndex}
+              className={`group cursor-pointer pb-[7px] pt-[5px] rounded-lg inline leading-8 break-all box-decoration-clone text-secondary font-semibold ${
+                commaSeparated
+                  ? "mx-[2px] hover:underline hover:text-primary text-[13px]"
+                  : "mx-[4px] px-2 bg-battleground text-xs"
+              }`}
+            >
+              {chapterIcon && (
+                <ChapterIcon
+                  className={`inline mr-1.5 ${
+                    commaSeparated
+                      ? "group-hover:text-primary h-3 text-secondary"
+                      : "h-2.5 text-placeholder"
+                  }`}
+                />
+              )}
+              {chapter.title}
+              {commaSeparated
+                ? chapterIndex < nodes.length - 1
+                  ? ","
+                  : "."
+                : ""}
+            </p>
+          );
+        })}
+      </div>
+    )
+  );
+};
+
+{
+  /* <p
+  key={chapterIndex}
+  className="group mx-[2px] cursor-pointer bg-battleground hover:text-primary px-2 rounded-lg inline leading-8 break-all box-decoration-clone"
+>
+  <span className="h-[26px] flex gap-1.5 items-center">
+    <ChapterIcon className="text-placeholder h-2.5" />
+    <span className="group-hover:text-primary text-secondary font-semibold text-xs">
+      {chapter.title}
+    </span>
+  </span>
+</p> */
 }

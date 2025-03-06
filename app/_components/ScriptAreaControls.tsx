@@ -17,6 +17,7 @@ import { motion } from "framer-motion";
 import { useScriptEditor } from "../_contexts/ScriptEditorContext";
 import { toggleComment } from "../_utils/tiptapCommands";
 import { getTextAlignment, isCursorInComment } from "../_utils/tiptapHelpers";
+import ScriptEditorSegment from "./ui/ScriptEditorSegment";
 
 const FontSizeControl = ({ editorOptions, setEditorOptions }: any) => {
   const { editor } = useScriptEditor();
@@ -226,7 +227,7 @@ const TextAlignment = ({ editorOptions, setEditorOptions }: any) => {
   ];
 
   return (
-    <SegmentedControl
+    <ScriptEditorSegment
       segments={textAlignmentSegments}
       selectedSegment={
         editorOptions.textAlignment === "left"

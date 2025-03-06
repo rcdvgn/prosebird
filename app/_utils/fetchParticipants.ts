@@ -13,6 +13,7 @@ export const fetchParticipants = async (
       getUsersByEmail(viewers, []),
       getPeople([author], []),
     ]);
+
     const editorsWithRoles = editorsDocs.map((doc: any) => ({
       ...doc,
       role: "editor",
