@@ -1,12 +1,8 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-// import { useAutoscroll } from "@/app/_contexts/AutoScrollContext";
-import { PlayIcon } from "../_assets/icons";
 import formatTimestamp from "../_utils/formatTimestamp";
 import { usePresentation } from "../_contexts/PresentationContext";
-import getTimestampFromPosition from "../_utils/getTimestampFromPosition";
-import { xor } from "lodash";
 
 export default function ProgressBar({
   handleTimeChange,
@@ -182,9 +178,9 @@ export default function ProgressBar({
   }, [totalDuration, handleTimeChange, setIsSeeking, setHoverElapsedTime]);
 
   return (
-    <div className="px-[7px] w-full absolute left-0 bottom-0">
+    <div className="z-20 px-[7px] w-full absolute left-0 bottom-0">
       {!isSeeking && (
-        <div className="text-secondary font-bold text-xs mx-4">
+        <div className="text-secondary font-bold text-xs mx-4 select-none">
           {formatTimestamp(elapsedTime)} / {formatTimestamp(totalDuration)}
         </div>
       )}
@@ -255,7 +251,7 @@ export default function ProgressBar({
 
         <div
           style={{ left: `${(elapsedTime * 100) / totalDuration}%` }}
-          className={`absolute m-auto -translate-x-1/2 rounded-full bg-primary pointer-events-none transition-all ease-in-out duration-150 ${
+          className={`absolute m-auto -translate-x-1/2 rounded-full bg-primary pointer-events-none transition-[top,height,width] ease-in-out duration-150 ${
             isHoverInCurrentChapter() || isSeeking
               ? "h-5 w-5 top-1.5"
               : "h-4 w-4 top-2"

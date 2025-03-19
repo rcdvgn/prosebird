@@ -29,6 +29,11 @@ function calculateLineBreaks(
   let lines: any = [];
   let chapterKeys = new Set(Object.keys(chapters)); // Use a Set for faster lookup
 
+  // Get the line height based on the font metrics
+  const fontMetrics = context.measureText("Mg"); // Using characters with ascenders and descenders
+  const lineHeight =
+    fontMetrics.actualBoundingBoxAscent + fontMetrics.actualBoundingBoxDescent;
+
   words.forEach((wordObject: any) => {
     const testLine =
       currentLine.map((item: any) => item.word).join(" ") +
@@ -39,11 +44,11 @@ function calculateLineBreaks(
     // Check if the word's key is a chapter start
     if (chapterKeys.has(wordObject.position)) {
       if (currentLine.length > 0) {
-        lines.push(currentLine); // Push the existing line if it's not empty
+        lines.push(currentLine);
       }
       currentLine = [wordObject]; // Start a new line with the chapter's first word
     } else if (testWidth > containerWidth) {
-      lines.push(currentLine); // Push the current line if it exceeds width
+      lines.push(currentLine);
       currentLine = [wordObject]; // Start a new line with the word
     } else {
       currentLine.push(wordObject); // Add the word to the current line
@@ -55,15 +60,24 @@ function calculateLineBreaks(
     lines.push(currentLine);
   }
 
-  return lines;
+  return {
+    lines,
+    lineHeight,
+  };
 }
 
 function calculateTotalDuration(
   numberOfLines: any,
   speedMultiplier: any,
-  baseSpeed: any
+  baseSpeed: any,
+  numberOfChapters: any,
+  heightPerLine: any
 ) {
-  return numberOfLines * speedMultiplier * baseSpeed;
+  const durationWoChapterTitles = numberOfLines * speedMultiplier * baseSpeed;
+  const durationPerPixel =
+    durationWoChapterTitles / (numberOfLines * heightPerLine);
+  const chapterTitlesDuration = numberOfChapters * 80 * durationPerPixel;
+  return durationWoChapterTitles + chapterTitlesDuration;
 }
 
 function calculateWordTimestamps(
@@ -110,12 +124,19 @@ export default async function calculateTimestamps(
 
   const context = await loadFontAndContext(fontSize);
 
-  const lines = calculateLineBreaks(context, words, chapters, containerWidth);
+  const { lines, lineHeight: heightPerLine } = calculateLineBreaks(
+    context,
+    words,
+    chapters,
+    containerWidth
+  );
 
   const totalDuration = calculateTotalDuration(
     lines.length,
     speedMultiplier,
-    baseSpeed
+    baseSpeed,
+    Object.keys(chapters).length,
+    heightPerLine
   );
 
   const { scriptWithTimestamps, chaptersWithTimestamps } =
