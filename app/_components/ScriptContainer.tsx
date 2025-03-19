@@ -185,7 +185,7 @@ export default function ScriptContainer({
         >
           <div
             ref={scriptContainer}
-            className="absolute text-left m-auto left-0 right-0"
+            className="absolute text-left m-auto left-0 right-0 select-none"
             style={{
               width: tempContainerWidth + "px",
             }}

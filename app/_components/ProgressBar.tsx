@@ -20,9 +20,9 @@ export default function ProgressBar({
     setIsSeeking,
     isAutoscrollOn,
     setIsAutoscrollOn,
-    presentation,
     wordsWithTimestamps,
     chaptersWithTimestamps,
+    progress,
   } = usePresentation();
   // const { isAutoscrollOn, setIsAutoscrollOn } = useAutoscroll();
 
@@ -49,13 +49,44 @@ export default function ProgressBar({
     return (relativeElapsedTime * 100) / chapterLength;
   };
 
+  const isHoverInCurrentChapter = () => {
+    if (!hoverElapsedTime) return false;
+
+    const chapterKeys = Object.keys(chaptersWithTimestamps);
+
+    const currentChapterIndex =
+      wordsWithTimestamps[progress.line][progress.index].chapterIndex;
+
+    const currentChapterStartPosition = chapterKeys[currentChapterIndex];
+
+    const isLastChapter = currentChapterIndex === chapterKeys.length - 1;
+
+    const nextChapterStartTimestamp = isLastChapter
+      ? totalDuration
+      : chaptersWithTimestamps[chapterKeys[currentChapterIndex + 1]].timestamp;
+
+    return (
+      hoverElapsedTime >=
+        chaptersWithTimestamps[currentChapterStartPosition].timestamp &&
+      hoverElapsedTime < nextChapterStartTimestamp
+    );
+  };
+
   useEffect(() => {
     // Handle dragging (mouse down) for seeking.
     const handleMouseDown = (e: MouseEvent) => {
       if (!progressContainer.current) return;
 
+      // Disable hover observer by removing its event listener.
+      progressContainer.current.removeEventListener(
+        "mousemove",
+        handleMouseHover
+      );
+
       setIsSeeking(true);
       setIsAutoscrollOn(true);
+      // Optionally reset hover state as well.
+      setHoverElapsedTime(null);
 
       const progressBarRect = progressContainer.current.getBoundingClientRect();
       const maxRight = progressBarRect.width;
@@ -86,6 +117,14 @@ export default function ProgressBar({
 
         document.removeEventListener("mousemove", handleMouseMove);
         document.removeEventListener("mouseup", handleMouseUp);
+
+        // Re-enable hover observer by re-adding the event listener.
+        if (progressContainer.current) {
+          progressContainer.current.addEventListener(
+            "mousemove",
+            handleMouseHover
+          );
+        }
       };
 
       document.addEventListener("mousemove", handleMouseMove);
@@ -144,12 +183,15 @@ export default function ProgressBar({
 
   return (
     <div className="px-[7px] w-full absolute left-0 bottom-0">
-      {/* <div className="text-primary font-semibold text-sm">
-        {formatTimestamp(elapsedTime)} / {formatTimestamp(totalDuration)}
-      </div> */}
+      {!isSeeking && (
+        <div className="text-secondary font-bold text-xs mx-4">
+          {formatTimestamp(elapsedTime)} / {formatTimestamp(totalDuration)}
+        </div>
+      )}
+
       <div
         ref={progressContainer}
-        className="flex items-center justify-between h-[18px]"
+        className="relative flex items-center justify-between h-[18px]"
       >
         {chaptersWithTimestamps &&
           totalDuration &&
@@ -211,10 +253,14 @@ export default function ProgressBar({
             });
           })()}
 
-        {/* <div
-          ref={progressBar}
-          className="w-full h-2 absolute bottom-[-2px] bg-brand"
-        ></div> */}
+        <div
+          style={{ left: `${(elapsedTime * 100) / totalDuration}%` }}
+          className={`absolute m-auto -translate-x-1/2 rounded-full bg-primary pointer-events-none transition-all ease-in-out duration-150 ${
+            isHoverInCurrentChapter() || isSeeking
+              ? "h-5 w-5 top-1.5"
+              : "h-4 w-4 top-2"
+          }`}
+        ></div>
       </div>
 
       {/* <button
