@@ -215,7 +215,7 @@ export default function ScriptEditor() {
 
           <div
             ref={containerRef}
-            className="w-[280px] bg-foreground border-border border-[1px] rounded-[10px] m-2.5 py-2.5 px-2 ring-attention-red ring-1 overflow-y-auto"
+            className="w-[280px] bg-foreground border-border border-[1px] rounded-[10px] m-2.5 py-2.5 px-2 ring-danger-red ring-1 overflow-y-auto"
           >
             {Array.from({ length: 20 }).map((_: any, index: any) => {
               return (

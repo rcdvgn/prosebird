@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  --background: 20, 20, 20;
+  --background: 26, 26, 26;
   --middleground: 12, 12, 12;
   --foreground: 28, 28, 28;
   --battleground: 32, 32, 32;
@@ -26,14 +26,17 @@
   --brand: 18, 70, 241;
 
   /* #292929 */
-  --border: 41, 41, 41;
-  --stroke: 33, 33, 33;
+  --stroke: 41, 41, 41;
+  --border: 33, 33, 33;
 
   --success-green: 33, 248, 40;
   --money-green: 114, 251, 93;
   --online-green: 51, 239, 59;
   --favorite-yellow: 233, 196, 11;
-  --attention-red: 233, 11, 14;
+  --danger-red: 233, 11, 14;
+
+  --progressbar-inactive: 43, 43, 43;
+  --progressbar-hover: 97, 97, 97;
 }
 
 /* @media (prefers-color-scheme: dark) {
@@ -126,7 +129,7 @@ textarea::-webkit-scrollbar {
 
 @layer components {
   .slate {
-    @apply flex flex-col bg-middleground rounded-[10px];
+    @apply bg-middleground rounded-[10px];
   }
 
   .icon-container {
@@ -255,5 +258,13 @@ textarea::-webkit-scrollbar {
 
   .tiptap-comment {
     @apply text-secondary;
+  }
+
+  .presentation-view-options {
+    @apply relative grid place-items-center h-10 w-10 rounded-[10px] hover:bg-hover cursor-pointer text-inactive hover:text-primary;
+  }
+
+  .presentation-control-options {
+    @apply flex items-center justify-center gap-2 relative h-10 min-w-10 px-2.5 rounded-[10px] cursor-pointer text-inactive hover:text-primary transition-all duration-100 ease-in-out;
   }
 }

@@ -27,7 +27,7 @@ const ProfilePicturePlaceholder = ({ className, firstName, lastName }: any) => {
   return (
     <div
       className={`aspect-square rounded-full flex items-center justify-center flex-shrink-0 min-w-0 text-primary font-semibold [&>div]:grid [&>div]:place-items-center ${className}`}
-      style={{ backgroundColor: `hsl(${nameColorHue}, 78%, 37%)` }}
+      style={{ backgroundColor: `hsl(${nameColorHue}, 64%, 51%)` }}
     >
       <ResponsiveFontSize
         ratio={0.4}

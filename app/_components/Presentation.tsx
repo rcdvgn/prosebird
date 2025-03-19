@@ -268,24 +268,22 @@ export default function Presentation() {
   }, [progress]);
 
   return (
-    <div className="flex relative h-full overflow-y-hidden">
-      <div className="w-[275px] shrink-0"></div>
-
-      <ScriptContainer handleTimeChange={handleTimeChange} />
-
-      <div className="w-[275px] shrink-0  "></div>
-      <div className="w-full h-56 fixed bottom-0 bg-gradient-to-t from-background to-background/0 pointer-events-none"></div>
-      <div className="w-full pb-[10px] px-[10px] fixed bottom-0">
-        <ActionPanel
-          // handleStartListening={handleStartListening}
-          // handleStopListening={handleStopListening}
-          // listening={listening}
-          handleTimeChange={handleTimeChange}
-          toggleScrollMode={toggleScrollMode}
-          handleTimerRun={handleTimerRun}
-          timer={timer}
-        />
+    <div className="flex flex-col relative h-screen w-screen bg-background">
+      <div className="px-2 pt-2 grow">
+        <ScriptContainer handleTimeChange={handleTimeChange} timer={timer} />
       </div>
+
+      <ActionPanel
+        // handleStartListening={handleStartListening}
+        // handleStopListening={handleStopListening}
+        // listening={listening}
+        handleTimeChange={handleTimeChange}
+        toggleScrollMode={toggleScrollMode}
+        handleTimerRun={handleTimerRun}
+        timer={timer}
+      />
     </div>
   );
 }
+
+/* <div className="w-full h-56 fixed bottom-0 bg-gradient-to-t from-background to-background/0 pointer-events-none"></div> */

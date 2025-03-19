@@ -5,12 +5,27 @@ import Scrollbar from "./Scrollbar";
 import { usePresentation } from "../_contexts/PresentationContext";
 import getTimestampFromPosition from "../_utils/getTimestampFromPosition";
 import Draggable from "react-draggable";
-import { ResizeIcon } from "../_assets/icons";
+import {
+  AboutIcon,
+  BellIcon,
+  ChaptersIcon,
+  LeaveIcon,
+  ParticipantsIcon,
+  PauseIcon,
+  PlayIcon,
+  ResizeIcon,
+  SearchIcon,
+  SettingsIcon,
+} from "../_assets/icons";
+import ProfilePicture from "./ProfilePicture";
+import ProgressBar from "./ProgressBar";
 
 export default function ScriptContainer({
   handleTimeChange,
+  timer,
 }: {
   handleTimeChange: any;
+  timer: any;
 }) {
   const {
     progress,
@@ -21,6 +36,7 @@ export default function ScriptContainer({
     wordsWithTimestamps,
     isAutoscrollOn,
     setIsAutoscrollOn,
+    speaker,
   } = usePresentation();
 
   const [scrollbarHeight, setScrollbarHeight] = useState(0);
@@ -139,97 +155,134 @@ export default function ScriptContainer({
 
   return (
     <>
-      <div
-        ref={scrollContainer}
-        className="group grow h-full flex flex-col items-center shrink-0 overflow-hidden relative"
-      >
+      <div className="relative slate group w-full h-full flex">
+        <div className="h-full">
+          <div className="flex items-center gap-1.5 h-20 mx-3 px-3">
+            <span className="h-9 w-9 rounded-full grid place-items-center hover-bg-hover cursor-pointer">
+              <span className="relative">
+                <ProfilePicture
+                  profilePictureURL={speaker?.profilePictureURL}
+                  firstName={speaker?.firstName || speaker?.alias}
+                  lastName={speaker?.lastName || null}
+                  className="h-8"
+                />
+
+                <div className="absolute bottom-[2px] right-[2px] rounded-full bg-online-green h-1.5 w-1.5 ring-[3px] ring-middleground"></div>
+              </span>
+            </span>
+            <span className="presentation-view-options">
+              <BellIcon className="h-[18px]" filled={false} />
+            </span>
+            <span className="presentation-view-options">
+              <SettingsIcon className="h-[18px]" filled={false} />
+            </span>
+          </div>
+        </div>
+
         <div
-          className={`flex justify-center h-full fixed top-0 transition-opacity duration-200 ease-in-out ${
-            isDragging ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-          }`}
+          ref={scrollContainer}
+          className="overflow-hidden relative h-full grow"
         >
-          <div className="pr-6 h-screen grid place-items-center left-0 top-0">
-            <Draggable
-              axis="x"
-              position={draggablePositionLeft}
-              onStart={handleStartDrag}
-              onDrag={handleDragMoveLeft}
-              onStop={handleDragStopLeft}
-              bounds={bounds}
-              nodeRef={leftDraggableRef}
-            >
-              <div
-                ref={leftDraggableRef}
-                className="aspect-square h-[30px] bg-brand rounded-full grid place-items-center cursor-pointer"
-              >
-                <ResizeIcon className="h-2.5 text-primary" />
-              </div>
-            </Draggable>
+          <div
+            ref={scriptContainer}
+            className="absolute text-left m-auto left-0 right-0"
+            style={{
+              width: tempContainerWidth + "px",
+            }}
+          >
+            {wordsWithTimestamps &&
+              Object.values(wordsWithTimestamps).map(
+                (line: any, lineIndex: any) => (
+                  <div key={lineIndex} className="">
+                    {line.map((wordObject: any, wordIndex: any) => (
+                      <span
+                        key={wordIndex}
+                        style={{
+                          lineHeight: "160%",
+                          fontSize: "36px",
+                        }}
+                        onClick={() => handleJump(wordObject.position)}
+                        className={`transtion-all transition-100 cursor-pointer font-bold hover:opacity-100 hover:font-bold text-primary ${
+                          wordObject.position <
+                          wordsWithTimestamps[progress.line][progress.index]
+                            .position
+                            ? "opacity-100"
+                            : "opacity-40"
+                        }`}
+                      >
+                        {wordIndex === 0
+                          ? wordObject.word
+                          : " " + wordObject.word}
+                      </span>
+                    ))}
+                  </div>
+                )
+              )}
           </div>
 
           <div
-            className="pointer-events-none"
             style={{
-              width: `${containerWidth}px`,
+              width: tempContainerWidth + 24 + "px",
             }}
-          ></div>
+            className="absolute grid place-items-center h-20 bg-gradient-to-b from-middleground via-middleground to-transparent from-0% via-85% to-100% m-auto left-0 right-0 top-0"
+          >
+            <div className="flex items-center bg-[#D23262]/15 border-[1px] border-[#D23262]/5 rounded-2xl h-14 w-full px-3 min-w-0">
+              <div className="flex gap-3.5 items-center grow min-w-0">
+                <ProfilePicture
+                  profilePictureURL={speaker?.profilePictureURL}
+                  firstName={speaker?.firstName || speaker?.alias}
+                  lastName={speaker?.lastName || null}
+                  className="h-8 ring-[1px] ring-[#D23262]"
+                />
 
-          <div className="pl-6 h-screen grid place-items-center right-0 top-0">
-            <Draggable
-              axis="x"
-              position={draggablePositionRight}
-              onStart={handleStartDrag}
-              onDrag={handleDragMoveRight}
-              onStop={handleDragStopRight}
-              bounds={{ left: -1 * bounds.right, right: -1 * bounds.left }}
-              nodeRef={rightDraggableRef}
-            >
-              <div
-                ref={rightDraggableRef}
-                className="aspect-square h-[30px] bg-brand rounded-full grid place-items-center cursor-pointer"
-              >
-                <ResizeIcon className="h-2.5 text-primary" />
+                <div className="flex flex-col gap-1 min-w-0">
+                  <span className="font-bold text-[#D23262] text-sm hover:underline cursor-pointer truncate">
+                    The Importance of Nutrition
+                  </span>
+                  <span className="font-semibold text-[#D23262] text-xs hover:underline cursor-pointer">
+                    {(speaker?.firstName || speaker?.alias) +
+                      " " +
+                      (speaker?.lastName || null)}
+                  </span>
+                </div>
               </div>
-            </Draggable>
+
+              <div className="h-8 w-8 grid place-items-center rounded-[10px] bg-[#D23262] cursor-pointer shrink-0">
+                {timer.isStarted() && timer.isRunning() ? (
+                  <PauseIcon className="h-3.5 text-primary" />
+                ) : (
+                  <PlayIcon className="h-3.5 text-primary" />
+                )}
+              </div>
+            </div>
           </div>
         </div>
 
-        <div
-          ref={scriptContainer}
-          className="absolute text-left m-auto left-0 right-0"
-          style={{
-            width: tempContainerWidth + "px",
-          }}
-        >
-          {wordsWithTimestamps &&
-            Object.values(wordsWithTimestamps).map(
-              (line: any, lineIndex: any) => (
-                <div key={lineIndex} className="">
-                  {line.map((wordObject: any, wordIndex: any) => (
-                    <span
-                      key={wordIndex}
-                      style={{
-                        lineHeight: "160%",
-                        fontSize: "36px",
-                      }}
-                      onClick={() => handleJump(wordObject.position)}
-                      className={`transtion-all transition-100 cursor-pointer font-bold hover:opacity-100 hover:font-bold text-primary ${
-                        wordObject.position <
-                        wordsWithTimestamps[progress.line][progress.index]
-                          .position
-                          ? "opacity-100"
-                          : "opacity-40 medium"
-                      }`}
-                    >
-                      {wordIndex === 0
-                        ? wordObject.word
-                        : " " + wordObject.word}
-                    </span>
-                  ))}
-                </div>
-              )
-            )}
+        <div className="h-full">
+          <div className="flex items-center gap-1.5 h-20 mx-3 px-3">
+            <span className="presentation-view-options">
+              <AboutIcon className="h-[18px]" filled={false} />
+            </span>
+
+            <span className="presentation-view-options">
+              <ParticipantsIcon className="h-[18px]" filled={false} />
+            </span>
+
+            <span className="presentation-view-options">
+              <ChaptersIcon className="h-[18px]" filled={false} />
+            </span>
+
+            <span className="presentation-view-options">
+              <SearchIcon className="h-[18px]" filled={false} />
+            </span>
+
+            <span className="presentation-view-options hover:!bg-danger-red/15">
+              <LeaveIcon className="text-danger-red h-[18px]" />
+            </span>
+          </div>
         </div>
+
+        <ProgressBar handleTimeChange={handleTimeChange} />
       </div>
       <Scrollbar
         calculateScrollbarHeight={calculateScrollbarHeight}

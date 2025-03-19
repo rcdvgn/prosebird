@@ -95,7 +95,7 @@ const LivePresentationNotifier = ({ presentations, iconSelected }: any) => {
 
   return livePresentations.length ? (
     <div
-      className={`absolute aspect-square bg-attention-red rounded-full ring-2 grid place-items-center h-1.5 -top-1 -right-1
+      className={`absolute aspect-square bg-danger-red rounded-full ring-2 grid place-items-center h-1.5 -top-1 -right-1
       ${
         iconSelected
           ? "ring-transparent"

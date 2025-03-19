@@ -1,4 +1,4 @@
-import { PauseIcon, PlayIcon } from "@/app/_assets/icons";
+import { ForwardIcon, PauseIcon, PlayIcon } from "@/app/_assets/icons";
 import { usePresentation } from "../_contexts/PresentationContext";
 import { MicrophoneState, useMicrophone } from "../_contexts/MicrophoneContext";
 
@@ -25,17 +25,24 @@ export default function PlayPauseButton({
   const showControls = speaker?.id === controller?.current;
 
   return (
-    showControls && (
-      <div
-        className="h-10 aspect-square rounded-full bg-brand grid place-items-center cursor-pointer mx-7"
-        onClick={handlePlayPause}
-      >
+    // showControls && (
+    <div className="flex items-center">
+      <span className="presentation-control-options">
+        <ForwardIcon className="h-[15px]" />
+      </span>
+
+      <div className="presentation-control-options" onClick={handlePlayPause}>
         {timer.isStarted() && timer.isRunning() ? (
-          <PauseIcon className="w-[12px] text-primary" />
+          <PauseIcon className="h-[18px]" />
         ) : (
-          <PlayIcon className="w-[12px] text-primary translate-x-[2px]" />
+          <PlayIcon className="h-[18px]" />
         )}
       </div>
-    )
+
+      <span className="presentation-control-options">
+        <ForwardIcon className="h-[15px] scale-x-[-1]" />
+      </span>
+    </div>
+    // )
   );
 }

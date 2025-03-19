@@ -36,7 +36,11 @@ const config: Config = {
         "money-green": "rgba(var(--money-green), <alpha-value>)",
         "online-green": "rgba(var(--online-green), <alpha-value>)",
         "favorite-yellow": "rgba(var(--favorite-yellow), <alpha-value>)",
-        "attention-red": "rgba(var(--attention-red), <alpha-value>)",
+        "danger-red": "rgba(var(--danger-red), <alpha-value>)",
+
+        "progressbar-hover": "rgba(var(--progressbar-hover), <alpha-value>)",
+        "progressbar-inactive":
+          "rgba(var(--progressbar-inactive), <alpha-value>)",
       },
     },
   },

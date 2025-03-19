@@ -175,8 +175,8 @@ export default function ReassignScriptChapters({
                     </div>
 
                     <div className="flex items-center justify-between w-full">
-                      <div className="w-[calc(50%-22px)] h-11 rounded-[10px] bg-attention-red/10 flex items-center justify-start px-3.5 cursor-not-allowed">
-                        <span className="font-semibold text-sm text-attention-red">
+                      <div className="w-[calc(50%-22px)] h-11 rounded-[10px] bg-danger-red/10 flex items-center justify-start px-3.5 cursor-not-allowed">
+                        <span className="font-semibold text-sm text-danger-red">
                           {chapterGroupOldSpeakerData?.firstName +
                             " " +
                             chapterGroupOldSpeakerData?.lastName ||

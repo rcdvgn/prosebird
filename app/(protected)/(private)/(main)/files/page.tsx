@@ -85,7 +85,7 @@ export default function Files() {
           </DropdownWrapper>
         </div>
       </div>
-      <div className="slate grow overflow-y-auto min-w-0 mr-2 mb-2">
+      <div className="slate flex flex-col grow overflow-y-auto min-w-0 mr-2 mb-2">
         <AllDocuments />
       </div>
     </div>

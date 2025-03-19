@@ -66,9 +66,16 @@ function calculateTotalDuration(
   return numberOfLines * speedMultiplier * baseSpeed;
 }
 
-function calculateWordTimestamps(lines: any, totalDuration: any) {
+function calculateWordTimestamps(
+  lines: any,
+  chapters: any,
+  totalDuration: any
+) {
   const durationPerLine = totalDuration / lines.length;
   const scriptWithTimestamps: any = {};
+  const chaptersWithTimestamps: any = {};
+
+  const chapterPositions = Object.keys(chapters);
 
   lines.forEach((line: any, lineIndex: any) => {
     // const lineWords = line.split(" ");
@@ -76,13 +83,20 @@ function calculateWordTimestamps(lines: any, totalDuration: any) {
       const timestamp =
         lineIndex * durationPerLine +
         durationPerLine * (wordIndex / line.length);
+
+      if (chapterPositions.includes(wordObject.position.toString())) {
+        chaptersWithTimestamps[wordObject.position] = {
+          ...chapters[wordObject.position],
+          timestamp,
+        };
+      }
       return { ...wordObject, timestamp };
     });
 
     scriptWithTimestamps[lineIndex] = wordsWithTimestamps;
   });
 
-  return scriptWithTimestamps;
+  return { scriptWithTimestamps, chaptersWithTimestamps };
 }
 
 export default async function calculateTimestamps(
@@ -104,7 +118,8 @@ export default async function calculateTimestamps(
     baseSpeed
   );
 
-  const scriptWithTimestamps = calculateWordTimestamps(lines, totalDuration);
+  const { scriptWithTimestamps, chaptersWithTimestamps } =
+    calculateWordTimestamps(lines, chapters, totalDuration);
 
-  return { scriptWithTimestamps, totalDuration };
+  return { scriptWithTimestamps, chaptersWithTimestamps, totalDuration };
 }

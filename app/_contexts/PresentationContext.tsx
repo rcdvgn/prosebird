@@ -45,6 +45,8 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
   const [scrollMode, setScrollMode] = useState<any>("continuous");
   const [isSeeking, setIsSeeking] = useState(false);
   const [wordsWithTimestamps, setWordsWithTimestamps] = useState<any>(null);
+  const [chaptersWithTimestamps, setChaptersWithTimestamps] =
+    useState<any>(null);
   const [totalDuration, setTotalDuration] = useState<any>(null);
   const [progress, setProgress] = useState<any>({ line: 0, index: 0 });
   const [participants, setParticipants] = useState<any>([]);
@@ -172,17 +174,21 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
     const fetchWordsWithTimestamps = async () => {
       try {
         if (presentation) {
-          const { scriptWithTimestamps, totalDuration } =
-            await calculateTimestamps(
-              presentation.nodes.words,
-              presentation.nodes.chapters,
-              containerWidth,
-              speedMultiplier,
-              fontSize
-            );
+          const {
+            scriptWithTimestamps,
+            chaptersWithTimestamps: newChaptersWithTimestamps,
+            totalDuration,
+          } = await calculateTimestamps(
+            presentation.nodes.words,
+            presentation.nodes.chapters,
+            containerWidth,
+            speedMultiplier,
+            fontSize
+          );
 
           setTotalDuration(totalDuration);
           setWordsWithTimestamps(scriptWithTimestamps);
+          setChaptersWithTimestamps(newChaptersWithTimestamps);
         }
       } catch (error) {
         console.error("Error fetching words with timestamps:", error);
@@ -362,6 +368,7 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
         setContainerWidth,
         speedMultiplier,
         wordsWithTimestamps,
+        chaptersWithTimestamps,
         totalDuration,
         isAutoscrollOn,
         setIsAutoscrollOn,

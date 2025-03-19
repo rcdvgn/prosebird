@@ -150,8 +150,8 @@ const Presentations: React.FC<PresentationsProps> = ({
                     {presentation.title}
                   </span>
                   {presentation.status === "active" ? (
-                    <div className="bg-attention-red/15 rounded-full py-1 px-2 flex items-center gap-1 text-attention-red">
-                      <div className="bg-attention-red rounded-full h-[5px] aspect-square"></div>
+                    <div className="bg-danger-red/15 rounded-full py-1 px-2 flex items-center gap-1 text-danger-red">
+                      <div className="bg-danger-red rounded-full h-[5px] aspect-square"></div>
                       <span className="font-bold text-[11px]">
                         {
                           Object.values(presentation.participants).filter(

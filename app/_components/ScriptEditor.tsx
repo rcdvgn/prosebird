@@ -264,7 +264,7 @@ export default function ScriptEditor() {
               "--editor-font-size": `${editorOptions.fontSize}px`,
             } as React.CSSProperties
           }
-          className="slate relative grow items-center min-h-0 overflow-y-auto"
+          className="slate flex flex-col relative grow items-center min-h-0 overflow-y-auto"
         >
           <ScriptAreaControls
             editorOptions={editorOptions}
@@ -280,7 +280,7 @@ export default function ScriptEditor() {
             <motion.div
               layout
               key="slate"
-              className="slate ml-2 px-2.5"
+              className="slate flex flex-col ml-2 px-2.5"
               style={{ width: chapterViewWidth + "px" }}
               initial="hidden"
               animate="visible"
