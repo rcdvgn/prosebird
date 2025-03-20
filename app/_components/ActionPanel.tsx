@@ -33,7 +33,7 @@ export default function ActionPanel({
   const { microphoneState } = useMicrophone();
 
   return (
-    <div className="flex justify-between items-center h-[76px] w-full px-6">
+    <div className="flex justify-between items-center h-[76px] w-full px-6 shrink-0">
       {/* <div className="h-full w-full flex items-center justify-center">
         <span className="text-primary">{microphoneState}</span>
 

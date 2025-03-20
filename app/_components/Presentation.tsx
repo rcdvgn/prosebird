@@ -269,7 +269,7 @@ export default function Presentation() {
 
   return (
     <div className="flex flex-col relative h-screen w-screen bg-background">
-      <div className="px-2 pt-2 grow">
+      <div className="px-2 pt-2 grow min-h-0">
         <ScriptContainer handleTimeChange={handleTimeChange} timer={timer} />
       </div>
 

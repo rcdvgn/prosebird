@@ -1,4 +1,6 @@
 "use client";
+import { Resizable } from "re-resizable";
+
 import React, { useState, useRef, useLayoutEffect, useEffect } from "react";
 import Scrollbar from "./Scrollbar";
 // import { useAutoscroll } from "@/app/_contexts/AutoScrollContext";
@@ -19,6 +21,7 @@ import {
 } from "../_assets/icons";
 import ProfilePicture from "./ProfilePicture";
 import ProgressBar from "./ProgressBar";
+import Script from "next/script";
 
 export default function ScriptContainer({
   handleTimeChange,
@@ -57,7 +60,7 @@ export default function ScriptContainer({
   const leftDraggableRef = useRef<HTMLDivElement>(null);
   const rightDraggableRef = useRef<HTMLDivElement>(null);
 
-  const scriptContainer = useRef<HTMLDivElement | null>(null);
+  const scriptContainer = useRef<any>(null);
   const scrollContainer = useRef<HTMLDivElement | null>(null);
 
   const calculateScrollbarHeight = () => {
@@ -100,60 +103,6 @@ export default function ScriptContainer({
     }
   }, [elapsedTime, totalDuration, isAutoscrollOn]);
 
-  const handleStartDrag = (e: any, data: any) => {
-    setIsDragging(true);
-
-    const scrollWidth = scrollContainer.current!.offsetWidth;
-    const scriptWidth = scriptContainer.current!.offsetWidth;
-
-    const left = -1 * ((scrollWidth - scriptWidth) / 2);
-
-    setBounds({
-      right: scriptWidth / 2 - 200,
-      left: left <= 0 ? left : 0,
-    });
-  };
-
-  const handleDragMoveLeft = (e: any, data: any) => {
-    setDraggablePositionLeft({ x: data.x, y: 0 });
-
-    setDraggablePositionRight({
-      x: draggablePositionRight.x - data.deltaX,
-      y: 0,
-    });
-
-    const newWidth = tempContainerWidth + data.deltaX * -2;
-    setTempContainerWidth(newWidth > 100 ? newWidth : 100);
-  };
-
-  const handleDragMoveRight = (e: any, data: any) => {
-    setDraggablePositionRight({ x: data.x, y: 0 });
-
-    setDraggablePositionLeft({
-      x: draggablePositionLeft.x - data.deltaX,
-      y: 0,
-    });
-
-    const newWidth = tempContainerWidth + data.deltaX * 2;
-    setTempContainerWidth(newWidth > 100 ? newWidth : 100);
-  };
-
-  const handleDragStopLeft = (e: any, data: any) => {
-    setDraggablePositionLeft(initialPosition);
-    setDraggablePositionRight(initialPosition);
-
-    setContainerWidth(tempContainerWidth);
-    setIsDragging(false);
-  };
-
-  const handleDragStopRight = (e: any, data: any) => {
-    setDraggablePositionRight(initialPosition);
-    setDraggablePositionLeft(initialPosition);
-
-    setContainerWidth(tempContainerWidth);
-    setIsDragging(false);
-  };
-
   return (
     <>
       <div className="relative slate group w-full h-full flex">
@@ -182,64 +131,45 @@ export default function ScriptContainer({
 
         <div
           ref={scrollContainer}
-          className="overflow-hidden relative h-full grow"
+          className="h-full grow flex items-start justify-center"
         >
-          <div
-            ref={scriptContainer}
-            className="absolute text-left m-auto left-0 right-0 select-none"
-            style={{
-              width: tempContainerWidth + "px",
+          <Resizable
+            handleClasses={{
+              left: "resizable-handle-container resizable-handle-container-left",
+              right:
+                "resizable-handle-container resizable-handle-container-right",
             }}
+            handleComponent={{
+              left: <ResizeHandle />,
+              right: <ResizeHandle />,
+            }}
+            size={{ width: containerWidth }}
+            onResizeStop={(e, direction, ref, d) => {
+              setContainerWidth(containerWidth + d.width);
+            }}
+            maxWidth={
+              scrollContainer.current ? scrollContainer.current.clientWidth : ""
+            }
+            className="resizable-script"
           >
-            {chaptersWithTimestamps &&
-              Object.entries(chaptersWithTimestamps).map(
-                ([chapterIndex, chapterData]: any, scopedIndex: any) => {
-                  return (
-                    <div key={chapterIndex} className="">
-                      <ChapterTitle speaker={speaker} timer={timer} />
-
-                      <div className="px-3">
-                        {wordsWithTimestamps &&
-                          Object.values(wordsWithTimestamps)
-                            .map((line: any, lineIndex: any) => {
-                              return line[0].chapterIndex === scopedIndex ? (
-                                <div key={lineIndex} className="">
-                                  {line.map(
-                                    (wordObject: any, wordIndex: any) => (
-                                      <span
-                                        key={wordIndex}
-                                        style={{
-                                          lineHeight: "160%",
-                                          fontSize: "36px",
-                                        }}
-                                        onClick={() =>
-                                          handleJump(wordObject.position)
-                                        }
-                                        className={`cursor-pointer font-bold ${
-                                          wordObject.position <
-                                          wordsWithTimestamps[progress.line][
-                                            progress.index
-                                          ].position
-                                            ? "text-[#D23262]"
-                                            : "text-primary/30 hover:text-primary"
-                                        }`}
-                                      >
-                                        {wordIndex === 0
-                                          ? wordObject.word
-                                          : " " + wordObject.word}
-                                      </span>
-                                    )
-                                  )}
-                                </div>
-                              ) : null;
-                            })
-                            .filter(Boolean)}
-                      </div>
-                    </div>
-                  );
-                }
-              )}
-          </div>
+            <div className="relative overflow-hidden h-full w-full">
+              <div
+                ref={scriptContainer}
+                className="absolute w-full text-left m-auto right-0 select-none"
+              >
+                {chaptersWithTimestamps && (
+                  <ScriptChapters
+                    wordsWithTimestamps={wordsWithTimestamps}
+                    chaptersWithTimestamps={chaptersWithTimestamps}
+                    speaker={speaker}
+                    timer={timer}
+                    progress={progress}
+                    handleJump={handleJump}
+                  />
+                )}
+              </div>
+            </div>
+          </Resizable>
         </div>
 
         <div className="h-full">
@@ -311,5 +241,72 @@ const ChapterTitle = ({ speaker, timer }: any) => {
         </div>
       </div>
     </div>
+  );
+};
+
+const ScriptChapters = ({
+  wordsWithTimestamps,
+  chaptersWithTimestamps,
+  speaker,
+  timer,
+  progress,
+  handleJump,
+}: any) => {
+  return (
+    <>
+      {Object.entries(chaptersWithTimestamps).map(
+        ([chapterIndex, chapterData]: any, scopedIndex: any) => {
+          return (
+            <div key={chapterIndex} className="">
+              <ChapterTitle speaker={speaker} timer={timer} />
+
+              <div className="px-3">
+                {wordsWithTimestamps &&
+                  Object.values(wordsWithTimestamps)
+                    .map((line: any, lineIndex: any) => {
+                      return line[0].chapterIndex === scopedIndex ? (
+                        <div key={lineIndex} className="">
+                          {line.map((wordObject: any, wordIndex: any) => (
+                            <span
+                              key={wordIndex}
+                              style={{
+                                lineHeight: "160%",
+                                fontSize: "36px",
+                              }}
+                              onClick={() => handleJump(wordObject.position)}
+                              className={`cursor-pointer font-bold ${
+                                wordObject.position <
+                                wordsWithTimestamps[progress.line][
+                                  progress.index
+                                ].position
+                                  ? "text-[#D23262]"
+                                  : "text-primary/30 hover:text-primary"
+                              }`}
+                            >
+                              {wordIndex === 0
+                                ? wordObject.word
+                                : " " + wordObject.word}
+                            </span>
+                          ))}
+                        </div>
+                      ) : null;
+                    })
+                    .filter(Boolean)}
+              </div>
+            </div>
+          );
+        }
+      )}
+    </>
+  );
+};
+
+const ResizeHandle = () => {
+  return (
+    // <div className="h-full grid place-items-center">
+    <div className="shrink-0 rounded-full h-9 w-9 grid place-items-center text-inactive hover-text-primary bg-background">
+      <ResizeIcon className="h-4" />
+    </div>
+    // </div>
   );
 };

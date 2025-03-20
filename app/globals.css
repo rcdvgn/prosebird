@@ -267,4 +267,20 @@ textarea::-webkit-scrollbar {
   .presentation-control-options {
     @apply flex items-center justify-center gap-2 relative h-10 min-w-10 px-2.5 rounded-[10px] cursor-pointer text-inactive hover:text-primary transition-all duration-100 ease-in-out;
   }
+
+  .resizable-script {
+    @apply !h-full;
+  }
+
+  .resizable-handle-container {
+    @apply !w-14 flex items-center justify-center;
+  }
+
+  .resizable-handle-container-right {
+    @apply !-right-14;
+  }
+
+  .resizable-handle-container-left {
+    @apply !-left-14;
+  }
 }
