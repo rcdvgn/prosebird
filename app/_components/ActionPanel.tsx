@@ -76,6 +76,10 @@ export default function ActionPanel({
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-1.5">
           <span className="presentation-control-options">
+            <EditTextIcon className="h-5" filled={false} />
+          </span>
+
+          <span className="presentation-control-options">
             <ScrollModeIcon className="w-5" filled={false} />
             <span className="font-bold text-[13px] mb-[-2px]">Voice sync</span>
           </span>
@@ -83,10 +87,6 @@ export default function ActionPanel({
           <span className="presentation-control-options">
             <PlaybackSpeedIcon className="h-5" filled={false} />
             <span className="font-bold text-[13px] mb-[-2px]">1.5x</span>
-          </span>
-
-          <span className="presentation-control-options">
-            <EditTextIcon className="h-5" filled={false} />
           </span>
 
           <span className="presentation-control-options">

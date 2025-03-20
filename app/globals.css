@@ -273,7 +273,7 @@ textarea::-webkit-scrollbar {
   }
 
   .resizable-handle-container {
-    @apply !w-14 flex items-center justify-center;
+    @apply flex items-center justify-center;
   }
 
   .resizable-handle-container-right {

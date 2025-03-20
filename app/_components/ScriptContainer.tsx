@@ -44,21 +44,7 @@ export default function ScriptContainer({
   } = usePresentation();
 
   const [scrollbarHeight, setScrollbarHeight] = useState(0);
-  const [tempContainerWidth, setTempContainerWidth] =
-    useState<any>(containerWidth);
-
-  const initialPosition = { x: 0, y: 0 };
-  const [draggablePositionLeft, setDraggablePositionLeft] =
-    useState<any>(initialPosition);
-  const [draggablePositionRight, setDraggablePositionRight] =
-    useState<any>(initialPosition);
-
-  const [isDragging, setIsDragging] = useState<boolean>(false);
-
-  const [bounds, setBounds] = useState({ left: 0, right: 0 });
-
-  const leftDraggableRef = useRef<HTMLDivElement>(null);
-  const rightDraggableRef = useRef<HTMLDivElement>(null);
+  const [isResizing, setIsResizing] = useState<any>(null);
 
   const scriptContainer = useRef<any>(null);
   const scrollContainer = useRef<HTMLDivElement | null>(null);
@@ -87,6 +73,15 @@ export default function ScriptContainer({
       );
       handleTimeChange(newElapsedTime);
     }
+  };
+
+  const handleResizeStart = ({ e, dir, ref }: any) => {
+    setIsResizing(dir);
+  };
+
+  const handleResizeStop = (d: any) => {
+    setIsResizing(null);
+    setContainerWidth(containerWidth + d.width);
   };
 
   const textSize = "0px"; // placeholder CHANGE LATER
@@ -134,6 +129,18 @@ export default function ScriptContainer({
           className="h-full grow flex items-start justify-center"
         >
           <Resizable
+            handleStyles={{
+              right: {
+                width: "56px",
+                cursor: "auto",
+                opacity: isResizing === "left" ? "0" : "1",
+              },
+              left: {
+                width: "56px",
+                cursor: "auto",
+                opacity: isResizing === "right" ? "0" : "1",
+              },
+            }}
             handleClasses={{
               left: "resizable-handle-container resizable-handle-container-left",
               right:
@@ -144,9 +151,10 @@ export default function ScriptContainer({
               right: <ResizeHandle />,
             }}
             size={{ width: containerWidth }}
-            onResizeStop={(e, direction, ref, d) => {
-              setContainerWidth(containerWidth + d.width);
-            }}
+            onResizeStart={(e: any, dir: any, ref: any) =>
+              handleResizeStart({ e, dir, ref })
+            }
+            onResizeStop={(d: any) => handleResizeStop(d)}
             maxWidth={
               scrollContainer.current ? scrollContainer.current.clientWidth : ""
             }
@@ -168,6 +176,8 @@ export default function ScriptContainer({
                   />
                 )}
               </div>
+
+              <div className="absolute w-full h-[150px] bottom-0 left-0 bg-gradient-to-t from-middleground to-middleground/0"></div>
             </div>
           </Resizable>
         </div>
@@ -304,7 +314,7 @@ const ScriptChapters = ({
 const ResizeHandle = () => {
   return (
     // <div className="h-full grid place-items-center">
-    <div className="shrink-0 rounded-full h-9 w-9 grid place-items-center text-inactive hover-text-primary bg-background">
+    <div className="shrink-0 rounded-full h-9 w-9 grid place-items-center text-inactive hover:text-primary bg-background cursor-pointer">
       <ResizeIcon className="h-4" />
     </div>
     // </div>
