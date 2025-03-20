@@ -130,15 +130,21 @@ export default function ScriptContainer({
         >
           <Resizable
             handleStyles={{
+              top: { display: "none" },
+              bottom: { display: "none" },
+              topRight: { display: "none" },
+              topLeft: { display: "none" },
+              bottomLeft: { display: "none" },
+              bottomRight: { display: "none" },
               right: {
                 width: "56px",
                 cursor: "auto",
-                opacity: isResizing === "left" ? "0" : "1",
+                opacity: isResizing === "left" ? "0" : "", // Remove the "1" to let CSS handle it
               },
               left: {
                 width: "56px",
                 cursor: "auto",
-                opacity: isResizing === "right" ? "0" : "1",
+                opacity: isResizing === "right" ? "0" : "", // Remove the "1" to let CSS handle it
               },
             }}
             handleClasses={{
@@ -151,10 +157,16 @@ export default function ScriptContainer({
               right: <ResizeHandle />,
             }}
             size={{ width: containerWidth }}
-            onResizeStart={(e: any, dir: any, ref: any) =>
-              handleResizeStart({ e, dir, ref })
-            }
-            onResizeStop={(d: any) => handleResizeStop(d)}
+            onResizeStart={(e: any, dir: any, ref: any) => {
+              handleResizeStart({ e, dir, ref });
+              // Add this line to add a class to the container during resize
+              ref.classList.add("resizing-active");
+            }}
+            onResizeStop={(e: any, dir: any, ref: any, d: any) => {
+              handleResizeStop(d);
+              // Remove the class when done resizing
+              ref.classList.remove("resizing-active");
+            }}
             maxWidth={
               scrollContainer.current ? scrollContainer.current.clientWidth : ""
             }
@@ -207,6 +219,8 @@ export default function ScriptContainer({
         </div>
 
         <ProgressBar handleTimeChange={handleTimeChange} />
+
+        <SyncToPresentation />
       </div>
       <Scrollbar
         calculateScrollbarHeight={calculateScrollbarHeight}
@@ -313,10 +327,26 @@ const ScriptChapters = ({
 
 const ResizeHandle = () => {
   return (
-    // <div className="h-full grid place-items-center">
     <div className="shrink-0 rounded-full h-9 w-9 grid place-items-center text-inactive hover:text-primary bg-background cursor-pointer">
       <ResizeIcon className="h-4" />
     </div>
-    // </div>
+  );
+};
+
+const SyncToPresentation = () => {
+  const { isSeeking, isAutoscrollOn, setIsAutoscrollOn } = usePresentation();
+
+  const handleEngageAutoScroll = () => {
+    if (isAutoscrollOn || isSeeking) return;
+    setIsAutoscrollOn(true);
+  };
+
+  return isAutoscrollOn ? null : (
+    <div
+      onClick={handleEngageAutoScroll}
+      className="z-30 absolute px-5 h-11 grid place-items-center rounded-full bg-battleground ring-1 ring-stroke bottom-10 right-1/2 transform-x-1/2 cursor-pointer text-inactive hover:text-primary transition-colors duration-100 ease-in-out"
+    >
+      <span className="font-bold text-[13px]">Sync to presentation</span>
+    </div>
   );
 };

@@ -269,11 +269,12 @@ textarea::-webkit-scrollbar {
   }
 
   .resizable-script {
-    @apply !h-full;
+    @apply !h-full relative;
   }
 
+  /* Make handles invisible by default */
   .resizable-handle-container {
-    @apply flex items-center justify-center;
+    @apply flex items-center justify-center opacity-0 transition-opacity duration-200;
   }
 
   .resizable-handle-container-right {
@@ -282,5 +283,16 @@ textarea::-webkit-scrollbar {
 
   .resizable-handle-container-left {
     @apply !-left-14;
+  }
+
+  /* Show handles when hovering over the resizable component or the handles themselves */
+  .resizable-script:hover .resizable-handle-container,
+  .resizable-handle-container:hover {
+    @apply opacity-100;
+  }
+
+  /* Keep handles visible during active resizing regardless of hover state */
+  .resizing-active .resizable-handle-container {
+    @apply opacity-100;
   }
 }

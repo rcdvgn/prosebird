@@ -26,11 +26,6 @@ export default function ProgressBar({
 
   const [hoverElapsedTime, setHoverElapsedTime] = useState<any>(null);
 
-  const handleEngageAutoScroll = () => {
-    if (isAutoscrollOn || isSeeking) return;
-    setIsAutoscrollOn(true);
-  };
-
   const calculateChapterProgressWidth = (
     initialT: any,
     nextT: any,
