@@ -6,7 +6,6 @@ import React, { useState, useEffect, useRef } from "react";
 // import SpeechRecognition, {
 //   useSpeechRecognition,
 // } from "react-speech-recognition";
-import ScriptContainer from "@/app/_components/ScriptContainer";
 import ActionPanel from "@/app/_components/ActionPanel";
 
 import { usePresentation } from "../_contexts/PresentationContext";
@@ -20,6 +19,7 @@ import {
   MicrophoneEvents,
   MicrophoneState,
 } from "../_contexts/MicrophoneContext";
+import PresentationMain from "./PresentationMain";
 
 export default function Presentation() {
   const {
@@ -270,7 +270,7 @@ export default function Presentation() {
   return (
     <div className="flex flex-col relative h-screen w-screen bg-background">
       <div className="px-2 pt-2 grow min-h-0">
-        <ScriptContainer handleTimeChange={handleTimeChange} timer={timer} />
+        <PresentationMain handleTimeChange={handleTimeChange} timer={timer} />
       </div>
 
       <ActionPanel

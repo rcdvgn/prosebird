@@ -186,6 +186,8 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
             fontSize
           );
 
+          // console.log(scriptWithTimestamps, newChaptersWithTimestamps);
+
           setTotalDuration(totalDuration);
           setWordsWithTimestamps(scriptWithTimestamps);
           setChaptersWithTimestamps(newChaptersWithTimestamps);
