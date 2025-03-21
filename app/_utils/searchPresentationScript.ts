@@ -1,219 +1,301 @@
-/**
- * Search through presentation script and return matching chapters and occurrences grouped by chapter
- * @param searchQuery The string to search for
- * @param wordsWithTimestamps Object containing words with timestamps and metadata
- * @param chaptersWithTimestamps Object containing chapter information
- * @returns Object with matching chapters and occurrences grouped by chapter
- */
 export function searchPresentationScript(
   searchQuery: string,
   wordsWithTimestamps: any,
   chaptersWithTimestamps: any
 ) {
   const query = searchQuery.toLowerCase();
-
-  // Results containers
   const matchingChapters: any[] = [];
   const occurrencesByChapter: { [key: string]: any[] } = {};
 
-  // First pass: find all matching chapters by title only
+  // First pass: chapter title matches
   Object.keys(chaptersWithTimestamps).forEach((chapterKey) => {
     const chapter = chaptersWithTimestamps[chapterKey];
-    const title = chapter.title;
-    const titleLower = title.toLowerCase();
-
+    const titleLower = chapter.title.toLowerCase();
     if (titleLower.includes(query)) {
-      // Find the query position in the title
       const queryIndex = titleLower.indexOf(query);
-      const queryLength = query.length;
-
-      // Split the title into before, match, and after parts
-      const beforeMatch = title.substring(0, queryIndex);
-      const match = title.substring(queryIndex, queryIndex + queryLength);
-      const afterMatch = title.substring(queryIndex + queryLength);
-
       matchingChapters.push({
         chapterIndex: parseInt(chapterKey),
-        title,
-        beforeMatch,
-        match,
-        afterMatch,
+        title: chapter.title,
+        beforeMatch: chapter.title.substring(0, queryIndex),
+        match: chapter.title.substring(queryIndex, queryIndex + query.length),
+        afterMatch: chapter.title.substring(queryIndex + query.length),
         timestamp: chapter.timestamp,
         speaker: chapter.speaker,
       });
     }
   });
 
-  // Second pass: find all matching occurrences in the script
+  // Second pass: word matches
+  const allWords: any[] = [];
+  Object.keys(wordsWithTimestamps).forEach((lineKey) => {
+    wordsWithTimestamps[lineKey].forEach((wordObj: any) =>
+      allWords.push(wordObj)
+    );
+  });
+  allWords.sort((a, b) => a.position - b.position);
+
+  const wordsByChapter: { [key: number]: any[] } = {};
+  allWords.forEach((word) => {
+    wordsByChapter[word.chapterIndex] = wordsByChapter[word.chapterIndex] || [];
+    wordsByChapter[word.chapterIndex].push(word);
+  });
+
+  const positionToIndexByChapter: { [key: number]: { [key: number]: number } } =
+    {};
+  Object.keys(wordsByChapter).forEach((chapterIdx) => {
+    const chapter = parseInt(chapterIdx);
+    positionToIndexByChapter[chapter] = {};
+    wordsByChapter[chapter].forEach((word, idx) => {
+      positionToIndexByChapter[chapter][word.position] = idx;
+    });
+  });
+
   Object.keys(wordsWithTimestamps).forEach((lineKey) => {
     const line = wordsWithTimestamps[lineKey];
-
-    // Build full text for the line with original casing and positions
     const lineText: string[] = [];
-    const wordIndices: number[] = [];
-    const wordData: any[] = [];
+    const wordPositions: number[] = [];
+    const wordStartIndices: number[] = [];
+    let currentPosition = 0;
 
     line.forEach((wordObj: any, idx: number) => {
       lineText.push(wordObj.word);
-      wordIndices.push(lineText.join(" ").length - wordObj.word.length);
-      wordData.push(wordObj);
+      wordPositions.push(wordObj.position);
+      wordStartIndices.push(currentPosition);
+      currentPosition += wordObj.word.length + (idx < line.length - 1 ? 1 : 0);
     });
 
     const fullLineText = lineText.join(" ");
     const fullLineTextLower = fullLineText.toLowerCase();
-
-    // Search for query in the full line text
-    let startIdx = 0;
-    let queryIdx = fullLineTextLower.indexOf(query, startIdx);
+    let queryIdx = fullLineTextLower.indexOf(query);
 
     while (queryIdx !== -1) {
-      // Find which word object contains the start of the match
-      let startWordIdx = -1;
-      for (let i = 0; i < wordIndices.length; i++) {
-        if (
-          wordIndices[i] <= queryIdx &&
-          (i === wordIndices.length - 1 || wordIndices[i + 1] > queryIdx)
-        ) {
-          startWordIdx = i;
+      let matchStartPos = -1;
+      let matchWordStartIdx = 0;
+
+      for (let i = 0; i < lineText.length; i++) {
+        const wordEndIdx = wordStartIndices[i] + lineText[i].length;
+        if (queryIdx >= wordStartIndices[i] && queryIdx < wordEndIdx) {
+          matchStartPos = wordPositions[i];
+          matchWordStartIdx = wordStartIndices[i];
           break;
         }
       }
 
-      if (startWordIdx !== -1) {
-        const startWord = wordData[startWordIdx];
-        const chapterIndex = startWord.chapterIndex;
+      if (matchStartPos !== -1) {
+        const matchWordObj = allWords.find(
+          (w: any) => w.position === matchStartPos
+        );
+        if (matchWordObj) {
+          const chapterIndex = matchWordObj.chapterIndex;
+          const chapterWords = wordsByChapter[chapterIndex];
+          const matchWordIndexInChapter =
+            positionToIndexByChapter[chapterIndex][matchStartPos];
+          const match = fullLineText.substring(
+            queryIdx,
+            queryIdx + query.length
+          );
 
-        // Get the exact match with original casing
-        const match = fullLineText.substring(queryIdx, queryIdx + query.length);
+          // Before context logic
+          let beforeContext = "";
+          let charCount = 0;
+          let moreBefore = false;
+          let currentIdx = matchWordIndexInChapter;
+          const matchStartsAt = queryIdx - matchWordStartIdx;
 
-        // Build before context (up to 5 words or 30 chars)
-        let beforeContext = "";
-        let charCountBefore = 0;
-        let currentWordIdx = startWordIdx;
-        let wordCountBefore = 0;
-        let moreBefore = false;
+          // Check if the query starts at a word boundary with a space before it
+          const isAtWordBoundary = matchStartsAt === 0 && queryIdx > 0;
 
-        // Start from the word before the matching word
-        while (
-          currentWordIdx > 0 &&
-          wordCountBefore < 5 &&
-          charCountBefore < 30
-        ) {
-          currentWordIdx--;
-
-          // Ensure we're still in the same chapter
-          if (wordData[currentWordIdx].chapterIndex !== chapterIndex) {
-            break;
+          if (isAtWordBoundary) {
+            // Add space before the match if it exists
+            beforeContext = " ";
+            charCount = 1;
+          } else if (matchStartsAt > 0) {
+            // Add partial word before the match
+            beforeContext = chapterWords[currentIdx].word.substring(
+              0,
+              matchStartsAt
+            );
+            charCount = beforeContext.length;
           }
 
-          const prevWord = wordData[currentWordIdx].word;
-          const prevWordWithSpace = prevWord + " ";
+          // Add words before the match
+          let wordsBefore = 0;
+          let tempCurrentIdx = currentIdx;
+          if (matchStartsAt > 0 || isAtWordBoundary) {
+            // If we've already used part of a word, don't count it again
+            tempCurrentIdx--;
+          }
 
-          if (charCountBefore + prevWordWithSpace.length <= 30) {
-            beforeContext = prevWordWithSpace + beforeContext;
-            charCountBefore += prevWordWithSpace.length;
-            wordCountBefore++;
+          while (tempCurrentIdx >= 0 && wordsBefore < 5 && charCount < 30) {
+            const prevWord = chapterWords[tempCurrentIdx].word;
+
+            // Check if adding this word would exceed character limit
+            const withSpace = beforeContext.length > 0 ? " " : "";
+            const newContentLength = prevWord.length + withSpace.length;
+
+            if (charCount + newContentLength <= 30) {
+              if (beforeContext.length > 0) {
+                beforeContext = prevWord + " " + beforeContext;
+              } else {
+                beforeContext = prevWord;
+              }
+              charCount += newContentLength;
+              wordsBefore++;
+              tempCurrentIdx--;
+            } else {
+              moreBefore = true;
+              break;
+            }
+          }
+
+          moreBefore = moreBefore || tempCurrentIdx >= 0;
+
+          // After context logic
+          let afterContext = "";
+          charCount = 0;
+          let moreAfter = false;
+          const queryEndIdx = queryIdx + query.length;
+          let matchEndWordPos = -1;
+          let endWordStartIdx = 0;
+
+          for (let i = 0; i < lineText.length; i++) {
+            const wordEndIdx = wordStartIndices[i] + lineText[i].length;
+            if (
+              queryEndIdx > wordStartIndices[i] &&
+              queryEndIdx <= wordEndIdx
+            ) {
+              matchEndWordPos = wordPositions[i];
+              endWordStartIdx = wordStartIndices[i];
+              break;
+            }
+          }
+
+          if (matchEndWordPos !== -1) {
+            currentIdx =
+              positionToIndexByChapter[chapterIndex][matchEndWordPos];
+            const endWord = chapterWords[currentIdx].word;
+            const matchEndsAt = queryEndIdx - endWordStartIdx;
+
+            // Check if the query ends at a word boundary
+            const isEndWordBoundary = matchEndsAt === endWord.length;
+
+            if (isEndWordBoundary) {
+              // Add space after the match
+              afterContext = " ";
+              charCount = 1;
+            } else if (matchEndsAt < endWord.length) {
+              // Add partial word after the match
+              afterContext = endWord.substring(matchEndsAt);
+              charCount = afterContext.length;
+            }
+
+            // Add words after the match
+            let wordsAfter = 0;
+            let tempCurrentIdx = currentIdx;
+
+            if (matchEndsAt < endWord.length && !isEndWordBoundary) {
+              // If we've already used part of a word, don't count it again
+              tempCurrentIdx++;
+            } else if (isEndWordBoundary) {
+              // If the match ends at a word boundary, move to the next word
+              tempCurrentIdx++;
+            }
+
+            while (
+              tempCurrentIdx < chapterWords.length &&
+              wordsAfter < 10 &&
+              charCount < 60
+            ) {
+              const nextWord = chapterWords[tempCurrentIdx].word;
+
+              // Check if adding this word would exceed character limit
+              const withSpace = afterContext.length > 0 ? " " : "";
+              const newContentLength = nextWord.length + withSpace.length;
+
+              if (charCount + newContentLength <= 60) {
+                if (afterContext.length > 0) {
+                  afterContext = afterContext + " " + nextWord;
+                } else {
+                  afterContext = nextWord;
+                }
+                charCount += newContentLength;
+                wordsAfter++;
+                tempCurrentIdx++;
+              } else {
+                moreAfter = true;
+                break;
+              }
+            }
+
+            moreAfter = moreAfter || tempCurrentIdx < chapterWords.length;
+          }
+
+          // Add to results
+          const occurrence = {
+            beforeContext,
+            match,
+            afterContext,
+            timestamp: matchWordObj.timestamp,
+            moreBefore,
+            moreAfter,
+          };
+
+          const chapterKey = String(chapterIndex);
+          if (!occurrencesByChapter[chapterKey]) {
+            occurrencesByChapter[chapterKey] = [
+              {
+                chapterIndex,
+                chapterTitle: matchWordObj.chapterTitle,
+                occurrences: [occurrence],
+              },
+            ];
           } else {
-            moreBefore = true;
-            break;
+            occurrencesByChapter[chapterKey][0].occurrences.push(occurrence);
           }
-        }
-
-        // There's more before if we stopped before reaching the beginning
-        moreBefore = moreBefore || currentWordIdx > 0;
-
-        // Build after context (up to 10 words or 60 chars)
-        let afterContext = "";
-        let charCountAfter = 0;
-        let wordCountAfter = 0;
-        let moreAfter = false;
-
-        // Find the last word that contains part of the query
-        let endWordIdx = startWordIdx;
-        const queryEnd = queryIdx + query.length;
-
-        while (
-          endWordIdx < wordIndices.length - 1 &&
-          wordIndices[endWordIdx + 1] < queryEnd
-        ) {
-          endWordIdx++;
-        }
-
-        // Start from the word after the last word of the match
-        currentWordIdx = endWordIdx;
-
-        while (
-          currentWordIdx < wordData.length - 1 &&
-          wordCountAfter < 10 &&
-          charCountAfter < 60
-        ) {
-          currentWordIdx++;
-
-          // Ensure we're still in the same chapter
-          if (wordData[currentWordIdx].chapterIndex !== chapterIndex) {
-            break;
-          }
-
-          const nextWord = wordData[currentWordIdx].word;
-          const nextWordWithSpace = " " + nextWord;
-
-          if (charCountAfter + nextWordWithSpace.length <= 60) {
-            afterContext += nextWordWithSpace;
-            charCountAfter += nextWordWithSpace.length;
-            wordCountAfter++;
-          } else {
-            moreAfter = true;
-            break;
-          }
-        }
-
-        // There's more after if we haven't reached the end
-        moreAfter = moreAfter || currentWordIdx < wordData.length - 1;
-
-        // Create the occurrence object
-        const occurrence = {
-          beforeContext: beforeContext.trim(),
-          match,
-          afterContext: afterContext.trim(),
-          timestamp: startWord.timestamp,
-          moreBefore,
-          moreAfter,
-        };
-
-        // Add to results, grouped by chapter
-        const chapterKey = String(chapterIndex);
-        if (!occurrencesByChapter[chapterKey]) {
-          occurrencesByChapter[chapterKey] = [
-            {
-              chapterIndex,
-              chapterTitle: startWord.chapterTitle,
-              occurrences: [occurrence],
-            },
-          ];
-        } else {
-          // Chapter already exists, add to its occurrences
-          occurrencesByChapter[chapterKey][0].occurrences.push(occurrence);
         }
       }
 
-      // Look for next occurrence
-      startIdx = queryIdx + 1;
-      queryIdx = fullLineTextLower.indexOf(query, startIdx);
+      queryIdx = fullLineTextLower.indexOf(query, queryIdx + 1);
     }
   });
 
-  // Convert chapter occurrences from object to array and sort by timestamp
+  // Post-processing
   const occurrences = Object.values(occurrencesByChapter).flat();
-
-  // Sort chapters and chapter occurrences by timestamp
   matchingChapters.sort((a, b) => a.timestamp - b.timestamp);
-  occurrences.forEach((chapter) => {
-    chapter.occurrences.sort((a: any, b: any) => a.timestamp - b.timestamp);
-  });
-  occurrences.sort((a, b) => a.timestamp - b.timestamp);
+  occurrences.forEach((chapter) =>
+    chapter.occurrences.sort((a: any, b: any) => a.timestamp - b.timestamp)
+  );
+  occurrences.sort((a, b) => a.chapterIndex - b.chapterIndex);
 
   return {
     chapters: matchingChapters,
     occurrences,
   };
 }
+
+// const obj = [
+//   {
+//     "chapterIndex": 0,
+//     "chapterTitle": "Introduction to AI in Quantitative Computing",
+//     "occurrences": [
+//       {
+//         "beforeContext": "has led to breakthroughs",
+//         "match": "in",
+//         "afterContext": " both efficiency and accuracy.",
+//         "correct": false,
+//         "correctBeforeContext": "has led to breakthroughs ",
+//         "correctMatch": "in",
+//         "correctAfterContext": " both efficiency and accuracy.",
+//     },
+//     {
+//       "beforeContext": "the key advantages of AI",
+//       "match": "in",
+//       "afterContext": " quantitative computing is its capacity for optimization. ",
+//       "correct": false,
+//       "correctBeforeContext": "the key advantages of AI ",
+//       "correctMatch": "in",
+//       "correctAfterContext": " quantitative computing is its capacity for optimization. ",
+//   }
+//     ]
+//   },
+// ]

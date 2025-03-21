@@ -58,7 +58,7 @@ const ScriptChapters = ({
             <div key={chapterIndex} className="">
               <ChapterTitle speaker={speaker} timer={timer} />
 
-              <div className="px-3">
+              <div className="px-3 text-nowrap">
                 {wordsWithTimestamps &&
                   Object.values(wordsWithTimestamps)
                     .map((line: any, lineIndex: any) => {

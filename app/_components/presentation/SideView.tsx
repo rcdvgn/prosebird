@@ -43,13 +43,14 @@ const Search = () => {
       wordsWithTimestamps,
       chaptersWithTimestamps
     );
+    console.log(searchResults);
 
     setResults(searchResults);
   }, [qry]);
 
   return (
-    <div className="flex flex-col gap-3 px-2.5">
-      <div className="w-full flex items-center overflow-hidden border-[1px] border-border bg-background rounded-xl h-11">
+    <div className="flex flex-col gap-3 px-2.5 h-full w-full">
+      <div className="w-full flex items-center overflow-hidden border-[1px] border-border bg-background rounded-xl h-11 shrink-0">
         <input
           value={qry}
           onChange={(e: any) => {
@@ -72,16 +73,20 @@ const Search = () => {
         )}
       </div>
 
-      <div className="w-full">
+      <div className="w-full shrink-0">
         <span className="fomnt-semibold text-[13px] text-secondary">
           4 results in 2 chapters
         </span>
       </div>
 
-      <div className="flex flex-col justify-start">
+      <div className="flex flex-col justify-start grow min-h-0 overflow-auto">
         {results &&
-          results?.occurrences.map((result: any) => {
-            return <SearchResult result={result} />;
+          results?.occurrences.map((result: any, index: any) => {
+            return (
+              <div key={index} className="flex flex-col">
+                <SearchResult result={result} />
+              </div>
+            );
           })}
       </div>
     </div>
@@ -89,17 +94,22 @@ const Search = () => {
 };
 
 const SearchResult = ({ result }: any) => {
+  const [isExpanded, setIsExpanded] = useState<any>(true);
+
   return (
-    <div className="flex flex-col">
-      <div className="w-full px-2.5 flex gap-3 items-center justify-start h-10">
-        <div className="h-5 w-5 grid place-items-center text-inactive hover:text-primary">
-          <ChevronIcon className="h-2.5 rotate-90" />
+    <>
+      <div
+        onClick={() => setIsExpanded((curr: any) => !curr)}
+        className="group w-full px-2.5 flex gap-3 items-center justify-start h-10 cursor-pointer select-none"
+      >
+        <div className="h-5 w-5 grid place-items-center text-inactive group-hover:text-primary">
+          <ChevronIcon
+            className={`h-2.5 ${isExpanded ? "-rotate-90" : "rotate-90"}`}
+          />
         </div>
 
-        <div className="grow min-w-0">
-          <span className="font-bold text-sm text-primary truncate">
-            {result?.chapterTitle}
-          </span>
+        <div className="grow min-w-0 truncate font-bold text-sm text-primary">
+          <span className="truncate">{result?.chapterTitle}</span>
         </div>
 
         <div className="ml-auto rounded-full min-w-5 h-5 grid place-items-center bg-brand px-1.5">
@@ -109,29 +119,31 @@ const SearchResult = ({ result }: any) => {
         </div>
       </div>
 
-      <div className="pl-2.5 flex">
-        <div className="shrink-0 w-5 flex justify-center">
-          <div className="h-full w-[1px] bg-border rounded-full"></div>
-        </div>
+      {isExpanded && (
+        <div className="pl-2.5 flex">
+          <div className="shrink-0 w-5 flex justify-center">
+            <div className="h-full w-[1px] bg-border rounded-full"></div>
+          </div>
 
-        <div className="grow min-w-0">
-          {result?.occurrences.map((occurrence: any) => {
-            return (
-              <div className="">
-                <div className="hover:bg-hover rounded-[10px] h-11 px-2.5 flex items-center leading-5 cursor-pointer">
-                  <span className="truncate text-[13px] font-semibold text-secondary">
-                    <span className="">{occurrence?.beforeContext}</span>
-                    <span className="bg-brand/15 rounded-[2px] !text-brand">
-                      {occurrence?.match}
+          <div className="grow min-w-0">
+            {result?.occurrences.map((occurrence: any, index: any) => {
+              return (
+                <div key={index} className="">
+                  <div className="hover:bg-hover rounded-[10px] h-11 px-2.5 flex items-center leading-5 cursor-pointer text-secondary hover:text-primary">
+                    <span className="truncate text-[13px] font-semibold">
+                      <span className="">{occurrence?.beforeContext}</span>
+                      <span className="bg-brand/15 rounded-[2px] !text-brand">
+                        {occurrence?.match}
+                      </span>
+                      <span className="">{occurrence?.afterContext}</span>
                     </span>
-                    <span className="">{occurrence?.afterContext}</span>
-                  </span>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 };
