@@ -10,6 +10,7 @@ import PresentationScript from "./presentation/PresentationScript";
 import PresentationRightSideControls from "./presentation/PresentationRightSideControls";
 import PresentationLeftSideControls from "./presentation/PresentationLeftSideControls";
 import SideView from "./presentation/SideView";
+import { useScroll } from "../_contexts/ScrollNavigationContext";
 
 export default function PresentationMain({
   handleTimeChange,
@@ -18,23 +19,14 @@ export default function PresentationMain({
   handleTimeChange: any;
   timer: any;
 }) {
-  const {
-    progress,
-    containerWidth,
-    setContainerWidth,
-    elapsedTime,
-    totalDuration,
-    wordsWithTimestamps,
-    isAutoscrollOn,
-    setIsAutoscrollOn,
-    speaker,
-    chaptersWithTimestamps,
-  } = usePresentation();
+  const { elapsedTime, totalDuration, wordsWithTimestamps, isAutoscrollOn } =
+    usePresentation();
 
   const [scrollbarHeight, setScrollbarHeight] = useState(0);
 
   const scriptContainer = useRef<any>(null);
-  const scrollContainer = useRef<HTMLDivElement | null>(null);
+  const scrollContainer = useRef<any>(null);
+  const { registerScrollContainer, registerScriptContainer } = useScroll();
 
   const calculateScrollbarHeight = () => {
     if (scrollContainer.current && scriptContainer.current) {
@@ -48,6 +40,15 @@ export default function PresentationMain({
   };
 
   const textSize = "0px"; // placeholder CHANGE LATER
+
+  useLayoutEffect(() => {
+    if (scrollContainer.current) {
+      registerScrollContainer(scrollContainer.current);
+    }
+    if (scriptContainer.current) {
+      registerScriptContainer(scriptContainer.current);
+    }
+  }, [registerScrollContainer, registerScriptContainer]);
 
   useLayoutEffect(() => {
     calculateScrollbarHeight();

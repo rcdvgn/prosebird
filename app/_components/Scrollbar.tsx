@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 // import { useAutoscroll } from "@/app/_contexts/AutoScrollContext";
 import { usePresentation } from "../_contexts/PresentationContext";
+import { useScroll } from "../_contexts/ScrollNavigationContext";
 
 export default function Scrollbar({
   calculateScrollbarHeight,
@@ -17,7 +18,14 @@ export default function Scrollbar({
   const { elapsedTime, totalDuration, isAutoscrollOn, setIsAutoscrollOn } =
     usePresentation();
 
-  const scrollThumb = useRef<HTMLDivElement | null>(null);
+  const scrollThumb = useRef<any>(null);
+  const { registerScrollThumb } = useScroll();
+
+  useEffect(() => {
+    if (scrollThumb.current) {
+      registerScrollThumb(scrollThumb.current);
+    }
+  }, [registerScrollThumb]);
 
   useEffect(() => {
     // Recalculate scrollbar height on window resize

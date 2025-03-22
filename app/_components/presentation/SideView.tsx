@@ -2,6 +2,7 @@
 
 import { ChevronIcon, CloseIcon, SearchIcon } from "@/app/_assets/icons";
 import { usePresentation } from "@/app/_contexts/PresentationContext";
+import { useScroll } from "@/app/_contexts/ScrollNavigationContext";
 import { searchPresentationScript } from "@/app/_utils/searchPresentationScript";
 import React, { useEffect, useState } from "react";
 
@@ -94,6 +95,8 @@ const Search = () => {
 };
 
 const SearchResult = ({ result }: any) => {
+  const { scrollToTimestamp } = useScroll();
+
   const [isExpanded, setIsExpanded] = useState<any>(true);
 
   return (
@@ -128,7 +131,11 @@ const SearchResult = ({ result }: any) => {
           <div className="grow min-w-0">
             {result?.occurrences.map((occurrence: any, index: any) => {
               return (
-                <div key={index} className="">
+                <div
+                  key={index}
+                  className=""
+                  onClick={() => scrollToTimestamp(occurrence?.timestamp)}
+                >
                   <div className="hover:bg-hover rounded-[10px] h-11 px-2.5 flex items-center leading-5 cursor-pointer text-secondary hover:text-primary">
                     <span className="truncate text-[13px] font-semibold">
                       <span className="">{occurrence?.beforeContext}</span>

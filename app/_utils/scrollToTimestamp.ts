@@ -1,11 +1,13 @@
+import { usePresentation } from "../_contexts/PresentationContext";
+
 export function scrollToTimestamp(
   timestamp: any,
   scrollContainer: any,
   scriptContainer: any,
-  scrollThumb: any,
-  totalDuration: any,
-  setIsAutoscrollOn: any
+  scrollThumb: any
 ) {
+  const { totalDuration, setIsAutoscrollOn } = usePresentation();
+
   // Ensure timestamp is a number
   const numericTimestamp =
     typeof timestamp === "string" ? parseFloat(timestamp) : timestamp;
