@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  --background: 26, 26, 26;
+  --background: 21, 21, 21;
   --middleground: 12, 12, 12;
   --foreground: 28, 28, 28;
   --battleground: 32, 32, 32;
