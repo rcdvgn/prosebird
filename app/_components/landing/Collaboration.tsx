@@ -2,45 +2,50 @@ import Header from "./Header";
 
 const Collaboration = () => {
   return (
-    <div className="py-40">
-      <Header
-        section="collaboration"
-        title1="You and your team, "
-        title2="on the same wavelength"
-        subtitle="From start to finish, OnQ lets you bring your team to every step of the way."
-      />
+    <div className="bg-middleground w-full min-h-screen flex justify-center items-start py-28">
+      <div className="w-[1080px]">
+        <Header
+          section="collaboration"
+          title1="You and your team, "
+          title2="on the same wavelength"
+          subtitle="From start to finish, OnQ lets you bring your team to every step of the way."
+        />
 
-      <div className="grid grid-cols-1 md:grid-cols-[repeat(auto-fill,minmax(494px,1fr))] gap-20">
-        <CollabBlock
-          title="Real time co-editing"
-          subtitle="Watch changes appear instantly as teammates refine the script."
-        >
-          <img className="w-[494px]" src="/landing/collaborationEditor.png" />
-        </CollabBlock>
-        <CollabBlock
-          title="Real time co-editing"
-          subtitle="Watch changes appear instantly as teammates refine the script."
-        >
-          <img
-            className="w-[494px]"
-            src="/landing/collaborationPresenters.png"
-          />
-        </CollabBlock>
-        <CollabBlock
-          title="Real time co-editing"
-          subtitle="Watch changes appear instantly as teammates refine the script."
-        >
-          <img
-            className="w-[494px]"
-            src="/landing/collaborationPermissions.png"
-          />
-        </CollabBlock>
-        <CollabBlock
-          title="Real time co-editing"
-          subtitle="Watch changes appear instantly as teammates refine the script."
-        >
-          <img className="w-[494px]" src="/landing/collaborationEditor.png" />
-        </CollabBlock>
+        <div className="grid grid-cols-1 md:grid-cols-[repeat(auto-fill,minmax(494px,1fr))] gap-20">
+          <CollabBlock
+            title="Real time co-editing"
+            subtitle="Watch changes appear instantly as teammates refine the script."
+          >
+            <img className="w-[494px]" src="/landing/collaborationEditor.png" />
+          </CollabBlock>
+          <CollabBlock
+            title="Real time co-editing"
+            subtitle="Watch changes appear instantly as teammates refine the script."
+          >
+            <img
+              className="w-[494px]"
+              src="/landing/collaborationPresenters.png"
+            />
+          </CollabBlock>
+          <CollabBlock
+            title="Real time co-editing"
+            subtitle="Watch changes appear instantly as teammates refine the script."
+          >
+            <img
+              className="w-[494px]"
+              src="/landing/collaborationProgress.png"
+            />
+          </CollabBlock>
+          <CollabBlock
+            title="Real time co-editing"
+            subtitle="Watch changes appear instantly as teammates refine the script."
+          >
+            <img
+              className="w-[494px]"
+              src="/landing/collaborationPermissions.png"
+            />
+          </CollabBlock>
+        </div>
       </div>
     </div>
   );

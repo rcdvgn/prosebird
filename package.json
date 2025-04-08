@@ -22,6 +22,8 @@
     "@tiptap/react": "^2.11.5",
     "@tiptap/starter-kit": "^2.11.5",
     "@types/uuid": "^10.0.0",
+    "embla-carousel-react": "^8.6.0",
+    "embla-carousel-wheel-gestures": "^8.0.2",
     "firebase": "^10.13.2",
     "firebase-admin": "^13.0.2",
     "framer-motion": "^12.3.1",

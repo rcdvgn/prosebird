@@ -1,64 +1,75 @@
 "use client";
-import { EmailIcon } from "@/app/_assets/presentationIcons";
-import { useState } from "react";
 
-export default function Hero() {
-  const [isFocused, setIsFocused] = useState<any>(false);
-  const [email, setEmail] = useState<any>("");
-  const handleSubmitEmail = (e: any) => {
-    e.preventDefault();
+import { useEffect, useState } from "react";
+import Cta from "./Cta";
 
-    console.log(email);
-  };
+export default function Hero({ scrollContainerRef }: any) {
+  const [gradientPosition, setGradientPosition] = useState(0);
 
-  const onFocus = () => setIsFocused(true);
-  const onBlur = () => setIsFocused(false);
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current;
+
+    if (!scrollContainer) return;
+
+    const handleScroll = () => {
+      // Calculate the scroll percentage based on component height
+      const scrollPosition = scrollContainer.scrollTop;
+
+      const componentHeight = window.innerHeight; // Since it's h-screen
+      // Calculate percentage (0-100)
+      const scrollPercentage = Math.min(
+        Math.max((scrollPosition / componentHeight) * 100, 0),
+        100
+      );
+
+      setGradientPosition(scrollPercentage * 1.5);
+    };
+
+    scrollContainer.addEventListener("scroll", handleScroll);
+
+    // Initial check
+    handleScroll();
+
+    return () => {
+      scrollContainer.removeEventListener("scroll", handleScroll);
+    };
+  }, [scrollContainerRef]);
 
   return (
-    <div className="flex justify-between items-center">
-      <div className="w-[540px] py-12">
-        <div className="font-extrabold text-7xl leading-[74px] my-6">
-          <span className="block text-primary">Worry less</span>
-          <span className="block text-brand">say much more</span>
-        </div>
+    <div
+      className={`w-full h-screen flex justify-center items-start -mt-16 py-28`}
+      style={{
+        backgroundImage: `linear-gradient(to top, rgba(var(--middleground), ${
+          gradientPosition / 100
+        }) ${gradientPosition}%, rgba(var(--middleground), 0) 100%)`,
+      }}
+    >
+      <div className="w-[1080px]">
+        <div className="flex justify-center items-center">
+          <div className="w-[620px]">
+            <div className="font-extrabold text-7xl leading-[80px] my-6 text-center">
+              <div className="">
+                <span className="text-primary opacity-10 select-none">[</span>
+                <span className="text-primary">Take doubt out</span>
+              </div>
 
-        <div className="my-2">
-          <span className="font-semibold text-base leading-6 text-secondary">
-            ProseBird is your all-in-one teleprompter for flawless virtual
-            presentations. Collaborate in real time, control progress with your
-            voice, and deliver confidently every time you step on the virtual
-            stage.
-          </span>
-        </div>
+              <div className="">
+                <span className="text-brand">of your words</span>
+                <span className="text-primary opacity-10 select-none">]</span>
+              </div>
+            </div>
 
-        <form onClick={handleSubmitEmail} className="my-12">
-          <div className="flex items-center h-[54px] rounded-[14px] bg-background border-[1px] focus-within:border-border border-stroke w-full pr-2.5">
-            <span className="w-[50px] h-full grid place-items-center">
-              <EmailIcon className="text-placeholder w-5 translate-x-1" />
-            </span>
+            <div className="my-1 text-center mb-12">
+              <span className="font-semibold text-base leading-6 text-secondary">
+                ProseBird is your all-in-one teleprompter for flawless virtual
+                presentations that helps you deliver confidently every time you
+                step on the virtual stage.
+              </span>
+            </div>
 
-            <input
-              value={email}
-              onFocus={onFocus}
-              onBlur={onBlur}
-              type="text"
-              className="grow h-full placeholder:text-placeholder bg-transparent border-none outline-none pr-2 text-primary font-semibold text-sm"
-              placeholder="Your email"
-              onChange={(e: any) => setEmail(e.target.value)}
-            />
-
-            <button className="rounded-[10px] bg-brand px-3.5 h-[34px] text-primary font-bold text-[13px] shrink-0">
-              Apply
-            </button>
+            <Cta />
           </div>
-
-          {isFocused && (
-            <p className="my-4 leading-5 font-medium text-[13px] text-secondary text-center">
-              By applying, you agree to be notified of product launches and
-              updates, which you can unsubscribe from at any time.
-            </p>
-          )}
-        </form>
+        </div>
       </div>
     </div>
   );

@@ -39,46 +39,50 @@ const Faq = () => {
   ];
 
   return (
-    <div className="py-40 text-center">
-      <Header
-        section=""
-        title1=""
-        title2="Frequently asked questions"
-        subtitle=""
-      />
+    <div className="bg-middleground w-full min-h-screen flex justify-center items-start py-28 rounded-b-[50px]">
+      <div className="w-[1080px] text-center">
+        <Header
+          section=""
+          title1=""
+          title2="Frequently asked questions"
+          subtitle=""
+        />
 
-      <div className="select-none w-full items-center flex flex-col gap-4">
-        {questions.map((item: any, index: any) => (
-          <div
-            key={index}
-            onClick={() =>
-              selectedQ === index ? setSelectedQ(null) : setSelectedQ(index)
-            }
-            className="group w-[760px] rounded-2xl bg-background hover:bg-foreground cursor-pointer px-6"
-          >
-            <div className="flex justify-between items-center w-full h-16">
-              <span className="text-primary text-base font-bold">{item.q}</span>
-              <span className="p-2">
-                <PlusIcon
-                  className={`text-inactive group-hover:text-primary h-4 transition-all duration-200 ease-in-out ${
-                    selectedQ === index ? "rotate-45" : "rotate-0"
-                  }`}
-                />
-              </span>
-            </div>
+        <div className="select-none w-full items-center flex flex-col gap-4">
+          {questions.map((item: any, index: any) => (
             <div
-              className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                selectedQ === index
-                  ? "max-h-[1000px] opacity-100 mt-2"
-                  : "max-h-0 opacity-0"
-              }`}
+              key={index}
+              onClick={() =>
+                selectedQ === index ? setSelectedQ(null) : setSelectedQ(index)
+              }
+              className="group w-[760px] rounded-2xl bg-background hover:bg-foreground cursor-pointer px-6"
             >
-              <p className="text-secondary text-base font-medium text-left pb-6">
-                {item.a}
-              </p>
+              <div className="flex justify-between items-center w-full h-16">
+                <span className="text-primary text-base font-bold">
+                  {item.q}
+                </span>
+                <span className="p-2">
+                  <PlusIcon
+                    className={`text-inactive group-hover:text-primary h-4 transition-all duration-200 ease-in-out ${
+                      selectedQ === index ? "rotate-45" : "rotate-0"
+                    }`}
+                  />
+                </span>
+              </div>
+              <div
+                className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                  selectedQ === index
+                    ? "max-h-[1000px] opacity-100 mt-2"
+                    : "max-h-0 opacity-0"
+                }`}
+              >
+                <p className="text-secondary text-base font-medium text-left pb-6">
+                  {item.a}
+                </p>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );
