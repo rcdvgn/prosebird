@@ -54,7 +54,7 @@ const Collaboration = () => {
 const CollabBlock = ({ children, title, subtitle }: any) => {
   return (
     <div className="">
-      <div className="mb-6 relative bg-background border-[1px] border-stroke py-[15px] px-[17px] rounded-3xl shadow-[0px_4px_35px_0px_rgba(0,0,0,0.25)]">
+      <div className="hover:border-border mb-6 relative bg-background border-[1px] border-stroke py-[15px] px-[17px] rounded-3xl shadow-[0px_4px_35px_0px_rgba(0,0,0,0.25)]">
         {children}
 
         <div className="hover:opacity-0 transition-opacity duration-200 ease-in-out absolute left-0 top-0 h-full w-full rounded-3xl bg-gradient-to-tl from-middleground from-0% to-transparent to-100%"></div>

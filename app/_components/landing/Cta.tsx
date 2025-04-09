@@ -1,5 +1,5 @@
 "use client";
-import { EmailIcon } from "@/app/_assets/presentationIcons";
+import { EmailIcon } from "@/app/_assets/landingIcons";
 import { useState } from "react";
 
 export default function Cta() {

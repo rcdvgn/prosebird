@@ -1,7 +1,7 @@
 const Header = ({ section, title1, title2, subtitle }: any) => {
   return (
     <div className="mb-14 flex justify-center">
-      <div className="w-[650px] text-center">
+      <div className="max-w-[650px] text-center flex flex-col items-center">
         <div className="mb-4">
           <span className="font-extrabold text-sm text-brand block uppercase py-2">
             {section}
@@ -12,7 +12,7 @@ const Header = ({ section, title1, title2, subtitle }: any) => {
           </div>
         </div>
 
-        <p className="font-semibold text-base text-secondary my-1">
+        <p className="font-semibold text-base text-secondary my-1 max-w-[550px]">
           {subtitle}
         </p>
       </div>

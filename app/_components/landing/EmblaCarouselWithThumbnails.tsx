@@ -49,13 +49,13 @@ export default function EmblaCarouselWithThumbnails() {
 
     const autoplayInterval = setInterval(() => {
       emblaMainApi.scrollNext();
-    }, 10000); // Change slide every 3 seconds
+    }, 6000); // Change slide every 6 seconds
 
     return () => clearInterval(autoplayInterval);
   }, [emblaMainApi]);
 
   return (
-    <div className="max-w-full mx-auto mb-40">
+    <div className="max-w-full mx-auto mb-64">
       {/* Main carousel */}
       <div className="overflow-hidden" ref={emblaMainRef}>
         <div className="flex">
@@ -74,22 +74,22 @@ export default function EmblaCarouselWithThumbnails() {
       </div>
 
       {/* Thumbnails */}
-      <div className="mt-4 overflow-hidden" ref={emblaThumbsRef}>
-        <div className="flex justify-center gap-2">
+      <div className="mt-2 overflow-hidden" ref={emblaThumbsRef}>
+        <div className="flex justify-center gap-4">
           {slides.map((slide, index) => (
             <button
               key={index}
               onClick={() => onThumbClick(index)}
-              className={`relative cursor-pointer w-28 flex-shrink-0 ${
+              className={`relative cursor-pointer w-[70px] flex-shrink-0 ${
                 index === selectedIndex ? "opacity-100" : "opacity-50"
               }`}
             >
               <div
-                className={`rounded-lg ${
+                className={`rounded-md ${
                   index === selectedIndex
                     ? "border-brand border-2"
-                    : "border-stroke border-[1px]"
-                } overflow-hidden h-20`}
+                    : "border-border border-[1px]"
+                } overflow-hidden h-12`}
               >
                 <img
                   className="w-full h-full object-cover"

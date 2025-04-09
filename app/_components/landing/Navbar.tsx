@@ -43,7 +43,7 @@ export default function Navbar({ scrollContainerRef }: any) {
         }`}
       >
         <div className="flex items-center gap-3">
-          <PrimaryLogo className="h-6" />
+          <PrimaryLogo className="h-5" />
 
           <div className="rounded-full px-2.5 py-1.5 ring-1 ring-brand/35 bg-gradient-to-r from-brand/20 to-blue-700/20 font-bold text-xs text-brand cursor-default">
             Under development

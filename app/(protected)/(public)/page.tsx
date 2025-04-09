@@ -2,6 +2,7 @@
 
 import Background from "@/app/_components/landing/Background";
 import Collaboration from "@/app/_components/landing/Collaboration";
+import Editor from "@/app/_components/landing/Editor";
 import Faq from "@/app/_components/landing/Faq";
 import Footer from "@/app/_components/landing/Footer";
 import Hero from "@/app/_components/landing/Hero";
@@ -23,6 +24,7 @@ export default function LandingPage() {
 
         <Hero scrollContainerRef={scrollContainerRef} />
         <Presentation />
+        <Editor />
         <Collaboration />
         <Faq />
         <Footer />
