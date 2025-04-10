@@ -16,7 +16,7 @@ export default function Benefits() {
     {
       icon: <EnergyIcon className="text-brand h-12" />,
       title: "Energy",
-      desc: "Writing, planing and delivering presentations takes a lot of effort, OnQ simplifies it by combining everything you need in one place.",
+      desc: "Writing, planing and delivering presentations takes a lot of effort, ProseBird simplifies it by combining everything you need in one place.",
     },
   ];
 

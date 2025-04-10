@@ -8,7 +8,7 @@ const Collaboration = () => {
           section="collaboration"
           title1="You and your team, "
           title2="on the same wavelength"
-          subtitle="From start to finish, OnQ lets you bring your team to every step of the way."
+          subtitle="From start to finish, ProseBird lets you bring your team to every step of the way."
         />
 
         <div className="grid grid-cols-1 md:grid-cols-[repeat(auto-fill,minmax(494px,1fr))] gap-20">

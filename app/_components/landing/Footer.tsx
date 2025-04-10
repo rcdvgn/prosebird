@@ -9,11 +9,18 @@ export default function Footer({
   setLoading,
 }: any) {
   return (
-    <div className="w-full min-h-screen flex justify-center items-start pt-72 pb-12">
-      <div className="w-[1080px]">
-        <div className="flex flex-col items-center mb-32">
-          <span className="text-3xl font-bold text-primary mb-4">
-            Available soon
+    <div className="w-full h-screen flex justify-center items-stretch py-10">
+      <div className="w-[1080px] h-full flex flex-col items-center justify-between">
+        <div className="invisible flex flex-col gap-4 text-center">
+          <PrimaryLogo className="h-7" />
+          <span className="text-secondary font-semibold text-sm">
+            © {new Date().getFullYear()} ProseBird. All rights reserved.
+          </span>
+        </div>
+
+        <div className="flex flex-col items-center">
+          <span className="text-3xl font-bold text-primary mb-4 select-none">
+            What would you like to say today?
           </span>
 
           <Cta
@@ -24,7 +31,7 @@ export default function Footer({
           />
         </div>
 
-        <div className="flex flex-col gap-6 text-center">
+        <div className="flex flex-col gap-4 text-center">
           <PrimaryLogo className="h-7" />
           <span className="text-secondary font-semibold text-sm">
             © {new Date().getFullYear()} ProseBird. All rights reserved.

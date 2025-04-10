@@ -26,7 +26,7 @@ const Presentation = () => {
           section="presentation"
           title1="Not your traditional "
           title2="teleprompter"
-          subtitle="Go beyond static text scrolling. OnQ adapts to you. It’s teleprompting, reinvented for collaboration."
+          subtitle="Go beyond static text scrolling. ProseBird adapts to you. It’s teleprompting, reinvented for collaboration."
         />
 
         <div className="grid grid-cols-1 md:grid-cols-[repeat(auto-fill,minmax(330px,1fr))] gap-11">

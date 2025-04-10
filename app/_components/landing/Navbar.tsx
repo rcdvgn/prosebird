@@ -34,7 +34,7 @@ export default function Navbar({ scrollContainerRef }: any) {
   }, [scrollContainerRef]);
 
   return (
-    <div className="z-10 sticky top-0 h-24 w-full flex justify-center items-center">
+    <div className="z-30 sticky top-0 h-24 w-full flex justify-center items-center">
       <div
         className={`transition-all duration-300 ease-in-out w-[1080px] h-16 flex items-center justify-between px-7 rounded-[20px] border-[1px] ${
           scrolled
@@ -46,7 +46,7 @@ export default function Navbar({ scrollContainerRef }: any) {
           <PrimaryLogo className="h-5" />
 
           <div className="rounded-full px-2.5 py-1 ring-1 ring-brand/35 bg-gradient-to-r from-brand/20 to-blue-700/20 font-bold text-[11px] text-brand cursor-default">
-            Waitlist
+            Early access
           </div>
         </div>
 
