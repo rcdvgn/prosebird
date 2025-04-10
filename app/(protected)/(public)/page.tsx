@@ -10,10 +10,13 @@ import Hero from "@/app/_components/landing/Hero";
 import Navbar from "@/app/_components/landing/Navbar";
 import Presentation from "@/app/_components/landing/Presentation";
 import UseCases from "@/app/_components/landing/UseCases";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 
 export default function LandingPage() {
   const scrollContainerRef = useRef<any>(null);
+
+  const [success, setSuccess] = useState<any>("");
+  const [loading, setLoading] = useState<any>(false);
 
   return (
     <div
@@ -24,14 +27,25 @@ export default function LandingPage() {
       <div className="relative w-full">
         <Navbar scrollContainerRef={scrollContainerRef} />
 
-        <Hero scrollContainerRef={scrollContainerRef} />
+        <Hero
+          scrollContainerRef={scrollContainerRef}
+          success={success}
+          setSuccess={setSuccess}
+          loading={loading}
+          setLoading={setLoading}
+        />
         <Presentation />
         <Benefits />
         <Editor />
         <UseCases />
         <Collaboration />
         <Faq />
-        <Footer />
+        <Footer
+          success={success}
+          setSuccess={setSuccess}
+          loading={loading}
+          setLoading={setLoading}
+        />
       </div>
     </div>
   );

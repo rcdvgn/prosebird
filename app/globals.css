@@ -68,6 +68,10 @@ body {
   height: 100%;
 }
 
+.grecaptcha-badge {
+  box-shadow: none !important;
+}
+
 .svg-gradient {
   fill: url(#brandGradient);
 }

@@ -95,7 +95,7 @@ const Feature = ({ icon, name, description }: any) => {
       <div className="flex flex-col items-center gap-3 my-2.5">
         {icon}
 
-        <span className="font-bold text-[15px] text-primary">{name}</span>
+        <span className="font-bold text-lg text-primary">{name}</span>
       </div>
 
       <p className="font-semibold text-sm text-secondary text-center">

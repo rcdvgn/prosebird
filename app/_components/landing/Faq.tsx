@@ -39,7 +39,7 @@ const Faq = () => {
   ];
 
   return (
-    <div className="bg-middleground w-full min-h-screen flex justify-center items-start py-28 rounded-b-[50px]">
+    <div className="bg-middleground w-full min-h-screen flex justify-center items-start py-28 rounded-b-[30px]">
       <div className="w-[1080px] text-center">
         <SubHeader title="Frequently asked questions" />
 

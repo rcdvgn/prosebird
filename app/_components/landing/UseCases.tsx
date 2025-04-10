@@ -54,7 +54,7 @@ export default function UseCases() {
 
                 <div className="cursor-default transition-opacity duration-300 ease-in-out absolute border-[1px] border-stroke bg-background w-full h-full left-0 top-0 overflow-hidden rounded-2xl group-hover:opacity-0 opacity-100">
                   <div className="w-full h-full bg-gradient-to-br from-middleground/0 from-50% to-middleground/0 flex flex-col justify-between items-center p-6">
-                    <item.icon className="text-secondary h-[30px]" />
+                    <item.icon className="text-placeholder h-[30px]" />
 
                     <div className="flex flex-col gap-3 items-center justify-center">
                       <span className="font-bold text-primary text-xl">

@@ -2,7 +2,12 @@ import React from "react";
 import Cta from "./Cta";
 import { PrimaryLogo } from "@/app/_assets/logos";
 
-export default function Footer() {
+export default function Footer({
+  success,
+  setSuccess,
+  loading,
+  setLoading,
+}: any) {
   return (
     <div className="w-full min-h-screen flex justify-center items-start pt-72 pb-12">
       <div className="w-[1080px]">
@@ -11,13 +16,18 @@ export default function Footer() {
             Available soon
           </span>
 
-          <Cta />
+          <Cta
+            success={success}
+            setSuccess={setSuccess}
+            loading={loading}
+            setLoading={setLoading}
+          />
         </div>
 
         <div className="flex flex-col gap-6 text-center">
           <PrimaryLogo className="h-7" />
           <span className="text-secondary font-semibold text-sm">
-            © 2025 ProseBird. All rights reserved.
+            © {new Date().getFullYear()} ProseBird. All rights reserved.
           </span>
         </div>
       </div>

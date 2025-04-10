@@ -3,7 +3,13 @@
 import { useEffect, useState } from "react";
 import Cta from "./Cta";
 
-export default function Hero({ scrollContainerRef }: any) {
+export default function Hero({
+  scrollContainerRef,
+  success,
+  setSuccess,
+  loading,
+  setLoading,
+}: any) {
   const [gradientPosition, setGradientPosition] = useState(0);
 
   useEffect(() => {
@@ -12,11 +18,9 @@ export default function Hero({ scrollContainerRef }: any) {
     if (!scrollContainer) return;
 
     const handleScroll = () => {
-      // Calculate the scroll percentage based on component height
       const scrollPosition = scrollContainer.scrollTop;
 
-      const componentHeight = window.innerHeight; // Since it's h-screen
-      // Calculate percentage (0-100)
+      const componentHeight = window.innerHeight;
       const scrollPercentage = Math.min(
         Math.max((scrollPosition / componentHeight) * 100, 0),
         100
@@ -27,7 +31,6 @@ export default function Hero({ scrollContainerRef }: any) {
 
     scrollContainer.addEventListener("scroll", handleScroll);
 
-    // Initial check
     handleScroll();
 
     return () => {
@@ -45,17 +48,21 @@ export default function Hero({ scrollContainerRef }: any) {
       }}
     >
       <div className="w-[1080px]">
-        <div className="flex justify-center items-center">
+        <div className="flex justify-center">
           <div className="w-[620px]">
             <div className="font-extrabold text-7xl leading-[80px] my-6 text-center">
-              <div className="">
-                <span className="text-primary opacity-10 select-none">[</span>
+              <div className="relative">
+                <span className="absolute text-primary opacity-[0.05] select-none -translate-x-7">
+                  [
+                </span>
                 <span className="text-primary">Take doubt out</span>
               </div>
 
-              <div className="">
+              <div className="relative">
                 <span className="text-brand">of your words</span>
-                <span className="text-primary opacity-10 select-none">]</span>
+                <span className="absolute text-primary opacity-[0.05] select-none">
+                  ]
+                </span>
               </div>
             </div>
 
@@ -67,7 +74,12 @@ export default function Hero({ scrollContainerRef }: any) {
               </span>
             </div>
 
-            <Cta />
+            <Cta
+              success={success}
+              setSuccess={setSuccess}
+              loading={loading}
+              setLoading={setLoading}
+            />
           </div>
         </div>
       </div>

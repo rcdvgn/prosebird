@@ -22,6 +22,7 @@
     "@tiptap/react": "^2.11.5",
     "@tiptap/starter-kit": "^2.11.5",
     "@types/uuid": "^10.0.0",
+    "@types/validator": "^13.12.3",
     "embla-carousel-react": "^8.6.0",
     "embla-carousel-wheel-gestures": "^8.0.2",
     "firebase": "^10.13.2",
@@ -50,6 +51,7 @@
     "tiptap-extension-font-size": "^1.2.0",
     "use-resize-observer": "^9.1.0",
     "uuid": "^10.0.0",
+    "validator": "^13.15.0",
     "y-websocket": "^2.1.0",
     "yjs": "^13.6.23"
   },
