@@ -21,14 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`bg-background ${publicSans.className}`}>
-        <AuthProvider>
-          <ModalProvider>
-            <MotionConfig transition={{ ease: "easeInOut" }}>
-              {children}
-            </MotionConfig>
-            <Modal />
-          </ModalProvider>
-        </AuthProvider>
+        {children}
       </body>
     </html>
   );
