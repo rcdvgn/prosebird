@@ -1,4 +1,4 @@
-const Header = ({ section, title1, title2, subtitle }: any) => {
+export const Header = ({ section, title1, title2, subtitle }: any) => {
   return (
     <div className="mb-14 flex justify-center">
       <div className="max-w-[650px] text-center flex flex-col items-center">
@@ -20,4 +20,12 @@ const Header = ({ section, title1, title2, subtitle }: any) => {
   );
 };
 
-export default Header;
+export const SubHeader = ({ title }: any) => {
+  return (
+    <div className="mb-14 flex justify-center">
+      <div className="max-w-[650px] text-center flex flex-col items-center">
+        <span className="block text-primary font-bold text-4xl">{title}</span>
+      </div>
+    </div>
+  );
+};

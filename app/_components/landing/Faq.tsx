@@ -1,7 +1,7 @@
 "use client";
 
 import { PlusIcon } from "@/app/_assets/icons";
-import Header from "./Header";
+import { SubHeader } from "./Header";
 import { useState } from "react";
 
 const Faq = () => {
@@ -41,12 +41,7 @@ const Faq = () => {
   return (
     <div className="bg-middleground w-full min-h-screen flex justify-center items-start py-28 rounded-b-[50px]">
       <div className="w-[1080px] text-center">
-        <Header
-          section=""
-          title1=""
-          title2="Frequently asked questions"
-          subtitle=""
-        />
+        <SubHeader title="Frequently asked questions" />
 
         <div className="select-none w-full items-center flex flex-col gap-4">
           {questions.map((item: any, index: any) => (

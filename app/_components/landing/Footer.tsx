@@ -7,7 +7,7 @@ export default function Footer() {
     <div className="w-full min-h-screen flex justify-center items-start pt-72 pb-12">
       <div className="w-[1080px]">
         <div className="flex flex-col items-center mb-32">
-          <span className="text-3xl font-bold text-primary">
+          <span className="text-3xl font-bold text-primary mb-4">
             Available soon
           </span>
 

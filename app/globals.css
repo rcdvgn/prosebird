@@ -68,6 +68,14 @@ body {
   height: 100%;
 }
 
+.svg-gradient {
+  fill: url(#brandGradient);
+}
+
+.svg-gradient {
+  fill: url(#whiteGradient);
+}
+
 textarea::-webkit-scrollbar {
   width: 0;
 }

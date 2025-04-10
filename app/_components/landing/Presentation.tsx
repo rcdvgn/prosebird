@@ -8,7 +8,7 @@ import {
   SpeedControlIcon,
   VoiceScrollIcon,
 } from "@/app/_assets/landingIcons";
-import Header from "./Header";
+import { Header } from "./Header";
 import { SearchIcon } from "@/app/_assets/icons";
 import EmblaCarouselWithThumbnails from "./EmblaCarouselWithThumbnails";
 

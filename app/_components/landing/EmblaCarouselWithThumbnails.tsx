@@ -47,12 +47,13 @@ export default function EmblaCarouselWithThumbnails() {
   useEffect(() => {
     if (!emblaMainApi) return;
 
+    // This interval will be cleared and recreated whenever selectedIndex changes
     const autoplayInterval = setInterval(() => {
       emblaMainApi.scrollNext();
     }, 6000); // Change slide every 6 seconds
 
     return () => clearInterval(autoplayInterval);
-  }, [emblaMainApi]);
+  }, [emblaMainApi, selectedIndex]); // Add selectedIndex to dependencies
 
   return (
     <div className="max-w-full mx-auto mb-64">

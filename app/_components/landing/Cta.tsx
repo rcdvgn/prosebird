@@ -20,8 +20,8 @@ export default function Cta() {
       className={`flex flex-col items-center justify-center mx-auto my-8 w-[450px]`}
     >
       <div
-        className={`transition-all duration-300 ease-in-out flex items-center h-[50px] rounded-[14px] bg-background/50 border-[1px] focus-within:border-border border-stroke pr-2 ${
-          isFocused || email.length ? "w-full" : "w-[350px]"
+        className={`transition-all duration-300 ease-in-out flex items-center h-[50px] rounded-[14px] bg-background/50 border-[1px] focus-within:bg-background/100 focus-within:border-border border-stroke pr-2 ${
+          isFocused || email.length ? "w-full bg-background/100" : "w-[350px]"
         }`}
       >
         <span className="w-[50px] h-full grid place-items-center">

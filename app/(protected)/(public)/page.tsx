@@ -1,6 +1,7 @@
 "use client";
 
 import Background from "@/app/_components/landing/Background";
+import Benefits from "@/app/_components/landing/Benefits";
 import Collaboration from "@/app/_components/landing/Collaboration";
 import Editor from "@/app/_components/landing/Editor";
 import Faq from "@/app/_components/landing/Faq";
@@ -8,6 +9,7 @@ import Footer from "@/app/_components/landing/Footer";
 import Hero from "@/app/_components/landing/Hero";
 import Navbar from "@/app/_components/landing/Navbar";
 import Presentation from "@/app/_components/landing/Presentation";
+import UseCases from "@/app/_components/landing/UseCases";
 import React, { useRef } from "react";
 
 export default function LandingPage() {
@@ -24,7 +26,9 @@ export default function LandingPage() {
 
         <Hero scrollContainerRef={scrollContainerRef} />
         <Presentation />
+        <Benefits />
         <Editor />
+        <UseCases />
         <Collaboration />
         <Faq />
         <Footer />

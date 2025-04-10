@@ -7,7 +7,7 @@ import {
   IntuitiveIcon,
   StructuredIcon,
 } from "@/app/_assets/landingIcons";
-import Header from "./Header";
+import { Header } from "./Header";
 
 export default function Editor() {
   const [selectedIndex, setSelectedIndex] = useState(0);
