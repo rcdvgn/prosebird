@@ -4,7 +4,9 @@ import admin from "firebase-admin"; // Import the module as a whole, not destruc
 const adminConfig = {
   projectId: process.env.NEXT_PUBLIC_PROJECT_ID,
   clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-  privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
+  privateKey: process.env.FIREBASE_PRIVATE_KEY?.split(String.raw`\n`).join(
+    "\n"
+  ),
 };
 
 // Initialize the admin app if not already initialized
