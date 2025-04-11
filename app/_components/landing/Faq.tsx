@@ -1,6 +1,6 @@
 "use client";
 
-import { PlusIcon } from "@/app/_assets/icons";
+import { PlusIcon } from "@/app/_assets/landingIcons";
 import { SubHeader } from "./Header";
 import { useState } from "react";
 
