@@ -4,16 +4,14 @@ import admin from "firebase-admin"; // Import the module as a whole, not destruc
 const adminConfig = {
   projectId: process.env.NEXT_PUBLIC_PROJECT_ID,
   clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-  privateKey: process.env.FIREBASE_PRIVATE_KEY?.split(String.raw`\n`).join(
-    "\n"
-  ),
+  privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
 };
 
 // Initialize the admin app if not already initialized
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert(adminConfig),
-    databaseURL: "https://moxie-de0a2-default-rtdb.firebaseio.com",
+    databaseURL: "https://prosebird-5ba8b-default-rtdb.firebaseio.com",
   });
 }
 
