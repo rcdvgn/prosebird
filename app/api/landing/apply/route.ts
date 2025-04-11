@@ -1,11 +1,9 @@
-// app/api/landing/apply/route.ts
 import { NextResponse } from "next/server";
 import isEmail from "validator/lib/isEmail";
 import { admin } from "@/app/_config/firebase/admin";
 
 const db = admin.firestore();
 
-// Function to verify reCAPTCHA token
 async function verifyRecaptcha(token: string) {
   try {
     const response = await fetch(

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
+// import Image from "next/image";
 
 export default function EmblaCarouselWithThumbnails() {
   const [emblaMainRef, emblaMainApi] = useEmblaCarousel({ loop: true }, [
@@ -14,10 +15,10 @@ export default function EmblaCarouselWithThumbnails() {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const slides = [
-    "/landing/presentation1.png",
-    "/landing/presentation1.png",
-    "/landing/presentation1.png",
-    "/landing/presentation1.png",
+    "https://utfs.io/a/dv6kwxfdfm/X7kJqL6j4LDUQatI08Y3MIxDcvU82Y60FplRHeP5CohdAqVs",
+    "https://utfs.io/a/dv6kwxfdfm/X7kJqL6j4LDUQatI08Y3MIxDcvU82Y60FplRHeP5CohdAqVs",
+    "https://utfs.io/a/dv6kwxfdfm/X7kJqL6j4LDUQatI08Y3MIxDcvU82Y60FplRHeP5CohdAqVs",
+    "https://utfs.io/a/dv6kwxfdfm/X7kJqL6j4LDUQatI08Y3MIxDcvU82Y60FplRHeP5CohdAqVs",
   ];
 
   const onThumbClick = useCallback(
@@ -67,6 +68,8 @@ export default function EmblaCarouselWithThumbnails() {
                   className="w-full h-auto"
                   src={slide}
                   alt={`Slide ${index + 1}`}
+                  // width={3724}
+                  // height={2000}
                 />
               </div>
             </div>

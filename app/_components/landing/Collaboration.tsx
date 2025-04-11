@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Header } from "./Header";
 
 const Collaboration = () => {
@@ -16,33 +17,48 @@ const Collaboration = () => {
             title="Real time co-editing"
             subtitle="Watch changes appear instantly as teammates refine the script."
           >
-            <img className="w-[494px]" src="/landing/collaborationEditor.png" />
-          </CollabBlock>
-          <CollabBlock
-            title="Real time co-editing"
-            subtitle="Watch changes appear instantly as teammates refine the script."
-          >
-            <img
+            <Image
+              width={1983}
+              height={1500}
+              alt="Collaborative editor"
               className="w-[494px]"
-              src="/landing/collaborationPresenters.png"
+              src="https://utfs.io/a/dv6kwxfdfm/X7kJqL6j4LDU529HWzEFueN1Vm64jTRKMndLzY87IafHqglQ"
             />
           </CollabBlock>
           <CollabBlock
             title="Real time co-editing"
             subtitle="Watch changes appear instantly as teammates refine the script."
           >
-            <img
+            <Image
+              width={1983}
+              height={1500}
+              alt="Presentation participants"
               className="w-[494px]"
-              src="/landing/collaborationProgress.png"
+              src="https://utfs.io/a/dv6kwxfdfm/X7kJqL6j4LDUMa2y5ISOAHt7p6kwLOf82D1FIbWN4X5SUjYd"
             />
           </CollabBlock>
           <CollabBlock
             title="Real time co-editing"
             subtitle="Watch changes appear instantly as teammates refine the script."
           >
-            <img
+            <Image
+              width={1983}
+              height={1500}
+              alt="Shared progress"
               className="w-[494px]"
-              src="/landing/collaborationPermissions.png"
+              src="https://utfs.io/a/dv6kwxfdfm/X7kJqL6j4LDUiR5AI7pyTpnlWXUqVEumZ32gatIfRKN7Jrkd"
+            />
+          </CollabBlock>
+          <CollabBlock
+            title="Real time co-editing"
+            subtitle="Watch changes appear instantly as teammates refine the script."
+          >
+            <Image
+              width={1983}
+              height={1500}
+              alt="Presentation permissions"
+              className="w-[494px]"
+              src="https://utfs.io/a/dv6kwxfdfm/X7kJqL6j4LDUgjGiURIZt6KxnQfhP7DMr0Fa9e1IVuYRXHNT"
             />
           </CollabBlock>
         </div>

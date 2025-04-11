@@ -16,10 +16,6 @@ const Presentation = () => {
   return (
     <div className="bg-middleground w-full min-h-screen flex justify-center items-start">
       <div className="w-[1080px] -translate-y-32">
-        {/* <div className="rounded-2xl border-stroke border-[1px] w-full overflow-hidden mb-40">
-          <img className="w-full" src="/landing/presentation1.png" />
-        </div> */}
-
         <EmblaCarouselWithThumbnails />
 
         <Header

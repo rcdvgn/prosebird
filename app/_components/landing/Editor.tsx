@@ -8,25 +8,29 @@ import {
   StructuredIcon,
 } from "@/app/_assets/landingIcons";
 import { Header } from "./Header";
+// import Image from "next/image";
 
 export default function Editor() {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const items = [
     {
-      imgSrc: "/landing/editor1.png",
+      imgSrc:
+        "https://utfs.io/a/dv6kwxfdfm/X7kJqL6j4LDUaxZ3G8Q4dUP3ZhOuzY5mRekTr8XqMBoDc6nt",
       icon: <IntuitiveIcon className="w-5 text-brand" />,
       title: "Intuitive",
       desc: "Its user-friendly interface and smart shortcuts allow you to turn your ideas into words faster than ever before.",
     },
     {
-      imgSrc: "/landing/editor1.png",
+      imgSrc:
+        "https://utfs.io/a/dv6kwxfdfm/X7kJqL6j4LDUaxZ3G8Q4dUP3ZhOuzY5mRekTr8XqMBoDc6nt",
       icon: <StructuredIcon className="w-5 text-brand" />,
       title: "Structured",
       desc: "Chapters are to ProseBird what slides are to PowerPoint: Create, edit and arrange them to match the flow and visuals of your presentation.",
     },
     {
-      imgSrc: "/landing/editor1.png",
+      imgSrc:
+        "https://utfs.io/a/dv6kwxfdfm/X7kJqL6j4LDUaxZ3G8Q4dUP3ZhOuzY5mRekTr8XqMBoDc6nt",
       icon: <FluidIcon className="w-5 text-brand" />,
       title: "Fluid",
       desc: "Reformat text, preview your script and drag & drop stuff around. An editor that molds to your workflow, not the reverse.",
@@ -108,6 +112,8 @@ export default function Editor() {
                       : "opacity-0 z-0"
                   }`}
                   alt={item.title}
+                  // width={3367}
+                  // height={2000}
                 />
               ))}
             </div>
