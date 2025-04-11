@@ -2,10 +2,10 @@ import React from "react";
 import { SubHeader } from "./Header";
 import {
   AcademicIcon,
+  ChevronIcon,
   ContentIcon,
   GraphIcon,
 } from "@/app/_assets/landingIcons";
-import { ChevronIcon } from "@/app/_assets/icons";
 
 export default function UseCases() {
   const items = [
