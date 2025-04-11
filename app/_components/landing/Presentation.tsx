@@ -5,11 +5,11 @@ import {
   MultiDeviceSupportIcon,
   PrivacyVisibilityIcon,
   ProgressControlIcon,
+  SearchIcon,
   SpeedControlIcon,
   VoiceScrollIcon,
 } from "@/app/_assets/landingIcons";
 import { Header } from "./Header";
-import { SearchIcon } from "@/app/_assets/icons";
 import EmblaCarouselWithThumbnails from "./EmblaCarouselWithThumbnails";
 
 const Presentation = () => {
