@@ -1,17 +1,24 @@
 import "server-only";
-import admin from "firebase-admin"; // Import the module as a whole, not destructured
+import admin from "firebase-admin";
+
+const base64EncodedServiceAccount: any =
+  process.env.FIREBASE_BASE64_ENCODED_SERVICE_ACCOUNT;
+const decodedServiceAccount = Buffer.from(
+  base64EncodedServiceAccount,
+  "base64"
+).toString("utf-8");
+const credentials = JSON.parse(decodedServiceAccount);
 
 const adminConfig = {
-  projectId: process.env.NEXT_PUBLIC_PROJECT_ID,
-  clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-  privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
+  projectId: credentials.project_id,
+  clientEmail: credentials.client_email,
+  privateKey: credentials.private_key,
 };
 
 // Initialize the admin app if not already initialized
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert(adminConfig),
-    // databaseURL: "https://prosebird-5ba8b-default-rtdb.firebaseio.com",
   });
 }
 
