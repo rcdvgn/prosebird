@@ -11,7 +11,7 @@ const adminConfig = {
 if (!admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert(adminConfig),
-    databaseURL: "https://prosebird-5ba8b-default-rtdb.firebaseio.com",
+    // databaseURL: "https://prosebird-5ba8b-default-rtdb.firebaseio.com",
   });
 }
 
