@@ -12,12 +12,12 @@ export default function UseCases() {
     {
       icon: AcademicIcon,
       title: "Academic Presentations",
-      desc: "Write, rehearse, and present your audio and visual content with instant previews and in-script comments.",
+      desc: "Save time from pointless memorization, break your subject into chapters and present it with your friends.",
     },
     {
       icon: GraphIcon,
       title: "Sales & Client Meetings",
-      desc: "Write, rehearse, and present your audio and visual content with instant previews and in-script comments.",
+      desc: "Access key insights and pace your delivery on the fly with a comprehensive suite of presentation tools.",
     },
     {
       icon: ContentIcon,

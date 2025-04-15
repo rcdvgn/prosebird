@@ -13,28 +13,25 @@ const Faq = () => {
       a: "ProseBird is an interactive teleprompter designed for solo and collaborative online presentations. It enables users to write, edit, and present scripts with real-time collaboration, voice control, and multi-device syncing. Whether for academic presentations, sales pitches, or professional lectures, ProseBird aims to simplify preparation and elevate the delivery of presentations under high-stakes conditions.",
     },
     {
-      q: "What is ProseBird?",
-      a: "ProseBird is an interactive teleprompter designed for solo and collaborative online presentations. It enables users to write, edit, and present scripts with real-time collaboration, voice control, and multi-device syncing. Whether for academic presentations, sales pitches, or professional lectures, ProseBird aims to simplify preparation and elevate the delivery of presentations under high-stakes conditions.",
+      q: "When will it be available?",
+      a: "ProseBird is expected to launch in May 15, 2025 for users that signed up for the early access.",
     },
     {
-      q: "What is ProseBird?",
-      a: "ProseBird is an interactive teleprompter designed for solo and collaborative online presentations. It enables users to write, edit, and present scripts with real-time collaboration, voice control, and multi-device syncing. Whether for academic presentations, sales pitches, or professional lectures, ProseBird aims to simplify preparation and elevate the delivery of presentations under high-stakes conditions.",
+      q: "Is it going to be free to use?",
+      a: "Although it will offer a basic free tier, ProseBird is primarily a paid app.",
     },
     {
-      q: "What is ProseBird?",
-      a: "ProseBird is an interactive teleprompter designed for solo and collaborative online presentations. It enables users to write, edit, and present scripts with real-time collaboration, voice control, and multi-device syncing. Whether for academic presentations, sales pitches, or professional lectures, ProseBird aims to simplify preparation and elevate the delivery of presentations under high-stakes conditions.",
+      q: "How does the voice control work?",
+      a: "When voice scrolling is activated, ProseBird automatically matches your speech to the script, advancing your presentation and syncing your progress across all connected devices as you speak.",
     },
     {
-      q: "What is ProseBird?",
-      a: "ProseBird is an interactive teleprompter designed for solo and collaborative online presentations. It enables users to write, edit, and present scripts with real-time collaboration, voice control, and multi-device syncing. Whether for academic presentations, sales pitches, or professional lectures, ProseBird aims to simplify preparation and elevate the delivery of presentations under high-stakes conditions.",
+      q: "Can I use it for in-person presentations?",
+      a: "Yes! ProseBird can do everything a traditional teleprompter does, with the added benefits of voice-controlled scrolling and multi-device sync, without the need for bulky, expensive hardware.",
     },
+
     {
-      q: "What is ProseBird?",
-      a: "ProseBird is an interactive teleprompter designed for solo and collaborative online presentations. It enables users to write, edit, and present scripts with real-time collaboration, voice control, and multi-device syncing. Whether for academic presentations, sales pitches, or professional lectures, ProseBird aims to simplify preparation and elevate the delivery of presentations under high-stakes conditions.",
-    },
-    {
-      q: "What is ProseBird?",
-      a: "ProseBird is an interactive teleprompter designed for solo and collaborative online presentations. It enables users to write, edit, and present scripts with real-time collaboration, voice control, and multi-device syncing. Whether for academic presentations, sales pitches, or professional lectures, ProseBird aims to simplify preparation and elevate the delivery of presentations under high-stakes conditions.",
+      q: "What languages will it support?",
+      a: "During Early Access, voice-controlled presentations will be available in English only. Support for additional languages will roll out in future updates, prioritizing those most requested by users.",
     },
   ];
 
