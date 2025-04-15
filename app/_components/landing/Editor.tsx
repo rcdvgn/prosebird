@@ -46,14 +46,14 @@ export default function Editor() {
     // Clear any existing interval first (this is important when selectedIndex changes)
     const autoplayInterval = setInterval(() => {
       setSelectedIndex((prevIndex) => (prevIndex + 1) % items.length);
-    }, 6000); // Change slide every 4 seconds
+    }, 6000); // Change slide every 6 seconds
 
     return () => clearInterval(autoplayInterval);
   }, [selectedIndex, items.length]);
 
   return (
-    <div className="bg-middleground w-full min-h-screen flex justify-center items-start py-28">
-      <div className="w-[1080px]">
+    <div className="bg-middleground w-full min-h-screen flex justify-center items-start py-16 md:py-28 sm:px-12">
+      <div className="w-full max-w-[1080px] px-4">
         <Header
           section="script editor"
           title1="No more to copy/paste"
@@ -61,15 +61,15 @@ export default function Editor() {
           subtitle="ProseBird's built-in rich text editor accelarates your preparation by combining writing and rehearsing, all in one place."
         />
 
-        <div className="flex items-stretch justify-between">
+        <div className="flex flex-col lg:flex-row items-center lg:items-stretch justify-between gap-8 lg:gap-6 xl:gap-10">
           {/* thumbnail items */}
-          <div className="flex flex-col justify-between items-start">
+          <div className="flex flex-col justify-between items-start w-full lg:w-[446px] gap-4 lg:gap-0">
             {items.map((item, index) => {
               return (
                 <div
                   key={index}
                   onClick={() => handleThumbClick(index)}
-                  className={`p-3 rounded-xl border-[1px] w-[446px] cursor-pointer transition-all duration-300 ${
+                  className={`p-3 rounded-xl border-[1px] w-full cursor-pointer transition-all duration-300 ${
                     index === selectedIndex
                       ? "border-brand bg-brand/10"
                       : "border-transparent hover:bg-hover"
@@ -92,38 +92,52 @@ export default function Editor() {
           </div>
 
           {/* Image carousel with proper sizing */}
-          <div className="group/parent relative shrink-0 overflow-hidden border-stroke border-[1px] rounded-xl ">
+          <div className="group/parent relative shrink-0 overflow-hidden border-stroke border-[1px] rounded-xl">
             {/* This visible image maintains the container size */}
-            <img
-              src={items[selectedIndex].imgSrc}
-              className="invisible h-[344px]"
-              alt="Size reference"
-            />
+            <div className="relative w-full aspect-[3367/2000] lg:w-[490px] lg:h-[344px]">
+              <img
+                src={items[selectedIndex].imgSrc}
+                className="invisible w-full lg:w-auto lg:h-[344px]"
+                alt="Size reference"
+              />
 
-            {/* Absolute positioned images for fading effect */}
-            <div className="absolute inset-0 group-hover/parent:scale-105 transition-all duration-150 ease-in-out">
-              {items.map((item, index) => (
-                <img
-                  key={index}
-                  src={item.imgSrc}
-                  className={`h-[344px] absolute top-0 left-0 transition-opacity duration-500 ease-linear ${
-                    index === selectedIndex
-                      ? "opacity-100 z-10"
-                      : "opacity-0 z-0"
-                  }`}
-                  alt={item.title}
-                  // width={3367}
-                  // height={2000}
-                />
-              ))}
-            </div>
+              {/* Absolute positioned images for fading effect */}
+              <div className="absolute inset-0 group-hover/parent:scale-105 transition-all duration-150 ease-in-out">
+                {items.map((item, index) => (
+                  <img
+                    key={index}
+                    src={item.imgSrc}
+                    className={`w-full lg:w-auto lg:h-[344px] absolute top-0 left-0 transition-opacity duration-500 ease-linear ${
+                      index === selectedIndex
+                        ? "opacity-100 z-10"
+                        : "opacity-0 z-0"
+                    }`}
+                    alt={item.title}
+                  />
+                ))}
+              </div>
 
-            <span className="group z-20 absolute w-full h-full grid place-items-center left-0 top-0 m-auto hover:bg-black/35 transition-colors duration-150 ease-in-out cursor-pointer">
-              <span className="text-secondary hover:text-primary p-4">
-                <FullscreenIcon className="group-hover:opacity-100 opacity-0 h-6 transition-all duration-150 ease-in-out group-hover:scale-125" />
+              <span className="group z-20 absolute w-full h-full grid place-items-center left-0 top-0 m-auto hover:bg-black/35 transition-colors duration-150 ease-in-out cursor-pointer">
+                <span className="text-secondary hover:text-primary p-4">
+                  <FullscreenIcon className="group-hover:opacity-100 opacity-0 h-6 transition-all duration-150 ease-in-out group-hover:scale-125" />
+                </span>
               </span>
-            </span>
+            </div>
           </div>
+        </div>
+
+        {/* Indicator dots for mobile */}
+        <div className="flex justify-center gap-2 mt-6 lg:hidden">
+          {items.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => handleThumbClick(index)}
+              className={`w-2 h-2 rounded-full transition-colors ${
+                index === selectedIndex ? "bg-brand" : "bg-secondary/30"
+              }`}
+              aria-label={`Select item ${index + 1}`}
+            />
+          ))}
         </div>
       </div>
     </div>

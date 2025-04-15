@@ -39,18 +39,18 @@ const Faq = () => {
   ];
 
   return (
-    <div className="bg-middleground w-full min-h-screen flex justify-center items-start py-28 rounded-b-[30px]">
-      <div className="w-[1080px] text-center">
+    <div className="bg-middleground w-full min-h-screen flex justify-center items-start py-28 rounded-b-[30px] sm:px-12">
+      <div className="w-[1080px] text-center px-4 flex flex-col items-center">
         <SubHeader title="Frequently asked questions" />
 
-        <div className="select-none w-full items-center flex flex-col gap-4">
+        <div className="max-w-[760px] select-none w-full items-center flex flex-col gap-4">
           {questions.map((item: any, index: any) => (
             <div
               key={index}
               onClick={() =>
                 selectedQ === index ? setSelectedQ(null) : setSelectedQ(index)
               }
-              className="group w-[760px] rounded-2xl bg-background hover:bg-foreground cursor-pointer px-6"
+              className="group w-full rounded-2xl bg-background hover:bg-foreground cursor-pointer px-6"
             >
               <div className="flex justify-between items-center w-full h-16">
                 <span className="text-primary text-base font-bold">

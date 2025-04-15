@@ -21,24 +21,24 @@ export default function Benefits() {
   ];
 
   return (
-    <div className="bg-middleground w-full flex justify-center items-start py-28">
-      <div className="w-[1080px] text-center">
+    <div className="bg-middleground w-full flex justify-center items-start py-16 md:py-28 px-4">
+      <div className="w-full max-w-[1080px] text-center">
         <SubHeader title="ProseBird is here to save you" />
 
-        <div className="grid grid-cols-1 md:grid-cols-[repeat(auto-fill,minmax(330px,1fr))] gap-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 justify-items-center">
           {items.map((item: any, index: any) => {
             return (
               <div
                 key={index}
-                className="w-[330px] flex flex-col gap-4 items-center justify-start"
+                className="w-full max-w-[330px] flex flex-col gap-4 items-center justify-start"
               >
                 {item.icon}
 
-                <span className="text-2xl font-bold text-primary">
+                <span className="text-xl md:text-2xl font-bold text-primary">
                   {item.title}
                 </span>
 
-                <p className="text-[15px] leading-[22px] font-semibold text-secondary">
+                <p className="text-sm md:text-[15px] leading-[22px] font-semibold text-secondary">
                   {item.desc}
                 </p>
               </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import StandaloneLogo from "@/app/_assets/StandaloneLogo";
 import { PrimaryLogo } from "@/app/_assets/logos";
 import { useEffect, useState } from "react";
 
@@ -36,19 +37,23 @@ export default function Navbar({ scrollContainerRef }: any) {
   return (
     <div className="z-30 sticky top-0 h-24 w-full flex justify-center items-center">
       <div
-        className={`transition-all duration-300 ease-in-out w-[1080px] h-16 flex items-center justify-between px-7 rounded-[20px] border-[1px] ${
+        className={`w-[95%] max-w-[1080px] transition-all duration-300 ease-in-out h-16 flex items-center justify-between px-7 rounded-[20px] border-[1px] ${
           scrolled
             ? "backdrop-blur-lg bg-middleground/50 border-stroke"
             : "border-transparent"
         }`}
       >
-        <div className="flex items-center gap-3">
-          <PrimaryLogo className="h-5" />
+        <div className="max-[820px]:hidden flex items-center gap-3">
+          <PrimaryLogo className="h-6" />
 
           <div className="rounded-full px-2.5 py-1 ring-1 ring-brand/35 bg-gradient-to-r from-brand/20 to-blue-700/20 font-bold text-[11px] text-brand cursor-default">
             Early access
           </div>
         </div>
+
+        <span className="min-[820px]:hidden ">
+          <StandaloneLogo className="h-6" />
+        </span>
 
         <div className="flex items-center gap-10">
           <span className="text-inactive font-bold text-sm cursor-pointer hover:text-primary px-1">

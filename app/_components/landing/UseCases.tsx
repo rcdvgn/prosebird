@@ -27,14 +27,21 @@ export default function UseCases() {
   ];
 
   return (
-    <div className="bg-middleground w-full flex justify-center items-start py-28">
-      <div className="w-[1080px] text-center">
+    <div className="bg-middleground w-full flex justify-center items-start py-28 min-[730px]:px-12">
+      <div className="w-full max-w-[1080px] text-center px-4">
         <SubHeader title="For moments of all sizes, we've got you covered" />
 
-        <div className="grid grid-cols-1 md:grid-cols-[repeat(auto-fill,346px)] justify-center gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 justify-center gap-4 sm:gap-6">
           {items.map((item: any, index: any) => {
             return (
-              <div key={index} className="group relative">
+              <div
+                key={index}
+                className={`group relative ${
+                  index === 2 && items.length === 3
+                    ? "sm:col-span-2 lg:col-span-1"
+                    : ""
+                }`}
+              >
                 <div className="transition-opacity duration-300 ease-in-out group-hover:opacity-100 opacity-0 relative h-40 overflow-hidden from-50% bg-gradient-to-tl from-[#092481]/25 to-brand/25 rounded-2xl border-[1px] border-brand/10">
                   <item.icon
                     gradient={true}

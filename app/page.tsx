@@ -21,7 +21,7 @@ export default function LandingPage() {
   return (
     <div
       ref={scrollContainerRef}
-      className="relative overflow-y-auto w-screen h-screen bg-middleground flex items-start justify-center landing-page"
+      className="relative overflow-y-auto w-screen h-screen bg-middleground flex items-start justify-center overflow-x-hidden"
     >
       <Background />
       <div className="relative w-full">

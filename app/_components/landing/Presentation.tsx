@@ -14,18 +14,18 @@ import EmblaCarouselWithThumbnails from "./EmblaCarouselWithThumbnails";
 
 const Presentation = () => {
   return (
-    <div className="bg-middleground w-full min-h-screen flex justify-center items-start">
-      <div className="w-[1080px] -translate-y-32">
+    <div className="bg-middleground w-full min-h-screen flex justify-center items-start sm:px-12">
+      <div className="w-full max-w-[1080px] -translate-y-16 md:-translate-y-32 px-4">
         <EmblaCarouselWithThumbnails />
 
         <Header
           section="presentation"
           title1="Not your traditional "
           title2="teleprompter"
-          subtitle="Go beyond static text scrolling. ProseBird adapts to you. It’s teleprompting, reinvented for collaboration."
+          subtitle="Go beyond static text scrolling. ProseBird adapts to you. It's teleprompting, reinvented for collaboration."
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-[repeat(auto-fill,minmax(330px,1fr))] gap-11">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-11 justify-items-center">
           <Feature
             icon={<VoiceScrollIcon className="h-4 text-brand" />}
             name="Voice Scroll"
@@ -87,7 +87,7 @@ const Presentation = () => {
 
 const Feature = ({ icon, name, description }: any) => {
   return (
-    <div className="w-[330px] flex flex-col items-center">
+    <div className="w-full max-w-[330px] flex flex-col items-center">
       <div className="flex flex-col items-center gap-3 my-2.5">
         {icon}
 
