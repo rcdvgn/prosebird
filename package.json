@@ -35,6 +35,7 @@
     "lodash": "^4.17.21",
     "next": "14.2.13",
     "overlayscrollbars-react": "^0.5.6",
+    "posthog-js": "^1.236.0",
     "pusher": "^5.2.0",
     "pusher-js": "^8.4.0-rc2",
     "re-resizable": "^6.11.2",

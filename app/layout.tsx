@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Public_Sans } from "next/font/google";
 import "./globals.css";
+import { PostHogProvider } from "./_contexts/PosthogContext";
 
 const publicSans = Public_Sans({ subsets: ["latin"] });
 
@@ -18,7 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`bg-background ${publicSans.className}`}>
-        {children}
+        <PostHogProvider> {children}</PostHogProvider>
       </body>
     </html>
   );
