@@ -6,7 +6,7 @@ import {
 } from "@/app/_assets/landingIcons";
 import isEmail from "validator/lib/isEmail";
 import { useState, useEffect } from "react";
-import { usePostHog } from "posthog-js/react";
+import posthog from "posthog-js";
 
 // Define a type for the reCAPTCHA window object
 declare global {
@@ -17,8 +17,6 @@ declare global {
 }
 
 export default function Cta({ success, setSuccess, loading, setLoading }: any) {
-  const posthog = usePostHog();
-
   const [isFocused, setIsFocused] = useState<any>(false);
   const [email, setEmail] = useState<any>("");
   const [error, setError] = useState<any>("");
