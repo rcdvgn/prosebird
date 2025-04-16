@@ -10,7 +10,7 @@ const Faq = () => {
   const questions = [
     {
       q: "What is ProseBird?",
-      a: "ProseBird is an interactive teleprompter designed for solo and collaborative online presentations. It enables users to write, edit, and present scripts with real-time collaboration, voice control, and multi-device syncing. Whether for academic presentations, sales pitches, or professional lectures, ProseBird aims to simplify preparation and elevate the delivery of presentations under high-stakes conditions.",
+      a: "ProseBird is an interactive teleprompter designed for solo and collaborative online presentations.",
     },
     {
       q: "When will it be available?",
@@ -22,7 +22,7 @@ const Faq = () => {
     },
     {
       q: "How does the voice control work?",
-      a: "When voice scrolling is activated, ProseBird automatically matches your speech to the script, advancing your presentation and syncing your progress across all connected devices as you speak.",
+      a: "When voice scrolling is activated, ProseBird automatically matches your speech to the script, advancing your presentation and syncing your progress across all connected devices in real time.",
     },
     {
       q: "Can I use it for in-person presentations?",
@@ -36,7 +36,7 @@ const Faq = () => {
   ];
 
   return (
-    <div className="bg-middleground w-full min-h-screen flex justify-center items-start py-28 rounded-b-[30px] sm:px-12">
+    <div className="bg-middleground w-full min-h-screen flex justify-center items-start py-40 rounded-b-[30px] sm:px-12">
       <div className="w-[1080px] text-center px-4 flex flex-col items-center">
         <SubHeader title="Frequently asked questions" />
 

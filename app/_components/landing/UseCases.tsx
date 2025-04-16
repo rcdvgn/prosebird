@@ -27,7 +27,7 @@ export default function UseCases() {
   ];
 
   return (
-    <div className="bg-middleground w-full flex justify-center items-start py-28 min-[730px]:px-12">
+    <div className="bg-middleground w-full flex justify-center items-start py-40 min-[730px]:px-12">
       <div className="w-full max-w-[1080px] text-center px-4">
         <SubHeader title="For moments of all sizes, we've got you covered" />
 

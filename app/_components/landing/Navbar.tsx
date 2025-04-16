@@ -12,7 +12,6 @@ export default function Navbar({ scrollContainerRef }: any) {
 
     if (!scrollContainer) return;
 
-    // Function to check scroll position
     const handleScroll = () => {
       const scrollPosition = scrollContainer.scrollTop;
       if (scrollPosition > 20) {
@@ -22,20 +21,17 @@ export default function Navbar({ scrollContainerRef }: any) {
       }
     };
 
-    // Add event listener to the specific scrollable element
     scrollContainer.addEventListener("scroll", handleScroll);
 
-    // Initial check
     handleScroll();
 
-    // Clean up
     return () => {
       scrollContainer.removeEventListener("scroll", handleScroll);
     };
   }, [scrollContainerRef]);
 
   return (
-    <div className="z-30 sticky top-0 h-24 w-full flex justify-center items-center">
+    <div className="z-30 fixed top-0 h-24 w-full flex justify-center items-center">
       <div
         className={`w-[95%] max-w-[1080px] transition-all duration-300 ease-in-out h-16 flex items-center justify-between px-7 rounded-[20px] border-[1px] ${
           scrolled

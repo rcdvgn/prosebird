@@ -44,20 +44,18 @@ export default function EmblaCarouselWithThumbnails() {
     };
   }, [emblaMainApi, onSelect]);
 
-  // Autoplay functionality
   useEffect(() => {
     if (!emblaMainApi) return;
 
-    // This interval will be cleared and recreated whenever selectedIndex changes
     const autoplayInterval = setInterval(() => {
       emblaMainApi.scrollNext();
-    }, 6000); // Change slide every 6 seconds
+    }, 6000);
 
     return () => clearInterval(autoplayInterval);
-  }, [emblaMainApi, selectedIndex]); // Add selectedIndex to dependencies
+  }, [emblaMainApi, selectedIndex]);
 
   return (
-    <div className="max-w-full mx-auto mb-64">
+    <div className="max-w-full mx-auto">
       {/* Main carousel */}
       <div className="overflow-hidden" ref={emblaMainRef}>
         <div className="flex">

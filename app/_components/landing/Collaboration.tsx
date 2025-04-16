@@ -3,7 +3,7 @@ import { Header } from "./Header";
 
 const Collaboration = () => {
   return (
-    <div className="bg-middleground w-full min-h-screen flex justify-center items-start py-28 md:px-12">
+    <div className="bg-middleground w-full min-h-screen flex justify-center items-start py-40 md:px-12">
       <div className="w-full max-w-[1080px] px-4">
         <Header
           section="collaboration"

@@ -40,7 +40,7 @@ export default function Hero({
 
   return (
     <div
-      className={`w-full h-screen flex justify-center items-start -mt-16 py-28`}
+      className={`w-full h-screen flex justify-center items-start py-32`}
       style={{
         backgroundImage: `linear-gradient(to top, rgba(var(--middleground), ${
           gradientPosition / 100
@@ -49,28 +49,19 @@ export default function Hero({
     >
       <div className="w-[1080px]">
         <div className="flex justify-center">
-          <div className="w-[620px]">
-            <div className="font-extrabold text-7xl leading-[80px] my-6 text-center">
-              <div className="relative">
-                <span className="absolute text-primary opacity-[0.05] select-none -translate-x-7">
-                  [
-                </span>
-                <span className="text-primary">Take doubt out</span>
-              </div>
-
-              <div className="relative">
-                <span className="text-brand">of your words</span>
-                <span className="absolute text-primary opacity-[0.05] select-none">
-                  ]
-                </span>
-              </div>
+          <div className="w-[630px]">
+            <div className="font-extrabold text-[76px] leading-[85px] my-6 text-center">
+              <span className="text-primary">Meet </span>
+              <span className="text-brand">stress-free </span>
+              <span className="text-primary">presentations</span>
             </div>
 
             <div className="my-1 text-center mb-12">
               <span className="font-semibold text-base leading-6 text-secondary">
-                ProseBird is your all-in-one teleprompter for flawless virtual
-                presentations that helps you deliver confidently every time you
-                step on the virtual stage.
+                Stop worrying about memorization, cadence or pacing. ProseBird
+                takes these variables out of your presentations so you can
+                deliver confidently with minimal rehearsal and hit your marks.
+                Everytime.
               </span>
             </div>
 

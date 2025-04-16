@@ -41,18 +41,16 @@ export default function Editor() {
     setSelectedIndex(index);
   };
 
-  // Autoplay functionality
   useEffect(() => {
-    // Clear any existing interval first (this is important when selectedIndex changes)
     const autoplayInterval = setInterval(() => {
       setSelectedIndex((prevIndex) => (prevIndex + 1) % items.length);
-    }, 6000); // Change slide every 6 seconds
+    }, 6000);
 
     return () => clearInterval(autoplayInterval);
   }, [selectedIndex, items.length]);
 
   return (
-    <div className="bg-middleground w-full min-h-screen flex justify-center items-start py-16 md:py-28 sm:px-12">
+    <div className="bg-middleground w-full min-h-screen flex justify-center items-start py-40 sm:px-12">
       <div className="w-full max-w-[1080px] px-4">
         <Header
           section="script editor"

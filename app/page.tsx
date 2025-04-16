@@ -11,6 +11,9 @@ import Navbar from "@/app/_components/landing/Navbar";
 import Presentation from "@/app/_components/landing/Presentation";
 import UseCases from "@/app/_components/landing/UseCases";
 import React, { useRef, useState } from "react";
+import Features from "@/app/_components/landing/Features";
+import Purpose from "./_components/landing/Purpose";
+import Reasoning from "./_components/landing/Reasoning";
 
 export default function LandingPage() {
   const scrollContainerRef = useRef<any>(null);
@@ -35,6 +38,9 @@ export default function LandingPage() {
           setLoading={setLoading}
         />
         <Presentation />
+        <Purpose />
+        <Reasoning scrollContainerRef={scrollContainerRef} />
+        <Features />
         <Benefits />
         <Editor />
         <UseCases />

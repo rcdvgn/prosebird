@@ -21,7 +21,7 @@ export default function Benefits() {
   ];
 
   return (
-    <div className="bg-middleground w-full flex justify-center items-start py-16 md:py-28 px-4">
+    <div className="bg-middleground w-full flex justify-center items-start py-40 px-4">
       <div className="w-full max-w-[1080px] text-center">
         <SubHeader title="ProseBird is here to save you" />
 
