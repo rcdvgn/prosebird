@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
+import InViewAnimation from "./InViewAnimation";
 // import Image from "next/image";
 
 export default function EmblaCarouselWithThumbnails() {
@@ -55,7 +56,7 @@ export default function EmblaCarouselWithThumbnails() {
   }, [emblaMainApi, selectedIndex]);
 
   return (
-    <div className="max-w-full mx-auto">
+    <InViewAnimation className="max-w-full mx-auto">
       {/* Main carousel */}
       <div className="overflow-hidden" ref={emblaMainRef}>
         <div className="flex">
@@ -103,6 +104,6 @@ export default function EmblaCarouselWithThumbnails() {
           ))}
         </div>
       </div>
-    </div>
+    </InViewAnimation>
   );
 }

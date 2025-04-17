@@ -1,5 +1,6 @@
 import { EnergyIcon, StressIcon, TimeIcon } from "@/app/_assets/landingIcons";
 import { SubHeader } from "./Header";
+import InViewAnimation from "./InViewAnimation";
 
 export default function Benefits() {
   const items = [
@@ -22,7 +23,7 @@ export default function Benefits() {
 
   return (
     <div className="bg-middleground w-full flex justify-center items-start py-40 px-4">
-      <div className="w-full max-w-[1080px] text-center">
+      <InViewAnimation className="w-full max-w-[1080px] text-center">
         <SubHeader title="ProseBird is here to save you" />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 justify-items-center">
@@ -45,7 +46,7 @@ export default function Benefits() {
             );
           })}
         </div>
-      </div>
+      </InViewAnimation>
     </div>
   );
 }

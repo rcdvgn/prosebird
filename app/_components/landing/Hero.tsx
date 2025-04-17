@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Cta from "./Cta";
+import InViewAnimation from "./InViewAnimation";
 
 export default function Hero({
   scrollContainerRef,
@@ -47,7 +48,12 @@ export default function Hero({
         }) ${gradientPosition}%, rgba(var(--middleground), 0) 100%)`,
       }}
     >
-      <div className="w-[1080px]">
+      <InViewAnimation
+        duration={1}
+        scale={false}
+        y={false}
+        className="w-[1080px]"
+      >
         <div className="flex justify-center">
           <div className="w-[630px]">
             <div className="font-extrabold text-[76px] leading-[85px] my-6 text-center">
@@ -73,7 +79,7 @@ export default function Hero({
             />
           </div>
         </div>
-      </div>
+      </InViewAnimation>
     </div>
   );
 }

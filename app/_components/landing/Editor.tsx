@@ -8,7 +8,7 @@ import {
   StructuredIcon,
 } from "@/app/_assets/landingIcons";
 import { Header } from "./Header";
-// import Image from "next/image";
+import InViewAnimation from "./InViewAnimation";
 
 export default function Editor() {
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -51,7 +51,7 @@ export default function Editor() {
 
   return (
     <div className="bg-middleground w-full min-h-screen flex justify-center items-start py-40 sm:px-12">
-      <div className="w-full max-w-[1080px] px-4">
+      <InViewAnimation className="w-full max-w-[1080px] px-4">
         <Header
           section="script editor"
           title1="No more to copy/paste"
@@ -137,7 +137,7 @@ export default function Editor() {
             />
           ))}
         </div>
-      </div>
+      </InViewAnimation>
     </div>
   );
 }

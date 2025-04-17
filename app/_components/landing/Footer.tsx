@@ -1,6 +1,7 @@
 import React from "react";
 import Cta from "./Cta";
 import { PrimaryLogo } from "@/app/_assets/logos";
+import InViewAnimation from "./InViewAnimation";
 
 export default function Footer({
   success,

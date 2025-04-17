@@ -2,6 +2,7 @@
 import { motion, useTransform, useMotionValue } from "framer-motion";
 import React, { useState, useRef, useEffect } from "react";
 import { Palette, FastForward, Eye, Rabbit, Lightbulb } from "lucide-react";
+import InViewAnimation from "./InViewAnimation";
 
 export default function Reasoning({ scrollContainerRef }: any) {
   const [progress, setProgress] = useState<number>(0);
@@ -10,7 +11,6 @@ export default function Reasoning({ scrollContainerRef }: any) {
   // Create a motion value from the progress state
   const scrollProgress = useMotionValue(0);
 
-  // Update the motion value whenever progress changes
   useEffect(() => {
     scrollProgress.set(progress);
   }, [progress]);
@@ -38,10 +38,8 @@ export default function Reasoning({ scrollContainerRef }: any) {
       icon: <Lightbulb size={25} strokeWidth={2.5} />,
       color: "!text-yellow-500",
     },
-    // Add more word-icon pairs as needed
   };
 
-  // Create a single array of all words from all paragraphs
   const allWords = ps.join(" ").split(" ");
 
   useEffect(() => {
@@ -89,7 +87,7 @@ export default function Reasoning({ scrollContainerRef }: any) {
       className="relative bg-middleground w-full h-[500vh] flex justify-center items-start sm:px-12"
     >
       <div className="sticky top-0 w-full max-w-[1080px] px-4 h-screen grid place-items-center">
-        <div className="text-left">
+        <InViewAnimation className="text-left">
           {ps.map((p, pIndex) => {
             // Process for multi-word special phrases
             let processedParagraph = p;
@@ -209,7 +207,7 @@ export default function Reasoning({ scrollContainerRef }: any) {
               </p>
             );
           })}
-        </div>
+        </InViewAnimation>
       </div>
     </div>
   );

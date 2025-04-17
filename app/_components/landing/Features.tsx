@@ -10,11 +10,12 @@ import {
   VoiceScrollIcon,
 } from "@/app/_assets/landingIcons";
 import { Header } from "./Header";
+import InViewAnimation from "./InViewAnimation";
 
 const Features = () => {
   return (
     <div className="bg-middleground w-full min-h-screen flex justify-center items-start py-40 sm:px-12">
-      <div className="w-full max-w-[1080px] px-4">
+      <InViewAnimation className="w-full max-w-[1080px] px-4">
         <Header
           section="presentation"
           title1="Not your traditional "
@@ -77,7 +78,7 @@ const Features = () => {
             description="Effortlessly locate any part of your script. Quickly search for keywords or phrases and skip scrolling."
           />
         </div>
-      </div>
+      </InViewAnimation>
     </div>
   );
 };

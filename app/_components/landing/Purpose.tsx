@@ -1,10 +1,10 @@
-import React from "react";
 import { SubHeader } from "./Header";
+import InViewAnimation from "./InViewAnimation";
 
 export default function Purpose() {
   return (
     <div className="bg-middleground w-full min-h-screen flex justify-center items-start py-20 md:py-40 px-4 sm:px-6 md:px-12">
-      <div className="w-full max-w-6xl text-center flex flex-col items-center">
+      <InViewAnimation className="w-full max-w-6xl text-center flex flex-col items-center">
         <SubHeader title="ProseBird was built on 2 core beliefs" />
 
         <div className="flex flex-col md:flex-row items-stretch justify-between w-full gap-6 mt-8">
@@ -19,7 +19,7 @@ export default function Purpose() {
             index="2"
           />
         </div>
-      </div>
+      </InViewAnimation>
     </div>
   );
 }

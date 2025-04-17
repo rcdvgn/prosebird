@@ -3,6 +3,7 @@
 import { PlusIcon } from "@/app/_assets/landingIcons";
 import { SubHeader } from "./Header";
 import { useState } from "react";
+import InViewAnimation from "./InViewAnimation";
 
 const Faq = () => {
   const [selectedQ, setSelectedQ] = useState<any>(null);
@@ -37,7 +38,7 @@ const Faq = () => {
 
   return (
     <div className="bg-middleground w-full min-h-screen flex justify-center items-start py-40 rounded-b-[30px] sm:px-12">
-      <div className="w-[1080px] text-center px-4 flex flex-col items-center">
+      <InViewAnimation className="w-[1080px] text-center px-4 flex flex-col items-center">
         <SubHeader title="Frequently asked questions" />
 
         <div className="max-w-[760px] select-none w-full items-center flex flex-col gap-4">
@@ -75,7 +76,7 @@ const Faq = () => {
             </div>
           ))}
         </div>
-      </div>
+      </InViewAnimation>
     </div>
   );
 };
