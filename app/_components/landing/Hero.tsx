@@ -41,7 +41,7 @@ export default function Hero({
 
   return (
     <div
-      className={`w-full h-screen flex justify-center items-start py-32`}
+      className={`w-full sm:h-screen min-h-screen flex justify-center items-start py-32`}
       style={{
         backgroundImage: `linear-gradient(to top, rgba(var(--middleground), ${
           gradientPosition / 100
@@ -52,23 +52,23 @@ export default function Hero({
         duration={1}
         scale={false}
         y={false}
-        className="w-[1080px]"
+        className="w-full max-w-[1080px] px-4 lg:px-0"
       >
         <div className="flex justify-center">
-          <div className="w-[630px]">
-            <div className="font-extrabold text-[76px] leading-[85px] my-6 text-center">
+          <div className="w-full max-w-[630px] flex flex-col items-center">
+            <p className="font-extrabold text-[42px] min-[550px]:text-5xl sm:text-6xl lg:text-[76px] leading-tight lg:leading-[85px] my-4 sm:my-5 md:my-6 text-center">
               <span className="text-primary">Meet </span>
-              <span className="text-brand">stress-free </span>
-              <span className="text-primary">presentations</span>
-            </div>
+              <span className="text-brand text-nowrap">stress-free</span>
+              <span className="text-primary"> presentations</span>
+            </p>
 
-            <div className="my-1 text-center mb-12">
-              <span className="font-semibold text-base leading-6 text-secondary">
+            <div className="my-1 text-center mb-4 w-[80%] sm:w-[90%]">
+              <p className="font-semibold text-[13px] leading-5 sm:leading-6 min-[550px]:text-sm sm:text-[15px] md:text-base text-secondary">
                 Stop worrying about memorization, cadence or pacing. ProseBird
                 takes these variables out of your presentations so you can
                 deliver confidently with minimal rehearsal and hit your marks.
                 Everytime.
-              </span>
+              </p>
             </div>
 
             <Cta

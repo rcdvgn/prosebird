@@ -137,8 +137,10 @@ export default function Cta({ success, setSuccess, loading, setLoading }: any) {
   const onFocus = () => setIsFocused(true);
   const onBlur = () => setIsFocused(false);
 
+  // In the Cta component, replace the return statement with this:
+
   return (
-    <div className="mx-auto h-[122px] w-[450px] my-8">
+    <div className="mx-auto h-[122px] w-full min-[600px]:w-[450px] my-8">
       <form
         onSubmit={submitForm}
         className="relative flex flex-col items-center justify-center w-full"
@@ -149,7 +151,7 @@ export default function Cta({ success, setSuccess, loading, setLoading }: any) {
               className={`transition-all duration-300 ease-in-out flex items-center h-[50px] rounded-[14px] bg-background/50 border-[1px] focus-within:bg-background/100 focus-within:border-border border-stroke pr-2 ${
                 isFocused || email.length
                   ? "w-full bg-background/100"
-                  : "w-[350px]"
+                  : "w-full min-[600px]:w-[350px]"
               }`}
             >
               <span className="w-[50px] h-full grid place-items-center">
@@ -160,14 +162,14 @@ export default function Cta({ success, setSuccess, loading, setLoading }: any) {
                 onFocus={onFocus}
                 onBlur={onBlur}
                 type="text"
-                className="grow h-full placeholder:text-placeholder bg-transparent border-none outline-none pr-2 text-primary font-semibold text-[15px]"
+                className="min-w-0 grow h-full placeholder:text-placeholder bg-transparent border-none outline-none pr-2 text-primary font-semibold text-[15px] max-[600px]:text-sm"
                 placeholder="Your email"
                 onChange={(e: any) => setEmail(e.target.value)}
               />
               <button
                 disabled={loading ? true : false}
                 type="submit"
-                className="rounded-[10px] bg-brand w-[65px] h-[34px] text-primary font-bold text-[13px] shrink-0"
+                className="hidden min-[380px]:inline-block rounded-[10px] bg-brand w-[65px] h-[34px] text-primary font-bold text-[13px] shrink-0"
               >
                 {loading ? (
                   <span className="w-full h-full flex items-center justify-center">
@@ -178,6 +180,20 @@ export default function Cta({ success, setSuccess, loading, setLoading }: any) {
                 )}
               </button>
             </div>
+
+            <button
+              disabled={loading ? true : false}
+              type="submit"
+              className="my-2 hidden max-[380px]:inline-block rounded-[10px] bg-brand w-full h-12 text-primary font-bold text-[13px] shrink-0"
+            >
+              {loading ? (
+                <span className="w-full h-full flex items-center justify-center">
+                  <CircleSpinnerIcon className="text-primary animate-spin h-4" />
+                </span>
+              ) : (
+                <span>Apply</span>
+              )}
+            </button>
             <p
               className={`my-4 leading-5 font-medium text-[13px] text-secondary text-center px-2 ${
                 isFocused || email.length ? "opacity-100" : "opacity-0"

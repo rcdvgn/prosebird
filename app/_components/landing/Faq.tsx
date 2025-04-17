@@ -51,7 +51,7 @@ const Faq = () => {
               className="group w-full rounded-2xl bg-background hover:bg-foreground cursor-pointer px-6"
             >
               <div className="flex justify-between items-center w-full h-16">
-                <span className="text-primary text-base font-bold">
+                <span className="text-primary text-base font-bold text-left">
                   {item.q}
                 </span>
                 <span className="p-2">
