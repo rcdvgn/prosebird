@@ -16,26 +16,29 @@ declare global {
   }
 }
 
-export default function Cta({ success, setSuccess, loading, setLoading }: any) {
+export default function Cta({
+  success,
+  setSuccess,
+  loading,
+  setLoading,
+  source,
+  details,
+}: any) {
   const [isFocused, setIsFocused] = useState<any>(false);
   const [email, setEmail] = useState<any>("");
   const [error, setError] = useState<any>("");
   const [recaptchaLoaded, setRecaptchaLoaded] = useState(false);
 
-  // Load reCAPTCHA script
   useEffect(() => {
-    // Only load the script once
     if (document.querySelector('script[src*="recaptcha"]')) {
       setRecaptchaLoaded(true);
       return;
     }
 
-    // Set up callback for when reCAPTCHA loads
     window.onRecaptchaLoad = () => {
       setRecaptchaLoaded(true);
     };
 
-    // Add reCAPTCHA script
     const script = document.createElement("script");
     script.src = `https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}&onload=onRecaptchaLoad`;
     script.async = true;
@@ -43,7 +46,6 @@ export default function Cta({ success, setSuccess, loading, setLoading }: any) {
     document.head.appendChild(script);
 
     return () => {
-      // Clean up if component unmounts
       window.onRecaptchaLoad = () => {};
     };
   }, []);
@@ -91,7 +93,9 @@ export default function Cta({ success, setSuccess, loading, setLoading }: any) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: trimmedEmail,
-          recaptchaToken, // Send token for verification on server
+          recaptchaToken,
+          source,
+          details,
         }),
       });
 
@@ -117,7 +121,10 @@ export default function Cta({ success, setSuccess, loading, setLoading }: any) {
       if (response.status === 201) {
         setSuccess("You have successfully applied. Thank you!");
 
-        posthog.capture("user_applied");
+        posthog.capture("user_applied", {
+          source,
+          details,
+        });
 
         setError("");
       } else if (data.isNewEmail === false) {
@@ -127,7 +134,7 @@ export default function Cta({ success, setSuccess, loading, setLoading }: any) {
         setError("Failed to process your request. Please try again later.");
       }
     } catch (error) {
-      console.error("Error submitting waitlist email:", error);
+      console.error("Error submitting application:", error);
       setError("An unexpected error occurred. Please try again.");
     }
 

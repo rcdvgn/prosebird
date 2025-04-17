@@ -37,7 +37,7 @@ async function verifyRecaptcha(token: string) {
 
 export async function POST(request: Request) {
   try {
-    const { email, recaptchaToken } = await request.json();
+    const { email, recaptchaToken, source, details } = await request.json();
 
     if (!isEmail(email)) {
       return NextResponse.json(
@@ -62,12 +62,12 @@ export async function POST(request: Request) {
       );
     }
 
-    const waitlistRef = db.collection("waitlist");
-    const emailQuery = await waitlistRef.where("email", "==", email).get();
+    const applicationsRef = db.collection("applications");
+    const emailQuery = await applicationsRef.where("email", "==", email).get();
     const isNewEmail = emailQuery.empty;
 
     if (isNewEmail) {
-      const docRef = await waitlistRef.add({ email });
+      const docRef = await applicationsRef.add({ email, source, details });
       return NextResponse.json(
         {
           id: docRef.id,
@@ -78,13 +78,13 @@ export async function POST(request: Request) {
     } else {
       return NextResponse.json({
         isNewEmail: false,
-        message: "Email already on waitlist",
+        message: "Email already applied to early access",
       });
     }
   } catch (error) {
-    console.error("Error processing waitlist request:", error);
+    console.error("Error processing early access application:", error);
     return NextResponse.json(
-      { error: "Failed to process waitlist request" },
+      { error: "Failed to process early access application" },
       { status: 500 }
     );
   }

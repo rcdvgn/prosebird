@@ -8,6 +8,8 @@ export default function Footer({
   setSuccess,
   loading,
   setLoading,
+  source,
+  details,
 }: any) {
   return (
     <div className="w-full h-screen flex justify-center items-stretch py-10">
@@ -29,6 +31,8 @@ export default function Footer({
             setSuccess={setSuccess}
             loading={loading}
             setLoading={setLoading}
+            source={source}
+            details={details}
           />
         </div>
 

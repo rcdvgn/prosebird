@@ -10,6 +10,8 @@ export default function Hero({
   setSuccess,
   loading,
   setLoading,
+  source,
+  details,
 }: any) {
   const [gradientPosition, setGradientPosition] = useState(0);
 
@@ -76,6 +78,8 @@ export default function Hero({
               setSuccess={setSuccess}
               loading={loading}
               setLoading={setLoading}
+              source={source}
+              details={details}
             />
           </div>
         </div>
