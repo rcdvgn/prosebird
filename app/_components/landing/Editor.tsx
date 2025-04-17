@@ -10,7 +10,7 @@ import {
 import { Header } from "./Header";
 import InViewAnimation from "./InViewAnimation";
 
-export default function Editor() {
+export default function Editor({ editorRef }: any) {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const items = [
@@ -50,7 +50,10 @@ export default function Editor() {
   }, [selectedIndex, items.length]);
 
   return (
-    <div className="bg-middleground w-full min-h-screen flex justify-center items-start py-40 sm:px-12">
+    <div
+      ref={editorRef}
+      className="bg-middleground w-full min-h-screen flex justify-center items-start py-40 sm:px-12"
+    >
       <InViewAnimation className="w-full max-w-[1080px] px-4">
         <Header
           section="script editor"

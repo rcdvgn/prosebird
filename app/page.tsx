@@ -21,6 +21,28 @@ export default function LandingPage() {
   const [success, setSuccess] = useState<any>("");
   const [loading, setLoading] = useState<any>(false);
 
+  const featuresRef = useRef(null);
+  const editorRef = useRef(null);
+  const collaborationRef = useRef(null);
+  const faqRef = useRef(null);
+
+  const scrollToSection = (elementRef: any) => {
+    if (elementRef.current && scrollContainerRef.current) {
+      const containerRect = scrollContainerRef.current.getBoundingClientRect();
+      const elementRect = elementRef.current.getBoundingClientRect();
+
+      const relativeTop =
+        elementRect.top -
+        containerRect.top +
+        scrollContainerRef.current.scrollTop;
+
+      scrollContainerRef.current.scrollTo({
+        top: relativeTop,
+        behavior: "smooth",
+      });
+    }
+  };
+
   return (
     <div
       ref={scrollContainerRef}
@@ -28,7 +50,14 @@ export default function LandingPage() {
     >
       <Background />
       <div className="relative w-full">
-        <Navbar scrollContainerRef={scrollContainerRef} />
+        <Navbar
+          scrollContainerRef={scrollContainerRef}
+          featuresRef={featuresRef}
+          editorRef={editorRef}
+          collaborationRef={collaborationRef}
+          faqRef={faqRef}
+          scrollToSection={scrollToSection}
+        />
 
         <Hero
           scrollContainerRef={scrollContainerRef}
@@ -40,12 +69,12 @@ export default function LandingPage() {
         <Presentation />
         <Purpose />
         <Reasoning scrollContainerRef={scrollContainerRef} />
-        <Features />
+        <Features featuresRef={featuresRef} />
         <Benefits />
-        <Editor />
+        <Editor editorRef={editorRef} />
         <UseCases />
-        <Collaboration />
-        <Faq />
+        <Collaboration collaborationRef={collaborationRef} />
+        <Faq faqRef={faqRef} />
         <Footer
           success={success}
           setSuccess={setSuccess}

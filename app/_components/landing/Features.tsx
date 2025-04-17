@@ -12,9 +12,12 @@ import {
 import { Header } from "./Header";
 import InViewAnimation from "./InViewAnimation";
 
-const Features = () => {
+const Features = ({ featuresRef }: any) => {
   return (
-    <div className="bg-middleground w-full min-h-screen flex justify-center items-start py-40 sm:px-12">
+    <div
+      ref={featuresRef}
+      className="bg-middleground w-full min-h-screen flex justify-center items-start py-40 sm:px-12"
+    >
       <InViewAnimation className="w-full max-w-[1080px] px-4">
         <Header
           section="presentation"

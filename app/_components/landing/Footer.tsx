@@ -11,7 +11,7 @@ export default function Footer({
 }: any) {
   return (
     <div className="w-full h-screen flex justify-center items-stretch py-10">
-      <div className="w-[1080px] h-full flex flex-col items-center justify-between">
+      <div className="w-full max-w-[1080px] px-4 sm:px-6 lg:px-0 h-full flex flex-col items-center justify-between">
         <div className="invisible flex flex-col gap-4 text-center">
           <PrimaryLogo className="h-7" />
           <span className="text-secondary font-semibold text-sm">
@@ -20,7 +20,7 @@ export default function Footer({
         </div>
 
         <div className="flex flex-col items-center">
-          <span className="text-3xl font-bold text-primary mb-4 select-none">
+          <span className="text-2xl sm:text-3xl font-bold text-primary mb-4 select-none text-center px-2">
             What would you like to say today?
           </span>
 

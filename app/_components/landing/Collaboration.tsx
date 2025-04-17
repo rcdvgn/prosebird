@@ -2,9 +2,12 @@ import Image from "next/image";
 import { Header } from "./Header";
 import InViewAnimation from "./InViewAnimation";
 
-const Collaboration = () => {
+const Collaboration = ({ collaborationRef }: any) => {
   return (
-    <div className="bg-middleground w-full min-h-screen flex justify-center items-start py-40 md:px-12">
+    <div
+      ref={collaborationRef}
+      className="bg-middleground w-full min-h-screen flex justify-center items-start py-40 md:px-12"
+    >
       <InViewAnimation className="w-full max-w-[1080px] px-4">
         <Header
           section="collaboration"
@@ -69,7 +72,7 @@ const CollabBlock = ({ title, subtitle, imageUrl, alt }: CollabBlockProps) => {
         </div>
         <div className="hover:opacity-0 transition-opacity duration-200 ease-in-out absolute left-0 top-0 h-full w-full rounded-3xl bg-gradient-to-tl from-middleground from-0% to-transparent to-100%"></div>
       </div>
-      <div className="flex flex-col gap-2.5">
+      <div className="flex flex-col gap-2.5 px-[17px]">
         <span className="font-bold text-xl md:text-[22px] text-primary">
           {title}
         </span>

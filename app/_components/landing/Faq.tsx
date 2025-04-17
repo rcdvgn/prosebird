@@ -5,7 +5,7 @@ import { SubHeader } from "./Header";
 import { useState } from "react";
 import InViewAnimation from "./InViewAnimation";
 
-const Faq = () => {
+const Faq = ({ faqRef }: any) => {
   const [selectedQ, setSelectedQ] = useState<any>(null);
 
   const questions = [
@@ -37,7 +37,10 @@ const Faq = () => {
   ];
 
   return (
-    <div className="bg-middleground w-full min-h-screen flex justify-center items-start py-40 rounded-b-[30px] sm:px-12">
+    <div
+      ref={faqRef}
+      className="bg-middleground w-full min-h-screen flex justify-center items-start py-40 rounded-b-[30px] sm:px-12"
+    >
       <InViewAnimation className="w-[1080px] text-center px-4 flex flex-col items-center">
         <SubHeader title="Frequently asked questions" />
 
