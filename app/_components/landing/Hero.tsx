@@ -57,19 +57,23 @@ export default function Hero({
         className="w-full max-w-[1080px] px-4 lg:px-0"
       >
         <div className="flex justify-center">
-          <div className="w-full max-w-[630px] flex flex-col items-center">
+          <div className="w-full max-w-[680px] flex flex-col items-center">
             <p className="font-extrabold text-[42px] min-[550px]:text-5xl sm:text-6xl lg:text-[76px] leading-tight lg:leading-[85px] my-4 sm:my-5 md:my-6 text-center">
               <span className="text-primary">Meet </span>
-              <span className="text-brand text-nowrap">stress-free</span>
+
+              <span className="text-nowrap">
+                <span className="text-primary/20">[</span>
+                <span className="text-primary/20">stress-free</span>
+                <span className="text-primary/20">]</span>
+              </span>
               <span className="text-primary"> presentations</span>
             </p>
 
             <div className="my-1 text-center mb-4 w-[80%] sm:w-[90%]">
               <p className="font-semibold text-[13px] leading-5 sm:leading-6 min-[550px]:text-sm sm:text-[15px] md:text-base text-secondary">
                 Stop worrying about memorization, cadence or pacing. ProseBird
-                takes these variables out of your presentations so you can
-                deliver confidently with minimal rehearsal and hit your marks.
-                Everytime.
+                takes these variables out of the equation so you can deliver
+                confidently with minimal rehearsal. Everytime.
               </p>
             </div>
 

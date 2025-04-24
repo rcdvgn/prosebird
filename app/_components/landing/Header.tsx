@@ -6,7 +6,7 @@ export const Header = ({ section, title1, title2, subtitle }: any) => {
           <span className="font-extrabold text-sm text-brand block uppercase py-2">
             {section}
           </span>
-          <div className="flex flex-col gap-4 font-bold text-5xl">
+          <div className="flex flex-col gap-4 font-extrabold text-5xl">
             <span className="block text-secondary">{title1}</span>
             <span className="block text-primary">{title2}</span>
           </div>

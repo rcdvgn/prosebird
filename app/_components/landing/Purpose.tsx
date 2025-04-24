@@ -9,12 +9,12 @@ export default function Purpose() {
 
         <div className="flex flex-col md:flex-row items-stretch justify-between w-full gap-6 mt-8">
           <Block
-            headline="Delivery matters as much as the message."
+            headline={`"Delivery matters as much as the message."`}
             subheadline="A brilliant idea can fall flat if it's poorly presented. We believe your words deserve a stage that matches their power."
             index="1"
           />
           <Block
-            headline="Great delivery shouldn't require years of training."
+            headline={`"Great presentations shouldn't require years of training."`}
             subheadline="You shouldn't need to be a TEDx speaker to communicate with confidence. Everyone deserves tools that makes presenting feel natural."
             index="2"
           />

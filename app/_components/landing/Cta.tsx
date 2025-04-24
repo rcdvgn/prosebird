@@ -206,8 +206,8 @@ export default function Cta({
                 isFocused || email.length ? "opacity-100" : "opacity-0"
               }`}
             >
-              By applying, you agree to be notified of product launches and
-              updates by email, which you can unsubscribe from at any time.
+              By applying to early access, you agree to be notified of product
+              launches and updates, which you can unsubscribe from at any time.
             </p>
             {error.length > 0 && (
               <span className="absolute bottom-full left-0 w-full text-center pb-1 text-red-700 font-semibold text-[13px]">

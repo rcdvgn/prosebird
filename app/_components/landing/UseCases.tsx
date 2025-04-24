@@ -13,7 +13,7 @@ export default function UseCases() {
     {
       icon: AcademicIcon,
       title: "Academic Presentations",
-      desc: "Save time from pointless memorization, break your subject into chapters and present it with your friends.",
+      desc: "Save time from pointless memorization, break your topic into chapters and present it with your friends.",
     },
     {
       icon: GraphIcon,

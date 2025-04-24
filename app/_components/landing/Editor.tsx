@@ -12,25 +12,26 @@ import InViewAnimation from "./InViewAnimation";
 
 export default function Editor({ editorRef }: any) {
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [isFullscreenView, setIsFullscreenView] = useState(false);
 
   const items = [
     {
       imgSrc:
-        "https://utfs.io/a/dv6kwxfdfm/X7kJqL6j4LDUaxZ3G8Q4dUP3ZhOuzY5mRekTr8XqMBoDc6nt",
+        "https://utfs.io/a/dv6kwxfdfm/X7kJqL6j4LDUWJvUWn1yF9ZTMU4EzNlHGP8XLsaD50fB1uQC",
       icon: <IntuitiveIcon className="w-5 text-brand" />,
       title: "Intuitive",
       desc: "Its user-friendly interface and smart shortcuts allow you to turn your ideas into words faster than ever before.",
     },
     {
       imgSrc:
-        "https://utfs.io/a/dv6kwxfdfm/X7kJqL6j4LDUaxZ3G8Q4dUP3ZhOuzY5mRekTr8XqMBoDc6nt",
+        "https://utfs.io/a/dv6kwxfdfm/X7kJqL6j4LDUVEIXjuJKIFZg3h5o7VMUGAxPuSlckX8Y6JWr",
       icon: <StructuredIcon className="w-5 text-brand" />,
       title: "Structured",
       desc: "Chapters are to ProseBird what slides are to PowerPoint: Create, edit and arrange them to match the flow and visuals of your presentation.",
     },
     {
       imgSrc:
-        "https://utfs.io/a/dv6kwxfdfm/X7kJqL6j4LDUaxZ3G8Q4dUP3ZhOuzY5mRekTr8XqMBoDc6nt",
+        "https://utfs.io/a/dv6kwxfdfm/X7kJqL6j4LDUnUbKYjLUd1TMAVxLKbqtYj2aBk7Z4yEuQzJ6",
       icon: <FluidIcon className="w-5 text-brand" />,
       title: "Fluid",
       desc: "Reformat text, preview your script and drag & drop stuff around. An editor that molds to your workflow, not the reverse.",
@@ -41,6 +42,10 @@ export default function Editor({ editorRef }: any) {
     setSelectedIndex(index);
   };
 
+  const toggleFullScreenView = () => {
+    setIsFullscreenView(!isFullscreenView);
+  };
+
   useEffect(() => {
     const autoplayInterval = setInterval(() => {
       setSelectedIndex((prevIndex) => (prevIndex + 1) % items.length);
@@ -49,22 +54,33 @@ export default function Editor({ editorRef }: any) {
     return () => clearInterval(autoplayInterval);
   }, [selectedIndex, items.length]);
 
+  // Prevent body scrolling when fullscreen is active
+  useEffect(() => {
+    if (isFullscreenView) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [isFullscreenView]);
+
   return (
     <div
       ref={editorRef}
       className="bg-middleground w-full min-h-screen flex justify-center items-start py-40 sm:px-12"
     >
-      <InViewAnimation className="w-full max-w-[1080px] px-4">
+      <InViewAnimation className="w-full max-w-[1080px] max-md:px-4">
         <Header
           section="script editor"
-          title1="No more to copy/paste"
-          title2="between tools"
-          subtitle="ProseBird's built-in rich text editor accelarates your preparation by combining writing and rehearsing, all in one place."
+          title1="Rehearse less,"
+          title2="create more"
+          subtitle="ProseBird's built-in rich text editor accelarates your preparation by combining everything you need in one place."
         />
 
-        <div className="flex flex-col lg:flex-row items-center lg:items-stretch justify-between gap-8 lg:gap-6 xl:gap-10">
-          {/* thumbnail items */}
-          <div className="flex flex-col justify-between items-start w-full lg:w-[446px] gap-4 lg:gap-0">
+        <div className="flex flex-col lg:flex-row items-center lg:items-start justify-between gap-8 lg:gap-6 xl:gap-10">
+          <div className="flex flex-col items-start w-full lg:w-[446px] gap-4 lg:gap-0 justify-between self-stretch">
             {items.map((item, index) => {
               return (
                 <div
@@ -92,23 +108,20 @@ export default function Editor({ editorRef }: any) {
             })}
           </div>
 
-          {/* Image carousel with proper sizing */}
           <div className="group/parent relative shrink-0 overflow-hidden border-stroke border-[1px] rounded-xl">
-            {/* This visible image maintains the container size */}
-            <div className="relative w-full aspect-[3367/2000] lg:w-[490px] lg:h-[344px]">
+            <div className="relative w-full xl:w-auto lg:w-[45vw] xl:h-[344px]">
               <img
                 src={items[selectedIndex].imgSrc}
-                className="invisible w-full lg:w-auto lg:h-[344px]"
+                className="invisible w-full xl:w-auto lg:w-[45vw] xl:h-[344px]"
                 alt="Size reference"
               />
 
-              {/* Absolute positioned images for fading effect */}
               <div className="absolute inset-0 group-hover/parent:scale-105 transition-all duration-150 ease-in-out">
                 {items.map((item, index) => (
                   <img
                     key={index}
                     src={item.imgSrc}
-                    className={`w-full lg:w-auto lg:h-[344px] absolute top-0 left-0 transition-opacity duration-500 ease-linear ${
+                    className={`w-full xl:w-auto lg:w-[45vw] xl:h-[344px] absolute top-0 left-0 transition-opacity duration-500 ease-linear ${
                       index === selectedIndex
                         ? "opacity-100 z-10"
                         : "opacity-0 z-0"
@@ -118,7 +131,10 @@ export default function Editor({ editorRef }: any) {
                 ))}
               </div>
 
-              <span className="group z-20 absolute w-full h-full grid place-items-center left-0 top-0 m-auto hover:bg-black/35 transition-colors duration-150 ease-in-out cursor-pointer">
+              <span
+                onClick={toggleFullScreenView}
+                className="group z-20 absolute w-full h-full grid place-items-center left-0 top-0 m-auto hover:bg-black/35 transition-colors duration-150 ease-in-out cursor-pointer"
+              >
                 <span className="text-secondary hover:text-primary p-4">
                   <FullscreenIcon className="group-hover:opacity-100 opacity-0 h-6 transition-all duration-150 ease-in-out group-hover:scale-125" />
                 </span>
@@ -127,7 +143,6 @@ export default function Editor({ editorRef }: any) {
           </div>
         </div>
 
-        {/* Indicator dots for mobile */}
         <div className="flex justify-center gap-2 mt-6 lg:hidden">
           {items.map((_, index) => (
             <button
@@ -141,6 +156,153 @@ export default function Editor({ editorRef }: any) {
           ))}
         </div>
       </InViewAnimation>
+
+      {/* Fullscreen View */}
+      {isFullscreenView && (
+        <FullscreenCarousel
+          items={items}
+          selectedIndex={selectedIndex}
+          setSelectedIndex={setSelectedIndex}
+          onClose={toggleFullScreenView}
+        />
+      )}
+    </div>
+  );
+}
+
+// Fullscreen Carousel Component
+function FullscreenCarousel({
+  items,
+  selectedIndex,
+  setSelectedIndex,
+  onClose,
+}: any) {
+  const handlePrevious = () => {
+    setSelectedIndex(
+      (prevIndex: any) => (prevIndex - 1 + items.length) % items.length
+    );
+  };
+
+  const handleNext = () => {
+    setSelectedIndex((prevIndex: any) => (prevIndex + 1) % items.length);
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center">
+      <div className="w-full h-full max-w-7xl max-h-screen flex flex-col">
+        {/* Close button */}
+        <div className="flex justify-end p-4">
+          <button
+            onClick={onClose}
+            className="text-white hover:text-brand p-2 rounded-full transition-colors"
+            aria-label="Close fullscreen view"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-8 w-8"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+
+        {/* Carousel */}
+        <div className="relative flex-1 overflow-hidden">
+          {items.map((item: any, index: any) => (
+            <div
+              key={index}
+              className={`absolute inset-0 flex flex-col transition-opacity duration-500 ease-linear ${
+                index === selectedIndex ? "opacity-100 z-10" : "opacity-0 z-0"
+              }`}
+            >
+              <div className="relative w-full h-full">
+                <img
+                  src={item.imgSrc}
+                  className="w-full h-full object-contain"
+                  alt={item.title}
+                />
+
+                {/* Text overlay */}
+                <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/70 to-transparent">
+                  <div className="flex gap-3 mb-2">
+                    <div className="text-white">{item.icon}</div>
+                    <h3 className="text-xl text-white font-bold">
+                      {item.title}
+                    </h3>
+                  </div>
+                  <p className="text-white/90 font-medium text-lg shadow-text">
+                    {item.desc}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
+
+          {/* Navigation buttons */}
+          <button
+            onClick={handlePrevious}
+            className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white p-3 rounded-full transition-colors"
+            aria-label="Previous image"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+          </button>
+          <button
+            onClick={handleNext}
+            className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white p-3 rounded-full transition-colors"
+            aria-label="Next image"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </button>
+        </div>
+
+        {/* Indicator dots */}
+        <div className="flex justify-center gap-3 py-6">
+          {items.map((_: any, index: any) => (
+            <button
+              key={index}
+              onClick={() => setSelectedIndex(index)}
+              className={`w-2 h-2 rounded-full transition-colors ${
+                index === selectedIndex ? "bg-brand" : "bg-white/30"
+              }`}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

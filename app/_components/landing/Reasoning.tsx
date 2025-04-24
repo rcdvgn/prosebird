@@ -1,7 +1,17 @@
 "use client";
 import { motion, useTransform, useMotionValue } from "framer-motion";
 import React, { useState, useRef, useEffect } from "react";
-import { Palette, FastForward, Eye, Rabbit, Lightbulb } from "lucide-react";
+import {
+  Palette,
+  FastForward,
+  Eye,
+  Rabbit,
+  Lightbulb,
+  Wand,
+  DraftingCompass,
+  WandSparkles,
+  Atom,
+} from "lucide-react";
 import InViewAnimation from "./InViewAnimation";
 
 export default function Reasoning({ scrollContainerRef }: any) {
@@ -16,27 +26,36 @@ export default function Reasoning({ scrollContainerRef }: any) {
   }, [progress]);
 
   const ps = [
-    "The solution should allow presenters to focus on creating the content, not on rehearsing its delivery. All arrows pointed to teleprompting.",
-    "But traditional telemprompters just dont cut it in fast-paced, ever-changing eviroments.",
-    "We had to reinvent it.",
+    // "A solution should allow presenters to focus on creating instead of rehearsing. All arrows pointed to teleprompting.",
+    "As if the words could simply appear before your eyes—like magic, or better yet, a teleprompter.",
+    "But traditional telemprompters just don't cut it in dynamic, fast-paced environments.",
+    "So we reinvented it.",
   ];
 
   const specialWords: any = {
-    creating: {
-      icon: <Palette size={25} strokeWidth={2.5} />,
-      color: "!text-green-500",
+    // creating: {
+    //   icon: <Palette size={25} strokeWidth={2.5} />,
+    //   color: "!text-green-500",
+    // },
+    magic: {
+      icon: <WandSparkles size={25} strokeWidth={2.5} />,
+      color: "!text-purple-500",
     },
-    teleprompting: {
-      icon: <FastForward size={25} strokeWidth={2.5} />,
-      color: "!text-blue-500",
+    teleprompter: {
+      icon: <Lightbulb size={25} strokeWidth={2.5} />,
+      color: "!text-yellow-400",
+    },
+    dynamic: {
+      icon: <Atom size={25} strokeWidth={2.5} />,
+      color: "!text-green-500",
     },
     "fast-paced": {
       icon: <Rabbit size={25} strokeWidth={2.5} />,
       color: "!text-pink-500",
     },
-    "reinvent it": {
-      icon: <Lightbulb size={25} strokeWidth={2.5} />,
-      color: "!text-yellow-500",
+    "reinvented it": {
+      icon: <DraftingCompass size={25} strokeWidth={2.5} />,
+      color: "!text-blue-500",
     },
   };
 
@@ -123,7 +142,7 @@ export default function Reasoning({ scrollContainerRef }: any) {
             return (
               <p
                 key={pIndex}
-                className="w-full md:w-[700px] my-6 sm:my-10 text-2xl sm:text-3xl leading-[40px] sm:leading-[48px]"
+                className="w-full md:w-[680px] my-6 sm:my-10 text-2xl sm:text-3xl leading-[40px] sm:leading-[48px]"
               >
                 {(() => {
                   // Track processed words to handle multi-word special phrases
