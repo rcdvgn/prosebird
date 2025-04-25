@@ -16,8 +16,8 @@ export default function EmblaCarouselWithThumbnails() {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const slides = [
-    "https://utfs.io/a/dv6kwxfdfm/X7kJqL6j4LDU613th55w8GI93FhEmR2w04DepY7LkifATO6P",
-    "https://utfs.io/a/dv6kwxfdfm/X7kJqL6j4LDUdZegIiABckAGn7P4ZoRLSKw3jINylb8HFfQV",
+    "https://utfs.io/a/dv6kwxfdfm/X7kJqL6j4LDUC6W4GQUqk6BMIXDA8TxZYucUthGRisLpzdfe",
+    "https://utfs.io/a/dv6kwxfdfm/X7kJqL6j4LDUs7dV1t841pPhUauvAgEG3SJnHW9jrokR0IZD",
     "https://utfs.io/a/dv6kwxfdfm/X7kJqL6j4LDU5iQ0fDEFueN1Vm64jTRKMndLzY87IafHqglQ",
   ];
 

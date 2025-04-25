@@ -26,13 +26,13 @@ const Collaboration = ({ collaborationRef }: any) => {
           />
           <CollabBlock
             title="Chapter Assigning"
-            subtitle="Divide the presentation into chapters and make sure everyone has a turn to speak."
+            subtitle="Divide the presentation into chapters and make sure everyone gets their turn to speak."
             imageUrl="https://utfs.io/a/dv6kwxfdfm/X7kJqL6j4LDUZ1Pz7hSMLU8bcns5HjGfwFTCaOAdBJQYvp2I"
             alt="Presentation participants"
           />
           <CollabBlock
             title="Speaker Coordination"
-            subtitle="Track speaker transitions, chapters, and pacing, ensuring everyone knows exactly where they are in the script."
+            subtitle="Track speaker transitions, chapters, and pacing, ensuring everyone knows exactly what to say, when to say it."
             imageUrl="https://utfs.io/a/dv6kwxfdfm/X7kJqL6j4LDUjO40IJc0KnfVM2eQlBXcwWOxFPgdhCq8Eoz9"
             alt="Shared progress"
           />
@@ -59,7 +59,7 @@ interface CollabBlockProps {
 const CollabBlock = ({ title, subtitle, imageUrl, alt }: CollabBlockProps) => {
   return (
     <div className="flex flex-col mx-auto w-full max-w-[494px]">
-      <div className="transition-all duration-200 ease-in-out hover:-translate-y-2 hover:border-border mb-4 relative bg-background border-[1px] border-stroke py-[15px] px-[17px] rounded-3xl shadow-[0px_4px_35px_0px_rgba(0,0,0,0.25)] min-w-[280px]">
+      <div className="transition-all duration-200 ease-in-out hover:-translate-y-2 hover:translate-x-2 hover:border-border mb-4 relative bg-background border-[1px] border-stroke py-[15px] px-[17px] rounded-3xl shadow-[0px_4px_35px_0px_rgba(0,0,0,0.25)] min-w-[280px]">
         <div className="aspect-[1983/1500] w-full relative">
           <Image
             src={imageUrl}

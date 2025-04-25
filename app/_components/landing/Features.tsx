@@ -23,7 +23,7 @@ const Features = ({ featuresRef }: any) => {
           section="presentation"
           title1="Not your traditional "
           title2="teleprompter"
-          subtitle="Go beyond static text scrolling. ProseBird adapts to you. It's teleprompting, reinvented for collaboration."
+          subtitle="Fast, reliable, customizable. Go beyond static text scrolling, ProseBird adapts to you."
         />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-11 justify-items-center">

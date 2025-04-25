@@ -15,11 +15,11 @@ const Faq = ({ faqRef }: any) => {
     },
     {
       q: "When will it be available?",
-      a: "ProseBird is expected to launch in May 15, 2025 for users that signed up for the early access.",
+      a: "ProseBird will launch on May 15, 2025 for users who have signed up for early access.",
     },
     {
-      q: "Is it going to be free to use?",
-      a: "Although it will offer a basic free tier, ProseBird is primarily a paid app.",
+      q: "Is it free to use?",
+      a: "ProseBird will offer a basic free tier, but is primarily a paid application.",
     },
     {
       q: "How does the voice control work?",
@@ -27,9 +27,8 @@ const Faq = ({ faqRef }: any) => {
     },
     {
       q: "Can I use it for in-person presentations?",
-      a: "Yes! ProseBird can do everything a traditional teleprompter does, with the added benefits of voice-controlled scrolling and multi-device sync, without the need for bulky, expensive hardware.",
+      a: "Yes! ProseBird can do everything a traditional teleprompter does with added benefits of voice-controlled scrolling and multi-device sync, without requiring bulky, expensive hardware.",
     },
-
     {
       q: "What languages will it support?",
       a: "During Early Access, voice-controlled presentations will be available in English only. Support for additional languages will roll out in future updates, prioritizing those most requested by users.",

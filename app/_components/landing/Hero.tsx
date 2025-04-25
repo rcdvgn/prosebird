@@ -43,13 +43,14 @@ export default function Hero({
 
   return (
     <div
-      className={`w-full sm:h-screen min-h-screen flex justify-center items-start py-32`}
-      style={{
-        backgroundImage: `linear-gradient(to top, rgba(var(--middleground), ${
-          gradientPosition / 100
-        }) ${gradientPosition}%, rgba(var(--middleground), 0) 100%)`,
-      }}
+      className={`relative w-full sm:h-screen min-h-screen flex justify-center items-start py-32`}
     >
+      <div
+        className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-[rgba(var(--middleground),1)] to-transparent"
+        style={{
+          height: `${gradientPosition}%`,
+        }}
+      />
       <InViewAnimation
         duration={1}
         scale={false}

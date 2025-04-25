@@ -23,7 +23,7 @@ export const Header = ({ section, title1, title2, subtitle }: any) => {
 export const SubHeader = ({ title }: any) => {
   return (
     <div className="mb-14 flex justify-center">
-      <div className="max-w-[650px] text-center flex flex-col items-center">
+      <div className="max-w-[655px] text-center flex flex-col items-center">
         <span className="block text-primary font-bold text-4xl">{title}</span>
       </div>
     </div>

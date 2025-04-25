@@ -240,7 +240,7 @@ const Word = ({ children, range, progress }: any) => {
       className="relative inline-block text-primary font-extrabold text-2xl sm:text-3xl leading-[40px] sm:leading-[48px]
  whitespace-pre"
     >
-      <span className="opacity-20">{children}</span>
+      <span className="opacity-20 pointer-events-none">{children}</span>
       <motion.span className="absolute top-0 left-0" style={{ opacity }}>
         {children}
       </motion.span>
@@ -270,7 +270,7 @@ const IconWordPair = ({ word, icon, color, range, progress }: any) => {
       className={`relative inline-flex items-center text-primary font-extrabold text-2xl sm:text-3xl leading-[40px] sm:leading-[48px]
  ${color}`}
     >
-      <span className="opacity-20 inline-flex items-center gap-1">
+      <span className="opacity-20 inline-flex items-center gap-1 pointer-events-none">
         <span className="-translate-y-[2px] ml-0.5 sm:ml-1">
           {mobileIcon}
           {responsiveIcon}

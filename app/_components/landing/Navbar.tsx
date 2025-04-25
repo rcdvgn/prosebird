@@ -66,9 +66,9 @@ export default function Navbar({
 
   return (
     <>
-      <div className="z-30 fixed top-0 h-24 w-full flex justify-center items-center">
+      <div className="z-30 fixed top-0 h-24 w-full flex justify-center items-center pointer-events-none">
         <div
-          className={`w-[95%] max-w-[1080px] transition-all duration-300 ease-in-out h-16 flex items-center justify-between px-7 rounded-[20px] border-[1px] ${
+          className={`!pointer-events-auto w-[95%] max-w-[1080px] transition-all duration-300 ease-in-out h-16 flex items-center justify-between px-7 rounded-[20px] border-[1px] ${
             scrolled
               ? "backdrop-blur-lg bg-middleground/50 border-stroke"
               : "border-transparent"
