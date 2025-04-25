@@ -246,12 +246,12 @@ function FullscreenCarousel({ items, initialIndex, onClose }: any) {
         <div className="flex justify-end py-2 px-4">
           <button
             onClick={onClose}
-            className="text-primary hover:text-brand p-2 rounded-full transition-colors"
+            className="text-inactive hover:text-primary p-2 rounded-full transition-colors"
             aria-label="Close fullscreen view"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-8 w-8"
+              className="h-6 w-6"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -282,7 +282,7 @@ function FullscreenCarousel({ items, initialIndex, onClose }: any) {
                   />
 
                   {/* Text overlay */}
-                  <div className="absolute bottom-0 left-0 right-0 py-6 px-24 bg-gradient-to-t from-black/70 to-transparent">
+                  <div className="absolute bottom-0 left-0 right-0 py-6 px-24 bg-gradient-to-t from-middleground to-transparent">
                     <div className="flex items-center gap-3 mb-2">
                       <div className="text-primary">{item.icon}</div>
                       <h3 className="text-xl text-primary font-bold">
@@ -301,7 +301,7 @@ function FullscreenCarousel({ items, initialIndex, onClose }: any) {
           {/* Navigation buttons */}
           <button
             onClick={scrollPrev}
-            className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-primary p-3 rounded-full transition-colors"
+            className="absolute left-4 top-1/2 -translate-y-1/2 hover:bg-hover text-inactive hover:text-primary p-3 rounded-full transition-colors"
             aria-label="Previous image"
           >
             <svg
@@ -321,7 +321,7 @@ function FullscreenCarousel({ items, initialIndex, onClose }: any) {
           </button>
           <button
             onClick={scrollNext}
-            className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-primary p-3 rounded-full transition-colors"
+            className="absolute right-4 top-1/2 -translate-y-1/2 hover:bg-hover text-inactive hover:text-primary p-3 rounded-full transition-colors"
             aria-label="Next image"
           >
             <svg
