@@ -62,7 +62,10 @@ export default function Hero({
             <p className="font-extrabold text-[42px] min-[550px]:text-5xl sm:text-6xl lg:text-[76px] leading-tight lg:leading-[85px] my-4 sm:my-5 md:my-6 text-center">
               <span className="text-primary">Meet </span>
 
-              <span className="text-nowrap">
+              <span
+                className="whitespace-nowrap"
+                style={{ whiteSpace: "nowrap" }}
+              >
                 <span className="text-primary/40">[</span>
                 <span className="text-primary/40">stress-free</span>
                 <span className="text-primary/40">]</span>
