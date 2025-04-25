@@ -18,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${publicSans.className}`}>
+      <body className={`bg-background ${publicSans.className}`}>
         <PostHogProvider> {children}</PostHogProvider>
       </body>
     </html>
