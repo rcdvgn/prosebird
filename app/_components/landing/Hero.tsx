@@ -62,9 +62,9 @@ export default function Hero({
               <span className="text-primary">Meet </span>
 
               <span className="text-nowrap">
-                <span className="text-primary/20">[</span>
-                <span className="text-primary/20">stress-free</span>
-                <span className="text-primary/20">]</span>
+                <span className="text-primary/40">[</span>
+                <span className="text-primary/40">stress-free</span>
+                <span className="text-primary/40">]</span>
               </span>
               <span className="text-primary"> presentations</span>
             </p>
