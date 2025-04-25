@@ -2,6 +2,7 @@
 
 import StandaloneLogo from "@/app/_assets/StandaloneLogo";
 import { PrimaryLogo } from "@/app/_assets/logos";
+import useWindowDimensions from "@/app/_hooks/useWindowDimensions";
 import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -13,21 +14,33 @@ export default function Navbar({
   faqRef,
   scrollToSection,
 }: any) {
+  const { height, width } = useWindowDimensions();
+
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     const scrollContainer = scrollContainerRef.current;
+    let lastScrollTop = 0;
 
     if (!scrollContainer) return;
 
     const handleScroll = () => {
       const scrollPosition = scrollContainer.scrollTop;
+      const isScrollingUp = scrollPosition < lastScrollTop;
+
       if (scrollPosition > 20) {
         setScrolled(true);
       } else {
         setScrolled(false);
       }
+
+      const isInVisibleRange = scrollPosition < height * 0.65;
+
+      setVisible(isInVisibleRange || isScrollingUp);
+
+      lastScrollTop = scrollPosition;
     };
 
     scrollContainer.addEventListener("scroll", handleScroll);
@@ -37,21 +50,14 @@ export default function Navbar({
     return () => {
       scrollContainer.removeEventListener("scroll", handleScroll);
     };
-  }, [scrollContainerRef]);
+  }, [scrollContainerRef, scrolled]);
 
   useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 820 && menuOpen) {
-        setMenuOpen(false);
-      }
-    };
-
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [menuOpen]);
+    // This will run whenever width changes or menuOpen changes
+    if (width >= 820 && menuOpen) {
+      setMenuOpen(false);
+    }
+  }, [width, menuOpen]);
 
   const handleNavClick = (ref: any) => {
     scrollToSection(ref);
@@ -66,7 +72,11 @@ export default function Navbar({
 
   return (
     <>
-      <div className="z-30 fixed top-0 h-24 w-full flex justify-center items-center pointer-events-none">
+      <div
+        className={`${
+          visible ? "" : "-translate-y-24"
+        } transition-all duration-400 ease-in-out z-30 fixed top-0 h-24 w-full flex justify-center items-center pointer-events-none`}
+      >
         <div
           className={`!pointer-events-auto w-[95%] max-w-[1080px] transition-all duration-300 ease-in-out h-16 flex items-center justify-between px-7 rounded-[20px] border-[1px] ${
             scrolled
