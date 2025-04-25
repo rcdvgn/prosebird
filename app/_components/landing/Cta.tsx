@@ -174,9 +174,11 @@ export default function Cta({
                 onChange={(e: any) => setEmail(e.target.value)}
               />
               <button
-                disabled={loading ? true : false}
+                disabled={email.length === 0 || loading ? true : false}
                 type="submit"
-                className="hidden min-[380px]:inline-block rounded-[10px] bg-brand w-[65px] h-[34px] text-primary font-bold text-[13px] shrink-0"
+                className={`${
+                  email.length && !loading ? "hover:opacity-90" : "opacity-60"
+                } disabled:cursor-not-allowed hidden min-[380px]:inline-block rounded-[10px] bg-brand w-[65px] h-[34px] text-primary font-bold text-[13px] shrink-0`}
               >
                 {loading ? (
                   <span className="w-full h-full flex items-center justify-center">
@@ -189,9 +191,11 @@ export default function Cta({
             </div>
 
             <button
-              disabled={loading ? true : false}
+              disabled={email.length === 0 || loading ? true : false}
               type="submit"
-              className="my-2 hidden max-[380px]:inline-block rounded-[10px] bg-brand w-full h-12 text-primary font-bold text-[13px] shrink-0"
+              className={`${
+                email.length && !loading ? "hover:opacity-90" : "opacity-60"
+              } disabled:cursor-not-allowed hover:opacity-90 my-2 hidden max-[380px]:inline-block rounded-[10px] bg-brand w-full h-12 text-primary font-bold text-[13px] shrink-0`}
             >
               {loading ? (
                 <span className="w-full h-full flex items-center justify-center">

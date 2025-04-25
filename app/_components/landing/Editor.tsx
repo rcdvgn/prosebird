@@ -29,7 +29,7 @@ export default function Editor({ editorRef }: any) {
     },
     {
       imgSrc:
-        "https://utfs.io/a/dv6kwxfdfm/X7kJqL6j4LDUVEIXjuJKIFZg3h5o7VMUGAxPuSlckX8Y6JWr",
+        "https://utfs.io/a/dv6kwxfdfm/X7kJqL6j4LDUgEILueZt6KxnQfhP7DMr0Fa9e1IVuYRXHNTq",
       icon: <StructuredIcon className="w-5 text-brand" />,
       title: "Structured",
       desc: "Chapters are to ProseBird what slides are to PowerPoint: Create, edit and arrange them to match the flow and visuals of your presentation.",

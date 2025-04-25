@@ -4,8 +4,8 @@ export default function Background() {
   return (
     <div className="fixed top-0 left-0 h-screen w-screen pointer-events-none">
       <div className="relative h-full w-full">
-        <div className="absolute bg-brand rounded-full m-auto h-[1000px] w-[1000px] left-[-500px] bottom-[-500px] blur-[600px]"></div>
-        <div className="absolute bg-brand rounded-full m-auto h-[1000px] w-[1000px] right-[-500px] top-[-500px] blur-[600px]"></div>
+        <div className="absolute bg-brand rounded-full m-auto h-[65vw] w-[65vw] left-[-32.5vw] bottom-[-32.5vw] blur-[40vw]"></div>
+        <div className="absolute bg-brand rounded-full m-auto h-[65vw] w-[65vw] right-[-32.5vw] top-[-32.5vw] blur-[40vw]"></div>
 
         <Image
           width={1534}
