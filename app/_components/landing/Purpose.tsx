@@ -3,7 +3,7 @@ import InViewAnimation from "./InViewAnimation";
 
 export default function Purpose() {
   return (
-    <div className="bg-middleground w-full min-h-screen flex justify-center items-start py-20 md:py-40 px-4 sm:px-6 md:px-12">
+    <div className="bg-middleground w-full min-h-screen flex justify-center items-start py-20 md:py-40 px-6 sm:px-6 md:px-12">
       <InViewAnimation className="w-full max-w-6xl text-center flex flex-col items-center">
         <SubHeader title="ProseBird was born from 2 convictions" />
 

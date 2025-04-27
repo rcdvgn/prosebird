@@ -40,7 +40,7 @@ const Faq = ({ faqRef }: any) => {
       ref={faqRef}
       className="bg-middleground w-full min-h-screen flex justify-center items-start py-40 rounded-b-[30px] sm:px-12"
     >
-      <InViewAnimation className="w-[1080px] text-center px-4 flex flex-col items-center">
+      <InViewAnimation className="w-[1080px] text-center px-6 flex flex-col items-center">
         <SubHeader title="Frequently asked questions" />
 
         <div className="max-w-[760px] select-none w-full items-center flex flex-col gap-4">

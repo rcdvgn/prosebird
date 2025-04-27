@@ -13,7 +13,7 @@ export default function Footer({
 }: any) {
   return (
     <div className="w-full h-screen flex justify-center items-stretch py-10">
-      <div className="w-full max-w-[1080px] px-4 sm:px-6 lg:px-0 h-full flex flex-col items-center justify-between">
+      <div className="w-full max-w-[1080px] px-6 sm:px-6 lg:px-0 h-full flex flex-col items-center justify-between">
         <div className="invisible flex flex-col gap-4 text-center">
           <PrimaryLogo className="h-7" />
           <span className="text-secondary font-semibold text-sm">

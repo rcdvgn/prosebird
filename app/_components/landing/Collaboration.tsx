@@ -8,7 +8,7 @@ const Collaboration = ({ collaborationRef }: any) => {
       ref={collaborationRef}
       className="bg-middleground w-full min-h-screen flex justify-center items-start py-40 md:px-12"
     >
-      <InViewAnimation className="w-full max-w-[1080px] px-4">
+      <InViewAnimation className="w-full max-w-[1080px] px-6">
         <Header
           section="collaboration"
           title1="You and your team, "

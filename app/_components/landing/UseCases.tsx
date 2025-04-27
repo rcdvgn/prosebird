@@ -29,7 +29,7 @@ export default function UseCases() {
 
   return (
     <div className="bg-middleground w-full flex justify-center items-start py-40 min-[730px]:px-12">
-      <InViewAnimation className="w-full max-w-[1080px] text-center px-4">
+      <InViewAnimation className="w-full max-w-[1080px] text-center px-6">
         <SubHeader title="For moments of all sizes, we've got you covered" />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 justify-center gap-4 sm:gap-6">

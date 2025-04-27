@@ -48,15 +48,12 @@ export default function Editor({ editorRef }: any) {
   };
 
   const toggleFullScreenView = (index?: number) => {
-    if (windowWidth >= 1024) {
-      // Store the current index when opening fullscreen
-      if (!isFullscreenView && index !== undefined) {
-        setFullscreenStartIndex(index);
-      } else if (!isFullscreenView) {
-        setFullscreenStartIndex(selectedIndex);
-      }
-      setIsFullscreenView(!isFullscreenView);
+    if (!isFullscreenView && index !== undefined) {
+      setFullscreenStartIndex(index);
+    } else if (!isFullscreenView) {
+      setFullscreenStartIndex(selectedIndex);
     }
+    setIsFullscreenView(!isFullscreenView);
   };
 
   // Listen for window resize to track viewport width
@@ -103,7 +100,7 @@ export default function Editor({ editorRef }: any) {
       ref={editorRef}
       className="bg-middleground w-full min-h-screen flex justify-center items-start py-40 sm:px-12"
     >
-      <InViewAnimation className="w-full max-w-[1080px] max-md:px-4">
+      <InViewAnimation className="w-full max-w-[1080px] max-md:px-6">
         <Header
           section="script editor"
           title1="Rehearse less,"
@@ -165,7 +162,7 @@ export default function Editor({ editorRef }: any) {
 
               <span
                 onClick={() => toggleFullScreenView(selectedIndex)}
-                className={`group z-20 absolute w-full h-full grid place-items-center left-0 top-0 m-auto hover:bg-black/35 transition-colors duration-150 ease-in-out ${
+                className={`cursor-pointer group z-20 absolute w-full h-full grid place-items-center left-0 top-0 m-auto hover:bg-black/35 transition-colors duration-150 ease-in-out ${
                   windowWidth >= 1024 ? "cursor-pointer" : ""
                 }`}
               >
@@ -196,7 +193,7 @@ export default function Editor({ editorRef }: any) {
       </InViewAnimation>
 
       {/* Fullscreen View with EmblaCarousel - Only for viewports ≥ 1024px */}
-      {isFullscreenView && windowWidth >= 1024 && (
+      {isFullscreenView && (
         <FullscreenCarousel
           items={items}
           initialIndex={fullscreenStartIndex}
@@ -213,8 +210,10 @@ function FullscreenCarousel({ items, initialIndex, onClose }: any) {
 
   const [emblaRef, emblaApi] = useEmblaCarousel({
     startIndex: initialIndex,
-    loop: true, // Enable loop for better user experience
+    loop: true,
     align: "center",
+    skipSnaps: false,
+    dragFree: false,
   });
 
   const scrollPrev = useCallback(() => {
@@ -240,18 +239,68 @@ function FullscreenCarousel({ items, initialIndex, onClose }: any) {
   }, [emblaApi]);
 
   return (
-    <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center">
-      <div className="w-full h-full max-w-7xl max-h-screen flex flex-col">
-        {/* Close button */}
-        <div className="flex justify-end py-2 px-4">
+    <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center">
+      {/* Main container with fixed width to prevent arrows from being pushed to sides */}
+      <div className="relative w-full max-h-[80vh] mx-auto max-sm:px-8 sm:max-w-[80vw]">
+        {/* Close button positioned relative to the container */}
+
+        <div className="absolute top-0 left-0 w-full flex justify-between items-center z-20 max-sm:px-8 h-8 md:h-12">
+          <div className="flex items-center h-full">
+            <button
+              onClick={scrollPrev}
+              className="hover:scale-105 text-inactive hover:text-primary rounded-full transition-colors h-full aspect-square flex items-center justify-center"
+              aria-label="Previous image"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4 md:h-6 md:w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+            </button>
+
+            <span className="text-primary text-xs md:text-base mx-1 md:mx-2">
+              {currentIndex + 1}
+            </span>
+
+            <button
+              onClick={scrollNext}
+              className="hover:scale-105 text-inactive hover:text-primary rounded-full transition-colors h-full aspect-square flex items-center justify-center"
+              aria-label="Next image"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4 md:h-6 md:w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </button>
+          </div>
+
           <button
             onClick={onClose}
-            className="text-inactive hover:text-primary p-2 rounded-full transition-colors"
+            className="text-inactive hover:text-primary rounded-full transition-colors h-full aspect-square flex items-center justify-center"
             aria-label="Close fullscreen view"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
+              className="h-4 w-4 md:h-6 md:w-6"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -266,79 +315,52 @@ function FullscreenCarousel({ items, initialIndex, onClose }: any) {
           </button>
         </div>
 
-        {/* EmblaCarousel */}
-        <div className="relative flex-1 overflow-hidden">
-          <div className="overflow-hidden h-full" ref={emblaRef}>
-            <div className="flex h-full">
-              {items.map((item: any, index: any) => (
-                <div
-                  key={index}
-                  className="flex-[0_0_100%] min-w-0 h-full relative"
-                >
+        {/* Carousel */}
+        <div className="overflow-hidden" ref={emblaRef}>
+          <div className="flex gap-8">
+            {items.map((item: any, index: any) => (
+              <div
+                key={index}
+                className="flex-[0_0_100%] min-w-0 flex flex-col items-center pt-12"
+              >
+                {/* Image container */}
+                <div className="group relative mb-4 flex justify-center max-h-[80vh]">
                   <img
                     src={item.imgSrc}
-                    className="w-full h-full object-contain"
+                    className="max-w-full w-auto object-contain rounded-2xl border-[2px] border-stroke"
+                    style={{ maxHeight: "min(calc(80vh - 48px), 2000px)" }}
                     alt={item.title}
                   />
 
-                  {/* Text overlay */}
-                  <div className="absolute bottom-0 left-0 right-0 py-6 px-24 bg-gradient-to-t from-middleground to-transparent">
+                  {/* Text overlay for large screens only */}
+                  <div className="group-hover:visible invisible absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/50 to-transparent hidden md:block">
                     <div className="flex items-center gap-3 mb-2">
                       <div className="text-primary">{item.icon}</div>
-                      <h3 className="text-xl text-primary font-bold">
+                      <h3 className="lg:text-xl text-base text-primary font-bold">
                         {item.title}
                       </h3>
                     </div>
-                    <p className="text-primary font-medium text-base shadow-lg">
+                    <p className="text-primary font-medium text-sm lg:text-base">
                       {item.desc}
                     </p>
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
 
-          {/* Navigation buttons */}
-          <button
-            onClick={scrollPrev}
-            className="absolute left-4 top-1/2 -translate-y-1/2 hover:bg-hover text-inactive hover:text-primary p-3 rounded-full transition-colors"
-            aria-label="Previous image"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-          </button>
-          <button
-            onClick={scrollNext}
-            className="absolute right-4 top-1/2 -translate-y-1/2 hover:bg-hover text-inactive hover:text-primary p-3 rounded-full transition-colors"
-            aria-label="Next image"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
-          </button>
+                {/* Text below image for small screens */}
+                <div className="sm:hidden w-full text-center px-4 pb-6">
+                  <div className="flex items-center justify-center gap-2 mb-2">
+                    <div className="text-primary">{item.icon}</div>
+                    <h3 className="text-lg text-primary font-bold">
+                      {item.title}
+                    </h3>
+                  </div>
+                  <p className="text-primary font-medium text-sm">
+                    {item.desc}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>

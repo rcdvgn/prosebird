@@ -43,7 +43,7 @@ export default function Hero({
 
   return (
     <div
-      className={`relative w-full sm:h-screen min-h-screen flex justify-center items-start py-32`}
+      className={`relative w-full sm:h-screen min-h-screen flex justify-center items-center`}
     >
       <div
         className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-[rgba(var(--middleground),1)] to-transparent"
@@ -55,7 +55,7 @@ export default function Hero({
         duration={1}
         scale={false}
         y={false}
-        className="w-full max-w-[1080px] px-4 lg:px-0"
+        className="w-full max-w-[1080px] px-6 lg:px-0"
       >
         <div className="flex justify-center">
           <div className="w-full max-w-[680px] flex flex-col items-center">

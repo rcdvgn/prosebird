@@ -18,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`bg-background ${publicSans.className}`}>
+      <body className={`bg-background overflow-hidden ${publicSans.className}`}>
         <PostHogProvider> {children}</PostHogProvider>
       </body>
     </html>

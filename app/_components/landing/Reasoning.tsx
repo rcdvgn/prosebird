@@ -105,7 +105,7 @@ export default function Reasoning({ scrollContainerRef }: any) {
       ref={sectionRef}
       className="relative bg-middleground w-full h-[500vh] flex justify-center items-start sm:px-12"
     >
-      <div className="sticky top-0 w-full max-w-[1080px] px-4 h-screen grid place-items-center">
+      <div className="sticky top-0 w-full max-w-[1080px] px-6 h-screen grid place-items-center">
         <InViewAnimation className="text-left">
           {ps.map((p, pIndex) => {
             // Process for multi-word special phrases
