@@ -204,15 +204,32 @@ export default function Editor({ editorRef }: any) {
   );
 }
 
-function FullscreenCarousel({ items, initialIndex, onClose }: any) {
-  // Use local state for the carousel - independent from parent
+interface CarouselItem {
+  imgSrc: string;
+  title?: string;
+  desc?: string;
+  icon?: React.ReactNode;
+}
+
+interface FullscreenCarouselProps {
+  items: CarouselItem[];
+  initialIndex: number;
+  onClose: () => void;
+  showText?: boolean; // Optional prop to control text visibility
+}
+
+export function FullscreenCarousel({
+  items,
+  initialIndex,
+  onClose,
+  showText = true,
+}: FullscreenCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
 
   const [emblaRef, emblaApi] = useEmblaCarousel({
     startIndex: initialIndex,
     loop: true,
     align: "center",
-    skipSnaps: false,
     dragFree: false,
   });
 
@@ -224,7 +241,7 @@ function FullscreenCarousel({ items, initialIndex, onClose }: any) {
     if (emblaApi) emblaApi.scrollNext();
   }, [emblaApi]);
 
-  // Handle slide changes and update the local currentIndex
+  // Update index when slide changes
   useEffect(() => {
     if (!emblaApi) return;
 
@@ -238,130 +255,136 @@ function FullscreenCarousel({ items, initialIndex, onClose }: any) {
     };
   }, [emblaApi]);
 
+  // Handle keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowLeft") scrollPrev();
+      if (e.key === "ArrowRight") scrollNext();
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onClose, scrollPrev, scrollNext]);
+
   return (
-    <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center">
-      {/* Main container with fixed width to prevent arrows from being pushed to sides */}
-      <div className="relative w-full max-h-[80vh] mx-auto max-sm:px-8 sm:max-w-[80vw]">
-        {/* Close button positioned relative to the container */}
-
-        <div className="absolute top-0 left-0 w-full flex justify-between items-center z-20 max-sm:px-8 h-8 md:h-12">
-          <div className="flex items-center h-full">
-            <button
-              onClick={scrollPrev}
-              className="hover:scale-105 text-inactive hover:text-primary rounded-full transition-colors h-full aspect-square flex items-center justify-center"
-              aria-label="Previous image"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4 md:h-6 md:w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-            </button>
-
-            <span className="text-primary text-xs md:text-base mx-1 md:mx-2">
-              {currentIndex + 1}
-            </span>
-
-            <button
-              onClick={scrollNext}
-              className="hover:scale-105 text-inactive hover:text-primary rounded-full transition-colors h-full aspect-square flex items-center justify-center"
-              aria-label="Next image"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4 md:h-6 md:w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </button>
-          </div>
-
-          <button
-            onClick={onClose}
-            className="text-inactive hover:text-primary rounded-full transition-colors h-full aspect-square flex items-center justify-center"
-            aria-label="Close fullscreen view"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4 md:h-6 md:w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
+    <div className="fixed inset-0 bg-black/90 z-50">
+      {/* Navigation bar - now absolute */}
+      <div className="absolute top-0 left-0 right-0 z-20 flex justify-between items-center p-3 bg-gradient-to-b from-black/60 to-transparent">
+        <div className="flex items-center">
+          <span className="text-sm text-white font-medium drop-shadow-md">
+            {currentIndex + 1} / {items.length}
+          </span>
         </div>
 
+        <button
+          onClick={onClose}
+          className="p-2 text-white drop-shadow-md hover:text-white/80"
+          aria-label="Close fullscreen view"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+
+      {/* Main carousel container - now full height */}
+      <div className="h-full w-full flex items-center relative overflow-hidden">
+        {/* Previous button */}
+        <button
+          onClick={scrollPrev}
+          className="absolute left-2 z-10 p-2 rounded-full bg-black/30 text-white drop-shadow-lg hover:bg-black/50"
+          aria-label="Previous image"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 19l-7-7 7-7"
+            />
+          </svg>
+        </button>
+
         {/* Carousel */}
-        <div className="overflow-hidden" ref={emblaRef}>
-          <div className="flex gap-8">
-            {items.map((item: any, index: any) => (
+        <div className="w-full h-full overflow-hidden" ref={emblaRef}>
+          <div className="flex h-full">
+            {items.map((item, index) => (
               <div
                 key={index}
-                className="flex-[0_0_100%] min-w-0 flex flex-col items-center pt-12"
+                className="flex-[0_0_100%] h-full flex items-center justify-center px-4"
               >
-                {/* Image container */}
-                <div className="group relative mb-4 flex justify-center max-h-[80vh]">
+                <div className="relative max-w-full max-h-full">
                   <img
                     src={item.imgSrc}
-                    className="max-w-full w-auto object-contain rounded-2xl border-[2px] border-stroke"
-                    style={{ maxHeight: "min(calc(80vh - 48px), 2000px)" }}
-                    alt={item.title}
+                    className="max-w-full max-h-screen w-auto h-auto object-contain mx-auto"
+                    alt={item.title || `Image ${index + 1}`}
                   />
 
-                  {/* Text overlay for large screens only */}
-                  <div className="group-hover:visible invisible absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/50 to-transparent hidden md:block">
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="text-primary">{item.icon}</div>
-                      <h3 className="lg:text-xl text-base text-primary font-bold">
-                        {item.title}
-                      </h3>
+                  {/* Optional text overlay */}
+                  {showText && item.title && (
+                    <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent">
+                      <div className="flex items-center gap-2 mb-1">
+                        {item.icon && (
+                          <div className="text-white drop-shadow-md">
+                            {item.icon}
+                          </div>
+                        )}
+                        <h3 className="text-white font-bold text-lg drop-shadow-md">
+                          {item.title}
+                        </h3>
+                      </div>
+                      {item.desc && (
+                        <p className="text-white/90 text-sm drop-shadow-md">
+                          {item.desc}
+                        </p>
+                      )}
                     </div>
-                    <p className="text-primary font-medium text-sm lg:text-base">
-                      {item.desc}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Text below image for small screens */}
-                <div className="sm:hidden w-full text-center px-4 pb-6">
-                  <div className="flex items-center justify-center gap-2 mb-2">
-                    <div className="text-primary">{item.icon}</div>
-                    <h3 className="text-lg text-primary font-bold">
-                      {item.title}
-                    </h3>
-                  </div>
-                  <p className="text-primary font-medium text-sm">
-                    {item.desc}
-                  </p>
+                  )}
                 </div>
               </div>
             ))}
           </div>
         </div>
+
+        {/* Next button */}
+        <button
+          onClick={scrollNext}
+          className="absolute right-2 z-10 p-2 rounded-full bg-black/30 text-white drop-shadow-lg hover:bg-black/50"
+          aria-label="Next image"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 5l7 7-7 7"
+            />
+          </svg>
+        </button>
       </div>
     </div>
   );
