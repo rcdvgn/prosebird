@@ -28,7 +28,7 @@ export default function Reasoning({ scrollContainerRef }: any) {
   const ps = [
     // "A solution should allow presenters to focus on creating instead of rehearsing. All arrows pointed to teleprompting.",
     "As if the words could simply appear before your eyes—like magic, or better yet, a teleprompter.",
-    "But traditional telemprompters just don't cut it in dynamic, fast-paced environments.",
+    "But traditional telemprompters just don't cut it for dynamic, fast-paced environments.",
     "So we reinvented it.",
   ];
 

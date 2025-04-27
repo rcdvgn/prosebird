@@ -142,7 +142,7 @@ export default function Navbar({
 
       {menuOpen && (
         <div
-          className="fixed inset-0 z-40 bg-background flex flex-col"
+          className="fixed inset-0 z-40 bg-middleground flex flex-col"
           onClick={handleBackdropClick}
         >
           <div className="h-24 w-full flex justify-between items-center px-7">
