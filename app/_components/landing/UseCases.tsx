@@ -18,7 +18,7 @@ export default function UseCases() {
     {
       icon: GraphIcon,
       title: "Sales & Client Meetings",
-      desc: "Access key insights and pace your delivery on the fly with a comprehensive suite of presentation tools.",
+      desc: "Access key insights and pace your delivery on the fly with a comprehensive suite of tools.",
     },
     {
       icon: ContentIcon,
