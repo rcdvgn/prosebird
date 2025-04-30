@@ -23,7 +23,7 @@
   --text-danger: #b51b1d;
 
   /* --brand: 50, 94, 241; */
-  --brand: 18, 70, 241;
+  --brand: 50, 100, 241;
 
   /* #292929 */
   --stroke: 33, 33, 33;
@@ -33,7 +33,7 @@
   --money-green: 114, 251, 93;
   --online-green: 51, 239, 59;
   --favorite-yellow: 233, 196, 11;
-  --danger-red: 233, 11, 14;
+  --danger-red: 356, 90, 52;
 
   --progressbar-inactive: 43, 43, 43;
   --progressbar-hover: 97, 97, 97;
@@ -127,6 +127,12 @@ textarea::-webkit-scrollbar {
   --os-handle-bg: var(--brand);
 } */
 
+@layer base {
+  a {
+    @apply text-brand hover:underline visited:!text-brand;
+  }
+}
+
 @layer components {
   .slate {
     @apply bg-middleground rounded-[10px];
@@ -149,7 +155,7 @@ textarea::-webkit-scrollbar {
   }
 
   .input-default {
-    @apply bg-transparent h-11 outline-1 -outline-offset-1 outline-border px-[14px] rounded-[10px] outline-none text-primary font-medium text-sm focus:outline-2 focus:-outline-offset-2 focus:outline-brand placeholder:text-placeholder focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-brand;
+    @apply bg-transparent h-11 outline-1 -outline-offset-1 outline-stroke px-[14px] rounded-[10px] outline-none text-primary font-medium text-sm focus:outline-2 focus:-outline-offset-2 focus:outline-brand placeholder:text-placeholder focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-brand;
   }
 
   .input-2 {
@@ -181,19 +187,19 @@ textarea::-webkit-scrollbar {
   }
 
   .btn-1-lg {
-    @apply btn-1 h-9 rounded-[10px];
+    @apply btn-1 h-11 rounded-[10px];
   }
 
   .btn-2-lg {
-    @apply btn-2 h-9 rounded-[10px];
+    @apply btn-2 h-11 rounded-[10px];
   }
 
   .btn-3-lg {
-    @apply btn-3 h-9 rounded-[10px];
+    @apply btn-3 h-11 rounded-[10px];
   }
 
   .button-secondary {
-    @apply h-[44px] rounded-[10px] text-inactive text-sm font-semibold px-[14px] hover:text-primary outline-none border-border border-[1px] focus:outline-brand focus:outline outline-offset-2 hover:bg-hover hover:border-transparent;
+    @apply h-[44px] rounded-[10px] text-inactive text-sm font-semibold px-[14px] hover:text-primary outline-none border-stroke border-[1px] focus:outline-brand focus:outline outline-offset-2 hover:bg-hover hover:border-transparent;
   }
 
   .button-icon {

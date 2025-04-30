@@ -4,12 +4,13 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { HidePasswordIcon, ShowPasswordIcon } from "@/app/_assets/icons";
 import { useAuth } from "../_contexts/AuthContext";
+import LegalNotice from "./LegalNotice";
 
 function AuthFlow({ flow }: any) {
   const router = useRouter();
 
   return (
-    <div className="text-sm w-full text-center font-semibold my-4">
+    <div className="text-sm font-semibold">
       <span className="text-secondary mr-1 pointer-events-none">
         {flow === "signup"
           ? "Already have an account?"
@@ -63,30 +64,35 @@ export default function AuthForm({ flow }: any) {
     }
   };
   return (
-    <div className="w-[400px] h-full flex flex-col justify-between">
-      <div className="invisible pointer-events-none">
-        <AuthFlow flow={flow} />
+    <div className="max-sm:h-full sm:max-w-[465px] min-h-[620px] sm:rounded-2xl z-10 bg-background border-stroke border-[1px] pb-10 w-full mx-auto overflow-hidden flex flex-col items-center justify-center">
+      {error && (
+        <div className="text-center w-full py-1.5 bg-red-800">
+          <span className="text-primary text-[13px] font-medium">{error}</span>
+        </div>
+      )}
+
+      <div className="mx-6 sm:mx-8 my-8 flex flex-col gap-6 items-center">
+        <img
+          className="h-9 !aspect-square"
+          src="https://utfs.io/a/dv6kwxfdfm/X7kJqL6j4LDUlNtWPnomHUs49zRpMfonbdO3FGlh8Be6YKQ0"
+          alt="Logo"
+        />
+        <div className="text-center">
+          <span className="block font-bold text-primary text-3xl mb-2">
+            {flow === "signin" ? "Welcome back" : "Create account"}
+          </span>
+          <AuthFlow flow={flow} />
+        </div>
       </div>
 
-      <div className="-mt-[10%]">
-        <div className="w-full text-center mb-10">
-          <span className="block font-bold text-primary text-3xl mb-2">
-            {flow === "signin" ? "Welcome back!" : "Create account"}
-          </span>
-          <span className="block font-semibold text-secondary text-sm">
-            {`Use your preferable sign${
-              flow === "signin" ? "in" : "up"
-            } method`}
-          </span>
-        </div>
-
-        <form
-          className="flex flex-col gap-6"
-          onSubmit={flow === "signin" ? handleSignIn : handleSignUp}
-        >
+      <form
+        className="flex flex-col gap-6 mx-6 sm:mx-8 grow"
+        onSubmit={flow === "signin" ? handleSignIn : handleSignUp}
+      >
+        <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-[10px]">
-            <label className="text-primary text-sm font-semibold">
-              Email{flow === "signin" ? "" : "*"}
+            <label className="text-primary text-sm font-semibold px-3.5">
+              Email
             </label>
             <input
               type="text"
@@ -98,38 +104,42 @@ export default function AuthForm({ flow }: any) {
             />
           </div>
 
-          <div className="flex flex-col gap-[10px]">
-            <label className="text-primary text-sm font-semibold">
-              Password{flow === "signin" ? "" : "*"}
-            </label>
+          {flow === "signin" && (
+            <div className="flex flex-col gap-[10px]">
+              <label className="text-primary text-sm font-semibold px-3.5">
+                Password
+              </label>
 
-            <div className="input-default flex items-center w-full !p-0">
-              <input
-                type={isPasswordVisible ? "text" : "password"}
-                value={password}
-                placeholder={
-                  flow === "signin"
-                    ? "Enter your password"
-                    : "Create a password"
-                }
-                className="input-default grow !border-0 !outline-0"
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
+              <div className="input-default flex items-center w-full !p-0">
+                <input
+                  type={isPasswordVisible ? "text" : "password"}
+                  value={password}
+                  placeholder={
+                    flow === "signin"
+                      ? "Enter your password"
+                      : "Create a password"
+                  }
+                  className="input-default grow !border-0 !outline-0"
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
 
-              <span
-                onClick={() => setIsPasswordVisible(!isPasswordVisible)}
-                className="button-icon mr-2"
-              >
-                {isPasswordVisible ? (
-                  <ShowPasswordIcon className="" />
-                ) : (
-                  <HidePasswordIcon className="" />
-                )}
-              </span>
+                <span
+                  onClick={() => setIsPasswordVisible(!isPasswordVisible)}
+                  className="button-icon mr-2"
+                >
+                  {isPasswordVisible ? (
+                    <ShowPasswordIcon className="" />
+                  ) : (
+                    <HidePasswordIcon className="" />
+                  )}
+                </span>
+              </div>
             </div>
-          </div>
+          )}
+        </div>
 
+        <div className="flex flex-col gap-4">
           <button className="btn-1-lg w-full" type="submit">
             {flow === "signin" ? "Sign In" : "Sign Up"}
           </button>
@@ -137,12 +147,12 @@ export default function AuthForm({ flow }: any) {
           <div className="flex items-center">
             <div className="bg-border h-[1px] w-full"></div>
             <span className="text-secondary font-medium text-sm px-3 shrink-0">
-              or {flow} with
+              or continue with
             </span>
             <div className="bg-border h-[1px] w-full"></div>
           </div>
 
-          <div className="flex gap-3.5">
+          <div className="flex flex-col sm:flex-row gap-3.5">
             <button
               onClick={googleLogin}
               className="button-secondary w-full items-center flex justify-center gap-2.5"
@@ -164,12 +174,9 @@ export default function AuthForm({ flow }: any) {
               <span className="">Apple</span>
             </button>
           </div>
-
-          {error && <p style={{ color: "red" }}>{error}</p>}
-        </form>
-      </div>
-
-      <AuthFlow flow={flow} />
+        </div>
+        <LegalNotice />
+      </form>
     </div>
   );
 }
