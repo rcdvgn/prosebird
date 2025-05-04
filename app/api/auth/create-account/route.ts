@@ -44,7 +44,8 @@ export async function POST(request: Request) {
     // Cleanup: remove the verification entry
     await ref.delete();
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, email });
+
   } catch (error: any) {
     console.error("Account creation error:", error.message);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });

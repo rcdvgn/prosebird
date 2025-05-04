@@ -5,6 +5,7 @@ import AuthContainer from "@/app/_components/containers/AuthContainer";
 import React, { useRef, useState, useEffect } from "react";
 import { passwordStrength } from "check-password-strength";
 import { redirect } from "next/navigation";
+import { useAuth } from "@/app/_contexts/AuthContext";
 
 export default function CreatePassword({
   params,
@@ -17,16 +18,18 @@ export default function CreatePassword({
     redirect("/");
   }
 
+  const { login } = useAuth();
+
   const [error, setError] = useState<any>("");
   const [password, setPassword] = useState<any>("");
   const [isPasswordVisible, setIsPasswordVisible] = useState<any>(false);
   const [strength, setStrength] = useState<any>("Too weak");
 
   const colorMap: any = {
-    0: "red-600",
-    1: "orange-600",
-    2: "yellow-600",
-    3: "green-600",
+    0: "bg-red-600",
+    1: "bg-orange-600",
+    2: "bg-yellow-600",
+    3: "bg-green-600",
   };
 
   const createAccount = async () => {
@@ -45,8 +48,7 @@ export default function CreatePassword({
         throw new Error(data.error || "Something went wrong");
       }
 
-      console.log("Account successfully created!");
-      // Redirect to login or dashboard
+      await login(data.email, password);
     } catch (err) {
       console.error("Account creation failed:", err);
       // Show toast or set error state
@@ -104,7 +106,7 @@ export default function CreatePassword({
                   <div
                     key={index}
                     className={`grow h-1 rounded-full ${
-                      strength.id >= index ? "bg-" + color : "bg-battleground"
+                      strength.id >= index ? color : "bg-battleground"
                     }`}
                   ></div>
                 );
