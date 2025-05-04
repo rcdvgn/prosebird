@@ -2,9 +2,15 @@
 
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { HidePasswordIcon, ShowPasswordIcon } from "@/app/_assets/icons";
+import {
+  HidePasswordIcon,
+  LoadingIcon,
+  ShowPasswordIcon,
+} from "@/app/_assets/icons";
 import { useAuth } from "../_contexts/AuthContext";
 import LegalNotice from "./LegalNotice";
+import AuthContainer from "./containers/AuthContainer";
+import isEmail from "validator/lib/isEmail";
 
 function AuthFlow({ flow }: any) {
   const router = useRouter();
@@ -28,14 +34,18 @@ function AuthFlow({ flow }: any) {
   );
 }
 
-export default function AuthForm({ flow }: any) {
+export default function AuthForm({
+  flow,
+  setFinalEmail = null,
+  error,
+  setError,
+}: any) {
   const { login, signup, googleLogin } = useAuth();
 
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState<any>("");
   const [password, setPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState<any>(false);
-
-  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   // const alternateFlow = flow === "signin" ? "signup" : "signin";
 
@@ -54,50 +64,47 @@ export default function AuthForm({ flow }: any) {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     setError(null);
 
     try {
-      await signup(email, password);
+      const trimmedEmail = email.trim();
+      if (!isEmail(trimmedEmail)) {
+        setError("Invalid email format. Please enter a valid email.");
+        setLoading(false);
+        return;
+      }
+
+      setFinalEmail(email);
+
+      setLoading(false);
+
+      // await signup(email, password);
     } catch (error) {
       setError("Failed to sign up. Please try again.");
       console.error("SignUp error:", error);
     }
   };
+
   return (
-    <div className="max-sm:h-full sm:max-w-[465px] min-h-[620px] sm:rounded-2xl z-10 bg-background border-stroke border-[1px] pb-10 w-full mx-auto overflow-hidden flex flex-col items-center justify-center">
-      {error && (
-        <div className="text-center w-full py-1.5 bg-red-800">
-          <span className="text-primary text-[13px] font-medium">{error}</span>
-        </div>
-      )}
-
-      <div className="mx-6 sm:mx-8 my-8 flex flex-col gap-6 items-center">
-        <img
-          className="h-9 !aspect-square"
-          src="https://utfs.io/a/dv6kwxfdfm/X7kJqL6j4LDUlNtWPnomHUs49zRpMfonbdO3FGlh8Be6YKQ0"
-          alt="Logo"
-        />
-        <div className="text-center">
-          <span className="block font-bold text-primary text-3xl mb-2">
-            {flow === "signin" ? "Welcome back" : "Create account"}
-          </span>
-          <AuthFlow flow={flow} />
-        </div>
-      </div>
-
+    <AuthContainer
+      error={error}
+      title={flow === "signin" ? "Welcome back" : "Create account"}
+      description={<AuthFlow flow={flow} />}
+    >
       <form
-        className="flex flex-col gap-6 mx-6 sm:mx-8 grow"
+        className="flex flex-col gap-6 px-6 sm:px-8 grow w-full"
         onSubmit={flow === "signin" ? handleSignIn : handleSignUp}
       >
         <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-[10px]">
+          <div className="flex flex-col gap-[10px] items-start">
             <label className="text-primary text-sm font-semibold px-3.5">
               Email
             </label>
             <input
               type="text"
               value={email}
-              placeholder="Enter your email address"
+              placeholder="Your email address"
               className="input-default w-full"
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -105,7 +112,7 @@ export default function AuthForm({ flow }: any) {
           </div>
 
           {flow === "signin" && (
-            <div className="flex flex-col gap-[10px]">
+            <div className="flex flex-col items-start gap-[10px]">
               <label className="text-primary text-sm font-semibold px-3.5">
                 Password
               </label>
@@ -114,11 +121,7 @@ export default function AuthForm({ flow }: any) {
                 <input
                   type={isPasswordVisible ? "text" : "password"}
                   value={password}
-                  placeholder={
-                    flow === "signin"
-                      ? "Enter your password"
-                      : "Create a password"
-                  }
+                  placeholder="Your password"
                   className="input-default grow !border-0 !outline-0"
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -135,13 +138,25 @@ export default function AuthForm({ flow }: any) {
                   )}
                 </span>
               </div>
+
+              <span className="text-sm text-secondary font-medium cursor-pointer hover:text-primary">
+                Forgot your password?
+              </span>
             </div>
           )}
         </div>
 
         <div className="flex flex-col gap-4">
           <button className="btn-1-lg w-full" type="submit">
-            {flow === "signin" ? "Sign In" : "Sign Up"}
+            {loading ? (
+              <span className="w-full h-full flex items-center justify-center">
+                <LoadingIcon className="text-primary animate-spin h-4" />
+              </span>
+            ) : flow === "signin" ? (
+              "Sign In"
+            ) : (
+              "Continue"
+            )}
           </button>
 
           <div className="flex items-center">
@@ -152,10 +167,10 @@ export default function AuthForm({ flow }: any) {
             <div className="bg-border h-[1px] w-full"></div>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3.5">
+          <div className="flex flex-col sm:flex-row gap-2">
             <button
               onClick={googleLogin}
-              className="button-secondary w-full items-center flex justify-center gap-2.5"
+              className="btn-2-lg w-full items-center flex justify-center gap-2.5"
             >
               <img
                 src="/static/logos/google_48.png"
@@ -165,7 +180,7 @@ export default function AuthForm({ flow }: any) {
               <span className="">Google</span>
             </button>
 
-            <button className="button-secondary w-full items-center flex justify-center gap-2.5">
+            <button className="btn-2-lg w-full items-center flex justify-center gap-2.5">
               <img
                 src="/static/logos/apple_48.png"
                 alt=""
@@ -177,6 +192,6 @@ export default function AuthForm({ flow }: any) {
         </div>
         <LegalNotice />
       </form>
-    </div>
+    </AuthContainer>
   );
 }

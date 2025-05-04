@@ -239,3 +239,30 @@ export const addPresentationParticipants = async (
     throw new Error("Failed to update presentation participants.");
   }
 };
+
+export async function userExists(email: string): Promise<boolean> {
+  const userSnap = await db
+    .collection("users")
+    .where("email", "==", email)
+    .limit(1)
+    .get();
+  return !userSnap.empty;
+}
+
+export async function saveVerificationCode(
+  email: string,
+  code: string,
+  expiresAt: number,
+  verifyToken: string
+) {
+  await db.collection("emailVerifications").doc(email).set({
+    code,
+    expiresAt,
+    verifyToken,
+  });
+}
+
+export async function getEmailVerification(email: string) {
+  const doc = await db.collection("emailVerifications").doc(email).get();
+  return doc.exists ? doc.data() : null;
+}
