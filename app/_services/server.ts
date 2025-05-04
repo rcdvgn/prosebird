@@ -3,6 +3,7 @@ import "server-only";
 import { admin } from "@/app/_config/firebase/admin";
 const rtdb = admin.database();
 const db = admin.firestore();
+const auth = admin.auth();
 import generatePresentationCode from "../_lib/generatePresentationCode";
 
 export const getPresentationByCode = async (presentationCode: string) => {
@@ -265,4 +266,29 @@ export async function saveVerificationCode(
 export async function getEmailVerification(email: string) {
   const doc = await db.collection("emailVerifications").doc(email).get();
   return doc.exists ? doc.data() : null;
+}
+
+export async function getEmailVerificationByToken(token: string) {
+  const snapshot = await db
+    .collection("emailVerifications")
+    .where("verifyToken", "==", token)
+    .limit(1)
+    .get();
+
+  if (snapshot.empty) return null;
+
+  const doc = snapshot.docs[0];
+  const data = doc.data();
+
+  return {
+    email: doc.id, // ✅ the doc ID *is* the email
+    verifyToken: data.verifyToken,
+    expiresAt: data.expiresAt,
+    code: data.code,
+    ref: doc.ref,
+  };
+}
+
+export async function createFirebaseUser(email: string, password: string) {
+  return await auth.createUser({ email, password });
 }

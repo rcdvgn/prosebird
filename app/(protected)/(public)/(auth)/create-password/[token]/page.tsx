@@ -4,8 +4,19 @@ import { HidePasswordIcon, ShowPasswordIcon } from "@/app/_assets/icons";
 import AuthContainer from "@/app/_components/containers/AuthContainer";
 import React, { useRef, useState, useEffect } from "react";
 import { passwordStrength } from "check-password-strength";
+import { redirect } from "next/navigation";
 
-export default function CreatePassword() {
+export default function CreatePassword({
+  params,
+}: {
+  params: { token: string };
+}) {
+  const token = params.token;
+
+  if (!token) {
+    redirect("/");
+  }
+
   const [error, setError] = useState<any>("");
   const [password, setPassword] = useState<any>("");
   const [isPasswordVisible, setIsPasswordVisible] = useState<any>(false);
@@ -18,8 +29,32 @@ export default function CreatePassword() {
     3: "green-600",
   };
 
-  const handleSubmit = () => {
-    console.log("New passord: ", password);
+  const createAccount = async () => {
+    try {
+      // console.log(token, password);
+      // return;
+      const res = await fetch("/api/auth/create-account", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Something went wrong");
+      }
+
+      console.log("Account successfully created!");
+      // Redirect to login or dashboard
+    } catch (err) {
+      console.error("Account creation failed:", err);
+      // Show toast or set error state
+    }
+  };
+
+  const handleSubmit = async () => {
+    createAccount();
   };
 
   useEffect(() => {
@@ -90,7 +125,11 @@ export default function CreatePassword() {
 
           <button className="btn-2-lg w-full">Use a different email</button>
 
-          <button className="btn-1-lg w-full" type="submit">
+          <button
+            disabled={strength.id < 1}
+            className="btn-1-lg w-full"
+            type="submit"
+          >
             Sign Up
           </button>
         </div>

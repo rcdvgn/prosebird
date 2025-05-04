@@ -40,7 +40,7 @@ export default function AuthForm({
   error,
   setError,
 }: any) {
-  const { login, signup, googleLogin } = useAuth();
+  const { login, googleLogin } = useAuth();
 
   const [email, setEmail] = useState<any>("");
   const [password, setPassword] = useState("");
@@ -78,8 +78,6 @@ export default function AuthForm({
       setFinalEmail(email);
 
       setLoading(false);
-
-      // await signup(email, password);
     } catch (error) {
       setError("Failed to sign up. Please try again.");
       console.error("SignUp error:", error);
