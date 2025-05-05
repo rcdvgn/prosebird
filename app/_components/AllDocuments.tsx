@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import ListView from "./ListView";
 import GridView from "./GridView";
 import {
-  ArrowIcon,
+  VerticalArrowIcon,
   GridViewIcon,
   ListViewIcon,
   TriangleExpandIcon,
@@ -189,7 +189,7 @@ export default function AllDocuments() {
             }}
             className="z-0 grid place-items-center h-full aspect-square rounded-lg text-inactive hover:bg-hover hover:text-primary cursor-pointer"
           >
-            <ArrowIcon
+            <VerticalArrowIcon
               className={`h-3.5 transition-rotate duration-150 ease-in-out ${
                 sorting.order === "asc" ? "" : "rotate-180"
               }`}

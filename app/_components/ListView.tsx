@@ -2,11 +2,11 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import {
-  ArrowIcon,
   CheckIcon,
   ClockIcon,
   MoreIcon,
   StarIcon,
+  VerticalArrowIcon,
 } from "../_assets/icons";
 import { lastModifiedFormatter } from "../_utils/lastModifiedFormater";
 import OutsideClickHandler from "./wrappers/OutsideClickHandler";
@@ -31,7 +31,7 @@ const ScriptAtributeTitle = ({ children, sorting, setSorting, value }: any) => {
             value.order === "asc" ? "rotate-180" : ""
           }`}
         >
-          <ArrowIcon className="h-2 text-primary" />
+          <VerticalArrowIcon className="h-2 text-primary" />
         </span>
       )}
       <div
