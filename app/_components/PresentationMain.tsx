@@ -57,9 +57,11 @@ export default function PresentationMain({
 
   useLayoutEffect(() => {
     if (scriptContainer.current && isAutoscrollOn) {
+      const STICKY_HEADER_OFFSET = 80; // height in px of ChapterTitle
       const progressPercentage =
         (elapsedTime / totalDuration) * scriptContainer.current.clientHeight;
-      scriptContainer.current.style.top = `-${progressPercentage}px`;
+      const adjustedTop = progressPercentage - STICKY_HEADER_OFFSET;
+      scriptContainer.current.style.top = `-${adjustedTop}px`;
     }
   }, [elapsedTime, totalDuration, isAutoscrollOn]);
 
