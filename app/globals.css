@@ -268,7 +268,7 @@ textarea::-webkit-scrollbar {
   }
 
   .presentation-view-options {
-    @apply relative grid place-items-center h-10 w-10 rounded-[10px] hover:bg-hover cursor-pointer text-inactive hover:text-primary;
+    @apply relative grid place-items-center h-10 w-10 rounded-xl hover:bg-hover cursor-pointer text-inactive hover:text-primary;
   }
 
   .presentation-control-options {

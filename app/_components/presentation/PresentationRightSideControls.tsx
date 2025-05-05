@@ -7,7 +7,10 @@ import {
 } from "@/app/_assets/icons";
 import React from "react";
 
-export default function PresentationRightSideControls() {
+export default function PresentationRightSideControls({
+  sideViewTab,
+  setSideViewTab,
+}: any) {
   return (
     <div className="h-full">
       <div className="flex items-center gap-1.5 h-20 mx-3 px-3">
@@ -23,7 +26,10 @@ export default function PresentationRightSideControls() {
           <ChaptersIcon className="h-[18px]" filled={false} />
         </span>
 
-        <span className="presentation-view-options">
+        <span
+          onClick={() => setSideViewTab("search")}
+          className="presentation-view-options"
+        >
           <SearchIcon className="h-[18px]" filled={false} />
         </span>
 

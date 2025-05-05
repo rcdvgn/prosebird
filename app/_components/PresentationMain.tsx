@@ -22,6 +22,7 @@ export default function PresentationMain({
   const { elapsedTime, totalDuration, wordsWithTimestamps, isAutoscrollOn } =
     usePresentation();
 
+  const [sideViewTab, setSideViewTab] = useState(null);
   const [scrollbarHeight, setScrollbarHeight] = useState(0);
 
   const scriptContainer = useRef<any>(null);
@@ -75,7 +76,10 @@ export default function PresentationMain({
             scriptContainer={scriptContainer}
           />
 
-          <PresentationRightSideControls />
+          <PresentationRightSideControls
+            sideViewTab={sideViewTab}
+            setSideViewTab={setSideViewTab}
+          />
 
           <ProgressBar handleTimeChange={handleTimeChange} />
 
@@ -89,7 +93,7 @@ export default function PresentationMain({
           />
         </div>
 
-        <SideView />
+        <SideView tab={sideViewTab} setTab={setSideViewTab} />
       </div>
     </>
   );
