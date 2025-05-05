@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { CloseIcon, PersonalIcon } from "../../_assets/icons";
+import { CloseIcon, UseCasesPersonalIcon } from "../../_assets/icons";
 import "overlayscrollbars/overlayscrollbars.css";
 import { useModal } from "../../_contexts/ModalContext";
 import PreferencesModal from "../settings/PreferencesModal";
@@ -14,17 +14,17 @@ export default function Settings() {
   const settings = [
     {
       name: "Preferences",
-      icon: <PersonalIcon className="h-4" />,
+      icon: <UseCasesPersonalIcon className="h-4" />,
       component: <PreferencesModal />,
     },
     {
       name: "Preferences",
-      icon: <PersonalIcon className="h-4" />,
+      icon: <UseCasesPersonalIcon className="h-4" />,
       component: <PreferencesModal />,
     },
     {
       name: "Preferences",
-      icon: <PersonalIcon className="h-4" />,
+      icon: <UseCasesPersonalIcon className="h-4" />,
       component: <PreferencesModal />,
     },
   ];

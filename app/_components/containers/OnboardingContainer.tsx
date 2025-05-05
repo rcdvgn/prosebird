@@ -17,7 +17,9 @@ export default function OnboardingContainer({
           <span className="block my-3 font-extrabold text-2xl text-primary">
             {title}
           </span>
-          <span className="block text-secondary">{description}</span>
+          <span className="block text-secondary font-medium">
+            {description}
+          </span>
         </div>
       </div>
 

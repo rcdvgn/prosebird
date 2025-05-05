@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import SplitView from "@/app/_components/SplitView";
 import UseCases from "@/app/_components/onboarding/UseCases";
 import Activities from "@/app/_components/onboarding/Activities";
+import Origin from "@/app/_components/onboarding/Origin";
+import Team from "@/app/_components/onboarding/Team";
 
 export default function Onboarding() {
   const { user, logout } = useAuth();
@@ -24,7 +26,9 @@ export default function Onboarding() {
   return user && !user.firstName ? (
     <SplitView options={{ side: "left", containerWidth: "fit" }}>
       {/* <UseCases /> */}
-      <Activities />
+      {/* <Activities /> */}
+      {/* <Origin /> */}
+      <Team />
     </SplitView>
   ) : null;
 }
