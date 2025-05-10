@@ -70,19 +70,16 @@ const TitleNodeView: React.FC<NodeViewProps> = (props: any) => {
                 <ProfilePicture
                   profilePictureURL={participant?.profilePictureURL}
                   className={`h-[26px]`}
-                  firstName={
+                  displayName={
                     participant?.role !== "guest"
-                      ? participant?.firstName
+                      ? participant?.displayName
                       : participant?.alias
-                  }
-                  lastName={
-                    participant?.role !== "guest" ? participant?.lastName : null
                   }
                 />
               ),
               text:
                 participant?.role !== "guest"
-                  ? participant.firstName + " " + participant.lastName
+                  ? participant.displayName
                   : participant.alias,
               onClick: () =>
                 handleChangeSpeaker(
@@ -98,13 +95,10 @@ const TitleNodeView: React.FC<NodeViewProps> = (props: any) => {
         <ProfilePicture
           profilePictureURL={speakerData?.profilePictureURL}
           className={`transition-all duration-300 ease-in-out h-[34px] cursor-pointer`}
-          firstName={
+          displayName={
             speakerData?.role !== "guest"
-              ? speakerData?.firstName
+              ? speakerData?.displayName
               : speakerData?.alias
-          }
-          lastName={
-            speakerData?.role !== "guest" ? speakerData?.lastName : null
           }
         />
       </DropdownWrapper>

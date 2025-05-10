@@ -13,8 +13,7 @@ export default function PresentationLeftSideControls() {
           <span className="relative">
             <ProfilePicture
               profilePictureURL={speaker?.profilePictureURL}
-              firstName={speaker?.firstName || speaker?.alias}
-              lastName={speaker?.lastName || null}
+              displayName={speaker?.displayName || speaker?.alias}
               className="h-8"
             />
 

@@ -101,7 +101,7 @@ export default function SpeakerPicker({
                 >
                   {participant.role === "guest"
                     ? participant.id
-                    : `${participant.firstName} ${participant.lastName}`}
+                    : `${participant.displayName}`}
                   {participant.id === nodes[position].speaker ? " •" : ""}
                 </div>
               );

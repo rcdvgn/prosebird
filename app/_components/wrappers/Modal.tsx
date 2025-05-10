@@ -18,8 +18,12 @@ const Modal: React.FC = () => {
           transition={{ duration: 0.2, ease: "easeInOut" }}
           className="z-50 h-screen w-screen fixed top-0 left-0 bg-background/25 backdrop-blur-md flex justify-center items-center"
         >
-          <OutsideClickHandler onOutsideClick={closeModal} exceptionRefs={[]}>
-            <div>{currentModal?.content}</div>
+          <OutsideClickHandler
+            onOutsideClick={closeModal}
+            exceptionRefs={[]}
+            isActive={currentModal?.options?.closable}
+          >
+            <div className="">{currentModal?.content}</div>
           </OutsideClickHandler>
         </motion.div>
       )}

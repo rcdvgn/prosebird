@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 :root {
-  --background: 26, 26, 26;
-  --middleground: 12, 12, 12;
+  --background: 21, 21, 21;
+  --middleground: 15, 15, 15;
   --foreground: 28, 28, 28;
   --battleground: 34, 34, 34;
 
@@ -24,7 +24,7 @@
   --text-danger: #b51b1d;
 
   /* --brand: 50, 94, 241; */
-  --brand: 50, 100, 241;
+  --brand: 50, 94, 241;
 
   /* #292929 */
   --stroke: 33, 33, 33;
@@ -156,7 +156,7 @@ textarea::-webkit-scrollbar {
   }
 
   .input-default {
-    @apply bg-foreground focus:bg-transparent h-11 outline-1 -outline-offset-1 outline-border px-[14px] rounded-xl outline-none text-primary font-medium text-sm focus:outline-2 focus:-outline-offset-2 focus:outline-brand placeholder:text-placeholder focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-brand;
+    @apply bg-transparent h-11 outline-1 -outline-offset-1 outline-border px-[14px] rounded-xl outline-none text-primary font-medium text-sm focus:outline-2 focus:-outline-offset-2 focus:outline-brand placeholder:text-placeholder focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-brand;
   }
 
   .button-secondary {

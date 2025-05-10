@@ -79,8 +79,7 @@ export default function Files() {
             <ProfilePicture
               profilePictureURL={user?.profilePictureURL}
               className="h-9 cursor-pointer"
-              firstName={user?.firstName}
-              lastName={user?.lastName}
+              displayName={user?.displayName}
             />
           </DropdownWrapper>
         </div>

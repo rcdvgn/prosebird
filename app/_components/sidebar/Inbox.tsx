@@ -22,18 +22,13 @@ const Inbox = ({ notifications, people }: any) => {
                   ?.profilePictureURL
               }
               className="h-8"
-              firstName={
-                people[notification.data.presentationHosts[0]]?.firstName
-              }
-              lastName={
-                people[notification.data.presentationHosts[0]]?.lastName
+              displayName={
+                people[notification.data.presentationHosts[0]]?.displayName
               }
             />
             <div className="grow leading-4">
               <span className="font-bold text-[13px] text-primary hover:underline cursor-pointer">
-                {people[notification.data.presentationHosts[0]]?.firstName +
-                  " " +
-                  people[notification.data.presentationHosts[0]]?.lastName}
+                {people[notification.data.presentationHosts[0]]?.displayName}
               </span>
               <span className="font-medium text-xs text-primary">
                 {" " + notificationTypes[notification.type].text[0] + " "}

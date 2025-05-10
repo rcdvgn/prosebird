@@ -41,13 +41,10 @@ const Participant = ({
         <ProfilePicture
           profilePictureURL={participant?.profilePictureURL}
           className={`h-8`}
-          firstName={
+          displayName={
             participant?.role !== "guest"
-              ? participant?.firstName
+              ? participant?.displayName
               : participant?.alias
-          }
-          lastName={
-            participant?.role !== "guest" ? participant?.lastName : null
           }
         />
 
@@ -55,7 +52,7 @@ const Participant = ({
           <div className="font-semibold text-sm -mb-1">
             <span className="text-primary inline">
               {participant?.role !== "guest"
-                ? participant?.firstName + " " + participant?.lastName
+                ? participant?.displayName
                 : participant?.alias}
             </span>
             {participant?.role !== "guest" &&

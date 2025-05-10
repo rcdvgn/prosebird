@@ -87,8 +87,7 @@ const Presentations: React.FC<PresentationsProps> = ({
               presentationHosts: presentation.hosts.reduce(
                 (acc: any, host: string) => {
                   acc[host] = {
-                    firstName: people[host]?.firstName,
-                    lastName: people[host]?.lastName,
+                    displayName: people[host]?.displayName,
                     profilePictureURL: people[host]?.profilePictureURL,
                   };
                   return acc;
@@ -101,8 +100,7 @@ const Presentations: React.FC<PresentationsProps> = ({
               ).reduce(
                 (acc: any, [participantId, participant]: [string, any]) => {
                   acc[participantId] = {
-                    firstName: people[participantId]?.firstName,
-                    lastName: people[participantId]?.lastName,
+                    displayName: people[participantId]?.displayName,
                     profilePictureURL: people[participantId]?.profilePictureURL,
                     isConnected: participant.isConnected,
                   };
@@ -119,8 +117,7 @@ const Presentations: React.FC<PresentationsProps> = ({
                     people[presentation.hosts[0]]?.profilePictureURL
                   }
                   className="h-8"
-                  firstName={people[presentation.hosts[0]]?.firstName}
-                  lastName={people[presentation.hosts[0]]?.lastName}
+                  displayName={people[presentation.hosts[0]]?.displayName}
                 />
                 {/* <div
                 style={{ backgroundImage: `url("/pfps/profile1.png")` }}

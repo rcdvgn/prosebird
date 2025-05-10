@@ -75,7 +75,7 @@ export default function Presentation() {
     if (microphoneState === MicrophoneState.Ready) {
       connectToDeepgram({
         model: "nova-2",
-        language: "pt-BR",
+        language: "en-US",
         interim_results: true,
         smart_format: true,
         filler_words: true,

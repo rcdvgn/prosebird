@@ -26,8 +26,7 @@ const PresentationTooltip = forwardRef<any, any>(
                         className={`h-8 ${
                           host.isConnected ? "" : "opacity-80"
                         }`}
-                        firstName={host?.firstName}
-                        lastName={host?.lastName}
+                        displayName={host?.displayName}
                       />
                       <div
                         className={`absolute m-auto right-0 bottom-0 h-2 w-2 ring-4 ring-foreground ${
@@ -60,8 +59,7 @@ const PresentationTooltip = forwardRef<any, any>(
                         className={`h-8 ${
                           participant.isConnected ? "" : "opacity-80"
                         }`}
-                        firstName={participant?.firstName}
-                        lastName={participant?.lastName}
+                        displayName={participant?.displayName}
                       />
 
                       <div

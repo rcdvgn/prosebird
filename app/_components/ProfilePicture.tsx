@@ -8,8 +8,8 @@ import hexToHsl from "hex-to-hsl";
 import { useState, useEffect } from "react";
 import { AnonymousIcon } from "../_assets/icons";
 
-const ProfilePicturePlaceholder = ({ className, firstName, lastName }: any) => {
-  const isAnonymous = !firstName || !lastName;
+const ProfilePicturePlaceholder = ({ className, displayName }: any) => {
+  const isAnonymous = !displayName;
 
   if (isAnonymous)
     return (
@@ -20,7 +20,7 @@ const ProfilePicturePlaceholder = ({ className, firstName, lastName }: any) => {
       </div>
     );
 
-  const fullName = (firstName[0] + lastName[0]).toUpperCase();
+  const fullName = displayName[0].toUpperCase();
   const nameColorHex = stc(fullName);
   const nameColorHue = hexToHsl(nameColorHex)[0];
 
@@ -44,8 +44,7 @@ const ProfilePicturePlaceholder = ({ className, firstName, lastName }: any) => {
 const ProfilePicture = ({
   profilePictureURL,
   className = "",
-  firstName,
-  lastName = null,
+  displayName,
 }: any) => {
   const [imageError, setImageError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -78,8 +77,7 @@ const ProfilePicture = ({
     return (
       <ProfilePicturePlaceholder
         className={className}
-        firstName={firstName}
-        lastName={lastName}
+        displayName={displayName}
       />
     );
   }

@@ -341,19 +341,17 @@ export default function ScriptEditor() {
                               <div className="flex items-center gap-2.5 grow min-w-0">
                                 <ProfilePicture
                                   className="h-8"
-                                  firstName={
-                                    participant?.firstName || participant?.alias
+                                  displayName={
+                                    participant?.displayName ||
+                                    participant?.alias
                                   }
-                                  lastName={participant?.lastName || null}
                                 />
 
                                 <div className="flex flex-col grow min-w-0 cursor-default pr-4">
                                   <span className="font-bold text-sm text-primary truncate">
                                     {participant?.role === "guest"
                                       ? participant?.alias
-                                      : participant?.firstName +
-                                        " " +
-                                        participant?.lastName}
+                                      : participant?.displayName}
                                   </span>
                                   <span className="font-medium text-xs text-secondary truncate">
                                     {String(participant?.role)

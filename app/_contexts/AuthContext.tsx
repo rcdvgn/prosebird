@@ -22,6 +22,7 @@ import {
 // Define the context type
 interface AuthContextType {
   user: any | null;
+  setUser: any;
   login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string) => Promise<void>;
   googleLogin: () => Promise<void>;
@@ -132,7 +133,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, signup, googleLogin, logout }}>
+    <AuthContext.Provider
+      value={{ user, setUser, login, signup, googleLogin, logout }}
+    >
       {!loading && children}
     </AuthContext.Provider>
   );

@@ -1,16 +1,19 @@
 "use client";
 
-import { useState } from "react";
-import OnboardingContainer from "../containers/OnboardingContainer";
 import { CheckIcon } from "@/app/_assets/icons";
 
-const Activities = () => {
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+const IntendedUse = ({ formData, setFormData, error }: any) => {
+  const selectedItems = formData.intendedUse;
 
   const toggleItem = (item: string) => {
-    setSelectedItems((prev) =>
-      prev.includes(item) ? prev.filter((i) => i !== item) : [...prev, item]
-    );
+    const updated = selectedItems.includes(item)
+      ? selectedItems.filter((i: any) => i !== item)
+      : [...selectedItems, item];
+
+    setFormData((prev: any) => ({
+      ...prev,
+      intendedUse: updated,
+    }));
   };
 
   const activityGroups = [
@@ -59,12 +62,8 @@ const Activities = () => {
   ];
 
   return (
-    <OnboardingContainer
-      title="What do you want help with?"
-      description="Letting us know how you’ll use ProseBird helps us shape a better experience for you."
-      step="3"
-    >
-      <div className="flex flex-col gap-12">
+    <div className="">
+      <div className="flex flex-col gap-12 w-full">
         {activityGroups.map((groupItem, groupIndex) => (
           <div key={groupIndex}>
             <div className="mb-4">
@@ -75,7 +74,7 @@ const Activities = () => {
 
             <div className="flex gap-3 flex-wrap">
               {groupItem.activities.map((item, index) => {
-                const isSelected = selectedItems.includes(item); // 👈 use for styling
+                const isSelected = selectedItems.includes(item);
 
                 return (
                   <span
@@ -84,8 +83,8 @@ const Activities = () => {
                     className={`rounded-[14px] h-11 px-3.5 text-nowrap flex items-center select-none gap-3 cursor-pointer border-[1px]
                       ${
                         isSelected
-                          ? "bg-brand/10 border-brand/20 text-brand"
-                          : "border-transparent bg-background hover:bg-hover text-inactive hover:text-primary"
+                          ? "bg-brand/15 border-brand/20 text-brand"
+                          : "border-transparent bg-foreground hover:bg-hover text-inactive hover:text-primary"
                       }
                     `}
                   >
@@ -93,7 +92,7 @@ const Activities = () => {
                       className={`h-5 w-5 rounded-md border-[1px] grid place-items-center ${
                         isSelected
                           ? "border-transparent bg-brand"
-                          : "bg-middleground border-foreground"
+                          : "bg-background border-stroke"
                       }`}
                     >
                       {isSelected && (
@@ -108,8 +107,13 @@ const Activities = () => {
           </div>
         ))}
       </div>
-    </OnboardingContainer>
+      {error?.intendedUse && (
+        <span className="text-xs text-red-500 font-medium my-4 px-1 block">
+          {error.intendedUse}
+        </span>
+      )}
+    </div>
   );
 };
 
-export default Activities;
+export default IntendedUse;

@@ -47,9 +47,7 @@ export default function ReassignScriptChapters({
           const nameMatches = remainingPartcipants
             .map((p: any) => {
               const isGuest = p?.role === "guest";
-              const nameOrAlias = isGuest
-                ? p?.alias
-                : p?.firstName + " " + p?.lastName;
+              const nameOrAlias = isGuest ? p?.alias : p?.displayName;
 
               if (nameOrAlias === speaker?.nameOrAlias?.trim()) {
                 return { id: p?.id, nameOrAlias, isGuest };
@@ -177,9 +175,7 @@ export default function ReassignScriptChapters({
                     <div className="flex items-center justify-between w-full">
                       <div className="w-[calc(50%-22px)] h-11 rounded-[10px] bg-danger-red/10 flex items-center justify-start px-3.5 cursor-not-allowed">
                         <span className="font-semibold text-sm text-danger-red">
-                          {chapterGroupOldSpeakerData?.firstName +
-                            " " +
-                            chapterGroupOldSpeakerData?.lastName ||
+                          {chapterGroupOldSpeakerData?.displayName ||
                             chapterGroupOldSpeakerData?.alias}
                         </span>
                       </div>
@@ -195,9 +191,7 @@ export default function ReassignScriptChapters({
                         optionGroups={[
                           partcipantsWithoutRemoved().map((p: any) => {
                             const nameOrAlias =
-                              p?.role !== "guest"
-                                ? p?.firstName + " " + p?.lastName
-                                : p?.alias;
+                              p?.role !== "guest" ? p?.displayName : p?.alias;
                             return {
                               text: nameOrAlias,
                               onClick: () =>

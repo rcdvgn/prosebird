@@ -37,6 +37,13 @@ import { db, rtdb } from "../_config/firebase/client";
 import defaultPreferences from "../_lib/defaultPreferences";
 import { gracePeriod } from "../_lib/gracePeriod";
 
+export const fetchUser = async (userId: any) => {
+  const userDocRef = doc(db, "users", userId);
+  const updatedDoc = await getDoc(userDocRef);
+
+  return { id: userId, ...updatedDoc.data() };
+};
+
 // rtdb nodes compliant
 export const createScript: any = async (userId: any) => {
   const blankScript = {
@@ -774,3 +781,39 @@ export const clearUnseenNotifications = async (notificationIds: string[]) => {
     console.error("Error clearing unseen notifications:", error);
   }
 };
+
+export async function updateUserOnboardingData(userId: string, data: any) {
+  if (!userId) throw new Error("User ID is required");
+
+  // Build update object conditionally
+  const updatePayload: any = {
+    displayName: data.displayName,
+    userType: data.userType,
+    intendedUse: data.intendedUse,
+    team: data.team,
+  };
+
+  // Origin logic
+  if (data.origin) {
+    updatePayload.origin =
+      data.origin === "Other"
+        ? data.otherOrigin?.trim() || "Other"
+        : data.origin;
+  }
+
+  // Contacts logic
+  if (data.team && data.contacts && data.contacts.length > 0) {
+    updatePayload.contacts = data.contacts.filter((c: any) => c.trim() !== "");
+  }
+
+  // Reference and update
+  const userRef = doc(db, "users", userId);
+
+  try {
+    await updateDoc(userRef, updatePayload);
+    console.log("User onboarding data updated:", updatePayload);
+  } catch (err) {
+    console.error("Failed to update user document:", err);
+    throw err;
+  }
+}

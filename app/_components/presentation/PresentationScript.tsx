@@ -2,35 +2,32 @@
 import { PauseIcon, PlayIcon, ResizeIcon } from "@/app/_assets/icons";
 import ProfilePicture from "../ProfilePicture";
 import { Resizable } from "re-resizable";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePresentation } from "@/app/_contexts/PresentationContext";
 import getTimestampFromPosition from "@/app/_utils/getTimestampFromPosition";
 
-const ChapterTitle = ({ speaker, timer }: any) => {
+const ChapterTitle = ({ speaker, timer, title }: any) => {
   return (
     <div className="z-10 sticky grid place-items-center h-20 bg-gradient-to-b from-middleground via-middleground to-transparent from-0% via-85% to-100% top-0">
-      <div className="flex items-center bg-[#D23262]/15 border-[1px] border-[#D23262]/5 rounded-2xl h-14 w-full px-3 min-w-0">
+      <div className="flex items-center bg-brand/15 border-[1px] border-brand/5 rounded-2xl h-14 w-full px-3 min-w-0">
         <div className="flex gap-3.5 items-center grow min-w-0">
           <ProfilePicture
             profilePictureURL={speaker?.profilePictureURL}
-            firstName={speaker?.firstName || speaker?.alias}
-            lastName={speaker?.lastName || null}
-            className="h-8 ring-[1px] ring-[#D23262]"
+            displayName={speaker?.displayName || speaker?.alias}
+            className="h-8"
           />
 
           <div className="flex flex-col gap-1 min-w-0">
-            <span className="font-bold text-[#D23262] text-sm hover:underline cursor-pointer truncate">
-              The Importance of Nutrition
+            <span className="font-bold text-brand text-sm hover:underline cursor-pointer truncate">
+              {title}
             </span>
-            <span className="font-semibold text-[#D23262] text-xs hover:underline cursor-pointer">
-              {(speaker?.firstName || speaker?.alias) +
-                " " +
-                (speaker?.lastName || null)}
+            <span className="font-semibold text-brand text-xs hover:underline cursor-pointer">
+              {speaker?.displayName || speaker?.alias}
             </span>
           </div>
         </div>
 
-        <div className="h-8 w-8 grid place-items-center rounded-[10px] bg-[#D23262] cursor-pointer shrink-0">
+        <div className="h-8 w-8 grid place-items-center rounded-[10px] bg-brand cursor-pointer shrink-0">
           {timer.isStarted() && timer.isRunning() ? (
             <PauseIcon className="h-3.5 text-primary" />
           ) : (
@@ -50,13 +47,21 @@ const ScriptChapters = ({
   progress,
   handleJump,
 }: any) => {
+  // useEffect(() => {
+  //   console.log(chaptersWithTimestamps);
+  // }, [chaptersWithTimestamps]);
+
   return (
     <>
       {Object.entries(chaptersWithTimestamps).map(
         ([chapterIndex, chapterData]: any, scopedIndex: any) => {
           return (
             <div key={chapterIndex} className="">
-              <ChapterTitle speaker={speaker} timer={timer} />
+              <ChapterTitle
+                title={chapterData.title}
+                speaker={speaker}
+                timer={timer}
+              />
 
               <div className="px-3 text-nowrap">
                 {wordsWithTimestamps &&
@@ -77,7 +82,7 @@ const ScriptChapters = ({
                                 wordsWithTimestamps[progress.line][
                                   progress.index
                                 ].position
-                                  ? "text-[#D23262]"
+                                  ? "text-brand"
                                   : "text-primary/30 hover:text-primary"
                               }`}
                             >

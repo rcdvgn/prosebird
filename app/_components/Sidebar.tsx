@@ -29,13 +29,13 @@ import Settings from "./modals/Settings";
 import Input3 from "./ui/Input3";
 import { useRealtimeData } from "../_contexts/RealtimeDataContext";
 import Scripts from "./sidebar/Scripts";
-import Presentations from "./sidebar/Presentations";
 import Inbox from "./sidebar/Inbox";
 import TooltipWrapper from "./wrappers/TooltipWrapper";
 import capitalizeFirstLetter from "../_utils/capitalizeFirstLetter";
 import DropdownWrapper from "./wrappers/DropdownWrapper";
 import ProfilePicture from "./ProfilePicture";
 import { clearUnseenNotifications } from "../_services/client";
+import Presentations from "./sidebar/presentations";
 
 const findUnseenNotifications = (notifications: any, onlyIds: any) => {
   let newUnseenNotifications = notifications
@@ -343,8 +343,7 @@ export default function Sidebar(fileId: any) {
                 className={`transition-all duration-300 ease-in-out ${
                   !currentTab ? "h-9" : "h-7"
                 } cursor-pointer`}
-                firstName={user?.firstName}
-                lastName={user?.lastName}
+                displayName={user?.displayName}
               />
             </DropdownWrapper>
 
@@ -372,7 +371,7 @@ export default function Sidebar(fileId: any) {
           {currentTab && (
             <div className="">
               <span className="block font-semibold text-primary text-[15px] mb-[2px]">
-                {user?.firstName + " " + user?.lastName}
+                {user?.displayName}
               </span>
               <span className="block font-medium text-secondary text-sm">
                 ricardorpvigliano@gmail.com

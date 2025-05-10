@@ -29,7 +29,7 @@ export default function ActionPanel({
   handleTimerRun: any;
   timer: any;
 }) {
-  const { scrollMode, speaker } = usePresentation();
+  const { scrollMode, speaker, setScrollMode } = usePresentation();
   const { microphoneState } = useMicrophone();
 
   return (
@@ -55,9 +55,8 @@ export default function ActionPanel({
         <div className="flex gap-3.5 items-center grow min-w-0">
           <ProfilePicture
             profilePictureURL={speaker?.profilePictureURL}
-            firstName={speaker?.firstName || speaker?.alias}
-            lastName={speaker?.lastName || null}
-            className="h-8 ring-[1px] ring-[#D23262]"
+            displayName={speaker?.displayName || speaker?.alias}
+            className="h-8"
           />
 
           <div className="flex flex-col gap-1 min-w-0">
@@ -65,9 +64,7 @@ export default function ActionPanel({
               The Importance of Nutrition
             </span>
             <span className="font-semibold text-secondary text-xs hover:underline cursor-pointer">
-              {(speaker?.firstName || speaker?.alias) +
-                " " +
-                (speaker?.lastName || null)}
+              {speaker?.displayName || speaker?.alias}
             </span>
           </div>
         </div>
@@ -79,7 +76,14 @@ export default function ActionPanel({
             <EditTextIcon className="h-5" filled={false} />
           </span>
 
-          <span className="presentation-control-options">
+          <span
+            onClick={() =>
+              setScrollMode(
+                scrollMode === "continuous" ? "dynamic" : "continuous"
+              )
+            }
+            className="presentation-control-options"
+          >
             <ScrollModeIcon className="w-5" filled={false} />
             <span className="font-bold text-[13px] mb-[-2px]">Voice sync</span>
           </span>

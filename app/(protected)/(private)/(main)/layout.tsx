@@ -7,8 +7,11 @@ import { useRouter, useParams } from "next/navigation";
 import { ScriptEditorProvider } from "@/app/_contexts/ScriptEditorContext";
 import Sidebar from "@/app/_components/Sidebar";
 import { RealtimeDataProvider } from "@/app/_contexts/RealtimeDataContext";
+import { useModal } from "@/app/_contexts/ModalContext";
+import Onboarding from "@/app/_components/modals/Onboarding";
 
 const MainLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const { openModal, currentModal, closeModal } = useModal();
   const { user } = useAuth();
   const router = useRouter();
   const params = useParams();
@@ -21,10 +24,19 @@ const MainLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
 
   useEffect(() => {
     if (user) {
-      if (!user.firstName) {
-        router.push("/onboarding");
+      console.log(user);
+      setLetUserIn(true);
+
+      if (!user.displayName) {
+        openModal({
+          content: <Onboarding />,
+          name: "onboarding",
+          options: { closable: false },
+        });
       } else {
-        setLetUserIn(true);
+        if (currentModal && currentModal?.name === "onboarding") {
+          closeModal();
+        }
       }
     } else {
       router.push("/");

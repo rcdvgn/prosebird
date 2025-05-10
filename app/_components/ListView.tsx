@@ -229,8 +229,7 @@ export default function ListView({
                           people[script.createdBy]?.profilePictureURL
                         }
                         className="h-[30px]"
-                        firstName={user?.firstName}
-                        lastName={user?.lastName}
+                        displayName={user?.displayName}
                       />
                       <span className="text-inactive font-semibold text-[13px] mb-[-3px] truncate group-hover/main:text-primary cursor-pointer hover:underline">
                         You
