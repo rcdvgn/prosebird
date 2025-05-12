@@ -42,7 +42,7 @@ const DisplayName = ({ formData, setFormData, error }: any) => {
         )}
       </div>
 
-      <span className="text-xs text-placeholder font-medium my-2 px-1 block">
+      <span className="text-xs text-tertiary font-medium my-2 px-1 block">
         {formData.displayName.length}/30
       </span>
 

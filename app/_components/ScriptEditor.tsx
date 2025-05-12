@@ -1,7 +1,6 @@
 "use client";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
-import ScriptArea from "./ScriptArea";
 import ScriptAreaInfo from "./ScriptAreaInfo";
 import { useRouter } from "next/navigation";
 import {
@@ -15,6 +14,10 @@ import {
   ChaptersIcon,
   ToggleSidebarIcon,
   ChapterIcon,
+  AboutIcon,
+  ScriptSkeuomorphicIcon,
+  LoadingIcon,
+  SavedChangesIcon,
 } from "../_assets/icons";
 import { useScriptEditor } from "@/app/_contexts/ScriptEditorContext";
 import { useAuth } from "@/app/_contexts/AuthContext";
@@ -29,10 +32,12 @@ import { useModal } from "../_contexts/ModalContext";
 import ManageParticipants from "./modals/ManageParticipants";
 import ProfilePicture from "./ProfilePicture";
 import _ from "lodash";
+import TooltipWrapper from "./wrappers/TooltipWrapper";
 
 export default function ScriptEditor() {
-  const { script, setScript, nodes, setNodes, participants, editor } =
+  const { script, setScript, nodes, setNodes, participants, editor, isSaved } =
     useScriptEditor();
+
   const { user } = useAuth();
   const router = useRouter();
 
@@ -43,6 +48,7 @@ export default function ScriptEditor() {
   });
 
   const [editorOptions, setEditorOptions] = useState<any>({
+    viewMode: "editor",
     textType: "default",
     fontSize: 14,
     textAlignment: "left",
@@ -58,7 +64,7 @@ export default function ScriptEditor() {
   const [documentTitle, setDocumentTitle] = useState(script?.title);
   const [selectedSegment, setSelectedSegment] = useState<any>(0);
 
-  const chapterViewWidth = 324;
+  const chapterViewWidth = 360;
 
   const handleDocumentTitleChange = (e: any) => {
     setDocumentTitle(e.target.value);
@@ -139,8 +145,9 @@ export default function ScriptEditor() {
   };
 
   const segments = [
-    { id: 0, text: "Chapters", onClick: () => setSelectedSegment(0) },
-    { id: 1, text: "People", onClick: () => setSelectedSegment(1) },
+    { id: 0, text: "About", onClick: () => setSelectedSegment(0) },
+    { id: 1, text: "Chapters", onClick: () => setSelectedSegment(1) },
+    { id: 2, text: "People", onClick: () => setSelectedSegment(2) },
   ];
 
   const slideVariants = {
@@ -171,56 +178,72 @@ export default function ScriptEditor() {
 
   return (
     <div className="flex flex-col w-full">
-      <div className="flex justify-between items-center p-[10px] h-16 shrink-0">
+      <div className="flex justify-between items-center py-[10px] px-5 h-16 shrink-0">
         {/* Top bar with document title and icons */}
-        <div className="grow flex items-center gap-3 min-w-0">
-          <div className="icon-container">
-            <ScriptIcon className="text-primary" />
-          </div>
-          <div className="relative grow flex items-center gap-2 min-w-0">
-            <span
-              ref={inputContainerRef}
-              className="absolute left-0 top-0 w-fit m-auto font-semibold text-[13px] invisible min-w-0"
-            >
-              {documentTitle}
-            </span>
-            <input
-              ref={documentTitleRef}
-              type="text"
-              value={documentTitle}
-              onFocus={() => setIsSpellCheckEnabled(true)}
-              onBlur={() => {
-                handleDocumentTitleFocusOut();
-                setIsSpellCheckEnabled(false);
-              }}
-              onChange={handleDocumentTitleChange}
-              onKeyDown={handleDocumentTitleKeyDown}
-              spellCheck={isSpellCheckEnabled}
-              className="font-semibold text-[13px] inactive bg-transparent border-none outline-none rounded-sm focus:text-primary/90 ring-1 ring-transparent hover:ring-placeholder focus:ring-brand ring-offset-4 ring-offset-background min-w-0"
-            />
-            <div className="flex items-center gap-1">
+        <div className="grow flex items-center gap-4 min-w-0">
+          <ScriptSkeuomorphicIcon className="w-6 translate-y-[2px]" />
+          <div className="grow flex items-center gap-2 min-w-0">
+            <div className="relative">
+              <span
+                ref={inputContainerRef}
+                className="absolute left-0 top-0 w-fit m-auto font-bold text-sm invisible min-w-0"
+              >
+                {documentTitle}
+              </span>
+              <input
+                ref={documentTitleRef}
+                type="text"
+                value={documentTitle}
+                onFocus={() => setIsSpellCheckEnabled(true)}
+                onBlur={() => {
+                  handleDocumentTitleFocusOut();
+                  setIsSpellCheckEnabled(false);
+                }}
+                onChange={handleDocumentTitleChange}
+                onKeyDown={handleDocumentTitleKeyDown}
+                spellCheck={isSpellCheckEnabled}
+                className="font-bold text-sm inactive bg-transparent border-none outline-none rounded-sm focus:text-primary/90 ring-1 ring-transparent hover:ring-placeholder focus:ring-brand ring-offset-4 ring-offset-background min-w-0"
+              />
+            </div>
+            <div className="flex items-center">
               <span
                 onClick={() =>
                   changeFavoriteStatus(script.id, !script.isFavorite)
                 }
-                className="button-icon !h-[25px] !bg-transparent"
+                className="button-icon !h-7 !rounded-lg"
               >
                 <StarIcon
-                  className={`h-4 ${
-                    script?.isFavorite
-                      ? "!text-favorite-yellow fill-current"
-                      : ""
+                  filled={script?.isFavorite ? true : false}
+                  className={`h-3.5 ${
+                    script?.isFavorite ? "!text-favorite-yellow" : ""
                   }`}
                 />
               </span>
-              <span className="button-icon !h-[25px] !bg-transparent">
-                <MoreIcon className="rotate-90 w-3.5" />
+              <span className="button-icon !h-7 !rounded-lg">
+                <MoreIcon className="rotate-90 w-[13px]" />
               </span>
+
+              {isSaved ? (
+                <TooltipWrapper
+                  position="bottom"
+                  data={{
+                    text: "Up to date, all changes have been saved.",
+                  }}
+                >
+                  <span className="button-icon !h-7 !rounded-lg cursor-auto">
+                    <SavedChangesIcon className="w-[18px] overflow-visible" />
+                  </span>
+                </TooltipWrapper>
+              ) : (
+                <span className="button-icon !h-7 !rounded-lg !bg-transparent pointer-events-none">
+                  <LoadingIcon className="h-3.5 animate-spin" />
+                </span>
+              )}
             </div>
           </div>
         </div>
-        <div className="flex gap-3 items-center">
-          <div className="flex h-7">
+        <div className="flex gap-1.5 items-center">
+          <div className="flex h-7 px-1">
             {Array.from({ length: 3 }).map((_, index) => (
               <div
                 key={index}
@@ -233,28 +256,33 @@ export default function ScriptEditor() {
               ></div>
             ))}
           </div>
-          <button
-            onClick={() => setScriptAreaControlsVisible((curr: any) => !curr)}
-            className="btn-2-md !px-0 !aspect-square"
-          >
-            <PencilIcon className="h-3.5" />
-          </button>
-          <button
-            onClick={() => setChaptersViewVisible((curr: any) => !curr)}
-            className="btn-2-md !px-0 !aspect-square"
-          >
-            <ChaptersIcon className="w-3.5" />
-          </button>
+          <div className="flex items-center gap-1.5 px-1">
+            <button
+              onClick={() => setChaptersViewVisible((curr: any) => !curr)}
+              className={`button-icon h-[34px] rounded-xl ${
+                chaptersViewVisible ? "!bg-brand/15 !text-brand" : ""
+              }`}
+            >
+              <AboutIcon filled={false} className="h-4" />
+            </button>
+            <button
+              onClick={() => setScriptAreaControlsVisible((curr: any) => !curr)}
+              className={`button-icon h-[34px] rounded-xl ${
+                scriptAreaControlsVisible ? "!bg-brand/15 !text-brand" : ""
+              }`}
+            >
+              <PencilIcon className="h-[15px]" />
+            </button>
+            <button className={`button-icon h-[34px] rounded-xl`}>
+              <PlayIcon className="h-[15px]" />
+            </button>
+          </div>
           {(currentUserInParticipants?.role === "author" ||
             currentUserInParticipants?.role === "editor") && (
-            <button onClick={handleShareFile} className="btn-2-md">
-              Invite
+            <button onClick={handleShareFile} className="btn-1-md">
+              Share
             </button>
           )}
-
-          <button className="btn-1-md" onClick={handlePresent}>
-            <span>Present</span>
-          </button>
         </div>
       </div>
       <div className="grow flex overflow-hidden min-w-0 mr-2 mb-2">
@@ -273,7 +301,7 @@ export default function ScriptEditor() {
             setisVisible={setScriptAreaControlsVisible}
           />
           <Tiptap />
-          <ScriptAreaInfo />
+          {/* <ScriptAreaInfo /> */}
         </div>
         <AnimatePresence>
           {chaptersViewVisible && (
@@ -288,24 +316,20 @@ export default function ScriptEditor() {
               variants={slideVariants}
               transition={{ duration: 0.2 }}
             >
-              <div className="h-16 border-stroke border-b-[1px] flex justify-between items-center shrink-0">
-                <span
+              <div className="h-16 border-stroke border-b-[1px] flex justify-center items-center shrink-0">
+                {/* <span
                   onClick={() => setChaptersViewVisible((curr: any) => !curr)}
                   className="mx-2 button-icon !bg-transparent"
                 >
                   <ToggleSidebarIcon className="h-[18px]" />
-                </span>
+                </span> */}
 
-                <div className="rounded-[10px] h-[36px] p-[2px]">
+                <div className="rounded-[10px] bg-foreground border-[1px] border-stroke p-[3px]">
                   <SegmentedControl
                     segments={segments}
                     selectedSegment={selectedSegment}
                   />
                 </div>
-
-                <span className="invisible mx-2 button-icon !bg-transparent">
-                  <ToggleSidebarIcon className="h-[18px]" />
-                </span>
               </div>
 
               <div

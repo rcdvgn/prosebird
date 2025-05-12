@@ -14,7 +14,10 @@ const ParagraphNodeView = (props: NodeViewProps) => {
   const isEffectivelyEmpty = contentText === "" || contentText === "\u200B";
 
   return (
-    <NodeViewWrapper className="tiptap-paragraph relative">
+    <NodeViewWrapper
+      className="tiptap-paragraph relative"
+      style={{ textAlign: node.attrs.textAlign || "left" }}
+    >
       {position !== null &&
         isEffectivelyEmpty &&
         nodes[position].paragraphs.length <= 1 && (

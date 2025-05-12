@@ -2,29 +2,37 @@ import React, { useEffect, useRef, useState } from "react";
 import SegmentedControl from "./ui/SegmentedControl";
 import {
   BoldTextIcon,
+  ChevronVerticalIcon,
   ClearIcon,
   CloseIcon,
   CommentedTextIcon,
   DefaultTextIcon,
+  EditTextIcon,
+  EditViewMode,
   ItalicTextIcon,
   MinusFontSizeIcon,
   PlusFontSizeIcon,
+  PreviewViewMode,
+  RedoIcon,
   TextAlignCenterIcon,
   TextAlignJustifyIcon,
   TextAlignLeftIcon,
+  TriangleExpandIcon,
+  UndoIcon,
 } from "../_assets/icons";
 import { motion } from "framer-motion";
 import { useScriptEditor } from "../_contexts/ScriptEditorContext";
 import { toggleComment } from "../_utils/tiptapCommands";
 import { getTextAlignment, isCursorInComment } from "../_utils/tiptapHelpers";
 import ScriptEditorSegment from "./ui/ScriptEditorSegment";
+import DropdownWrapper from "./wrappers/DropdownWrapper";
 
 const FontSizeControl = ({ editorOptions, setEditorOptions }: any) => {
   const { editor } = useScriptEditor();
   return (
     <div className="flex items-center h-full">
       <span
-        className="pl-3.5 text-inactive hover:text-primary h-full cursor-pointer flex items-center"
+        className="text-inactive rounded-[10px] hover:bg-hover hover:text-primary h-full aspect-square cursor-pointer flex items-center justify-center"
         onClick={() => {
           const newSize = editorOptions.fontSize - 1;
           setEditorOptions((curr: any) => ({
@@ -33,15 +41,15 @@ const FontSizeControl = ({ editorOptions, setEditorOptions }: any) => {
           }));
         }}
       >
-        <MinusFontSizeIcon className="w-3" />
+        <MinusFontSizeIcon className="w-[14px]" />
       </span>
-      <div className="w-11 text-center cursor-pointer select-none">
-        <span className="font-bold text-sm text-inactive hover:text-primary">
+      <div className="h-full aspect-square grid place-items-center cursor-pointer select-none rounded-[10px] hover:bg-hover hover:text-primary">
+        <span className="font-bold text-sm text-inactive">
           {editorOptions.fontSize}
         </span>
       </div>
       <span
-        className="pr-3.5 text-inactive hover:text-primary h-full cursor-pointer flex items-center"
+        className="text-inactive rounded-[10px] hover:bg-hover hover:text-primary h-full aspect-square cursor-pointer flex items-center justify-center"
         onClick={() => {
           const newSize = editorOptions.fontSize + 1;
           setEditorOptions((curr: any) => ({
@@ -50,14 +58,14 @@ const FontSizeControl = ({ editorOptions, setEditorOptions }: any) => {
           }));
         }}
       >
-        <PlusFontSizeIcon className="h-3" />
+        <PlusFontSizeIcon className="h-[14px]" />
       </span>
     </div>
   );
 };
 
 const HrDivider = () => {
-  return <div className="w-[2px] h-[18px] rounded-full bg-selected"></div>;
+  return <div className="w-[2px] h-5 rounded-full bg-border"></div>;
 };
 
 export const TextFormatting = () => {
@@ -71,7 +79,7 @@ export const TextFormatting = () => {
 
   const formattingOptions = [
     {
-      leftIcon: <BoldTextIcon className="h-3" />,
+      leftIcon: <BoldTextIcon className="h-[14px]" />,
       type: "bold",
       onClick: () => {
         if (editor) {
@@ -81,7 +89,7 @@ export const TextFormatting = () => {
       isActive: isMarkActive("bold"),
     },
     {
-      leftIcon: <ItalicTextIcon className="h-3" />,
+      leftIcon: <ItalicTextIcon className="h-[14px]" />,
       type: "italic",
       onClick: () => {
         if (editor) {
@@ -91,7 +99,7 @@ export const TextFormatting = () => {
       isActive: isMarkActive("italic"),
     },
     {
-      leftIcon: <CommentedTextIcon className="h-3.5" />,
+      leftIcon: <CommentedTextIcon className="h-[14px]" />,
       type: "comment",
       onClick: () => {
         if (editor && isCursorInComment(editor)) {
@@ -145,7 +153,7 @@ const FormatButton = ({ icon, isActive, onClick }: any) => {
   return (
     <div
       onClick={onClick}
-      className={`h-full px-3 rounded-lg flex justify-center items-center cursor-pointer ${
+      className={`h-full aspect-square px-1 rounded-lg flex justify-center items-center cursor-pointer ${
         isActive
           ? "bg-brand text-primary"
           : "text-secondary hover:text-primary hover:bg-hover"
@@ -159,14 +167,11 @@ const FormatButton = ({ icon, isActive, onClick }: any) => {
 const TextAlignment = ({ editorOptions, setEditorOptions }: any) => {
   const { editor } = useScriptEditor();
 
-  // Helper function to apply alignment to all paragraphs
   const applyAlignmentToAllParagraphs = (alignment: string) => {
     if (!editor) return;
 
-    // Store current selection
     const { from, to } = editor.state.selection;
 
-    // Find all paragraph nodes and apply alignment
     const tr = editor.state.tr;
     editor.state.doc.descendants((node: any, pos: any) => {
       if (node.type.name === "paragraph") {
@@ -178,7 +183,6 @@ const TextAlignment = ({ editorOptions, setEditorOptions }: any) => {
       return true;
     });
 
-    // Apply transaction and restore selection
     editor.view.dispatch(tr);
     editor.commands.setTextSelection({ from, to });
   };
@@ -238,8 +242,91 @@ const TextAlignment = ({ editorOptions, setEditorOptions }: any) => {
           ? 2
           : 3
       }
-      segmentWidth={44}
+      segmentWidth={38}
     />
+  );
+};
+
+const ViewMode = ({ editorOptions, setEditorOptions }: any) => {
+  const [optionsExapanded, setOptionsExapanded] = useState<any>(false);
+
+  return (
+    <DropdownWrapper
+      align="left"
+      isVisible={optionsExapanded}
+      setIsVisible={setOptionsExapanded}
+      optionGroups={[
+        [
+          {
+            text: editorOptions.viewMode === "editor" ? "Preview" : "Editor",
+            beforeIcon:
+              editorOptions.viewMode === "editor" ? (
+                <PreviewViewMode className="w-4" />
+              ) : (
+                <EditViewMode className="w-[14px]" />
+              ),
+            onClick: () =>
+              setEditorOptions((curr: any) => ({
+                ...curr,
+                viewMode: curr.viewMode === "editor" ? "preview" : "editor",
+              })),
+          },
+        ],
+      ]}
+    >
+      <div className="group h-full flex items-center justify-start gap-[2px] text-inactive hover:text-primary cursor-pointer">
+        <span className="grid place-items-center h-[30px] aspect-square text-secondary group-hover:text-primary">
+          {editorOptions.viewMode === "preview" ? (
+            <PreviewViewMode className="w-4" />
+          ) : (
+            <EditViewMode className="w-[14px]" />
+          )}
+        </span>
+        <span className="font-bold text-sm">
+          {String(editorOptions.viewMode).charAt(0).toUpperCase() +
+            String(editorOptions.viewMode).slice(1)}
+        </span>
+
+        <span className="px-2">
+          <TriangleExpandIcon
+            className={`w-[7px] text-inactive group-hover:text-primary transition-all select-none ${
+              optionsExapanded ? "rotate-180" : "rotate-0 translate-y-[1px]"
+            }`}
+          />
+        </span>
+      </div>
+    </DropdownWrapper>
+  );
+};
+
+const UndoRedo = () => {
+  const { editor } = useScriptEditor();
+
+  const canUndo = editor ? editor.can().undo() : false;
+  const canRedo = editor ? editor.can().redo() : false;
+
+  return (
+    <div className="flex items-center h-full">
+      <button
+        onClick={() => {
+          editor ? editor.chain().focus().undo().run() : "";
+        }}
+        disabled={!canUndo}
+        className={`h-full aspect-square rounded-[10px] text-secondary hover:bg-hover hover:text-primary grid place-items-center disabled:text-placeholder disabled:cursor-not-allowed disabled:!bg-transparent`}
+      >
+        <UndoIcon className="w-3.5" />
+      </button>
+
+      <button
+        onClick={() => {
+          editor ? editor.chain().focus().redo().run() : "";
+        }}
+        disabled={!canRedo}
+        className={`h-full aspect-square rounded-[10px] text-secondary hover:bg-hover hover:text-primary grid place-items-center disabled:text-placeholder disabled:cursor-not-allowed disabled:!bg-transparent`}
+      >
+        <RedoIcon className="w-3.5" />
+      </button>
+    </div>
   );
 };
 
@@ -294,9 +381,13 @@ const ScriptControls = ({
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: isVisible ? 1 : 0, scale: isVisible ? 1 : 0.95 }}
       transition={{ duration: 0.15, delay: isVisible ? 0.15 : 0 }}
-      className="pointer-events-auto p-[3px] rounded-[10px] bg-foreground border-stroke border-[1px]"
+      className="pointer-events-auto"
     >
-      <div className="h-8 flex items-center gap-1">
+      <div className="h-12 flex items-center gap-1 ring-stroke ring-1 rounded-[13px] bg-foreground p-[5px]">
+        <UndoRedo />
+
+        <HrDivider />
+
         <TextFormatting />
 
         <HrDivider />
@@ -315,11 +406,18 @@ const ScriptControls = ({
 
         <HrDivider />
 
+        <ViewMode
+          editorOptions={editorOptions}
+          setEditorOptions={setEditorOptions}
+        />
+
+        <HrDivider />
+
         <div
           onClick={() => setisVisible(false)}
-          className="w-11 h-full text-inactive hover:text-primary grid place-items-center cursor-pointer rounded-lg"
+          className="h-full aspect-square text-inactive hover:text-primary grid place-items-center cursor-pointer hover:bg-hover rounded-[10px]"
         >
-          <CloseIcon className="h-3" />
+          <ChevronVerticalIcon className="w-3 translate-y-[-1px]" />
         </div>
       </div>
     </motion.div>
@@ -335,8 +433,8 @@ export default function ScriptAreaControls({
   return (
     <div className={`z-50 sticky top-0 left-0 w-full pointer-events-none`}>
       <div
-        className={`flex items-end justify-center w-full px-10 transition-all duration-300 ease-in-out overflow-hidden pointer-events-none ${
-          isVisible ? "h-16" : "h-0"
+        className={`flex items-end justify-center w-full px-10 transition-all duration-300 ease-in-out pointer-events-none ${
+          isVisible ? "h-[72px]" : "h-0"
         }`}
       >
         <ScriptControls

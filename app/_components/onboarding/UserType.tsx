@@ -51,14 +51,14 @@ const UserType = ({ formData, setFormData, error }: any) => {
             className={`group w-full py-4 px-5 rounded-[20px] flex items-center gap-6 border-[1px] cursor-pointer ${
               isActive
                 ? "bg-brand/15 border-brand/20"
-                : "bg-background border-stroke hover:bg-foreground"
+                : "bg-foreground border-stroke hover:bg-hover"
             }`}
           >
             <div
               className={`h-12 aspect-square rounded-[14px] grid place-items-center ${
                 isActive
                   ? "bg-brand text-primary"
-                  : "bg-foreground text-primary group-hover:bg-battleground"
+                  : "bg-battleground text-primary"
               }`}
             >
               {item.icon(isActive)}

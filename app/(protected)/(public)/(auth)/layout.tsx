@@ -6,7 +6,7 @@ import React, { ReactNode } from "react";
 const AuthLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <div className="min-h-screen w-screen grid place-items-center bg-middleground">
-      <GradientBackground />
+      {/* <GradientBackground /> */}
       {children}
     </div>
   );

@@ -37,9 +37,13 @@ const DefaultDropdown = ({
         <div
           key={index}
           onClick={() => handleClick(item.onClick)}
-          className="px-3 py-2.5 rounded-md hover:bg-hover cursor-pointer font-semibold text-[13px] text-inactive hover:text-primary"
+          className="px-3 py-2.5 rounded-md hover:bg-hover cursor-pointer font-semibold text-[13px] text-inactive hover:text-primary flex items-center gap-2"
         >
-          {item.text}
+          {item.beforeIcon && (
+            <span className="shrink-0">{item.beforeIcon}</span>
+          )}
+          <span>{item.text}</span>
+          {item.afterIcon && <span className="shrink-0">{item.afterIcon}</span>}
         </div>
       ))}
 

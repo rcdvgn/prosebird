@@ -184,11 +184,11 @@ textarea::-webkit-scrollbar {
   }
 
   .btn-1-md {
-    @apply btn-1 h-8 rounded-lg px-[14px];
+    @apply btn-1 h-[34px] rounded-[10px] px-[14px];
   }
 
   .btn-2-md {
-    @apply btn-2 h-8 rounded-lg px-[14px];
+    @apply btn-2 h-[34px] rounded-[10px] px-[14px];
   }
 
   .btn-1-lg {

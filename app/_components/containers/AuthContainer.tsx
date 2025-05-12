@@ -7,7 +7,7 @@ export default function AuthContainer({
   error,
 }: any) {
   return (
-    <div className="max-sm:h-full sm:max-w-[465px] min-h-[650px] sm:rounded-2xl z-10 bg-background border-border border-[1px] pb-10 w-full mx-auto overflow-hidden flex flex-col items-center justify-center">
+    <div className="max-sm:h-full sm:max-w-[465px] min-h-[650px] sm:rounded-2xl z-10 bg-background border-stroke border-[1px] pb-10 w-full mx-auto overflow-hidden flex flex-col items-center justify-center">
       {error && (
         <div className="text-center w-full py-1.5 bg-red-900">
           <span className="text-primary text-[13px] font-medium">{error}</span>

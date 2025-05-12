@@ -22,14 +22,19 @@ const Paragraph = Node.create({
     return [{ tag: "paragraph" }, { tag: "p" }];
   },
 
-  renderHTML({ HTMLAttributes }) {
+  renderHTML({ node, HTMLAttributes }) {
     return [
       "p",
-      mergeAttributes(HTMLAttributes, { class: "tiptap-paragraph" }),
+      {
+        ...HTMLAttributes,
+        style: `text-align: ${node.attrs.textAlign || "left"}; ${
+          HTMLAttributes.style || ""
+        }`,
+        class: `tiptap-paragraph ${HTMLAttributes.class || ""}`,
+      },
       0,
     ];
   },
-
   addNodeView() {
     return ReactNodeViewRenderer(ParagraphNodeView);
   },
