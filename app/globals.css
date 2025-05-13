@@ -11,7 +11,7 @@
   --hover: rgba(255, 255, 255, 0.1);
   --hover-solid: 36, 36, 36;
 
-  --selected: 50, 50, 50;
+  --selected: 38, 38, 38;
 
   --primary: 255, 255, 255;
   /* #A1A1A1 */
@@ -128,6 +128,16 @@ textarea::-webkit-scrollbar {
   --os-handle-bg: var(--brand);
 } */
 
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
 @layer base {
   a {
     @apply text-brand hover:underline visited:!text-brand;
@@ -156,7 +166,7 @@ textarea::-webkit-scrollbar {
   }
 
   .input-default {
-    @apply bg-transparent h-11 outline-1 -outline-offset-1 outline-border px-[14px] rounded-xl outline-none text-primary font-medium text-sm focus:outline-2 focus:-outline-offset-2 focus:outline-brand placeholder:text-placeholder focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-brand;
+    @apply bg-transparent h-10 outline-1 -outline-offset-1 outline-border px-[14px] rounded-xl outline-none text-primary font-medium text-sm focus:outline-2 focus:-outline-offset-2 focus:outline-brand placeholder:text-placeholder focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-brand;
   }
 
   .button-secondary {
@@ -168,15 +178,15 @@ textarea::-webkit-scrollbar {
   }
 
   .btn-1 {
-    @apply bg-brand text-primary text-[13px] font-bold flex justify-center items-center gap-[6px] hover:opacity-85 outline-none border-none focus:outline-brand focus:outline outline-offset-2 disabled:cursor-not-allowed disabled:opacity-80;
+    @apply bg-brand text-primary text-[13px] font-semibold flex justify-center items-center gap-[6px] hover:opacity-85 outline-none border-none focus:outline-brand focus:outline outline-offset-2 disabled:cursor-not-allowed disabled:opacity-80;
   }
 
   .btn-2 {
-    @apply bg-battleground text-inactive hover:text-primary text-[13px] font-bold flex justify-center items-center gap-[6px] outline-none border-none focus:outline-brand focus:outline outline-offset-2 hover:bg-hover disabled:cursor-not-allowed disabled:opacity-80;
+    @apply bg-battleground text-inactive hover:text-primary text-[13px] font-semibold flex justify-center items-center gap-[6px] outline-none border-none focus:outline-brand focus:outline outline-offset-2 hover:bg-hover disabled:cursor-not-allowed disabled:opacity-80;
   }
 
   .btn-3 {
-    @apply text-brand text-sm font-bold flex justify-center items-center gap-[6px] hover:text-brand/80 outline-none border-none disabled:cursor-not-allowed disabled:opacity-80 px-3;
+    @apply text-brand text-sm font-semibold flex justify-center items-center gap-[6px] hover:text-brand/80 outline-none border-none disabled:cursor-not-allowed disabled:opacity-80 px-3;
   }
 
   .btn-1-sm {
@@ -192,15 +202,15 @@ textarea::-webkit-scrollbar {
   }
 
   .btn-1-lg {
-    @apply btn-1 h-11 rounded-xl px-6;
+    @apply btn-1 h-10 rounded-xl px-6;
   }
 
   .btn-2-lg {
-    @apply btn-2 h-11 rounded-xl px-6;
+    @apply btn-2 h-10 rounded-xl px-6;
   }
 
   .btn-3-lg {
-    @apply btn-3 h-11 rounded-xl;
+    @apply btn-3 h-10 rounded-xl;
   }
 
   .button-icon {

@@ -13,14 +13,17 @@ export const GroupByTime = ({
   );
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-4 overflow-y-auto grow no-scrollbar">
       {Object.entries(organizedInstances).map(([slot, group]: any) => (
-        <div key={slot}>
-          <span className="block font-semibold text-xs text-secondary mb-4">
+        <div
+          className="flex flex-col items-center @[80px]:items-start"
+          key={slot}
+        >
+          <span className="text-center @[80px]:text-left block font-semibold text-xs text-primary mb-2.5 @[80px]:px-4 py-1">
             {capitalizeFirstLetter(slot)}
           </span>
 
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1 w-10 @[80px]:w-full">
             {group.map((instance: any, index: number) => (
               <div key={index}>{children(instance, index)}</div>
             ))}

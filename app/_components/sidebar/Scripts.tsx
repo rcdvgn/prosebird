@@ -7,9 +7,14 @@ import GenericFilters, { FilterConfig } from "../filters/GenericFilters";
 import { isScriptShared } from "@/app/_utils/isScriptShared";
 import matchToRole from "@/app/_utils/matchToRole";
 import { filterScripts } from "@/app/_utils/organizeScripts";
+import { useRealtimeData } from "@/app/_contexts/RealtimeDataContext";
+import { useAuth } from "@/app/_contexts/AuthContext";
 
-const Scripts = ({ scripts, people, user }: any) => {
+const Scripts = () => {
+  const { scripts, people } = useRealtimeData();
+
   if (!scripts || !people) return null;
+  const { user } = useAuth();
   const { script: currentScript } = useScriptEditor();
   const router = useRouter();
 
@@ -77,43 +82,46 @@ const Scripts = ({ scripts, people, user }: any) => {
   );
 
   return (
-    <>
-      <div className="relative flex w-full mb-5 h-8 overflow-x-clip overflow-y-visible">
-        <GenericFilters filters={filtersConfig} />
-      </div>
+    // <>
+    //   <div className="relative flex w-full mb-5 h-8 overflow-x-clip overflow-y-visible">
+    //     <GenericFilters filters={filtersConfig} />
+    //   </div>
 
-      <GroupByTime
-        unorganizedInstances={filteredScripts}
-        criteria="lastModified"
-      >
-        {(script: any) => (
-          <div
-            onClick={() => router.push(`/file/${script.id}`)}
-            className={`group h-11 w-full rounded-[10px] pl-[18px] pr-1 flex items-center justify-between cursor-pointer ${
-              currentScript?.id === script.id
-                ? "bg-battleground text-primary"
-                : "text-inactive hover:text-primary hover:bg-hover"
-            }`}
-          >
-            <div className="flex justify-start items-center grow min-w-0 gap-3">
-              <ScriptIcon className="h-4 shrink-0" />
-              <span className="block h-[18px] font-semibold text-[13px] truncate">
-                {script?.title}
-              </span>
-            </div>
-            <span
-              className={`button-icon !bg-transparent ${
+    <GroupByTime unorganizedInstances={filteredScripts} criteria="lastModified">
+      {(script: any) => (
+        <div
+          onClick={() => router.push(`/file/${script.id}`)}
+          className={`group h-10 w-full rounded-[10px] @[80px]:pl-4 @[80px]:pr-1 flex items-center justify-center @[80px]:justify-between gap-1.5 cursor-pointer ${
+            currentScript?.id === script.id
+              ? "bg-battleground text-primary"
+              : "text-inactive hover:text-primary hover:bg-hover"
+          }`}
+        >
+          <div className="flex justify-center @[80px]:justify-start items-center grow min-w-0 gap-3">
+            <ScriptIcon
+              className={`@[80px]:h-4 h-5 shrink-0 ${
                 currentScript?.id === script.id
                   ? "text-primary"
-                  : "opacity-0 group-hover:opacity-100"
+                  : "text-tertiary group-hover:text-primary"
               }`}
-            >
-              <MoreIcon className="w-3 rotate-90" />
+            />
+            <span className="hidden @[80px]:block font-medium text-[13px] truncate">
+              {script?.title}
             </span>
           </div>
-        )}
-      </GroupByTime>
-    </>
+          <span
+            className={`hidden @[80px]:grid button-icon ${
+              currentScript?.id === script.id
+                ? "text-primary"
+                : "opacity-0 group-hover:opacity-100"
+            }`}
+          >
+            <MoreIcon className="w-[13px] rotate-90" />
+          </span>
+        </div>
+      )}
+    </GroupByTime>
+    // </>
   );
 };
 

@@ -5,10 +5,10 @@ import { useAuth } from "@/app/_contexts/AuthContext";
 import { useRouter, useParams } from "next/navigation";
 
 import { ScriptEditorProvider } from "@/app/_contexts/ScriptEditorContext";
-import Sidebar from "@/app/_components/Sidebar";
 import { RealtimeDataProvider } from "@/app/_contexts/RealtimeDataContext";
 import { useModal } from "@/app/_contexts/ModalContext";
 import Onboarding from "@/app/_components/modals/Onboarding";
+import Sidebar from "@/app/_components/Sidebar";
 
 const MainLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { openModal, currentModal, closeModal } = useModal();
@@ -49,7 +49,7 @@ const MainLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
         <div id="main" className="flex">
           <RealtimeDataProvider>
             <ScriptEditorProvider>
-              <Sidebar fileId={fileId} />
+              <Sidebar />
               {children}
             </ScriptEditorProvider>
           </RealtimeDataProvider>
