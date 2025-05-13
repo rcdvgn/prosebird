@@ -23,7 +23,7 @@ export default function ScriptEditorSegment({
             style={{ width: `${segmentWidth}px` }}
             className={`z-10 h-full px-1 rounded-[10px] flex justify-center items-center gap-1 ${
               selectedSegment === index
-                ? "text-primary"
+                ? "text-white"
                 : "hover:bg-hover text-secondary hover:text-primary"
             }`}
           >

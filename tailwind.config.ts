@@ -12,6 +12,8 @@ const config: Config = {
         brand: "0 0 6px 1px rgba(50, 94, 241, 0.1)",
       },
       colors: {
+        white: "rgba(var(--white), <alpha-value>)",
+
         background: "rgba(var(--background), <alpha-value>)",
         middleground: "rgba(var(--middleground), <alpha-value>)",
         foreground: "rgba(var(--foreground), <alpha-value>)",

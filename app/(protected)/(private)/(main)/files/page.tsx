@@ -59,7 +59,7 @@ export default function Files() {
 
         <div className="flex items-center justify-start gap-6">
           <button onClick={handleCreateScript} className="btn-1-md">
-            <PlusIcon className="text-primary h-2.5" />
+            <PlusIcon className="h-2.5" />
             <span className="">New</span>
           </button>
 

@@ -1431,7 +1431,7 @@ export function ParticipantsIcon({ className, filled = true }: any) {
   );
 }
 
-export function AboutIcon({ className, filled = true }: any) {
+export function AboutIcon({ className, filled = false }: any) {
   return filled ? (
     <svg
       className={className}

@@ -5,6 +5,7 @@ import { AuthProvider } from "./_contexts/AuthContext";
 import { ModalProvider } from "./_contexts/ModalContext";
 import Modal from "./_components/wrappers/Modal";
 import { MotionConfig } from "framer-motion";
+import { ThemeProvider } from "./_contexts/ThemeContext";
 
 const publicSans = Public_Sans({ subsets: ["latin"] });
 
@@ -22,14 +23,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`bg-background ${publicSans.className}`}>
-        <AuthProvider>
-          <ModalProvider>
-            <MotionConfig transition={{ ease: "easeInOut" }}>
-              {children}
-            </MotionConfig>
-            <Modal />
-          </ModalProvider>
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <ModalProvider>
+              <MotionConfig transition={{ ease: "easeInOut" }}>
+                {children}
+              </MotionConfig>
+              <Modal />
+            </ModalProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

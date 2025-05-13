@@ -9,6 +9,7 @@ import matchToRole from "@/app/_utils/matchToRole";
 import { filterScripts } from "@/app/_utils/organizeScripts";
 import { useRealtimeData } from "@/app/_contexts/RealtimeDataContext";
 import { useAuth } from "@/app/_contexts/AuthContext";
+import TooltipWrapper from "../wrappers/TooltipWrapper";
 
 const Scripts = () => {
   const { scripts, people } = useRealtimeData();
@@ -91,10 +92,10 @@ const Scripts = () => {
       {(script: any) => (
         <div
           onClick={() => router.push(`/file/${script.id}`)}
-          className={`group h-10 w-full rounded-[10px] @[80px]:pl-4 @[80px]:pr-1 flex items-center justify-center @[80px]:justify-between gap-1.5 cursor-pointer ${
+          className={`group h-10 w-full rounded-xl @[80px]:pl-4 @[80px]:pr-1 flex items-center justify-center @[80px]:justify-between gap-1.5 cursor-pointer ${
             currentScript?.id === script.id
-              ? "bg-battleground text-primary"
-              : "text-inactive hover:text-primary hover:bg-hover"
+              ? "bg-selected text-primary"
+              : "text-inactive hover:text-primary hover:!bg-hover"
           }`}
         >
           <div className="flex justify-center @[80px]:justify-start items-center grow min-w-0 gap-3">
@@ -105,7 +106,7 @@ const Scripts = () => {
                   : "text-tertiary group-hover:text-primary"
               }`}
             />
-            <span className="hidden @[80px]:block font-medium text-[13px] truncate">
+            <span className="hidden @[80px]:block font-semibold text-[13px] truncate">
               {script?.title}
             </span>
           </div>
@@ -121,6 +122,7 @@ const Scripts = () => {
         </div>
       )}
     </GroupByTime>
+
     // </>
   );
 };

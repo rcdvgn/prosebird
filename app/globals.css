@@ -3,6 +3,8 @@
 @tailwind utilities;
 
 :root {
+  --white: 250, 250, 250;
+
   --background: 21, 21, 21;
   --middleground: 15, 15, 15;
   --foreground: 28, 28, 28;
@@ -37,6 +39,42 @@
   --danger-red: 356, 90, 52;
 
   --progressbar-inactive: 43, 43, 43;
+  --progressbar-hover: 97, 97, 97;
+}
+
+[data-theme="light"] {
+  --white: 250, 250, 250;
+
+  --background: 240, 240, 240;
+  --middleground: 250, 250, 250;
+  --foreground: 230, 230, 230;
+  --battleground: 210, 210, 210;
+
+  --hover: rgba(0, 0, 0, 0.1);
+  --hover-solid: 230, 230, 230;
+
+  --selected: 217, 217, 217;
+
+  --primary: 10, 10, 10;
+  --secondary: 65, 65, 65;
+  --tertiary: 80, 80, 80;
+
+  --inactive: 65, 65, 65;
+  --placeholder: 130, 130, 130;
+  --text-danger: #b51b1d;
+
+  --brand: 50, 94, 241;
+
+  --stroke: 220, 220, 220;
+  --border: 210, 210, 210;
+
+  --success-green: 33, 248, 40;
+  --money-green: 70, 190, 70;
+  --online-green: 70, 210, 70;
+  --favorite-yellow: 233, 196, 11;
+  --danger-red: 356, 90, 52;
+
+  --progressbar-inactive: 240, 240, 240;
   --progressbar-hover: 97, 97, 97;
 }
 
@@ -128,6 +166,11 @@ textarea::-webkit-scrollbar {
   --os-handle-bg: var(--brand);
 } */
 
+/* [data-theme="light"] .btn-1,
+.btn-2 {
+  color: rgb(var(--middleground)); 
+} */
+
 @layer utilities {
   .no-scrollbar::-webkit-scrollbar {
     display: none;
@@ -178,7 +221,7 @@ textarea::-webkit-scrollbar {
   }
 
   .btn-1 {
-    @apply bg-brand text-primary text-[13px] font-semibold flex justify-center items-center gap-[6px] hover:opacity-85 outline-none border-none focus:outline-brand focus:outline outline-offset-2 disabled:cursor-not-allowed disabled:opacity-80;
+    @apply bg-brand text-white text-[13px] font-semibold flex justify-center items-center gap-[6px] hover:opacity-85 outline-none border-none focus:outline-brand focus:outline outline-offset-2 disabled:cursor-not-allowed disabled:opacity-80;
   }
 
   .btn-2 {
@@ -266,11 +309,11 @@ textarea::-webkit-scrollbar {
   }
 
   .tiptap-paragraph {
-    @apply pl-[50px] text-primary font-normal leading-[22px] placeholder:text-placeholder;
+    @apply pl-[50px] text-primary font-semibold leading-[22px] placeholder:text-placeholder;
   }
 
   .tiptap-title {
-    @apply py-[2px] text-xl text-primary font-bold !p-0 h-[34px] flex items-center justify-start;
+    @apply py-[2px] text-xl text-primary font-extrabold !p-0 h-[34px] flex items-center justify-start;
   }
 
   .tiptap-comment {

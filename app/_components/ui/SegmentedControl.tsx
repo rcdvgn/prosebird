@@ -23,7 +23,7 @@ export default function SegmentedControl({
             style={{ width: `${segmentWidth}px` }}
             className={`z-10 h-8 px-1 rounded-lg flex justify-center items-center gap-1 ${
               selectedSegment === index
-                ? "text-primary"
+                ? "text-white"
                 : "text-secondary hover:text-primary"
             }`}
           >
