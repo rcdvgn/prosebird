@@ -10,12 +10,14 @@ const Hr = () => {
   return <div className="w-full h-[1px] rounded-full bg-border"></div>;
 };
 
-export default function PreferencesModal() {
+export default function Preferences() {
   const speedMultiplierSelectedOptionContainer = useRef<any>(null);
 
   const [speedMultiplier, setSpeedMultiplier] = useState<any>(1);
   const [isSpeedMultiplierExpanded, setIsSpeedMultiplierExpanded] =
     useState<any>(false);
+
+  const sections = [{ name: "General" }];
 
   const speedMultiplierOptions = [
     { name: "0.25x", value: 0.25 },
@@ -38,30 +40,77 @@ export default function PreferencesModal() {
       : "";
   };
 
-  return (
-    <div className="flex flex-col gap-6 items-start [&>div]:flex [&>div]:items-center [&>div]:justify-between">
-      <div className="w-full">
-        <div className="flex gap-2 items-center">
-          <span className="font-semibold text-sm text-primary">
-            Playback speed
-          </span>
-          <TooltipWrapper
-            tooltipType={AboutTooltip}
-            data={{
-              text: "Setting up your preferred languages helps for more accurate live transcriptions",
-            }}
-          >
-            <AboutIcon className="text-inactive h-3 hover:text-primary" />
-          </TooltipWrapper>
-        </div>
+  const configGroups = [
+    {
+      name: "General",
+      configs: [
+        {
+          name: "Appearance",
+          description: "Sets the visual theme of ProseBird on your device.",
+          controller: {
+            type: "dropdown",
+          },
+        },
+      ],
+    },
+  ];
 
-        <div className="relative">
-          <div
+  return (
+    <div className="flex flex-col items-start gap-4">
+      {configGroups.map((group: any, index: any) => {
+        return <SettingsOptions group={group} groupIndex={index} />;
+      })}
+    </div>
+  );
+}
+
+const SettingsOptions = ({ group, groupIndex }: any) => {
+  // const controlTypes = []
+
+  return (
+    <div key={groupIndex} className="w-full">
+      <div className="py-2.5 flex justify-start items-center w-full border-b-[1px] border-border">
+        <span className="text-primary font-extrabold text-base">
+          {group.name}
+        </span>
+      </div>
+
+      {/* options container */}
+      <div className="flex flex-col gap-[18px] py-4">
+        {group.configs.map((config: any, index: any) => {
+          return (
+            <div
+              key={index}
+              className="w-full flex items-center justify-between gap-8"
+            >
+              <div className="flex flex-col gap-1.5 grow">
+                <span className="font-semibold text-sm text-primary">
+                  {config.name}
+                </span>
+
+                <span className="text-tertiary font-semibold text-[13px]">
+                  {config.description}
+                </span>
+              </div>
+
+              <div className="relative w-40 flex justify-end items-center">
+                {/* control */}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+{
+  /* <div
             ref={speedMultiplierSelectedOptionContainer}
             onClick={() =>
               setIsSpeedMultiplierExpanded(!isSpeedMultiplierExpanded)
             }
-            className="group py-2 px-4 hover:bg-hover rounded-[10px] cursor-pointer select-none"
+            className="group h-8 px-4 hover:bg-hover rounded-lg cursor-pointer select-none grid place-items-center"
           >
             <span className="font-bold text-sm text-inactive group-hover:text-primary">
               {speedMultiplier + "x"}
@@ -89,13 +138,6 @@ export default function PreferencesModal() {
                     }`}
                   >
                     <span className="flex items-center justify-start">
-                      {/* <TrashCanIcon
-                      className={`h-3 ${
-                        speedMultiplier === item.value
-                          ? "text-primary"
-                          : "text-inactive group-hover:text-primary"
-                      }`}
-                    /> */}
                       <span
                         className={`font-bold text-[13px] ${
                           speedMultiplier === item.value
@@ -114,11 +156,5 @@ export default function PreferencesModal() {
                 );
               })}
             </div>
-          </OutsideClickHandler>
-        </div>
-      </div>
-
-      <Hr />
-    </div>
-  );
+          </OutsideClickHandler> */
 }

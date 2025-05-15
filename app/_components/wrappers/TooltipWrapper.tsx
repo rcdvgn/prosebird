@@ -1,77 +1,137 @@
-"use client";
-import React, { useRef, useState, useEffect } from "react";
+// TooltipWrapper.tsx
+import React, { ReactNode, useState } from "react";
+import {
+  useFloating,
+  offset,
+  flip,
+  shift,
+  autoUpdate,
+} from "@floating-ui/react";
+import { motion, AnimatePresence } from "framer-motion";
+
+// your tooltip components
 import DefaultTooltip from "../tooltips/DefaultTooltip";
+import AboutTooltip from "../tooltips/AboutTooltip";
+import PresentationTooltip from "../tooltips/PresentationTooltip";
+import OutsideClickHandler from "./OutsideClickHandler";
+
+type Placement = "top" | "bottom" | "left" | "right";
+type OpenOn = "hover" | "click";
+
+interface TooltipWrapperProps {
+  children: ReactNode;
+  position?: Placement;
+  tooltipType?: any;
+  data: any;
+  delay?: number; // seconds before show (default 0.5)
+  disabled?: boolean; // if true, never open
+  openOn?: OpenOn; // "hover" (default) or "click"
+  className?: string;
+}
 
 export default function TooltipWrapper({
   children,
   position = "top",
-  className = "",
-  tooltipType: TooltipComponent = DefaultTooltip,
+  tooltipType = DefaultTooltip,
   data,
-}: any) {
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const tooltipRef = useRef<HTMLDivElement>(null);
-  const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
+  delay = 0.5,
+  disabled = false,
+  openOn = "hover",
+  className = "",
+}: TooltipWrapperProps) {
+  const [open, setOpen] = useState(false);
 
-  const updateTooltipPosition = () => {
-    if (wrapperRef.current && tooltipRef.current) {
-      const wrapperRect = wrapperRef.current.getBoundingClientRect();
-      const tooltipRect = tooltipRef.current.getBoundingClientRect();
+  // —— Floating UI setup ——
+  const { refs, x, y, strategy } = useFloating({
+    placement: position,
+    middleware: [
+      offset(16), // bigger gap
+      flip(), // auto-flip on edges
+      shift({ padding: 5 }), // nudge into view
+    ],
+    whileElementsMounted: autoUpdate,
+  });
 
-      const positions: any = {
-        top: {
-          top: wrapperRect.top - tooltipRect.height,
-          left:
-            wrapperRect.left + wrapperRect.width / 2 - tooltipRect.width / 2,
-        },
-        bottom: {
-          top: wrapperRect.bottom,
-          left:
-            wrapperRect.left + wrapperRect.width / 2 - tooltipRect.width / 2,
-        },
-        left: {
-          top:
-            wrapperRect.top + wrapperRect.height / 2 - tooltipRect.height / 2,
-          left: wrapperRect.left - tooltipRect.width,
-        },
-        right: {
-          top:
-            wrapperRect.top + wrapperRect.height / 2 - tooltipRect.height / 2,
-          left: wrapperRect.right,
-        },
-      };
+  // —— pull-away offset so it “slides in” from outside its final spot
+  const pullAwayMap: Record<Placement, { x?: number; y?: number }> = {
+    top: { y: 12 },
+    bottom: { y: -12 },
+    left: { x: 12 },
+    right: { x: -12 },
+  };
+  const pullAway = pullAwayMap[position];
 
-      setTooltipPosition(positions[position]);
+  // —— build the event props for the trigger element
+  const triggerProps: Record<string, any> = {};
+  if (!disabled) {
+    if (openOn === "hover") {
+      triggerProps.onMouseEnter = () => setOpen(true);
+      triggerProps.onMouseLeave = () => setOpen(false);
+    } else if (openOn === "click") {
+      triggerProps.onClick = () => setOpen((o) => !o);
     }
-  };
+  }
 
-  useEffect(() => {
-    updateTooltipPosition();
-    window.addEventListener("resize", updateTooltipPosition);
-    return () => {
-      window.removeEventListener("resize", updateTooltipPosition);
-    };
-  }, [position]);
-
-  const getTranslateClass = () => {
-    const translations: any = {
-      top: "group-hover:-translate-y-4",
-      bottom: "group-hover:translate-y-4",
-      left: "group-hover:-translate-x-4",
-      right: "group-hover:translate-x-4",
-    };
-    return translations[position];
-  };
-
-  return (
-    <div className="relative group" ref={wrapperRef}>
+  // —— the trigger node itself
+  const triggerNode = (
+    <div
+      className={className}
+      ref={refs.setReference}
+      {...triggerProps}
+      // keep its bounding-box predictable even if children are inline
+      // style={{ display: "inline-block" }}
+    >
       {children}
-      <TooltipComponent
-        ref={tooltipRef}
-        data={data}
-        className={`fixed z-[9999] opacity-0 group-hover:opacity-100 pointer-events-none ${className} ${getTranslateClass()}`}
-        style={{ top: tooltipPosition.top, left: tooltipPosition.left }}
-      />
     </div>
+  );
+
+  // —— the tooltip bubble
+  const tooltipNode = (
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          ref={refs.setFloating}
+          initial={{ opacity: 0, scale: 0.9, ...pullAway }}
+          animate={{ opacity: 1, scale: 1, x: 0, y: 0 }}
+          exit={{ opacity: 0, scale: 0.9, ...pullAway }}
+          transition={{ duration: 0.2, delay, ease: "easeInOut" }}
+          style={{
+            position: strategy,
+            top: y ?? 0,
+            left: x ?? 0,
+          }}
+          className="z-[9999] pointer-events-none"
+        >
+          {React.createElement(tooltipType, { data })}
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+
+  // —— if disabled, just render the trigger
+  if (disabled) {
+    return triggerNode;
+  }
+
+  // —— if click-to-open, wrap both in OutsideClickHandler
+  if (openOn === "click") {
+    return (
+      <OutsideClickHandler
+        onOutsideClick={() => setOpen(false)}
+        exceptionRefs={[refs.reference, refs.floating]}
+        isActive={open}
+      >
+        {triggerNode}
+        {tooltipNode}
+      </OutsideClickHandler>
+    );
+  }
+
+  // —— hover-to-open (default)
+  return (
+    <>
+      {triggerNode}
+      {tooltipNode}
+    </>
   );
 }

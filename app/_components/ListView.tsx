@@ -283,10 +283,9 @@ export default function ListView({
                         className=" group-hover/main:visible invisible button-icon !bg-transparent"
                       >
                         <StarIcon
+                          filled={script?.isFavorite}
                           className={`h-3.5 ${
-                            script?.isFavorite
-                              ? "!text-favorite-yellow fill-current"
-                              : ""
+                            script?.isFavorite ? "!text-favorite-yellow" : ""
                           }`}
                         />
                       </div>

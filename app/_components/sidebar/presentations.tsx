@@ -82,7 +82,7 @@ const Presentations: React.FC<PresentationsProps> = ({
           <TooltipWrapper
             position="right"
             tooltipType={PresentationTooltip}
-            delay="0"
+            delay={0}
             data={{
               presentationHosts: presentation.hosts.reduce(
                 (acc: any, host: string) => {

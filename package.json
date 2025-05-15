@@ -11,6 +11,7 @@
   "dependencies": {
     "@allwqre/react-responsive-font-size": "^1.2.0",
     "@deepgram/sdk": "^3.9.0",
+    "@floating-ui/react": "^0.27.8",
     "@hello-pangea/dnd": "^18.0.1",
     "@syncedstore/core": "^0.6.0",
     "@syncedstore/react": "^0.6.0",

@@ -14,8 +14,11 @@ import {
 import Scripts from "./sidebar/Scripts";
 import { useModal } from "../_contexts/ModalContext";
 import Settings from "./modals/Settings";
+import { useRouter } from "next/navigation";
+import TooltipWrapper from "./wrappers/TooltipWrapper";
 
 export default function Sidebar() {
+  const router = useRouter();
   const [expanded, setExpanded] = useState<any>(true);
   const { openModal } = useModal();
 
@@ -32,71 +35,74 @@ export default function Sidebar() {
       transition={{ duration: 0.2, ease: "easeInOut" }}
       className="@container shrink-0 flex flex-col items-center justify-between px-3 pb-5"
     >
-      <div className="w-full shrink-0 h-16 flex items-center justify-center @[80px]:justify-between @[80px]:pl-4 [80px]:pr-2">
-        <ProseBird squared={!expanded} className="h-5 text-primary shrink-0" />
-
-        {expanded && (
-          <span
-            onClick={() => setExpanded((curr: any) => !curr)}
-            className="button-icon h-10 w-10 rounded-xl !bg-transparent"
-          >
-            <ExpandSideBarIcon className="h-[18px]" retract={expanded} />
-          </span>
-        )}
-      </div>
-
-      <div className="w-full flex flex-col gap-4 min-h-0">
-        <div className="w-full flex flex-col items-center gap-1">
-          <Page
-            name={"Expand"}
-            onClick={() => setExpanded((curr: any) => !curr)}
-            icon={
-              <ExpandSideBarIcon
-                className={`h-full @[80px]:h-4 text-tertiary group-hover:text-primary`}
-                filled={currentPage === "Expand" ? true : false}
-              />
-            }
-            isCurrent={currentPage === "Expand"}
-            className="@[80px]:hidden"
+      <div className="w-full">
+        <div className="w-full shrink-0 h-16 flex items-center justify-center @[80px]:justify-between @[80px]:pl-4 [80px]:pr-2">
+          <ProseBird
+            squared={!expanded}
+            className="h-5 text-primary shrink-0"
           />
 
-          <Page
-            name={"Home"}
-            onClick={() => {
-              console.log("You clicked Home");
-            }}
-            icon={
-              <HomeSideBarIcon
-                className={`h-full @[80px]:h-4 text-tertiary group-hover:text-primary`}
-                filled={currentPage === "Home" ? true : false}
-              />
-            }
-            isCurrent={currentPage === "Home"}
-          />
-
-          <Page
-            name={"Search"}
-            onClick={() => {
-              console.log("You clicked Search");
-            }}
-            icon={
-              <SideBarSearchIcon
-                className={`h-full @[80px]:h-4 text-tertiary group-hover:text-primary`}
-                filled={currentPage === "Search" ? true : false}
-              />
-            }
-            isCurrent={currentPage === "Search"}
-          />
-
-          <button className="@[80px]:w-full w-10 btn-1-lg !text-sm gap-2.5 p-0 @[80px]:p-auto mt-1">
-            <NewScriptIcon className="h-[18px] @[80px]:h-4 shrink-0" />
-            <span className="@[80px]:inline hidden">New Script</span>
-          </button>
+          {expanded && (
+            <span
+              onClick={() => setExpanded((curr: any) => !curr)}
+              className="button-icon h-10 w-10 rounded-xl !bg-transparent"
+            >
+              <ExpandSideBarIcon className="h-[18px]" retract={expanded} />
+            </span>
+          )}
         </div>
 
-        <Hr />
+        <div className="w-full flex flex-col gap-4 min-h-0">
+          <div className="w-full flex flex-col items-center gap-1">
+            <Page
+              name={"Expand"}
+              onClick={() => setExpanded((curr: any) => !curr)}
+              icon={
+                <ExpandSideBarIcon
+                  className={`h-full @[80px]:h-4 text-tertiary group-hover:text-primary`}
+                  filled={currentPage === "Expand" ? true : false}
+                />
+              }
+              isCurrent={currentPage === "Expand"}
+              className="@[80px]:hidden"
+            />
 
-        <Scripts />
+            <Page
+              name={"Home"}
+              onClick={() => router.push(`/files`)}
+              icon={
+                <HomeSideBarIcon
+                  className={`h-full @[80px]:h-4 text-tertiary group-hover:text-primary`}
+                  filled={currentPage === "Home" ? true : false}
+                />
+              }
+              isCurrent={currentPage === "Home"}
+            />
+
+            <Page
+              name={"Search"}
+              onClick={() => {
+                console.log("You clicked Search");
+              }}
+              icon={
+                <SideBarSearchIcon
+                  className={`h-full @[80px]:h-4 text-tertiary group-hover:text-primary`}
+                  filled={currentPage === "Search" ? true : false}
+                />
+              }
+              isCurrent={currentPage === "Search"}
+            />
+
+            <button className="@[80px]:w-full w-10 btn-1-lg !text-sm gap-2.5 p-0 @[80px]:p-auto mt-1">
+              <NewScriptIcon className="h-[18px] @[80px]:h-4 shrink-0" />
+              <span className="@[80px]:inline hidden">New Script</span>
+            </button>
+          </div>
+
+          <Hr />
+
+          <Scripts />
+        </div>
       </div>
 
       <div className="w-full flex flex-col gap-4 shrink-0">
@@ -153,19 +159,28 @@ export default function Sidebar() {
 
 const Page = ({ icon, name, isCurrent, onClick, className = "" }: any) => {
   return (
-    <div
-      onClick={onClick}
-      className={`${className} group cursor-pointer flex items-center justify-center @[80px]:justify-start gap-2.5 rounded-xl @[80px]:pl-3.5 @[80px]:pr-4 h-10 @[80px]:w-full w-10 ${
-        isCurrent
-          ? "bg-selected text-primary"
-          : "text-inactive hover:!text-primary hover:bg-hover"
-      }`}
+    <TooltipWrapper
+      className="@[80px]:w-full"
+      delay={0}
+      position="right"
+      data={{
+        text: name,
+      }}
     >
-      <span className="grid h-5 w-5 place-items-center">{icon}</span>
-      <span className="hidden @[80px]:inline font-bold text-sm truncate">
-        {name}
-      </span>
-    </div>
+      <div
+        onClick={onClick}
+        className={`${className} group cursor-pointer flex items-center justify-center @[80px]:justify-start gap-2.5 rounded-xl @[80px]:pl-3.5 @[80px]:pr-4 h-10 @[80px]:w-full w-10 ${
+          isCurrent
+            ? "bg-selected text-primary"
+            : "text-inactive hover:!text-primary hover:bg-hover"
+        }`}
+      >
+        <span className="grid h-5 w-5 place-items-center">{icon}</span>
+        <span className="hidden @[80px]:inline font-bold text-sm truncate">
+          {name}
+        </span>
+      </div>
+    </TooltipWrapper>
   );
 };
 

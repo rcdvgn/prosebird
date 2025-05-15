@@ -213,7 +213,7 @@ export default function ScriptEditor() {
                 className="button-icon !h-7 !rounded-lg"
               >
                 <StarIcon
-                  filled={script?.isFavorite ? true : false}
+                  filled={script?.isFavorite}
                   className={`h-3.5 ${
                     script?.isFavorite ? "!text-favorite-yellow" : ""
                   }`}

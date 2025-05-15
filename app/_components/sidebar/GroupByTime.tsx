@@ -28,10 +28,10 @@ export const GroupByTime = ({
             {group.map((instance: any, index: number) => (
               <div key={index}>
                 <TooltipWrapper
-                  className="!delay-0"
+                  delay={0}
                   position="right"
                   data={{
-                    text: "Up to date, all changes have been saved.",
+                    text: instance?.title,
                   }}
                 >
                   {children(instance, index)}
