@@ -5,6 +5,7 @@ import React, { useRef, useState } from "react";
 import OutsideClickHandler from "../wrappers/OutsideClickHandler";
 import AboutTooltip from "../tooltips/AboutTooltip";
 import TooltipWrapper from "../wrappers/TooltipWrapper";
+import DropdownWrapper from "../testDropdown/DropdownWrapper";
 
 const Hr = () => {
   return <div className="w-full h-[1px] rounded-full bg-border"></div>;
@@ -20,14 +21,14 @@ export default function Preferences() {
   const sections = [{ name: "General" }];
 
   const speedMultiplierOptions = [
-    { name: "0.25x", value: 0.25 },
-    { name: "0.5x", value: 0.5 },
-    { name: "0.75x", value: 0.75 },
-    { name: "1x", value: 1 },
-    { name: "1.25x", value: 1.25 },
-    { name: "1.5x", value: 1.5 },
-    { name: "1.75x", value: 1.75 },
-    { name: "2x", value: 2 },
+    { label: "0.25x", value: 0.25, onClick: () => setSpeedMultiplier(0.25) },
+    { label: "0.5x", value: 0.5, onClick: () => setSpeedMultiplier(0.5) },
+    { label: "0.75x", value: 0.75, onClick: () => setSpeedMultiplier(0.75) },
+    { label: "1x", value: 1, onClick: () => setSpeedMultiplier(1) },
+    { label: "1.25x", value: 1.25, onClick: () => setSpeedMultiplier(1.25) },
+    { label: "1.5x", value: 1.5, onClick: () => setSpeedMultiplier(0.5) },
+    { label: "1.75x", value: 1.75, onClick: () => setSpeedMultiplier(1.75) },
+    { label: "2x", value: 2, onClick: () => setSpeedMultiplier(2) },
   ];
 
   const handleCloseSpeedMultiplier = () => {
@@ -47,9 +48,31 @@ export default function Preferences() {
         {
           name: "Appearance",
           description: "Sets the visual theme of ProseBird on your device.",
-          controller: {
-            type: "dropdown",
-          },
+          controller: (
+            <DropdownWrapper
+              position="bottom-right"
+              options={[
+                {
+                  label: "Light",
+                  value: "light",
+                  onClick: () => {
+                    console.log("light");
+                  },
+                },
+                {
+                  label: "Dark",
+                  value: "dark",
+                  onClick: () => {
+                    console.log("Dark");
+                  },
+                },
+              ]}
+            >
+              <button className="border-none outline-none hover:bg-hover h-10 rounded-xl px-4 text-inactive hover:text-primary">
+                <span className="font-bold text-sm">Light</span>
+              </button>
+            </DropdownWrapper>
+          ),
         },
       ],
     },
@@ -94,7 +117,7 @@ const SettingsOptions = ({ group, groupIndex }: any) => {
               </div>
 
               <div className="relative w-40 flex justify-end items-center">
-                {/* control */}
+                {config.controller}
               </div>
             </div>
           );
