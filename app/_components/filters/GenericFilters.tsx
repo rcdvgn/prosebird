@@ -1,5 +1,6 @@
 import React from "react";
-import DropdownWrapper from "../wrappers/DropdownWrapper";
+// import DropdownWrapper from "../wrappers/DropdownWrapper";
+import DropdownWrapper from "../testDropdown/DropdownWrapper";
 import { ClearIcon, CloseIcon, TriangleExpandIcon } from "@/app/_assets/icons";
 
 export interface FilterOption {
@@ -15,7 +16,7 @@ export interface FilterConfig {
   value?: string | boolean | null;
   isVisible?: boolean;
   setIsVisible?: any;
-  options?: FilterOption[];
+  options?: any;
   onClear?: () => void;
   onToggle?: () => void;
   excludes?: string[];
@@ -61,9 +62,9 @@ const GenericFilters: React.FC<GenericFiltersProps> = ({ filters }) => {
               {filter.value ? (
                 <>
                   <DropdownWrapper
-                    isVisible={filter.isVisible!}
-                    setIsVisible={filter.setIsVisible!}
-                    optionGroups={[filter.options!]}
+                    isActive={filter.isVisible!}
+                    setIsActive={filter.setIsVisible!}
+                    options={filter.options!}
                   >
                     <div className="filter-1 filter-1-selected pr-2 !rounded-r-none">
                       <span className="font-semibold text-[13px] flex items-center">
@@ -85,9 +86,9 @@ const GenericFilters: React.FC<GenericFiltersProps> = ({ filters }) => {
                 </>
               ) : (
                 <DropdownWrapper
-                  isVisible={filter.isVisible!}
-                  setIsVisible={filter.setIsVisible!}
-                  optionGroups={[filter.options!]}
+                  isActive={filter.isVisible!}
+                  setIsActive={filter.setIsVisible!}
+                  options={filter.options!}
                 >
                   <div className="filter-1 filter-1-inactive">
                     <span className="font-semibold text-[13px]">

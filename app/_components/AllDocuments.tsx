@@ -91,21 +91,24 @@ export default function AllDocuments() {
 
   const roleFilterOptions = [
     {
-      text: "Author",
+      label: "Author",
+      value: "author",
       onClick: () => {
         setRoleFilter("Author");
         setIsRoleFilterOptionsVisible(false);
       },
     },
     {
-      text: "Editor",
+      label: "Editor",
+      value: "editor",
       onClick: () => {
         setRoleFilter("Editor");
         setIsRoleFilterOptionsVisible(false);
       },
     },
     {
-      text: "Viewer",
+      label: "Viewer",
+      value: "viewer",
       onClick: () => {
         setRoleFilter("Viewer");
         setIsRoleFilterOptionsVisible(false);
@@ -114,7 +117,7 @@ export default function AllDocuments() {
   ];
 
   // Create the filter configuration array for the GenericFilters component
-  const filtersConfig: FilterConfig[] = [
+  const filtersConfig: any = [
     {
       type: "dropdown",
       label: "Role",

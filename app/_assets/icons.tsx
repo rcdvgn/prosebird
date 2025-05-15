@@ -497,6 +497,24 @@ export function ChevronVerticalIcon({ className }: { className: any }) {
   );
 }
 
+export function ChevronHorizontalIcon({ className }: { className: any }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 8 13"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        fill-rule="evenodd"
+        clip-rule="evenodd"
+        d="M0.794843 0.794846C0.404323 1.18537 0.404323 1.81853 0.794843 2.20906L5.08774 6.50195L0.794843 10.7949C0.404323 11.1854 0.404323 11.8186 0.794843 12.2091C1.18537 12.5996 1.81853 12.5996 2.20906 12.2091L7.20906 7.20906C7.59958 6.81853 7.59958 6.18537 7.20906 5.79484L2.20906 0.794846C1.81853 0.404322 1.18537 0.404322 0.794843 0.794846Z"
+        className="fill-current"
+      />
+    </svg>
+  );
+}
+
 export function CloseIcon({ className }: { className: any }) {
   return (
     <svg

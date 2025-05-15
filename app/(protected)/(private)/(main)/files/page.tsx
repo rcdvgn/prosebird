@@ -13,7 +13,7 @@ import { useModal } from "@/app/_contexts/ModalContext";
 import Settings from "@/app/_components/modals/Settings";
 import { useEffect, useRef, useState } from "react";
 import OutsideClickHandler from "@/app/_components/wrappers/OutsideClickHandler";
-import DropdownWrapper from "@/app/_components/wrappers/DropdownWrapper";
+import DropdownWrapper from "@/app/_components/testDropdown/DropdownWrapper";
 
 export default function Files() {
   const { setScript, setNodes } = useScriptEditor();
@@ -64,16 +64,24 @@ export default function Files() {
           </button>
 
           <DropdownWrapper
-            align="right"
-            optionGroups={[
-              [
-                { text: "Settings", onClick: handleSettings },
-                { text: "Log out", onClick: logout },
-                {
-                  text: "Get desktop app",
-                  onClick: () => console.log("You clicked 'Get desktop app'"),
-                },
-              ],
+            position="bottom-right"
+            options={[
+              {
+                label: "Settings",
+                value: "settings",
+                onClick: handleSettings,
+              },
+
+              {
+                label: "Get desktop app",
+                value: "getDesktopApp",
+                onClick: () => console.log("Get desktop app"),
+              },
+              {
+                label: "Log out",
+                value: "logout",
+                onClick: logout,
+              },
             ]}
           >
             <ProfilePicture
