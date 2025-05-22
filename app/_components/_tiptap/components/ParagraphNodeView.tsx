@@ -20,6 +20,8 @@ const ParagraphNodeView = (props: NodeViewProps) => {
     >
       {position !== null &&
         isEffectivelyEmpty &&
+        nodes[position] &&
+        Array.isArray(nodes[position].paragraphs) &&
         nodes[position].paragraphs.length <= 1 && (
           <span
             className="tiptap-paragraph absolute pointer-events-none text-placeholder top-0 left-0"
