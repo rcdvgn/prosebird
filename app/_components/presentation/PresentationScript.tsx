@@ -1,10 +1,10 @@
+// PresentationScript.tsx
 "use client";
+import React, { useRef, useState } from "react";
 import { PauseIcon, PlayIcon, ResizeIcon } from "@/app/_assets/icons";
 import ProfilePicture from "../ProfilePicture";
 import { Resizable } from "re-resizable";
-import { useEffect, useState } from "react";
 import { usePresentation } from "@/app/_contexts/PresentationContext";
-import getTimestampFromPosition from "@/app/_utils/getTimestampFromPosition";
 
 const ChapterTitle = ({ speaker, timer, title }: any) => {
   return (
@@ -40,190 +40,149 @@ const ChapterTitle = ({ speaker, timer, title }: any) => {
 };
 
 const ScriptChapters = ({
-  wordsWithTimestamps,
-  chaptersWithTimestamps,
+  flatWords,
   speaker,
   timer,
   progress,
   handleJump,
+  timestamps,
+  elapsedTime,
 }: any) => {
   // useEffect(() => {
   //   console.log(chaptersWithTimestamps);
   // }, [chaptersWithTimestamps]);
 
-  return (
-    <>
-      {Object.entries(chaptersWithTimestamps).map(
-        ([chapterIndex, chapterData]: any, scopedIndex: any) => {
-          return (
-            <div key={chapterIndex} className="">
-              <ChapterTitle
-                title={chapterData.title}
-                speaker={speaker}
-                timer={timer}
-              />
+  const groupedByChapter: { [chapterIndex: number]: typeof flatWords } =
+    flatWords.reduce((acc: any, word: any) => {
+      if (!acc[word.chapterIndex]) {
+        acc[word.chapterIndex] = [];
+      }
+      acc[word.chapterIndex].push(word);
+      return acc;
+    }, {} as { [chapterIndex: number]: typeof flatWords });
 
-              <div className="px-3 text-nowrap">
-                {wordsWithTimestamps &&
-                  Object.values(wordsWithTimestamps)
-                    .map((line: any, lineIndex: any) => {
-                      return line[0].chapterIndex === scopedIndex ? (
-                        <div key={lineIndex} className="">
-                          {line.map((wordObject: any, wordIndex: any) => (
-                            <span
-                              key={wordIndex}
-                              style={{
-                                lineHeight: "160%",
-                                fontSize: "36px",
-                              }}
-                              onClick={() => handleJump(wordObject.position)}
-                              className={`cursor-pointer font-bold ${
-                                wordObject.position <
-                                wordsWithTimestamps[progress.line][
-                                  progress.index
-                                ].position
-                                  ? "text-brand"
-                                  : "text-primary/30 hover:text-primary"
-                              }`}
-                            >
-                              {wordIndex === 0
-                                ? wordObject.word
-                                : " " + wordObject.word}
-                            </span>
-                          ))}
-                        </div>
-                      ) : null;
-                    })
-                    .filter(Boolean)}
-              </div>
-            </div>
-          );
-        }
-      )}
-    </>
-  );
+  return Object.entries(groupedByChapter).map(([chapterIndex, wordsArray]) => (
+    <div key={chapterIndex}>
+      <ChapterTitle
+        title={wordsArray[0].chapterTitle}
+        speaker={speaker}
+        timer={timer}
+      />
+      <div style={{ lineHeight: "160%", fontSize: "36px" }} className="px-3">
+        {wordsArray.map(
+          (
+            word: any,
+            wordIndex: any // Renamed wordIndex to wordIndexInChapter for clarity
+          ) => (
+            <span
+              key={word.position}
+              className={`word-span inline-block p-0 align-top cursor-pointer font-bold ${
+                timestamps[word.position] < elapsedTime
+                  ? "text-brand"
+                  : "text-primary/30 hover:text-primary"
+              }`}
+              style={{
+                marginRight:
+                  wordIndex !== wordsArray.length - 1 ? "0.2em" : "0",
+              }}
+              data-word-index={word.position}
+              onClick={() =>
+                handleJump(word.position, timestamps[word.position])
+              }
+            >
+              {word.word}
+            </span>
+          )
+        )}
+      </div>
+    </div>
+  ));
 };
 
-const PresentationScript = ({
+export default function PresentationScript({
   timer,
   handleTimeChange,
-  scrollContainer,
-  scriptContainer,
-}: any) => {
+  slateHeight,
+}: any) {
   const {
+    flatWords,
+    chaptersWithTimestamps,
     progress,
     containerWidth,
     setContainerWidth,
-    wordsWithTimestamps,
-    setIsAutoscrollOn,
     speaker,
-    chaptersWithTimestamps,
+    setIsAutoscrollOn,
+    timestamps,
+    scriptContainer,
+    elapsedTime,
   } = usePresentation();
-
   const [isResizing, setIsResizing] = useState<any>(null);
 
-  const handleJump = (newPosition: any) => {
+  // when user clicks a word
+  const handleJump = (pos: number, ts: number) => {
     setIsAutoscrollOn(true);
-
-    if (
-      wordsWithTimestamps[progress.line][progress.index].position !==
-      newPosition
-    ) {
-      const newElapsedTime = getTimestampFromPosition(
-        wordsWithTimestamps,
-        newPosition
-      );
-      handleTimeChange(newElapsedTime);
-    }
-  };
-
-  const handleResizeStart = ({ e, dir, ref }: any) => {
-    setIsResizing(dir);
-  };
-
-  const handleResizeStop = (d: any) => {
-    setIsResizing(null);
-    setContainerWidth(containerWidth + d.width);
+    handleTimeChange(ts);
   };
 
   return (
     <div
-      ref={scrollContainer}
+      ref={scriptContainer}
       className="bg-middleground h-full grow flex items-start justify-center"
     >
       <Resizable
-        handleStyles={{
-          top: { display: "none" },
-          bottom: { display: "none" },
-          topRight: { display: "none" },
-          topLeft: { display: "none" },
-          bottomLeft: { display: "none" },
-          bottomRight: { display: "none" },
-          right: {
-            width: "56px",
-            cursor: "auto",
-            opacity: isResizing === "left" ? "0" : "", // Remove the "1" to let CSS handle it
-          },
-          left: {
-            width: "56px",
-            cursor: "auto",
-            opacity: isResizing === "right" ? "0" : "", // Remove the "1" to let CSS handle it
-          },
+        size={{ width: containerWidth }}
+        maxWidth={scriptContainer?.current?.clientWidth}
+        onResizeStart={(_e, dir, ref) => {
+          setIsResizing(dir);
+          ref.classList.add("resizing-active");
+        }}
+        onResizeStop={(_e, _dir, ref, d) => {
+          setIsResizing(null);
+          setContainerWidth(containerWidth + d.width);
+          ref.classList.remove("resizing-active");
         }}
         handleClasses={{
-          left: "resizable-handle-container resizable-handle-container-left",
-          right: "resizable-handle-container resizable-handle-container-right",
+          left: "resizable-handle-container-left",
+          right: "resizable-handle-container-right",
         }}
         handleComponent={{
           left: <ResizeHandle />,
           right: <ResizeHandle />,
         }}
-        size={{ width: containerWidth }}
-        onResizeStart={(e: any, dir: any, ref: any) => {
-          handleResizeStart({ e, dir, ref });
-          // Add this line to add a class to the container during resize
-          ref.classList.add("resizing-active");
-        }}
-        onResizeStop={(e: any, dir: any, ref: any, d: any) => {
-          handleResizeStop(d);
-          // Remove the class when done resizing
-          ref.classList.remove("resizing-active");
-        }}
-        maxWidth={
-          scrollContainer.current ? scrollContainer.current.clientWidth : ""
-        }
+        enable={{ top: false, bottom: false, left: true, right: true }}
         className="resizable-script"
       >
-        <div className="relative overflow-hidden h-full w-full">
+        <div className="relative h-full w-full">
           <div
             ref={scriptContainer}
-            className="absolute w-full text-left m-auto right-0 select-none"
+            style={{
+              paddingBottom: slateHeight ? `${slateHeight}px` : undefined,
+            }}
+            className="w-full text-left select-none"
           >
             {chaptersWithTimestamps && (
               <ScriptChapters
-                wordsWithTimestamps={wordsWithTimestamps}
-                chaptersWithTimestamps={chaptersWithTimestamps}
+                flatWords={flatWords}
                 speaker={speaker}
                 timer={timer}
                 progress={progress}
                 handleJump={handleJump}
+                timestamps={timestamps}
+                elapsedTime={elapsedTime}
               />
             )}
           </div>
 
           <div className="absolute w-full h-[150px] bottom-0 left-0 bg-gradient-to-t from-middleground to-middleground/0"></div>
         </div>
+        <div className="absolute bottom-0 w-full h-[150px] bg-gradient-to-t from-middleground to-transparent" />
       </Resizable>
     </div>
   );
-};
+}
 
-export default PresentationScript;
-
-const ResizeHandle = () => {
-  return (
-    <div className="shrink-0 rounded-full h-9 w-9 grid place-items-center text-inactive hover:text-primary bg-background cursor-pointer">
-      <ResizeIcon className="h-4" />
-    </div>
-  );
-};
+const ResizeHandle = () => (
+  <div className="h-9 w-9 grid place-items-center rounded-full bg-background cursor-pointer hover:text-primary">
+    <ResizeIcon className="h-4" />
+  </div>
+);

@@ -506,8 +506,8 @@ export function ChevronHorizontalIcon({ className }: { className: any }) {
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M0.794843 0.794846C0.404323 1.18537 0.404323 1.81853 0.794843 2.20906L5.08774 6.50195L0.794843 10.7949C0.404323 11.1854 0.404323 11.8186 0.794843 12.2091C1.18537 12.5996 1.81853 12.5996 2.20906 12.2091L7.20906 7.20906C7.59958 6.81853 7.59958 6.18537 7.20906 5.79484L2.20906 0.794846C1.81853 0.404322 1.18537 0.404322 0.794843 0.794846Z"
         className="fill-current"
       />
@@ -2106,9 +2106,9 @@ export const ScriptSkeuomorphicIcon = ({ className }: any) => {
           width="23"
           height="32"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feBlend
             mode="normal"
             in="SourceGraphic"
@@ -2141,9 +2141,9 @@ export const ScriptSkeuomorphicIcon = ({ className }: any) => {
           width="21.8008"
           height="9.79492"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -2176,9 +2176,9 @@ export const ScriptSkeuomorphicIcon = ({ className }: any) => {
           width="18.8008"
           height="9.79492"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -2211,9 +2211,9 @@ export const ScriptSkeuomorphicIcon = ({ className }: any) => {
           width="14.9004"
           height="9.79492"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -2246,9 +2246,9 @@ export const ScriptSkeuomorphicIcon = ({ className }: any) => {
           width="12.2793"
           height="13"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
@@ -2461,8 +2461,8 @@ export const ExpandSideBarIcon = ({ className, retract = false }: any) => {
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M4.49988 0.000850561C2.01464 0.00091724 0 2.01562 0 4.50085V13.5005C0 15.9858 2.01472 18.0005 4.5 18.0005H13.5026C15.9879 18.0005 18.0026 15.9858 18.0026 13.5005V4.50061C18.0026 2.01528 15.9878 0.000542338 13.5025 0.00060902L4.49988 0.000850561ZM4.53559 1.50051C2.86052 1.50051 1.5026 2.85843 1.5026 4.5335V13.4675C1.5026 15.1426 2.86052 16.5005 4.53559 16.5005H5.50259V1.50051H4.53559ZM16.5026 4.5335C16.5026 2.85843 15.1447 1.50051 13.4696 1.50051H7.0026V16.5005H13.4696C15.1447 16.5005 16.5026 15.1426 16.5026 13.4675V4.5335Z"
         className="fill-current"
       />

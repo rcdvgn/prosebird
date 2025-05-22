@@ -6,9 +6,9 @@ import React, {
   useState,
   ReactNode,
   useEffect,
+  useRef,
 } from "react";
-import _ from "lodash";
-import calculateTimestamps from "@/app/_lib/addTimestamps";
+import _, { isEqual } from "lodash";
 
 import getPositionFromTimestamp from "../_utils/getPositionFromTimestamp";
 
@@ -18,6 +18,7 @@ import {
   subscribeToPresentation,
   managePresence,
 } from "../_services/client";
+import { generateTimestamps } from "../_lib/addTimestamps";
 
 interface PusherMember {
   id: string;
@@ -38,102 +39,79 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
   const [presentationCode, setPresentationCode] = useState<any>(null);
   const [script, setScript] = useState<any>(null);
   const [loading, setLoading] = useState<any>(true);
-  const [presentation, setPresentation] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [speaker, setSpeaker] = useState<any>(null);
-  const [elapsedTime, setElapsedTime] = useState<any>(0);
   const [scrollMode, setScrollMode] = useState<any>("continuous");
-  const [isSeeking, setIsSeeking] = useState(false);
-  const [wordsWithTimestamps, setWordsWithTimestamps] = useState<any>(null);
-  const [chaptersWithTimestamps, setChaptersWithTimestamps] =
-    useState<any>(null);
-  const [totalDuration, setTotalDuration] = useState<any>(null);
-  const [progress, setProgress] = useState<any>({ line: 0, index: 0 });
   const [participants, setParticipants] = useState<any>([]);
-  const [containerWidth, setContainerWidth] = useState<any>(520);
-  const [isAutoscrollOn, setIsAutoscrollOn] = useState<boolean>(true);
   const [lastFetchedParticipants, setLastFetchedParticipants] = useState<any>(
     []
   );
+  const [timestamps, setTimestamps] = useState<any>([]);
+
   const [controller, setController] = useState<any>(null);
   const [realtimeNodes, setRealtimeNodes] = useState<any>(null);
   const [newerNodesAvailable, setNewerNodesAvailable] = useState<any>(false);
 
-  // const [pusherChannel, setPusherChannel] = useState<any>(null);
+  // — Fetch & validate presentation (unchanged) …
+  const [presentation, setPresentation] = useState<any>(null);
+  // … your pusher/presence/subscription logic remains exactly as before :contentReference[oaicite:0]{index=0}:contentReference[oaicite:1]{index=1} …
 
+  // **New timing state**
+  const [flatWords, setFlatWords] = useState<any>([]);
+  const [chaptersWithTimestamps, setChaptersWithTimestamps] = useState<any>([]);
+
+  const [totalDuration, setTotalDuration] = useState<number>(0);
+
+  // **Playback / scroll state**
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [progress, setProgress] = useState(0); // now a single index into flatWords
+  const [isSeeking, setIsSeeking] = useState(false);
+  const [isAutoscrollOn, setIsAutoscrollOn] = useState(true);
+  const prevNodesRef = useRef();
+
+  // **Layout & speed**
+  const [containerWidth, setContainerWidth] = useState(550);
   const speedMultiplier = 1;
   const fontSize = "36";
 
-  const getController = (currentPosition: any) => {
-    let isController = false;
-    let didControllerChange = false;
-
+  const getController = () => {
     if (!presentation || !speaker) return;
-    const chapters = presentation?.nodes?.chapters;
+    // If you have chapters as a flat, sorted array:
+    const chapters = chaptersWithTimestamps; // or whatever your flat array is called
 
-    const chapterStartPositions = Object.keys(chapters);
-
-    let correctLineSpeaker: any;
-
-    for (let i = chapterStartPositions.length - 1; i >= 0; i--) {
-      if (currentPosition >= chapterStartPositions[i]) {
-        correctLineSpeaker = chapters[chapterStartPositions[i]].speaker;
+    // Find the current chapter for the current progress (flat word index)
+    // Assume chapters are sorted by startPosition ascending
+    let correctSpeaker = null;
+    for (let i = chapters.length - 1; i >= 0; i--) {
+      if (progress >= chapters[i].startPosition) {
+        correctSpeaker = chapters[i].speaker?.id ?? chapters[i].speaker; // support both obj or id
         break;
       }
     }
-    correctLineSpeaker === speaker?.id ? (isController = true) : "";
 
-    if (!controller) {
-      didControllerChange = true;
-      setController({ current: correctLineSpeaker, previous: null });
+    if (!controller || correctSpeaker !== controller.current) {
+      setController((previousController: any) => ({
+        current: correctSpeaker,
+        previous: previousController?.current ?? null,
+      }));
     }
-
-    if (correctLineSpeaker !== controller?.current) {
-      didControllerChange = true;
-      setController((previousController: any) => {
-        return {
-          current: correctLineSpeaker,
-          previous: previousController?.current
-            ? previousController?.current
-            : null,
-        };
-      });
-    }
-
-    return { isController, didControllerChange };
   };
 
-  const broadcastProgress = async ({ transcript }: any) => {
-    let customParams = {};
-    if (transcript) {
-      const lastSpokenWords = transcript.split(" ").slice(-3);
-
-      customParams = {
-        words: presentation.nodes.words,
-        lastSpokenWords: lastSpokenWords,
-      };
-    }
-
+  const broadcastProgress = async ({
+    newPosition,
+  }: {
+    newPosition: number;
+  }) => {
     try {
-      const response = await fetch(
-        `/api/presentation/${transcript ? "dynamically-" : ""}update`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            // presentationCode: presentationCode,
-            presentationId: presentation.id,
-            currentPosition:
-              wordsWithTimestamps[progress.line][progress.index].position,
-            userId: speaker.id,
-            ...customParams,
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status} - ${response.statusText}`);
-      }
+      await fetch(`/api/presentation/update`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          presentationId: presentation.id,
+          currentPosition: newPosition,
+          userId: speaker.id,
+        }),
+      });
     } catch (error) {
       console.error("Error updating presentation:", error);
     }
@@ -169,36 +147,34 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
     validatePresentation();
   }, [presentationCode]);
 
-  // generate wordsWithTimestamps
+  // Generate timestamps when presentation (or speed) changes
   useEffect(() => {
-    const fetchWordsWithTimestamps = async () => {
-      try {
-        if (presentation) {
-          const {
-            scriptWithTimestamps,
-            chaptersWithTimestamps: newChaptersWithTimestamps,
-            totalDuration,
-          } = await calculateTimestamps(
-            presentation.nodes.words,
-            presentation.nodes.chapters,
-            containerWidth,
-            speedMultiplier,
-            fontSize
-          );
+    // Initial guard
+    if (!presentation || !presentation.nodes) {
+      return;
+    }
+    if (isEqual(prevNodesRef.current, presentation.nodes)) {
+      return;
+    }
 
-          // console.log(scriptWithTimestamps, newChaptersWithTimestamps);
+    const {
+      flatWords: fw,
+      chaptersWithTimestamps: ct,
+      totalDuration: td,
+    } = generateTimestamps(
+      presentation.nodes.words,
+      presentation.nodes.chapters,
+      500 // Your original fixed value
+    );
+    console.log(presentation); // Your original console log
 
-          setTotalDuration(totalDuration);
-          setWordsWithTimestamps(scriptWithTimestamps);
-          setChaptersWithTimestamps(newChaptersWithTimestamps);
-        }
-      } catch (error) {
-        console.error("Error fetching words with timestamps:", error);
-      }
-    };
+    setFlatWords(fw);
+    setChaptersWithTimestamps(ct);
+    setTotalDuration(td);
 
-    fetchWordsWithTimestamps();
-  }, [presentation?.nodes, presentation?.id, containerWidth, speedMultiplier]);
+    // Update refs with the current values for the next comparison
+    prevNodesRef.current = presentation.nodes;
+  }, [presentation?.nodes, speedMultiplier]);
 
   // watch nodes and presenation changes in realtime
   useEffect(() => {
@@ -246,10 +222,6 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
       unsubscribe();
     };
   }, [presentation?.id, speaker?.id]);
-
-  // useEffect(() => {
-  //   console.log(participants, speaker);
-  // }, [participants, speaker]);
 
   // update participants and speaker variable in realtime
   useEffect(() => {
@@ -333,20 +305,24 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [presentation?.participants]);
 
-  // update progress based on elapsedTime
   useEffect(() => {
-    if (!wordsWithTimestamps || isSeeking) return;
+    if (isSeeking || flatWords.length === 0) return;
+    const idx = getPositionFromTimestamp(timestamps, elapsedTime);
 
-    const newProgress = getPositionFromTimestamp(
-      wordsWithTimestamps,
-      progress,
-      elapsedTime
-    );
+    if (idx !== progress) {
+      setProgress(idx);
 
-    if (!_.isEqual(newProgress, progress)) {
-      setProgress(newProgress);
+      if (speaker.id === controller?.current) {
+        broadcastProgress({ newPosition: idx });
+      }
     }
-  }, [elapsedTime, isSeeking, wordsWithTimestamps]);
+  }, [elapsedTime, isSeeking, flatWords, progress, speaker?.id]);
+
+  useEffect(() => {
+    getController();
+    // console.log(flatWords);
+    // console.log(chaptersWithTimestamps);
+  }, [progress]);
 
   return (
     <PresentationContext.Provider
@@ -369,7 +345,6 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
         containerWidth,
         setContainerWidth,
         speedMultiplier,
-        wordsWithTimestamps,
         chaptersWithTimestamps,
         totalDuration,
         isAutoscrollOn,
@@ -379,6 +354,10 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
         getController,
         controller,
         setController,
+        flatWords,
+        setFlatWords,
+        timestamps,
+        setTimestamps,
       }}
     >
       {children}

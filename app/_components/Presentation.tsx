@@ -20,12 +20,13 @@ import {
   MicrophoneState,
 } from "../_contexts/MicrophoneContext";
 import PresentationMain from "./PresentationMain";
+import matchToScript from "../_lib/matchToScript";
 
 export default function Presentation() {
   const {
     presentation,
     speaker,
-    wordsWithTimestamps,
+    flatWords,
     broadcastProgress,
     progress,
     elapsedTime,
@@ -39,6 +40,7 @@ export default function Presentation() {
     isAutoscrollOn,
     setIsAutoscrollOn,
     controller,
+    timestamps,
   } = usePresentation();
 
   const { connectToDeepgram, connection, connectionState } = useDeepgram();
@@ -229,43 +231,43 @@ export default function Presentation() {
 
   // handle messages
   useEffect(() => {
-    if (!wordsWithTimestamps || !presentation || !presentation?.lastMessage)
-      return;
+    if (!flatWords || !presentation || !presentation?.lastMessage) return;
     const { position: newPosition, senderId } = presentation.lastMessage;
 
-    if (scrollMode === "continuous" && senderId === speaker.id) return;
+    // Don't update UI for your own messages; you already did that locally.
+    if (senderId === speaker.id) return;
 
-    const newTimestamp = getTimestampFromPosition(
-      wordsWithTimestamps,
-      newPosition
-    );
-    newTimestamp ? handleTimeChange(newTimestamp) : "";
-  }, [presentation?.id, presentation?.lastMessage, wordsWithTimestamps]);
+    const newTimestamp = flatWords[newPosition]?.timestamp;
+    if (typeof newTimestamp === "number") {
+      handleTimeChange(newTimestamp);
+    }
+  }, [presentation?.id, presentation?.lastMessage, flatWords]);
 
   // update presentation if scroll mode is dynamic
   useEffect(() => {
     if (!transcript || !presentation || transcript.length === 0) return;
 
-    console.log(transcript);
-    broadcastProgress({ transcript });
-  }, [transcript]);
+    // Only proceed if you are the controller
+    if (speaker.id !== controller.current) return;
 
-  // update presentation if scroll mode is continuous
-  useEffect(() => {
-    if (!progress || !wordsWithTimestamps || !speaker) return;
+    // Extract last spoken words and normalize
+    const lastSpokenWords: any = transcript.trim().split(/\s+/).slice(-3);
 
-    const position =
-      wordsWithTimestamps[progress.line][progress.index].position;
-    const { isController, didControllerChange } = getController(position);
+    // Run the matching logic (using flatWords)
+    const newPosition = matchToScript(
+      progress,
+      presentation.nodes.words,
+      lastSpokenWords
+    );
 
-    if (scrollMode === "continuous") {
-      const isProgressZero = position === 0;
-
-      if (isController || (didControllerChange && !isProgressZero)) {
-        broadcastProgress({ transcript: null });
+    // If position changed, update UI locally and broadcast
+    if (newPosition !== progress) {
+      const newTimestamp = getTimestampFromPosition(timestamps, newPosition);
+      if (typeof newTimestamp === "number") {
+        handleTimeChange(newTimestamp); // This sets elapsedTime, which will update progress, and triggers effect below
       }
     }
-  }, [progress]);
+  }, [transcript]);
 
   return (
     <div className="flex flex-col relative h-screen w-screen bg-background">
@@ -287,3 +289,20 @@ export default function Presentation() {
 }
 
 /* <div className="w-full h-56 fixed bottom-0 bg-gradient-to-t from-background to-background/0 pointer-events-none"></div> */
+
+// update presentation if scroll mode is continuous
+// useEffect(() => {
+//   if (!progress || !wordsWithTimestamps || !speaker) return;
+
+//   const position =
+//     wordsWithTimestamps[progress.line][progress.index].position;
+//   const { isController, didControllerChange } = getController(position);
+
+//   if (scrollMode === "continuous") {
+//     const isProgressZero = position === 0;
+
+//     if (isController || (didControllerChange && !isProgressZero)) {
+//       broadcastProgress({ transcript: null });
+//     }
+//   }
+// }, [progress]);

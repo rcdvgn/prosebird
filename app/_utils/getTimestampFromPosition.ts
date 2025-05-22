@@ -1,16 +1,14 @@
 export default function getTimestampFromPosition(
-  wordsWithTimestamps: any,
-  position: any
-) {
-  let testIndex = position;
-
-  for (const line of Object.values(wordsWithTimestamps) as any) {
-    if (line.length > testIndex) {
-      return line[testIndex].timestamp;
-    } else {
-      testIndex -= line.length;
-    }
+  timestamps: number[],
+  position: number
+): number | null {
+  if (
+    !timestamps ||
+    !Array.isArray(timestamps) ||
+    position < 0 ||
+    position >= timestamps.length
+  ) {
+    return null;
   }
-
-  return null;
+  return timestamps[position] ?? null;
 }

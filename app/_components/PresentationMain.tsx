@@ -1,103 +1,155 @@
+// PresentationMain.tsx
 "use client";
-import { Resizable } from "re-resizable";
-
-import React, { useState, useRef, useLayoutEffect } from "react";
-import Scrollbar from "./Scrollbar";
-import { usePresentation } from "../_contexts/PresentationContext";
-
-import ProgressBar from "./ProgressBar";
+import React, { useRef, useLayoutEffect, useEffect, useState } from "react";
 import PresentationScript from "./presentation/PresentationScript";
-import PresentationRightSideControls from "./presentation/PresentationRightSideControls";
 import PresentationLeftSideControls from "./presentation/PresentationLeftSideControls";
+import PresentationRightSideControls from "./presentation/PresentationRightSideControls";
+import ProgressBar from "./ProgressBar";
 import SideView from "./presentation/SideView";
-import { useScroll } from "../_contexts/ScrollNavigationContext";
+import { usePresentation } from "../_contexts/PresentationContext";
 
 export default function PresentationMain({
   handleTimeChange,
   timer,
 }: {
-  handleTimeChange: any;
+  handleTimeChange: (ms: number) => void;
   timer: any;
 }) {
-  const { elapsedTime, totalDuration, wordsWithTimestamps, isAutoscrollOn } =
-    usePresentation();
+  const {
+    elapsedTime,
+    totalDuration,
+    flatWords,
+    progress,
+    isAutoscrollOn,
+    setIsAutoscrollOn,
+    timestamps,
+    setTimestamps,
+  } = usePresentation();
 
-  const [sideViewTab, setSideViewTab] = useState(null);
-  const [scrollbarHeight, setScrollbarHeight] = useState(0);
-
+  const slateRef = useRef<HTMLDivElement>(null);
   const scriptContainer = useRef<any>(null);
-  const scrollContainer = useRef<any>(null);
-  const { registerScrollContainer, registerScriptContainer } = useScroll();
 
-  const calculateScrollbarHeight = () => {
-    if (scrollContainer.current && scriptContainer.current) {
-      const containerHeight = scrollContainer.current.clientHeight;
-      const contentHeight = scriptContainer.current.scrollHeight;
+  const [slateHeight, setSlateHeight] = useState(0);
 
-      const newScrollbarHeight =
-        (containerHeight / contentHeight) * containerHeight;
-      setScrollbarHeight(newScrollbarHeight);
+  // Update slateHeight on resize/layout
+  useLayoutEffect(() => {
+    const updateHeight = () => {
+      if (slateRef.current) setSlateHeight(slateRef.current.clientHeight);
+    };
+    updateHeight();
+    window.addEventListener("resize", updateHeight);
+    return () => window.removeEventListener("resize", updateHeight);
+  }, []);
+
+  useLayoutEffect(() => {
+    const container = slateRef.current;
+    if (!container || totalDuration === 0) {
+      return;
+    }
+
+    // 1. Select all word spans and sort by data-word-index
+    const spans = Array.from(
+      container.querySelectorAll<HTMLElement>(".word-span")
+    ).sort((a, b) => {
+      const indexA = Number(a.dataset.wordIndex);
+      const indexB = Number(b.dataset.wordIndex);
+      return indexA - indexB;
+    });
+
+    if (spans.length === 0) {
+      return;
+    }
+
+    // 2. Group spans by their offsetTop (i.e., lines)
+    const lines: HTMLElement[][] = [];
+    let lastOffsetTop: number | undefined = undefined;
+    spans.forEach((span) => {
+      const offsetTop = span.offsetTop;
+      if (
+        lastOffsetTop === undefined ||
+        Math.abs(offsetTop - lastOffsetTop) > 1
+      ) {
+        lines.push([span]);
+        lastOffsetTop = offsetTop;
+      } else {
+        lines[lines.length - 1].push(span);
+      }
+    });
+
+    if (lines.length === 0) {
+      return;
+    }
+
+    // 3. Calculate per-line duration
+    const durationPerLine = totalDuration / lines.length;
+
+    console.log(lines);
+
+    const newCalculatedTimestamps: number[] = [];
+
+    lines.forEach((line, lineIndex) => {
+      const lineStart = lineIndex * durationPerLine;
+      const numWordsInLine = line.length;
+      if (numWordsInLine === 0) return; // Skip empty lines
+
+      line.forEach((span, wordIdxInLine) => {
+        const pos = Number(span.dataset.wordIndex);
+        if (isNaN(pos)) {
+          console.warn("Word span found with invalid data-word-index:", span);
+          return;
+        }
+        const ts =
+          lineStart + (durationPerLine * wordIdxInLine) / numWordsInLine;
+        newCalculatedTimestamps[pos] = ts;
+      });
+    });
+
+    // Update the timestamps in the context with the newly calculated values.
+    setTimestamps(newCalculatedTimestamps);
+  }, [flatWords, totalDuration]);
+
+  // 2️⃣ Auto‐scroll effect
+  useEffect(() => {
+    if (!isAutoscrollOn || !slateRef.current || !totalDuration) return;
+    const container = slateRef.current;
+    const maxScroll = container.scrollHeight - container.clientHeight;
+    const scrollProgress = Math.min(elapsedTime / totalDuration, 1);
+
+    let target = scrollProgress * maxScroll - 100;
+    if (target < 0) target = 0;
+
+    container.scrollTo({ top: target, behavior: "auto" });
+  }, [elapsedTime, isAutoscrollOn, totalDuration]);
+
+  // 3️⃣ Only disable on genuine user scroll
+  const onScroll = (_e: React.UIEvent<HTMLDivElement>) => {
+    if (isAutoscrollOn) {
+      setIsAutoscrollOn(false);
     }
   };
 
-  const textSize = "0px"; // placeholder CHANGE LATER
-
-  useLayoutEffect(() => {
-    if (scrollContainer.current) {
-      registerScrollContainer(scrollContainer.current);
-    }
-    if (scriptContainer.current) {
-      registerScriptContainer(scriptContainer.current);
-    }
-  }, [registerScrollContainer, registerScriptContainer]);
-
-  useLayoutEffect(() => {
-    calculateScrollbarHeight();
-  }, [wordsWithTimestamps, textSize]);
-
-  useLayoutEffect(() => {
-    if (scriptContainer.current && isAutoscrollOn) {
-      const STICKY_HEADER_OFFSET = 80; // height in px of ChapterTitle
-      const progressPercentage =
-        (elapsedTime / totalDuration) * scriptContainer.current.clientHeight;
-      const adjustedTop = progressPercentage - STICKY_HEADER_OFFSET;
-      scriptContainer.current.style.top = `-${adjustedTop}px`;
-    }
-  }, [elapsedTime, totalDuration, isAutoscrollOn]);
-
   return (
-    <>
-      <div className="flex h-full w-full">
-        <div className="relative slate group grow h-full flex min-w-0">
-          <PresentationLeftSideControls />
+    <div className="flex h-full w-full">
+      <div
+        ref={slateRef}
+        className="slate group grow h-full flex min-w-0 overflow-y-auto"
+      >
+        {/* <PresentationLeftSideControls /> */}
 
-          <PresentationScript
-            timer={timer}
-            handleTimeChange={handleTimeChange}
-            scrollContainer={scrollContainer}
-            scriptContainer={scriptContainer}
-          />
+        <PresentationScript
+          timer={timer}
+          handleTimeChange={handleTimeChange}
+          slateHeight={slateHeight}
+          scriptContainer={scriptContainer}
+        />
 
-          <PresentationRightSideControls
-            sideViewTab={sideViewTab}
-            setSideViewTab={setSideViewTab}
-          />
+        {/* <PresentationRightSideControls /> */}
 
-          <ProgressBar handleTimeChange={handleTimeChange} />
-
-          <SyncToPresentation />
-
-          <Scrollbar
-            calculateScrollbarHeight={calculateScrollbarHeight}
-            scrollContainer={scrollContainer}
-            scriptContainer={scriptContainer}
-            scrollbarHeight={scrollbarHeight}
-          />
-        </div>
-
-        <SideView tab={sideViewTab} setTab={setSideViewTab} />
+        {/* <ProgressBar handleTimeChange={handleTimeChange} /> */}
+        <SyncToPresentation />
       </div>
-    </>
+      {/* <SideView /> */}
+    </div>
   );
 }
 

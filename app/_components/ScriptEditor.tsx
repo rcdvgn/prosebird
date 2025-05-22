@@ -273,7 +273,10 @@ export default function ScriptEditor() {
             >
               <PencilIcon className="h-[15px]" />
             </button>
-            <button className={`button-icon h-[34px] rounded-xl`}>
+            <button
+              onClick={handlePresent}
+              className={`button-icon h-[34px] rounded-xl`}
+            >
               <PlayIcon className="h-[15px]" />
             </button>
           </div>

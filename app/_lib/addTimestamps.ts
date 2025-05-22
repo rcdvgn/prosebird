@@ -1,146 +1,104 @@
-async function loadFontAndContext(
-  fontSize: any
-): Promise<CanvasRenderingContext2D> {
-  const canvas = document.createElement("canvas");
-  const context = canvas.getContext("2d");
+export function generateTimestamps(words: any, chapters: any, wpm: any) {
+  const baseTime = 500;
+  const totalDuration = 500 * words.length;
 
-  if (!context) {
-    throw new Error("Unable to get 2D context for canvas");
-  }
+  const flatWords = words.map((w: any, i: any) => ({
+    ...w,
+    timestamp: i * baseTime,
+  }));
 
-  const font = new FontFace(
-    "Public-Sans",
-    "url(/fonts/Public_Sans/static/PublicSans-Bold.ttf)"
-  );
-  await font.load();
-  document.fonts.add(font);
-  context.font = `${fontSize}px Public-Sans`; // Adjust the size as needed
+  const chapterArray = Object.entries(chapters)
+    .map(([startPosition, chapterData]: any) => ({
+      startPosition: Number(startPosition),
+      ...chapterData,
+    }))
+    .sort((a, b) => a.startPosition - b.startPosition);
 
-  return context;
+  const chaptersWithTimestamps = chapterArray.map((c: any, idx: any) => ({
+    chapterIndex: idx,
+    title: c.title,
+    timestamp: flatWords[c.startPosition]?.timestamp ?? 0,
+    startPosition: c.startPosition,
+    speaker: c.speaker,
+  }));
+
+  return { flatWords, chaptersWithTimestamps, totalDuration };
 }
 
-function calculateLineBreaks(
-  context: any,
-  words: any,
-  chapters: any,
-  containerWidth: any
-) {
-  let currentLine: any = [];
-  let lines: any = [];
-  let chapterKeys = new Set(Object.keys(chapters)); // Use a Set for faster lookup
+const words = [
+  {
+    chapterIndex: 0,
+    chapterTitle: "What Is a Parabola?",
+    position: 0,
+    word: "A",
+  },
+  {
+    chapterIndex: 0,
+    chapterTitle: "What Is a Parabola?",
+    position: 1,
+    word: "parabola",
+  },
+  {
+    chapterIndex: 0,
+    chapterTitle: "What Is a Parabola?",
+    position: 2,
+    word: "is",
+  },
+];
 
-  // Get the line height based on the font metrics
-  const fontMetrics = context.measureText("Mg"); // Using characters with ascenders and descenders
-  const lineHeight =
-    fontMetrics.actualBoundingBoxAscent + fontMetrics.actualBoundingBoxDescent;
+const chapters = {
+  "0": {
+    speaker: {
+      id: "oXk2R62ek7Y0k8fcsQ4B1wjMdyT2",
+      isGuest: false,
+    },
+    title: "What Is a Parabola?",
+  },
+  "61": {
+    speaker: {
+      id: "oXk2R62ek7Y0k8fcsQ4B1wjMdyT2",
+      isGuest: false,
+    },
+    title: "Parabolas in Physics​What Is a Parabola?",
+  },
+  "114": {
+    speaker: {
+      id: "oXk2R62ek7Y0k8fcsQ4B1wjMdyT2",
+      isGuest: false,
+    },
+    title: "Parabolas in Engineering",
+  },
+  "158": {
+    speaker: {
+      id: "oXk2R62ek7Y0k8fcsQ4B1wjMdyT2",
+      isGuest: false,
+    },
+    title: "Why It Matters",
+  },
+};
 
-  words.forEach((wordObject: any) => {
-    const testLine =
-      currentLine.map((item: any) => item.word).join(" ") +
-      (currentLine.length > 0 ? " " : "") +
-      wordObject.word;
-    const testWidth = context.measureText(testLine).width;
+// const baseTime = 60_000 / wpm / speedMultiplier;
+//   const flatWords: WordTimestamp[] = words.map((w, i) => ({
+//     ...w,
+//     timestamp: i * baseTime,
+//   }));
+//   const totalDuration = flatWords.length * baseTime;
 
-    // Check if the word's key is a chapter start
-    if (chapterKeys.has(wordObject.position)) {
-      if (currentLine.length > 0) {
-        lines.push(currentLine);
-      }
-      currentLine = [wordObject]; // Start a new line with the chapter's first word
-    } else if (testWidth > containerWidth) {
-      lines.push(currentLine);
-      currentLine = [wordObject]; // Start a new line with the word
-    } else {
-      currentLine.push(wordObject); // Add the word to the current line
-    }
-  });
+//   // Convert chapters object to sorted array of {startPosition, ...data}
+//   const chapterArray = Object.entries(chapters)
+//     .map(([startPosition, chapterData]) => ({
+//       startPosition: Number(startPosition),
+//       ...chapterData,
+//     }))
+//     .sort((a, b) => a.startPosition - b.startPosition);
 
-  // Push the final line if it's not empty
-  if (currentLine.length > 0) {
-    lines.push(currentLine);
-  }
-
-  return {
-    lines,
-    lineHeight,
-  };
-}
-
-function calculateTotalDuration(
-  numberOfLines: any,
-  speedMultiplier: any,
-  baseSpeed: any,
-  numberOfChapters: any,
-  heightPerLine: any
-) {
-  const durationWoChapterTitles = numberOfLines * speedMultiplier * baseSpeed;
-  const durationPerPixel =
-    durationWoChapterTitles / (numberOfLines * heightPerLine);
-  const chapterTitlesDuration = numberOfChapters * 80 * durationPerPixel;
-  return durationWoChapterTitles + chapterTitlesDuration;
-}
-
-function calculateWordTimestamps(
-  lines: any,
-  chapters: any,
-  totalDuration: any
-) {
-  const durationPerLine = totalDuration / lines.length;
-  const scriptWithTimestamps: any = {};
-  const chaptersWithTimestamps: any = {};
-
-  const chapterPositions = Object.keys(chapters);
-
-  lines.forEach((line: any, lineIndex: any) => {
-    // const lineWords = line.split(" ");
-    const wordsWithTimestamps = line.map((wordObject: any, wordIndex: any) => {
-      const timestamp =
-        lineIndex * durationPerLine +
-        durationPerLine * (wordIndex / line.length);
-
-      if (chapterPositions.includes(wordObject.position.toString())) {
-        chaptersWithTimestamps[wordObject.position] = {
-          ...chapters[wordObject.position],
-          timestamp,
-        };
-      }
-      return { ...wordObject, timestamp };
-    });
-
-    scriptWithTimestamps[lineIndex] = wordsWithTimestamps;
-  });
-
-  return { scriptWithTimestamps, chaptersWithTimestamps };
-}
-
-export default async function calculateTimestamps(
-  words: any,
-  chapters: any,
-  containerWidth: any,
-  speedMultiplier: any,
-  fontSize: any
-) {
-  const baseSpeed = 1500;
-
-  const context = await loadFontAndContext(fontSize);
-
-  const { lines, lineHeight: heightPerLine } = calculateLineBreaks(
-    context,
-    words,
-    chapters,
-    containerWidth
-  );
-
-  const totalDuration = calculateTotalDuration(
-    lines.length,
-    speedMultiplier,
-    baseSpeed,
-    Object.keys(chapters).length,
-    heightPerLine
-  );
-
-  const { scriptWithTimestamps, chaptersWithTimestamps } =
-    calculateWordTimestamps(lines, chapters, totalDuration);
-
-  return { scriptWithTimestamps, chaptersWithTimestamps, totalDuration };
-}
+//   // Now you can .map chapterArray!
+//   const chaptersWithTimestamps: ChapterTimestamp[] = chapterArray.map(
+//     (c, idx) => ({
+//       chapterIndex: idx,
+//       title: c.title,
+//       timestamp: flatWords[c.startPosition]?.timestamp ?? 0,
+//       startPosition: c.startPosition,
+//       speaker: c.speaker,
+//     })
+//   );
