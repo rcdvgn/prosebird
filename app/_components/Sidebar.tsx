@@ -35,7 +35,7 @@ export default function Sidebar() {
       transition={{ duration: 0.2, ease: "easeInOut" }}
       className="@container shrink-0 flex flex-col items-center justify-between px-3 pb-5"
     >
-      <div className="w-full">
+      <div className="w-full grow min-h-0 flex flex-col">
         <div className="w-full shrink-0 h-16 flex items-center justify-center @[80px]:justify-between @[80px]:pl-4 [80px]:pr-2">
           <ProseBird
             squared={!expanded}
@@ -52,7 +52,7 @@ export default function Sidebar() {
           )}
         </div>
 
-        <div className="w-full flex flex-col gap-4 min-h-0">
+        <div className="w-full flex flex-col gap-4 grow min-h-0">
           <div className="w-full flex flex-col items-center gap-1">
             <Page
               name={"Expand"}
