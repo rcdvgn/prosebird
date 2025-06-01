@@ -85,7 +85,9 @@ export default function ActionPanel({
             className="presentation-control-options"
           >
             <ScrollModeIcon className="w-5" filled={false} />
-            <span className="font-bold text-[13px] mb-[-2px]">Voice sync</span>
+            <span className="font-bold text-[13px] mb-[-2px]">
+              {scrollMode === "continuous" ? "Continuous" : "Dynamic"}
+            </span>
           </span>
 
           <span className="presentation-control-options">

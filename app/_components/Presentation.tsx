@@ -245,7 +245,13 @@ export default function Presentation() {
 
   // update presentation if scroll mode is dynamic
   useEffect(() => {
-    if (!transcript || !presentation || transcript.length === 0) return;
+    if (
+      !controller?.current ||
+      !transcript ||
+      !presentation ||
+      transcript.length === 0
+    )
+      return;
 
     // Only proceed if you are the controller
     if (speaker.id !== controller.current) return;
@@ -267,7 +273,7 @@ export default function Presentation() {
         handleTimeChange(newTimestamp); // This sets elapsedTime, which will update progress, and triggers effect below
       }
     }
-  }, [transcript]);
+  }, [transcript, controller, speaker]);
 
   return (
     <div className="flex flex-col relative h-screen w-screen bg-background">
