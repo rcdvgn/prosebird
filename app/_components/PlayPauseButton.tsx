@@ -6,7 +6,7 @@ import {
   PlayIcon,
 } from "@/app/_assets/icons";
 import { usePresentation } from "../_contexts/PresentationContext";
-import { MicrophoneState, useMicrophone } from "../_contexts/MicrophoneContext";
+import { useOpenAIRealtime } from "../_contexts/OpenAIRealtimeContext";
 
 export default function PlayPauseButton({
   handleTimerRun,
@@ -15,17 +15,14 @@ export default function PlayPauseButton({
   handleTimerRun: any;
   timer: any;
 }) {
-  const { controller, speaker, scrollMode } = usePresentation();
-  const { startMicrophone, stopMicrophone, microphoneState } = useMicrophone();
+  const { controller, speaker, scrollMode, isMuted, setIsMuted } =
+    usePresentation();
 
   const handleDynamic = () => {
-    microphoneState === MicrophoneState.Open
-      ? stopMicrophone()
-      : startMicrophone();
+    setIsMuted(!isMuted);
   };
 
   return (
-    // showControls && (
     <div className="flex items-center">
       <span className="presentation-control-options">
         <ForwardIcon className="h-[15px]" />
@@ -41,7 +38,7 @@ export default function PlayPauseButton({
         </div>
       ) : (
         <div className="presentation-control-options" onClick={handleDynamic}>
-          {microphoneState === MicrophoneState.Open ? (
+          {!isMuted ? (
             <MicrophoneIcon className="h-[18px]" />
           ) : (
             <MicrophoneMutedIcon className="h-[18px]" />
@@ -53,6 +50,5 @@ export default function PlayPauseButton({
         <ForwardIcon className="h-[15px] scale-x-[-1]" />
       </span>
     </div>
-    // )
   );
 }

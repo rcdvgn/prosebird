@@ -1,5 +1,4 @@
-import { DeepgramContextProvider } from "@/app/_contexts/DeepgramContextProvider";
-import { MicrophoneContextProvider } from "@/app/_contexts/MicrophoneContext";
+import { OpenAIRealtimeContextProvider } from "@/app/_contexts/OpenAIRealtimeContext";
 import { PresentationProvider } from "@/app/_contexts/PresentationContext";
 import { ScrollProvider } from "@/app/_contexts/ScrollNavigationContext";
 
@@ -11,9 +10,9 @@ export default function PresentationLayout({
   return (
     <PresentationProvider>
       <ScrollProvider>
-        <MicrophoneContextProvider>
-          <DeepgramContextProvider>{children}</DeepgramContextProvider>
-        </MicrophoneContextProvider>
+        <OpenAIRealtimeContextProvider>
+          {children}
+        </OpenAIRealtimeContextProvider>
       </ScrollProvider>
     </PresentationProvider>
   );

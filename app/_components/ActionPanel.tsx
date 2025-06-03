@@ -4,7 +4,6 @@ import ProgressBar from "@/app/_components/ProgressBar";
 import PlayPauseButton from "./PlayPauseButton";
 
 import { usePresentation } from "../_contexts/PresentationContext";
-import { useMicrophone } from "../_contexts/MicrophoneContext";
 import {
   EditTextIcon,
   ForwardIcon,
@@ -30,7 +29,6 @@ export default function ActionPanel({
   timer: any;
 }) {
   const { scrollMode, speaker, setScrollMode } = usePresentation();
-  const { microphoneState } = useMicrophone();
 
   return (
     <div className="flex justify-between items-center h-[76px] w-full px-6 shrink-0">

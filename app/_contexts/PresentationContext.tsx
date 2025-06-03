@@ -20,19 +20,6 @@ import {
 } from "../_services/client";
 import { generateTimestamps } from "../_lib/addTimestamps";
 
-interface PusherMember {
-  id: string;
-  info?: any;
-}
-
-interface PusherMembers {
-  count: number;
-  members: { [key: string]: PusherMember };
-  myID: string;
-  get: (id: string) => PusherMember | null;
-  each: (callback: (member: PusherMember) => void) => void;
-}
-
 const PresentationContext = createContext<any>(undefined);
 
 export const PresentationProvider = ({ children }: { children: ReactNode }) => {
@@ -47,7 +34,7 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
     []
   );
   const [timestamps, setTimestamps] = useState<any>([]);
-
+  const [isMuted, setIsMuted] = useState<any>(true);
   const [controller, setController] = useState<any>(null);
   const [realtimeNodes, setRealtimeNodes] = useState<any>(null);
   const [newerNodesAvailable, setNewerNodesAvailable] = useState<any>(false);
@@ -75,7 +62,6 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
   const fontSize = "36";
 
   const getController = () => {
-    if (!presentation || !speaker) return;
     // If you have chapters as a flat, sorted array:
     const chapters = chaptersWithTimestamps; // or whatever your flat array is called
 
@@ -166,7 +152,6 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
       presentation.nodes.chapters,
       500 // Your original fixed value
     );
-    console.log(presentation); // Your original console log
 
     setFlatWords(fw);
     setChaptersWithTimestamps(ct);
@@ -319,10 +304,9 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
   }, [elapsedTime, isSeeking, flatWords, progress, speaker?.id]);
 
   useEffect(() => {
-    getController();
-    // console.log(flatWords);
-    // console.log(chaptersWithTimestamps);
-  }, [progress]);
+    if (!presentation || !speaker || !chaptersWithTimestamps.length)
+      getController();
+  }, [progress, presentation?.code, speaker, chaptersWithTimestamps]);
 
   return (
     <PresentationContext.Provider
@@ -358,6 +342,8 @@ export const PresentationProvider = ({ children }: { children: ReactNode }) => {
         setFlatWords,
         timestamps,
         setTimestamps,
+        isMuted,
+        setIsMuted,
       }}
     >
       {children}

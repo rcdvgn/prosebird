@@ -83,8 +83,6 @@ export default function PresentationMain({
     // 3. Calculate per-line duration
     const durationPerLine = totalDuration / lines.length;
 
-    console.log(lines);
-
     const newCalculatedTimestamps: number[] = [];
 
     lines.forEach((line, lineIndex) => {

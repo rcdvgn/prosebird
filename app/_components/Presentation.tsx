@@ -2,25 +2,14 @@
 import "regenerator-runtime/runtime";
 import { useTimer } from "react-use-precision-timer";
 import getTimestampFromPosition from "@/app/_utils/getTimestampFromPosition";
-import React, { useState, useEffect, useRef } from "react";
-// import SpeechRecognition, {
-//   useSpeechRecognition,
-// } from "react-speech-recognition";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import ActionPanel from "@/app/_components/ActionPanel";
 
 import { usePresentation } from "../_contexts/PresentationContext";
-import {
-  useDeepgram,
-  LiveConnectionState,
-  LiveTranscriptionEvents,
-} from "../_contexts/DeepgramContextProvider";
-import {
-  useMicrophone,
-  MicrophoneEvents,
-  MicrophoneState,
-} from "../_contexts/MicrophoneContext";
+import { useOpenAIRealtime } from "../_contexts/OpenAIRealtimeContext";
 import PresentationMain from "./PresentationMain";
 import matchToScript from "../_lib/matchToScript";
+import { usePCMStream } from "../_hooks/usePCMStream";
 
 export default function Presentation() {
   const {
@@ -41,19 +30,89 @@ export default function Presentation() {
     setIsAutoscrollOn,
     controller,
     timestamps,
+    isMuted,
   } = usePresentation();
 
-  const { connectToDeepgram, connection, connectionState } = useDeepgram();
   const {
-    setupMicrophone,
-    microphone,
-    startMicrophone,
-    stopMicrophone,
-    microphoneState,
-  } = useMicrophone();
-  const [transcript, setTranscript] = useState("");
+    connectToProxy,
+    sendAudio,
+    transcript,
+    connectionState,
+    isConnected,
+  } = useOpenAIRealtime();
 
-  const keepAliveInterval = useRef<any>();
+  const [microphoneActive, setMicrophoneActive] = useState(false);
+  const connectionInitialized = useRef(false);
+  const previousMutedState = useRef<boolean>(isMuted);
+
+  const handlePCMChunk = useCallback(
+    (chunk: ArrayBuffer) => {
+      // Debug logging
+      console.log("PCM Chunk received:", {
+        size: chunk.byteLength,
+        isMuted,
+        speakerId: speaker?.id,
+        controllerId: controller?.current,
+        isController: speaker?.id === controller?.current,
+        connectionState,
+        isConnected,
+      });
+
+      // Only forward if unmuted, user is the controller, and connection is ready
+      if (
+        !isMuted &&
+        speaker?.id === controller?.current &&
+        isConnected &&
+        connectionState === "OPEN"
+      ) {
+        console.log("Sending audio chunk to OpenAI");
+        sendAudio(chunk);
+      } else {
+        console.log("Audio chunk not sent:", {
+          muted: isMuted,
+          notController: speaker?.id !== controller?.current,
+          notConnected: !isConnected || connectionState !== "OPEN",
+        });
+      }
+    },
+    [
+      isMuted,
+      speaker?.id,
+      controller?.current,
+      sendAudio,
+      connectionState,
+      isConnected,
+    ]
+  );
+
+  const { start, stop } = usePCMStream({ onAudioChunk: handlePCMChunk });
+
+  // Handle microphone start/stop based on mute state
+  const startMicrophone = useCallback(async () => {
+    if (!microphoneActive) {
+      try {
+        console.log("Starting microphone...");
+        await start();
+        setMicrophoneActive(true);
+        console.log("Microphone started successfully");
+      } catch (error) {
+        console.error("Failed to start microphone:", error);
+      }
+    }
+  }, [start, microphoneActive]);
+
+  const stopMicrophone = useCallback(async () => {
+    if (microphoneActive) {
+      try {
+        console.log("Stopping microphone...");
+        await stop();
+        setMicrophoneActive(false);
+        console.log("Microphone stopped successfully");
+      } catch (error) {
+        console.error("Failed to stop microphone:", error);
+      }
+    }
+  }, [stop, microphoneActive]);
 
   const timer = useTimer(
     {
@@ -69,76 +128,52 @@ export default function Presentation() {
     }
   );
 
+  // Initialize connection once
   useEffect(() => {
-    setupMicrophone();
-  }, []);
-
-  useEffect(() => {
-    if (microphoneState === MicrophoneState.Ready) {
-      connectToDeepgram({
-        model: "nova-2",
-        language: "en-US",
-        interim_results: true,
-        smart_format: true,
-        filler_words: true,
-        utterance_end_ms: 3000,
-      });
+    if (!connectionInitialized.current) {
+      console.log("Initializing OpenAI connection");
+      connectToProxy();
+      connectionInitialized.current = true;
     }
-  }, [microphoneState]);
+  }, [connectToProxy]);
 
+  // Handle microphone based on mute state
   useEffect(() => {
-    if (!microphone || !connection) return;
+    console.log("Mute state changed:", {
+      isMuted,
+      previousMuted: previousMutedState.current,
+    });
 
-    const onData = (e: BlobEvent) => {
-      if (e.data.size > 0) {
-        connection?.send(e.data);
-      }
-    };
-
-    const onTranscript = (data: any) => {
-      console.log(data);
-      const thisCaption = data.channel.alternatives[0]?.transcript;
-      if (thisCaption) {
-        setTranscript((prev) => prev + " " + thisCaption);
-      }
-    };
-
-    if (connectionState === LiveConnectionState.OPEN) {
-      connection.addListener(LiveTranscriptionEvents.Transcript, onTranscript);
-      microphone.addEventListener(MicrophoneEvents.DataAvailable, onData);
-      // startMicrophone();
+    if (isMuted && !previousMutedState.current) {
+      // User just muted - stop microphone
+      console.log("User muted - stopping microphone");
+      stopMicrophone();
+    } else if (!isMuted && previousMutedState.current) {
+      // User just unmuted - start microphone
+      console.log("User unmuted - starting microphone");
+      startMicrophone();
+    } else if (!isMuted && !microphoneActive) {
+      // Initial unmuted state - start microphone
+      console.log("Initial unmuted state - starting microphone");
+      startMicrophone();
     }
 
+    previousMutedState.current = isMuted;
+  }, [isMuted, startMicrophone, stopMicrophone, microphoneActive]);
+
+  // Cleanup on unmount
+  useEffect(() => {
     return () => {
-      connection.removeListener(
-        LiveTranscriptionEvents.Transcript,
-        onTranscript
-      );
-      microphone.removeEventListener(MicrophoneEvents.DataAvailable, onData);
+      console.log("Component unmounting, stopping microphone");
+      stopMicrophone();
     };
-  }, [connectionState, microphone]);
+  }, [stopMicrophone]);
 
+  // Handle transcript changes
   useEffect(() => {
-    if (!connection) return;
-
-    if (
-      microphoneState !== MicrophoneState.Open &&
-      connectionState === LiveConnectionState.OPEN
-    ) {
-      connection.keepAlive();
-
-      keepAliveInterval.current = setInterval(() => {
-        connection.keepAlive();
-      }, 5000);
-    } else {
-      clearInterval(keepAliveInterval.current);
-    }
-
-    return () => {
-      clearInterval(keepAliveInterval.current);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [microphoneState, connectionState]);
+    if (!transcript) return;
+    console.log("[Transcription received]:", transcript);
+  }, [transcript]);
 
   const handleTimerRun = () => {
     if (!timer.isStarted()) {
@@ -165,39 +200,11 @@ export default function Presentation() {
       if (timer.isRunning()) {
         timer.pause();
       }
-
       setScrollMode("dynamic");
     } else {
       setScrollMode("continuous");
     }
   };
-
-  // const {
-  //   transcript,
-  //   resetTranscript,
-  //   listening,
-  //   // interimTranscript,
-  //   browserSupportsSpeechRecognition,
-  // } = useSpeechRecognition();
-
-  // const handleStartListening = () => {
-  //   resetTranscript();
-  //   SpeechRecognition.startListening({
-  //     continuous: true,
-  //     language: "en-US",
-  //   });
-  // };
-
-  // const handleStopListening = () => {
-  //   SpeechRecognition.stopListening();
-  // };
-
-  // check if browser supports dynamic mode
-  // useEffect(() => {
-  //   if (!browserSupportsSpeechRecognition) {
-  //     console.log("Browser doesn't support speech recognition.");
-  //   }
-  // }, [browserSupportsSpeechRecognition]);
 
   // render interval
   useEffect(() => {
@@ -223,8 +230,6 @@ export default function Presentation() {
         if (timer.isRunning()) {
           handleTimerRun();
         }
-      } else {
-        microphoneState === MicrophoneState.Open ? stopMicrophone() : "";
       }
     }
   }, [speaker, controller]);
@@ -249,12 +254,12 @@ export default function Presentation() {
       !controller?.current ||
       !transcript ||
       !presentation ||
-      transcript.length === 0
+      transcript.length === 0 ||
+      speaker?.id !== controller?.current // Only process if user is controller
     )
       return;
 
-    // Only proceed if you are the controller
-    if (speaker.id !== controller.current) return;
+    console.log("Processing transcript for matching:", transcript);
 
     // Extract last spoken words and normalize
     const lastSpokenWords: any = transcript.trim().split(/\s+/).slice(-3);
@@ -266,25 +271,36 @@ export default function Presentation() {
       lastSpokenWords
     );
 
+    console.log("Match result:", {
+      currentProgress: progress,
+      newPosition,
+      lastSpokenWords,
+    });
+
     // If position changed, update UI locally and broadcast
     if (newPosition !== progress) {
       const newTimestamp = getTimestampFromPosition(timestamps, newPosition);
       if (typeof newTimestamp === "number") {
-        handleTimeChange(newTimestamp); // This sets elapsedTime, which will update progress, and triggers effect below
+        console.log("Updating time based on transcript match:", newTimestamp);
+        handleTimeChange(newTimestamp);
       }
     }
-  }, [transcript, controller, speaker]);
+  }, [transcript, controller, speaker, progress, presentation, timestamps]);
 
   return (
     <div className="flex flex-col relative h-screen w-screen bg-background">
+      {/* Debug info */}
+      <div className="px-2 py-1 text-xs text-gray-500 border-b">
+        Connection: {connectionState} | Microphone:{" "}
+        {microphoneActive ? "ON" : "OFF"} | Muted: {isMuted ? "YES" : "NO"} |
+        Controller: {speaker?.id === controller?.current ? "YES" : "NO"}
+      </div>
+
       <div className="px-2 pt-2 grow min-h-0">
         <PresentationMain handleTimeChange={handleTimeChange} timer={timer} />
       </div>
 
       <ActionPanel
-        // handleStartListening={handleStartListening}
-        // handleStopListening={handleStopListening}
-        // listening={listening}
         handleTimeChange={handleTimeChange}
         toggleScrollMode={toggleScrollMode}
         handleTimerRun={handleTimerRun}
@@ -293,22 +309,3 @@ export default function Presentation() {
     </div>
   );
 }
-
-/* <div className="w-full h-56 fixed bottom-0 bg-gradient-to-t from-background to-background/0 pointer-events-none"></div> */
-
-// update presentation if scroll mode is continuous
-// useEffect(() => {
-//   if (!progress || !wordsWithTimestamps || !speaker) return;
-
-//   const position =
-//     wordsWithTimestamps[progress.line][progress.index].position;
-//   const { isController, didControllerChange } = getController(position);
-
-//   if (scrollMode === "continuous") {
-//     const isProgressZero = position === 0;
-
-//     if (isController || (didControllerChange && !isProgressZero)) {
-//       broadcastProgress({ transcript: null });
-//     }
-//   }
-// }, [progress]);
